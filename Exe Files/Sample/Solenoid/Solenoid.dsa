@@ -1,0 +1,153 @@
+$begin "DoSA_Project"
+	Writed=2017-09-04 오후 1:08:55
+	DoSA_Version=0.9.0.1
+	File_Version=1.0.0.0
+	$begin "Design"
+		DesignName=Solenoid
+		$begin "Coil"
+			NodeName=coil
+			KindKey=COIL
+			MovingParts=FIXED
+			Material=Copper
+			CurrentDirection=IN
+			Turns=1040
+			Resistance=15.20945
+			Layers=20
+			TurnsOfOneLayer=52
+			CoilWireGrade=Enameled_IEC_Grade_2
+			InnerDiameter=9.6
+			OuterDiameter=21.6
+			Height=16
+			CopperDiameter=0.27
+			WireDiameter=0.31072
+			Temperature=20
+			HorizontalCoefficient=0.9
+			VerticalCoefficient=0.98
+			ResistanceCoefficient=1
+			$begin "Shape"
+				PointX=4.8
+				PointY=14
+				LineKind=STRAIGHT
+				ArcDriction=FORWARD
+				PointX=4.8
+				PointY=-2
+				LineKind=STRAIGHT
+				ArcDriction=FORWARD
+				PointX=10.8
+				PointY=-2
+				LineKind=STRAIGHT
+				ArcDriction=FORWARD
+				PointX=10.8
+				PointY=14
+				LineKind=STRAIGHT
+				ArcDriction=FORWARD
+			$end "Shape"
+		$end "Coil"
+		$begin "Steel"
+			NodeName=plunger
+			KindKey=STEEL
+			MovingParts=MOVING
+			Material=430 Stainless Steel
+			$begin "Shape"
+				FaceType=RECTANGLE
+				PointX=0
+				PointY=0
+				LineKind=STRAIGHT
+				ArcDriction=FORWARD
+				PointX=0
+				PointY=-12
+				LineKind=STRAIGHT
+				ArcDriction=FORWARD
+				PointX=4
+				PointY=-12
+				LineKind=STRAIGHT
+				ArcDriction=FORWARD
+				PointX=4
+				PointY=0
+				LineKind=STRAIGHT
+				ArcDriction=FORWARD
+			$end "Shape"
+		$end "Steel"
+		$begin "Steel"
+			NodeName=core
+			KindKey=STEEL
+			MovingParts=FIXED
+			Material=430 Stainless Steel
+			$begin "Shape"
+				FaceType=POLYGON
+				PointX=0
+				PointY=19.2
+				LineKind=STRAIGHT
+				ArcDriction=FORWARD
+				PointX=0
+				PointY=1.2
+				LineKind=STRAIGHT
+				ArcDriction=FORWARD
+				PointX=4
+				PointY=1.2
+				LineKind=STRAIGHT
+				ArcDriction=FORWARD
+				PointX=4
+				PointY=14.8
+				LineKind=STRAIGHT
+				ArcDriction=FORWARD
+				PointX=15.6
+				PointY=14.8
+				LineKind=STRAIGHT
+				ArcDriction=FORWARD
+				PointX=15.6
+				PointY=19.2
+				LineKind=STRAIGHT
+				ArcDriction=FORWARD
+			$end "Shape"
+		$end "Steel"
+		$begin "Steel"
+			NodeName=case
+			KindKey=STEEL
+			MovingParts=FIXED
+			Material=1010 Steel
+			$begin "Shape"
+				FaceType=POLYGON
+				PointX=4.4
+				PointY=-2.8
+				LineKind=STRAIGHT
+				ArcDriction=FORWARD
+				PointX=4.4
+				PointY=-10.4
+				LineKind=STRAIGHT
+				ArcDriction=FORWARD
+				PointX=15.6
+				PointY=-10.4
+				LineKind=STRAIGHT
+				ArcDriction=FORWARD
+				PointX=15.6
+				PointY=14.8
+				LineKind=STRAIGHT
+				ArcDriction=FORWARD
+				PointX=11.6
+				PointY=14.8
+				LineKind=STRAIGHT
+				ArcDriction=FORWARD
+				PointX=11.6
+				PointY=-2.8
+				LineKind=STRAIGHT
+				ArcDriction=FORWARD
+			$end "Shape"
+		$end "Steel"
+		$begin "ForceExperiment"
+			NodeName=force
+			Voltage=14.5
+			Current=0.95335
+			MovingStroke=0
+		$end "ForceExperiment"
+		$begin "CurrentExperiment"
+			NodeName=current
+			InitialCurrent=0
+			FinalCurrent=1.5
+			StepCount=5
+			MovingStroke=0
+		$end "CurrentExperiment"
+	$end "Design"
+$end "DoSA_Project"
+$begin "Check"
+$end "Check"
