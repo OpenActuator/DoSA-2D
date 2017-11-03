@@ -590,8 +590,8 @@ namespace Scripts
 
                 /// Region 의 물성치를 Default 물성치로 지정하여 Block 이 추가되지 않은 영역을 설정 한다.
                 /// 
-                strCommand = "mi_attachdefault()";
-                sendCommand(strCommand);
+                //strCommand = "mi_attachdefault()";
+                //sendCommand(strCommand);
 
                 string strMaterial = "\"" + "Air" + "\"";
 
