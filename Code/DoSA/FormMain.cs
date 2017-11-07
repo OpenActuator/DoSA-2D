@@ -619,15 +619,15 @@ namespace DoSA
 
         private void ribbonButtonHelp_Click(object sender, EventArgs e)
         {
-            string strHelpFileFullName = Path.Combine(CSettingData.m_strProgramDirName, "Help", "TofU-2D_User_Guide.pdf");
+            //string strHelpFileFullName = Path.Combine(CSettingData.m_strProgramDirName, "Help", "TofU-2D_User_Guide.pdf");
 
-            if (m_manageFile.isExistFile(strHelpFileFullName) == false)
-            {
-                CNotice.noticeWarning("도움말 파일이 존재하지 않습니다.\nTofU 디렉토리 > Help > TofU-2D Guide.pdf 를 확인하세요.");
-                return;
-            }
+            //if (m_manageFile.isExistFile(strHelpFileFullName) == false)
+            //{
+            //    CNotice.noticeWarning("도움말 파일이 존재하지 않습니다.\nTofU 디렉토리 > Help > TofU-2D Guide.pdf 를 확인하세요.");
+            //    return;
+            //}
 
-            System.Diagnostics.Process.Start(strHelpFileFullName);
+            //System.Diagnostics.Process.Start(strHelpFileFullName);
         }
 
         private void ribbonButtonAbout_Click(object sender, EventArgs e)

@@ -874,22 +874,28 @@ namespace Shapes
             List<CPoint> listAbsolutePoint = new List<CPoint>();
             listAbsolutePoint = AbsolutePointList;
 
+            CPoint selectPoint = new CPoint();
+            CPoint startPoint = null;
+            CPoint endPoint = null;
+            
             for (int i = 0; i < listAbsolutePoint.Count; i++)
             {
-                CPoint selectPoint = new CPoint();
-
                 if(listAbsolutePoint[i].m_emLineKind == EMLineKind.STRAIGHT)
                 {
+                    //// 마지막 라인만 다르게 처리한다.
                     if (i < listAbsolutePoint.Count - 1)
                     {
-                        selectPoint.m_dX = (listAbsolutePoint[i].m_dX + listAbsolutePoint[i + 1].m_dX) / 2.0f;
-                        selectPoint.m_dY = (listAbsolutePoint[i].m_dY + listAbsolutePoint[i + 1].m_dY) / 2.0f;
+                        startPoint = listAbsolutePoint[i];
+                        endPoint = listAbsolutePoint[i + 1];
                     }
                     else
                     {
-                        selectPoint.m_dX = (listAbsolutePoint[i].m_dX + listAbsolutePoint[0].m_dX) / 2.0f;
-                        selectPoint.m_dY = (listAbsolutePoint[i].m_dY + listAbsolutePoint[0].m_dY) / 2.0f;
+                        startPoint = listAbsolutePoint[i];
+                        endPoint = listAbsolutePoint[0];
                     }
+
+                    selectPoint.m_dX = (startPoint.m_dX + endPoint.m_dX) / 2.0f;
+                    selectPoint.m_dY = (startPoint.m_dY + endPoint.m_dY) / 2.0f;
 
                     femm.selectLine(selectPoint);
                 }
