@@ -26,12 +26,15 @@ using Nodes;
 using Scripts;
 using Shapes;
 using gtLibrary;
+using Microsoft.Win32;
 
 namespace DoSA
 {
     public partial class FormMain : Form
     {
-		// Treeview 접근 INDEX
+        #region-------------------------- 내부 변수 ----------------------------
+
+        // Treeview 접근 INDEX
 		const int FIRST_PARTS_INDEX = 0;
 		const int FIRST_ANALYSIS_INDEX = 1;
 
@@ -43,11 +46,13 @@ namespace DoSA
 
         private string m_strBackupNodeName = string.Empty;
 
-        //-----------------------------------------------------------------------------------------------------
-        // 초기화
-        //-----------------------------------------------------------------------------------------------------
+        #endregion
 
-        #region - 생성자
+        //----------------------------------------------------------------
+        // 초기화
+        //----------------------------------------------------------------
+
+        #region---------------------- 생성자 --------------------------------
 
         public FormMain()
         {
@@ -86,12 +91,25 @@ namespace DoSA
         }
         #endregion
 
-        #region - 프로그램 초기화
+        #region----------------------- 프로그램 초기화 --------------------------
 
         private void initializeProgram()
         {
             try
             {
+                bool retFreamework = checkFramework451();
+
+                if (retFreamework == false)
+                {
+                    DialogResult result = CNotice.noticeWarningOKCancel("DoSA 실행을 위해 Net Framework V4.5 이상의 설치가 필요합니다.\n다운로드 페이지로 이동하겠습니까?");
+                    
+                    if(result == DialogResult.OK )
+                        openWebsite(@"https://www.microsoft.com/ko-kr/download/details.aspx?id=30653");
+
+                    System.Windows.Forms.Application.ExitThread();
+                    Environment.Exit(0);
+                }
+
                 // 실행파일의 위치를 읽어낸다.
                 CSettingData.m_strProgramDirName = System.Windows.Forms.Application.StartupPath;
 
@@ -162,7 +180,7 @@ namespace DoSA
 
         #endregion
 
-        #region - Notice Event 호출 함수
+        #region----------------------- Notice Event 호출 함수 ----------------------
 
         // 이벤트 발생 때 호출되는 함수
         void printLogEvent(EMOutputTarget emTarget, string strMSG)
@@ -180,7 +198,7 @@ namespace DoSA
 
         #endregion
 
-        #region - 재질 초기화
+        #region--------------------- 재질 초기화 ---------------------------
         
         private void loadMaterial()
         {
@@ -214,6 +232,9 @@ namespace DoSA
                 CPropertyItemList.steelList.Add("316 Stainless Steel");
                 CPropertyItemList.steelList.Add("304 Stainless Steel");
 
+                // 해당 Steel 을 사용하지 않은 경우를 대비해 재질 Air 를 인가할 수 있도록 한다.
+                CPropertyItemList.steelList.Add("Air");
+
                 //------------------------------------------------
                 // 자기회로 내장 영구자석
                 //------------------------------------------------
@@ -234,6 +255,9 @@ namespace DoSA
                 CPropertyItemList.magnetList.Add("Ceramic 5");
                 CPropertyItemList.magnetList.Add("Ceramic 8");
 
+                // 해당 Steel 을 사용하지 않은 경우를 대비해 재질 Air 를 인가할 수 있도록 한다.
+                CPropertyItemList.magnetList.Add("Air");
+
                 //------------------------------------------------
                 // 코일 동선 재료
                 //------------------------------------------------
@@ -250,7 +274,7 @@ namespace DoSA
         }
         #endregion
 
-        #region - 전체 초기화
+        #region------------------------- 전체 초기화 ------------------------
         //전체 초기화 한다
         private void closeDesign()
         {
@@ -272,11 +296,11 @@ namespace DoSA
         }
         #endregion
 
-        //-----------------------------------------------------------------------------------------------------
+        //-----------------------------------------------------------------
         // 이벤트
-        //-----------------------------------------------------------------------------------------------------
+        //-----------------------------------------------------------------
         
-        #region - Ribbon Menu
+        #region--------------------- Ribbon Menu ---------------------------
 
         private void ribbonButtonNew_Click(object sender, EventArgs e)
         {
@@ -317,13 +341,9 @@ namespace DoSA
             // 왜냐하면, 만약 작업 디렉토리를 수정하는 경우 기존의 작업파일을 열 수 없기 때문이다.
             string strDesignDirName = Path.Combine(CSettingData.m_strWorkingDirName, strDesignName);
 
-            // 다지인 디렉토리를 생성한다.
-            m_manageFile.createDirectory(strDesignDirName);
-
             m_design.m_strDesignDirName = strDesignDirName;
             m_design.m_strDesignName = strDesignName;
-
-
+            
             // 프로젝트가 시작 했음을 표시하기 위해서 TreeView 에 기본 가지를 추가한다.
             TreeNode treeNode = new TreeNode("Parts", (int)EMKind.PARTS, (int)EMKind.PARTS);
             treeViewMain.Nodes.Add(treeNode);
@@ -404,6 +424,8 @@ namespace DoSA
 
             redrawParts();
 
+            m_femm.zoomFit();
+
             // 제목줄에 디자인명을 표시한다
             this.Text = "Design Toolkit of Solenoid & Actuator - " + m_design.m_strDesignName;
 
@@ -419,6 +441,9 @@ namespace DoSA
                     saveDesignFile();
                 }
             }
+
+            // 저장을 하고 나면 초기화 한다.
+            m_design.m_bChanged = false;
 
             // 기존 디자인 데이터를 모두 삭제한다.
             closeDesign();
@@ -582,130 +607,7 @@ namespace DoSA
         {
             addRawNode(EMKind.CURRENT_EXPERIMENT);
         }
-
-        private void ribbonButtonCheckShape_Click(object sender, EventArgs e)
-        {
-
-            if (m_design.m_strDesignName.Length == 0)
-            {
-                CNotice.noticeWarning("형상을 확인할 작업 디자인이 없습니다.\n작업을 취소 합니다.");
-                return;
-            }
-
-            openNewFEMM();
-
-            redrawParts();
-        }
-
-        private void redrawParts()
-        {
-            List<CLine> listLineAll = new List<CLine>();
-            List<CLine> listLine = null;
-            CFace face = null;
-
-            m_femm.deleteAll();
-
-            foreach (CNode node in m_design.NodeList)
-            {
-                if (node.GetType().BaseType.Name == "CParts")
-                {
-                    CParts nodeParts = (CParts)node;
-
-                    face = nodeParts.Face;
-
-                    if (null != face)
-                    {
-                        listLine = face.LineList;
-
-                        /// 모든 라인들을 하나의 Line List 에 담는다.
-                        foreach (CLine line in listLine)
-                            listLineAll.Add(line);
-
-                        nodeParts.Face.drawFace(m_femm, nodeParts.MovingPart);
-                    }
-                }
-            }
-
-            m_femm.zoomFit();
-        }
-
-        private bool checkIntersectionLines()
-        {
-            List<CLine> listLineAll = new List<CLine>();
-            List<CLine> listLine = null;
-            CFace face = null;
-
-            foreach (CNode node in m_design.NodeList)
-            {
-                if (node.GetType().BaseType.Name == "CParts")
-                {
-                    CParts nodeParts = (CParts)node;
-
-                    face = nodeParts.Face;
-
-                    if (null != face)
-                    {
-                        listLine = face.LineList;
-
-                        /// 모든 라인들을 하나의 Line List 에 담는다.
-                        foreach (CLine line in listLine)
-                            listLineAll.Add(line);
-                    }
-                }
-            }
-
-            face = new CFace();
-
-            for (int i = 0; i < listLineAll.Count - 1; i++)
-            {
-                for (int j = i + 1; j < listLineAll.Count; j++)
-                {
-                    if (true == face.checkIntersectionLine(listLineAll[i], listLineAll[j]))
-                    {
-                        /// 교차 간섭 함
-                        CNotice.noticeWarning("라인 간섭이 발생 했습니다.");
-
-                        return true;
-                    }
-                }
-            }
-
-            return false;
-        }
-
-        private CScriptFEMM openNewFEMM(int widthFEMM = 500)
-        {
-            if(m_femm != null)
-            {
-                quitFEMM();
-            }
-
-            /// 좌측에 FEMM 공간을 확보하기 위해서 DoSA 의 위치를 지정한다
-            this.Left = 600;
-
-            m_femm = new CScriptFEMM();
-
-            const int FEMM_WIDTH = 500;
-
-            CProgramFEMM.moveFEMM(this.Location.X - FEMM_WIDTH, this.Location.Y, widthFEMM);
-
-            return m_femm;
-        }
-
-        private void resizeFEMM(int widthFEMM = 500)
-        {
-            if (m_femm == null)
-                return;
-
-            this.Left = 600;
-
-            const int FEMM_WIDTH = 500;
-
-            CProgramFEMM.moveFEMM(this.Location.X - FEMM_WIDTH, this.Location.Y, widthFEMM);
-
-            m_femm.zoomFit();
-        }
-
+        
         private void ribbonButtonSetting_Click(object sender, EventArgs e)
         {
 
@@ -735,21 +637,9 @@ namespace DoSA
             frmAbout.ShowDialog();
         }
 
-        private void FormMain_FormClosing(object sender, FormClosingEventArgs e)
-        {
-            // 이름이 지정된 Design 만 저장을 확인한다.
-            if (m_design.m_bChanged == true)
-            {
-                if (DialogResult.OK == CNotice.noticeWarningOKCancel("디자인을 저장 하시겠습니까?"))
-                {
-                    saveDesignFile();
-                }
-            }
-        }
-
         #endregion
 
-        #region - Button
+        #region----------------------- Button -------------------------------
 
 
         private void buttonExperimentCurrent_Click(object sender, EventArgs e)
@@ -1041,14 +931,14 @@ namespace DoSA
                         CNotice.printTrace("형상이 정상적으로 생성되지 못했다.");
                     }
 
-                    if (false == m_femm.checkLive())
+                    if (false == m_femm.checkOpen())
                         openNewFEMM();
 
                     redrawParts();
                 }
-                /// 수정한 내용을 Draw 한 후에 취소 되는 경우를 대비해서 빠져나가면서 다시 그리기를 한다.
                 else
                 {
+                    // 삽입 동안 화면에 그렸던 형상을 제거한다.
                     redrawParts();
                     return;
                 }                
@@ -1458,28 +1348,142 @@ namespace DoSA
 
         #endregion
 
-        #region - Windows Message
+        #region---------------------- Windows Message -----------------------
 
         /// <summary>
         /// FEMM 의 위치가 DoSA 와 연동되도록 한다.
         /// </summary>
         private void FormMain_Move(object sender, EventArgs e)
         {
-            int posX = ((FormMain)sender).Location.X;
-            int posY = ((FormMain)sender).Location.Y;
+            //int posX = ((FormMain)sender).Location.X;
+            //int posY = ((FormMain)sender).Location.Y;
 
-            const int FEMM_WIDTH = 500;
+            //const int FEMM_WIDTH = 500;
 
-            CProgramFEMM.moveFEMM(posX - FEMM_WIDTH, posY);
+            //CProgramFEMM.moveFEMM(posX - FEMM_WIDTH, posY);
+        }
+
+        private void FormMain_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            // 이름이 지정된 Design 만 저장을 확인한다.
+            if (m_design.m_bChanged == true)
+            {
+                if (DialogResult.OK == CNotice.noticeWarningOKCancel("디자인을 저장 하시겠습니까?"))
+                {
+                    saveDesignFile();
+                }
+            }
         }
 
         #endregion
 
-        //-----------------------------------------------------------------------------------------------------
+        //------------------------------------------------------------------
         // 기능 함수
-        //-----------------------------------------------------------------------------------------------------
+        //------------------------------------------------------------------
 
-        #region Save & Load Data
+        #region----------------------- 형상관련 기능함수 ------------------------
+
+        private void redrawParts()
+        {
+            m_femm.deleteAll();
+
+            foreach (CNode node in m_design.NodeList)
+            {
+                if (node.GetType().BaseType.Name == "CParts")
+                {
+                    CParts nodeParts = (CParts)node;
+
+
+                    if (null != nodeParts.Face)
+                    {
+                        nodeParts.Face.drawFace(m_femm, nodeParts.MovingPart);
+                    }
+                }
+            }
+
+            //m_femm.zoomFit();
+        }
+
+        private bool checkIntersectionLines()
+        {
+            List<CLine> listLineAll = new List<CLine>();
+            List<CLine> listAbsoluteLine = null;
+            CFace face = null;
+
+            foreach (CNode node in m_design.NodeList)
+            {
+                if (node.GetType().BaseType.Name == "CParts")
+                {
+                    CParts nodeParts = (CParts)node;
+
+                    face = nodeParts.Face;
+
+                    if (null != face)
+                    {
+                        listAbsoluteLine = face.AbsoluteLineList;
+
+                        /// 모든 라인들을 하나의 Line List 에 담는다.
+                        foreach (CLine line in listAbsoluteLine)
+                            listLineAll.Add(line);
+                    }
+                }
+            }
+
+            face = new CFace();
+
+            for (int i = 0; i < listLineAll.Count - 1; i++)
+            {
+                for (int j = i + 1; j < listLineAll.Count; j++)
+                {
+                    if (true == face.checkIntersectionLine(listLineAll[i], listLineAll[j]))
+                    {
+                        /// 교차 간섭 함
+                        CNotice.noticeWarning("라인 간섭이 발생 했습니다.");
+
+                        return true;
+                    }
+                }
+            }
+
+            return false;
+        }
+
+        private CScriptFEMM openNewFEMM(int widthFEMM = 500)
+        {
+            if (m_femm != null)
+            {
+                quitFEMM();
+            }
+
+            /// 좌측에 FEMM 공간을 확보하기 위해서 DoSA 의 위치를 지정한다
+            this.Left = 600;
+
+            m_femm = new CScriptFEMM();
+
+            const int FEMM_WIDTH = 500;
+
+            CProgramFEMM.moveFEMM(this.Location.X - FEMM_WIDTH, this.Location.Y, widthFEMM);
+
+            return m_femm;
+        }
+
+        private void resizeFEMM(int widthFEMM = 500)
+        {
+            if (m_femm == null)
+                return;
+
+            this.Left = 600;
+
+            const int FEMM_WIDTH = 500;
+
+            CProgramFEMM.moveFEMM(this.Location.X - FEMM_WIDTH, this.Location.Y, widthFEMM);
+
+            m_femm.zoomFit();
+        }
+
+        #endregion
+
+        #region-------------------------- Save & Load Data -------------------------
 
         private bool saveDesignFile()
         {
@@ -1487,6 +1491,16 @@ namespace DoSA
             {
                 CNotice.printTrace("생성되지 않는 디자인을 저장하려고 합니다.");
                 return false;
+            }
+
+            /// New 에서 생성할 때 바로 디렉토리를 생성하면 만약, 프로젝트를 저장하지 않으면 디렉토리만 남는다.
+            /// 따라서 저장할 때 없으면 디렉토리를 생성하는 것으로 바꾸었다.
+            string strDesignDirName = Path.Combine(CSettingData.m_strWorkingDirName, m_design.m_strDesignName);
+
+            if (false == m_manageFile.isExistDirectory(strDesignDirName))
+            {
+                // 다지인 디렉토리를 생성한다.
+                m_manageFile.createDirectory(strDesignDirName);
             }
 
             string strActuatorDesignFileFullName = Path.Combine(m_design.m_strDesignDirName, m_design.m_strDesignName + ".dsa");
@@ -1676,7 +1690,7 @@ namespace DoSA
         }
         #endregion
 
-        #region TreeView관련
+        #region------------------------- TreeView 관련 -------------------------
 
         private void treeViewMain_DoubleClick(object sender, EventArgs e)
         {
@@ -1733,7 +1747,12 @@ namespace DoSA
                 popupShape.Owner = this;
 
                 if (DialogResult.Cancel == popupShape.ShowDialog())
+                {
+                    // 삽입 동안 화면에 그렸던 형상을 제거한다.
+                    redrawParts();
                     return null;
+                }
+                    
 
                 strName = popupShape.m_strPartName;
 
@@ -1794,7 +1813,7 @@ namespace DoSA
                     return null;
                 }
 
-                if (false == m_femm.checkLive())
+                if (false == m_femm.checkOpen())
                     openNewFEMM();
 
                 redrawParts();                
@@ -1966,7 +1985,7 @@ namespace DoSA
                         if (node.GetType().BaseType.Name == "CParts")
                         {
                             /// FEMM 이 없으면 다시 오픈한다.
-                            if (false == m_femm.checkLive())
+                            if (false == m_femm.checkOpen())
                             {
                                 openNewFEMM();
                                 redrawParts();
@@ -2119,7 +2138,7 @@ namespace DoSA
                 }
 
                 /// FEMM 이 없으면 다시 오픈한다.
-                if (false == m_femm.checkLive())
+                if (false == m_femm.checkOpen())
                     openNewFEMM();
 
                 redrawParts();
@@ -2142,7 +2161,8 @@ namespace DoSA
 
         #endregion
 
-        #region property관련
+        #region------------------------ PropertyView 관련 ------------------------------
+
         //property 수정
         private void propertyGrid_PropertyValueChanged(object s, PropertyValueChangedEventArgs e)
         {
@@ -2292,7 +2312,7 @@ namespace DoSA
 
         #endregion
 
-        #region Information Window관련
+        #region----------------------- Information Window 관련 -----------------------
 
         //steel 그래프를 생성한다
         private void drawBHCurve(String strMaterialName)
@@ -2304,7 +2324,8 @@ namespace DoSA
             string strProgramMaterialDirName = Path.Combine(CSettingData.m_strProgramDirName, "Materials");
 
             // 내장 비자성 재료
-            if (strMaterialName == "Aluminum, 1100" || strMaterialName == "Copper" || strMaterialName == "316 Stainless Steel" || strMaterialName == "304 Stainless Steel")
+            if (strMaterialName == "Aluminum, 1100" || strMaterialName == "Copper" ||
+                strMaterialName == "316 Stainless Steel" || strMaterialName == "304 Stainless Steel" || strMaterialName == "Air")
             {
                 chartBHCurve.Series.Clear();                    // Series 삭제
                 // Series 생성
@@ -2584,5 +2605,33 @@ namespace DoSA
 
         #endregion
 
+        #region---------------------- 기타 기능함수 -----------------------------
+
+        private bool checkFramework451()
+        {
+            int iReleaseKey;
+
+            using (RegistryKey ndpKey = RegistryKey.OpenBaseKey(RegistryHive.LocalMachine, RegistryView.Registry32).OpenSubKey("SOFTWARE\\Microsoft\\NET Framework Setup\\NDP\\v4\\Full\\"))
+            {
+                iReleaseKey = Convert.ToInt32(ndpKey.GetValue("Release"));
+
+                if (iReleaseKey >= 378675)
+                    return true;
+                else
+                    return false;
+
+                // 393273 : "4.6 RC or later"
+                // 379893 : "4.5.2 or later"
+                // 378675 : "4.5.1 or later"
+                // 378389 : "4.5 or later"
+            }
+        }
+
+        private void openWebsite(string strWebAddress)
+        {
+            System.Diagnostics.Process.Start(strWebAddress);
+        }
+
+        #endregion
     }
 }

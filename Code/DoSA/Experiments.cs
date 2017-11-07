@@ -260,15 +260,16 @@ namespace Experiments
     public class CCurrentExperiment : CExperiment
     {
         /// <summary>
-        ///  CurrentExperiment 에서는 Voltage와 Current 를 사용하지 않음
-        ///  프로퍼티에서 숨기기 위해서 재선언을 하고 Brawsable 을 False 로 함
-        ///  따라서 Voltage와 Current 는 저장을 포함해서 사용을 하지 않는다.
+        ///  CCurrentExperiment 에서는 상위 CExperiment 의 Voltage와 Current 를 사용하지 않고 있다.
+        ///  따라서 프로퍼티에서 숨기기 위해서 재선언을 하고 Brawsable 을 False 로 했는데,
+        ///  상속된 변수를 숨김에 문제가 발생한다는 CS0108 경고가 발생해서 new 한정자를 추가해 새로운 변수임을 알려서 문제를 해결하였다
+        ///  단, praviate 선언을 하면 숨기기가 되지 않는다.
         /// </summary>
         /// ----------------------------------------------
         [BrowsableAttribute(false)]
-        public double Voltage { get; set; }
+        public new double Voltage { get; set; }
         [BrowsableAttribute(false)]
-        public double Current { get; set; }
+        public new double Current { get; set; }
         //-------------------------------------------------
 
 

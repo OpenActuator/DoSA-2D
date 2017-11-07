@@ -67,8 +67,16 @@ namespace DoSA
 
                         if (strOldTempName == strNewTempName)
                         {
-                            CNotice.noticeWarning("동일한 디자인 명이 작업 디렉토리에 이미 존재 합니다.\n다른 이름의 디자인 명을 사용하세요.");
-                            return false;
+                            // 기존 디자인이 이미 존재할 때 삭제하고 새롭게 시작할지를 물어 온다
+                            DialogResult ret = CNotice.noticeWarningOKCancel("동일한 디자인이 작업디렉토리에 이미 존재 합니다.\n기존 디자인을 삭제 하시겠습니까?");
+
+                            if(ret == DialogResult.OK)
+                            {
+                                m_manageFile.deleteDirectory(directoryName);
+                                return true;
+                            }
+                            else
+                                return false;
                         }
                     }
                 }

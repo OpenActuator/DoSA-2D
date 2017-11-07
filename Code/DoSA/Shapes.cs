@@ -44,17 +44,51 @@ namespace Shapes
     {
         const int INDEX_ERROR = -1;
 
+        private CPoint m_basePoint = new CPoint();
+
+        public CPoint BasePoint
+        {
+            get { return m_basePoint; }
+            set { m_basePoint = value; }
+        }
+
         /// <summary>
-        /// 정책
+        /// [ 정책 ]
         /// - Face 안의 형상관리는 Line 이 아니라 Point 를 사용하고 있다.
         /// - 이유는 기본형상 입력을 Point 를 사용하기 때문이다.
         ///   따라서 CLine 객체는 외부에서 필요할 때만 그때의 Point 정보로 만들어서 사용한다.
         /// </summary>
-        private List<CPoint> m_listPoint = new List<CPoint>();
+        private List<CPoint> m_listRelativePoint = new List<CPoint>();
 
-        public List<CPoint> PointList 
+        // 내부좌표 List 는 상대좌표임으로 m_listPoint 를 바로 리턴한다.
+        public List<CPoint> RelativePointList
         {
-            get { return m_listPoint; }            
+            get { return m_listRelativePoint; }
+        }
+
+        // 절대좌표는 내부 기준점과 내부좌표 List 를 고려해서 생성해서 리턴한다.
+        public List<CPoint> AbsolutePointList
+        {
+            get
+            {
+                List<CPoint> listPoint = new List<CPoint>();
+                CPoint point = null;
+
+                // foreach 를 사용해서 읽어내서 더하게 되면 계속 증가하는 문제가 발생한다.
+                // for 문에서 매번 point 를 new 를 하면 Add 하라.
+                for (int i=0; i < m_listRelativePoint.Count; i++ )
+                {
+                    point = new CPoint();
+                    point.m_dX = m_listRelativePoint[i].m_dX + m_basePoint.m_dX;
+                    point.m_dY = m_listRelativePoint[i].m_dY + m_basePoint.m_dY;
+                    point.m_emDirectionArc = m_listRelativePoint[i].m_emDirectionArc;
+                    point.m_emLineKind = m_listRelativePoint[i].m_emLineKind;
+
+                    listPoint.Add(point);
+                }
+
+                return listPoint;
+            }
         }
 
         private EMFaceType m_emFaceType;
@@ -71,51 +105,81 @@ namespace Shapes
         ///  - 접근 때마다 생성하기 때문에 
         ///    사용할 때는 List<CLine> 로 새로운 List 를 만들고 한번 초기화 한 후에 새로운 List 를 사용하라.
         /// </summary>
-        public List<CLine> LineList
+        public List<CLine> AbsoluteLineList
         { 
             get
             {
-                if (m_listPoint.Count < 4)
+                if (m_listRelativePoint.Count < 4)
                 {
                     CNotice.printTrace("Face 의 좌표점이 4개 보다 작은 상태에서 Line List 를 얻으려 하고 있다.");
                     return null;
                 }
 
                 List<CLine> listLine = new List<CLine>();
-
-                for (int i = 0; i < m_listPoint.Count; i++)
+                CPoint startPoint = null;
+                CPoint endPoint = null;
+                
+                for (int i = 0; i < m_listRelativePoint.Count; i++)
                 {
+                    // 기준 점인 Base Point 의 좌표와 상대좌표인 PointList 를 더해서
+                    // 절대좌표값을 계산한 후에 형상을 그리기 위한 LineList 를 만든다
+                    startPoint = new CPoint();
+                    startPoint.m_dX = m_listRelativePoint[i].m_dX + m_basePoint.m_dX;
+                    startPoint.m_dY = m_listRelativePoint[i].m_dY + m_basePoint.m_dY;
+                    startPoint.m_emDirectionArc = m_listRelativePoint[i].m_emDirectionArc;
+                    startPoint.m_emLineKind = m_listRelativePoint[i].m_emLineKind;
+
                     // 마지막 Point 을 제외한 나머지 경우
-                    if (i < m_listPoint.Count - 1)
+                    if (i < m_listRelativePoint.Count - 1)
                     {
-                        listLine.Add(new CLine(m_listPoint[i], m_listPoint[i + 1]));
+                        // 기준 점인 Base Point 의 좌표와 상대좌표인 PointList 를 더해서
+                        // 절대좌표값을 계산한 후에 형상을 그리기 위한 LineList 를 만든다
+                        endPoint = new CPoint();
+                        endPoint.m_dX = m_listRelativePoint[i + 1].m_dX + m_basePoint.m_dX;
+                        endPoint.m_dY = m_listRelativePoint[i + 1].m_dY + m_basePoint.m_dY;
+                        endPoint.m_emDirectionArc = m_listRelativePoint[i + 1].m_emDirectionArc;
+                        endPoint.m_emLineKind = m_listRelativePoint[i + 1].m_emLineKind;
                     }
                     /// 마지막인 Point 경우
                     else
                     {
-                        listLine.Add(new CLine(m_listPoint[i], m_listPoint[0]));
+                        endPoint = new CPoint();
+                        endPoint.m_dX = m_listRelativePoint[0].m_dX + m_basePoint.m_dX;
+                        endPoint.m_dY = m_listRelativePoint[0].m_dY + m_basePoint.m_dY;
+                        endPoint.m_emDirectionArc = m_listRelativePoint[0].m_emDirectionArc;
+                        endPoint.m_emLineKind = m_listRelativePoint[0].m_emLineKind;
                     }
+
+                    listLine.Add(new CLine(startPoint, endPoint));
                 }
 
                 return listLine;
             }
         }
 
+        public CFace()
+        {
+            m_basePoint.m_dX = 0.0f;
+            m_basePoint.m_dY = 0.0f;
+        }
+
         public bool addPoint(CPoint point)
         {
-            m_listPoint.Add(point);
+            m_listRelativePoint.Add(point);
 
             return true;
         }
 
         /// <summary>
         /// 하나의 Face 안의 라인 간섭이 있는지 확인한다.
+        /// 
+        /// Face 내부의 간섭은 상대좌표 사용해도 가능한다.
         /// </summary>
         public bool checkFaceShape()
         {
             /// 축대칭 모델만 사용하기 때문에 
             /// 내부 포인트의 X 좌표값은 항상 영보다 커야 한다.
-            foreach(CPoint point in m_listPoint)
+            foreach(CPoint point in m_listRelativePoint)
             {
                 if(point.m_dX < 0)
                     return false;
@@ -123,7 +187,8 @@ namespace Shapes
 
             /// 매번 생성하는 Property 이기 때문에 
             /// LineList 는 새로운 List에  담는 동작 한번만 호출하고, 사용은 새로운 List 를 사용한다.
-            List<CLine> listLine = LineList;
+            List<CLine> listAbsoluteLine = new List<CLine>();
+            listAbsoluteLine = AbsoluteLineList;
 
             /// 아래와 같이 라인의 교차간섭을 비교한다.
             /// 1 line <=> 2 line ... last line
@@ -131,11 +196,11 @@ namespace Shapes
             /// ...
             /// lsat-2 line <=> last-1 line , last line
             /// last-1 line <=> last line 
-            for (int i = 0; i < listLine.Count - 1; i++)
+            for (int i = 0; i < listAbsoluteLine.Count - 1; i++)
             {
-                for (int j = i + 1; j < listLine.Count; j++)
+                for (int j = i + 1; j < listAbsoluteLine.Count; j++)
                 {
-                    if (true == checkIntersectionLine(listLine[i], listLine[j]))
+                    if (true == checkIntersectionLine(listAbsoluteLine[i], listAbsoluteLine[j]))
                     {
                         /// 사용 중지
                         ///
@@ -238,7 +303,7 @@ namespace Shapes
             if(x1 == x2 || y1 == y2)
                 return false;
 
-            m_listPoint.Clear();
+            m_listRelativePoint.Clear();
 
             m_emFaceType = EMFaceType.RECTANGLE;
 
@@ -264,23 +329,29 @@ namespace Shapes
                 smallY = y1;
             }
 
-            // 1 점 (좌상)
-            m_listPoint.Add(new CPoint(smallX, bigY, EMLineKind.STRAIGHT, EMDirectionArc.FORWARD));
+            /// Base Point 가 좌하점이기 때문에 
+            /// 박스를 그리는 순서는 좌하점 부터 반시계 방향으로 그린다.
 
-            // 2 점 (좌하)
-            m_listPoint.Add(new CPoint(smallX, smallY, EMLineKind.STRAIGHT, EMDirectionArc.FORWARD));
+            // 1 점 (좌하)
+            m_listRelativePoint.Add(new CPoint(smallX, smallY, EMLineKind.STRAIGHT, EMDirectionArc.FORWARD));
 
-            // 3 점 (우하)
-            m_listPoint.Add(new CPoint(bigX, smallY, EMLineKind.STRAIGHT, EMDirectionArc.FORWARD));
+            // 2 점 (우하)
+            m_listRelativePoint.Add(new CPoint(bigX, smallY, EMLineKind.STRAIGHT, EMDirectionArc.FORWARD));
 
-            // 4 점 (우상)
-            m_listPoint.Add(new CPoint(bigX, bigY, EMLineKind.STRAIGHT, EMDirectionArc.FORWARD));
+            // 3 점 (우상)
+            m_listRelativePoint.Add(new CPoint(bigX, bigY, EMLineKind.STRAIGHT, EMDirectionArc.FORWARD));
+
+            // 4 점 (좌상)
+            m_listRelativePoint.Add(new CPoint(smallX, bigY, EMLineKind.STRAIGHT, EMDirectionArc.FORWARD));
+
 
             return true;
         }
 
         /// <summary>
         /// FEMM 에 Face 를 그린다.
+        /// 
+        /// FEMM 에 형상을 그릴 때는 절대좌표를 사용해야 한다.
         /// </summary>
         /// <param name="femm">FEMM</param>
         /// <param name="emMoving">Line 의 Group 를 결정하기 위한 동작부 여부</param>
@@ -289,36 +360,41 @@ namespace Shapes
             double x1, y1, x2, y2;
             bool bDirectionArc = false;
 
-            if(m_listPoint.Count < 4)
+            if(m_listRelativePoint.Count < 4)
             {
                 CNotice.printTrace("4 개보다 작은점을 가진 Face 의 형상을 그리려고 하고 있다.");
                 return false;
             }
 
+            /// 매번 생성하는 Property 이기 때문에 
+            /// LineList 는 새로운 List에  담는 동작 한번만 호출하고, 사용은 새로운 List 를 사용한다.
+            List<CPoint> listAbsolutePoint = new List<CPoint>();
+            listAbsolutePoint = AbsolutePointList;
+
             // Face 에 저장될 때는 Rectangle 도 4개의 직선으로 저장되기 때문에
             // Face 를 그릴 때는 모두 다각형으로 취급한다.
-            for (int i = 0; i < m_listPoint.Count; i++)
+            for (int i = 0; i < listAbsolutePoint.Count; i++)
             {
                 // 마지막 PointLine 만 제외한다.
-                if (i < m_listPoint.Count - 1)
+                if (i < listAbsolutePoint.Count - 1)
                 {
-                    x1 = m_listPoint[i].m_dX;
-                    y1 = m_listPoint[i].m_dY;
-                    x2 = m_listPoint[i+1].m_dX;
-                    y2 = m_listPoint[i+1].m_dY;
+                    x1 = listAbsolutePoint[i].m_dX;
+                    y1 = listAbsolutePoint[i].m_dY;
+                    x2 = listAbsolutePoint[i + 1].m_dX;
+                    y2 = listAbsolutePoint[i + 1].m_dY;
                 }
                 // 마지막 선은 끝점과 첫점을 있는다
                 else
                 {
-                    x1 = m_listPoint[i].m_dX;
-                    y1 = m_listPoint[i].m_dY;
-                    x2 = m_listPoint[0].m_dX;
-                    y2 = m_listPoint[0].m_dY;
+                    x1 = listAbsolutePoint[i].m_dX;
+                    y1 = listAbsolutePoint[i].m_dY;
+                    x2 = listAbsolutePoint[0].m_dX;
+                    y2 = listAbsolutePoint[0].m_dY;
                 }
 
-                if (m_listPoint[i].m_emLineKind == EMLineKind.ARC)
+                if (listAbsolutePoint[i].m_emLineKind == EMLineKind.ARC)
                 {
-                    bDirectionArc = (m_listPoint[i].m_emDirectionArc == EMDirectionArc.BACKWARD ? true : false);
+                    bDirectionArc = (listAbsolutePoint[i].m_emDirectionArc == EMDirectionArc.BACKWARD ? true : false);
                     femm.drawArc(x1, y1, x2, y2, bDirectionArc, emMoving);
                 }
                 else
@@ -343,12 +419,12 @@ namespace Shapes
                 return false;
             }
 
-            m_listPoint.Clear();
+            m_listRelativePoint.Clear();
 
             m_emFaceType = EMFaceType.POLYGON;
 
             foreach (CPoint pointLine in listPoint)
-                m_listPoint.Add(pointLine);
+                m_listRelativePoint.Add(pointLine);
 
             return true;
         }
@@ -371,6 +447,8 @@ namespace Shapes
 
         /// <summary>
         /// 재귀호출을 사용해서 FACE 내부점을 찾아낸다.
+        /// 재질 블럭점을 찾는 것이기 때문에 절대좌표를 사용해야 한다.
+        /// 
         /// 참고 사이트 : http://bowbowbow.tistory.com/24
         /// </summary>
         /// <param name="minX">내부점을 찾는 구간의 X 점 최소값</param>
@@ -399,10 +477,12 @@ namespace Shapes
             leftLine.m_endPoint.m_dX = -1e300;
             leftLine.m_endPoint.m_dY = baseY;
 
-            List<CLine> listLine = new List<CLine>();            
-            listLine = LineList;
-            
-            foreach(CLine line in listLine)
+            /// 매번 생성하는 Property 이기 때문에 
+            /// LineList 는 새로운 List에  담는 동작 한번만 호출하고, 사용은 새로운 List 를 사용한다.
+            List<CLine> listAbsoluteLine = new List<CLine>();
+            listAbsoluteLine = AbsoluteLineList;
+
+            foreach (CLine line in listAbsoluteLine)
             {
                 if (true == checkIntersectionLine(line, rightLine))
                     nRightIntersection ++;
@@ -446,6 +526,8 @@ namespace Shapes
         /// <summary>
         /// Face 의 면적을 계산한다.
         /// 단, 다각형의 면적 계산은 정확하지 않다. (개선 필요함)
+        ///
+        /// 면적계산을 상대좌표를 상관이 없기 때문에 사용한다.
         /// </summary>
         /// <returns>Face 면적</returns>
         public double calcArea()
@@ -471,10 +553,10 @@ namespace Shapes
             else
             {
                 /// The last vertex is the 'previous' one to the first
-                int j = m_listPoint.Count - 1;  
-                for (int i = 0; i < m_listPoint.Count; i++)
+                int j = m_listRelativePoint.Count - 1;  
+                for (int i = 0; i < m_listRelativePoint.Count; i++)
                 {
-                    dArea += (m_listPoint[j].m_dX + m_listPoint[i].m_dX) * (m_listPoint[j].m_dY - m_listPoint[i].m_dY);
+                    dArea += (m_listRelativePoint[j].m_dX + m_listRelativePoint[i].m_dX) * (m_listRelativePoint[j].m_dY - m_listRelativePoint[i].m_dY);
 
                     j = i;  /// j is previous vertex to i
                 }
@@ -484,6 +566,8 @@ namespace Shapes
 
         /// <summary>
         /// Face 안의 부품의 속성을 입력하기 위한 BlockPoint 를 얻어낸다.
+        /// 
+        /// 절대좌표의 내부 블럭점을 찾는 것이기 때문에 절대 좌표를 사용해야 한다.
         /// </summary>
         /// <returns>Block Point</returns>
         public CPoint getBlockPoint()
@@ -496,14 +580,19 @@ namespace Shapes
             /// Rectangle 은 4 좌표의 평균점을 사용한다.
             if(FaceType == EMFaceType.RECTANGLE)
             {
-                foreach(CPoint point in m_listPoint)
+                /// 매번 생성하는 Property 이기 때문에 
+                /// LineList 는 새로운 List에  담는 동작 한번만 호출하고, 사용은 새로운 List 를 사용한다.
+                List<CPoint> listAbsolutePoint = new List<CPoint>();
+                listAbsolutePoint = AbsolutePointList;
+
+                foreach (CPoint point in listAbsolutePoint)
                 {
                     sumX += point.m_dX;
                     sumY += point.m_dY;
                 }
 
-                blockPoint.m_dX = sumX / m_listPoint.Count;
-                blockPoint.m_dY = sumY / m_listPoint.Count;
+                blockPoint.m_dX = sumX / listAbsolutePoint.Count;
+                blockPoint.m_dY = sumY / listAbsolutePoint.Count;
             }
             else
             {
@@ -523,6 +612,9 @@ namespace Shapes
 
         /// <summary>
         /// Face 의 최대, 최소 X 좌표값을 얻어낸다.
+        /// 
+        /// 절대좌표의 최대최소 X 를 찾는다.
+        /// 
         /// </summary>
         /// <param name="dMinX">리턴용 최소 X 값</param>
         /// <param name="dMaxX">리턴용 최대 X 값</param>
@@ -534,10 +626,15 @@ namespace Shapes
             double maxX = -1e300;
 
             /// 아직 Point 가 존재하지 않는 경우 false 를 리턴한다.
-            if (m_listPoint.Count == 0)
+            if (m_listRelativePoint.Count == 0)
                 return false;
 
-            foreach(CPoint point in m_listPoint)
+            /// 매번 생성하는 Property 이기 때문에 
+            /// LineList 는 새로운 List에  담는 동작 한번만 호출하고, 사용은 새로운 List 를 사용한다.
+            List<CPoint> listAbsolutePoint = new List<CPoint>();
+            listAbsolutePoint = AbsolutePointList;
+
+            foreach (CPoint point in listAbsolutePoint)
             {
                 if (point.m_dX < minX)  minX = point.m_dX;
                 if (point.m_dX > maxX)  maxX = point.m_dX;
@@ -557,6 +654,8 @@ namespace Shapes
 
         /// <summary>
         /// Face 의 최대, 최소 Y 좌표값을 얻어낸다.
+        /// 
+        /// 절대좌표의 최대최소 X 를 찾는다.
         /// </summary>
         /// <param name="dMinX">리턴용 최소 Y 값</param>
         /// <param name="dMaxX">리턴용 최대 Y 값</param>
@@ -568,10 +667,15 @@ namespace Shapes
             double maxY = -1e300;
 
             /// 아직 Point 가 존재하지 않는 경우 false 를 리턴한다.
-            if (m_listPoint.Count == 0)
+            if (m_listRelativePoint.Count == 0)
                 return false;
 
-            foreach (CPoint point in m_listPoint)
+            /// 매번 생성하는 Property 이기 때문에 
+            /// LineList 는 새로운 List에  담는 동작 한번만 호출하고, 사용은 새로운 List 를 사용한다.
+            List<CPoint> listAbsolutePoint = new List<CPoint>();
+            listAbsolutePoint = AbsolutePointList;
+
+            foreach (CPoint point in listAbsolutePoint)
             {
                 if (point.m_dY < minY) minY = point.m_dY;
                 if (point.m_dY > maxY) maxY = point.m_dY;
@@ -595,35 +699,35 @@ namespace Shapes
         /// <returns>Face 포인트 수</returns>
         public int getPointCount()
         {
-            return m_listPoint.Count;
+            return m_listRelativePoint.Count;
         }
 
         public bool insertPoint(int nIndex, CPoint pointLine)
         {
             // nIndex 가 List 크기보다 크면 바로 리턴한다.
-            if (nIndex >= m_listPoint.Count)
+            if (nIndex >= m_listRelativePoint.Count)
                 return false;
 
             //**************************************************
             // 동작 확인이 필요함
             //**************************************************
-            m_listPoint.Insert(nIndex + 1, pointLine);
+            m_listRelativePoint.Insert(nIndex + 1, pointLine);
             return true;
         }
 
         public bool deletePoint(int nIndex)
         {
             // nIndex 가 List 크기보다 크면 바로 리턴한다.
-            if (nIndex >= m_listPoint.Count)
+            if (nIndex >= m_listRelativePoint.Count)
                 return false;
 
-            m_listPoint.RemoveAt(nIndex);
+            m_listRelativePoint.RemoveAt(nIndex);
             return true;
         }
 
         public void deleteAllPoint()
         {
-            m_listPoint.Clear();
+            m_listRelativePoint.Clear();
         }
 
         /// <summary>
@@ -656,16 +760,21 @@ namespace Shapes
 
             double sx, sy, ex, ey;
 
+            /// 매번 생성하는 Property 이기 때문에 
+            /// LineList 는 새로운 List에  담는 동작 한번만 호출하고, 사용은 새로운 List 를 사용한다.
+            List<CPoint> listAbsolutePoint = new List<CPoint>();
+            listAbsolutePoint = AbsolutePointList;
+
             // 좌변을 제외하고 하변, 상변, 우변에만 경계조건이 부여된다.
-            for (int i = 0; i < m_listPoint.Count; i++)
+            for (int i = 0; i < listAbsolutePoint.Count; i++)
             {
                 // 마지막 PointLine 만 제외한다.
-                if (i < m_listPoint.Count - 1)
+                if (i < listAbsolutePoint.Count - 1)
                 {
-                    sx = m_listPoint[i].m_dX;
-                    sy = m_listPoint[i].m_dY;
-                    ex = m_listPoint[i + 1].m_dX;
-                    ey = m_listPoint[i + 1].m_dY;
+                    sx = listAbsolutePoint[i].m_dX;
+                    sy = listAbsolutePoint[i].m_dY;
+                    ex = listAbsolutePoint[i + 1].m_dX;
+                    ey = listAbsolutePoint[i + 1].m_dY;
 
                     /// 좌변 라인 (축대칭 지점으로 경계조건이 필요 없음)
                     if(i == 0)
@@ -676,10 +785,10 @@ namespace Shapes
                 // 마지막 선은 끝점과 첫점을 있는다
                 else
                 {
-                    sx = m_listPoint[i].m_dX;
-                    sy = m_listPoint[i].m_dY;
-                    ex = m_listPoint[0].m_dX;
-                    ey = m_listPoint[0].m_dY;
+                    sx = listAbsolutePoint[i].m_dX;
+                    sy = listAbsolutePoint[i].m_dY;
+                    ex = listAbsolutePoint[0].m_dX;
+                    ey = listAbsolutePoint[0].m_dY;
 
                     femm.drawBoundaryLine(sx, sy, ex, ey);
                 }
@@ -714,16 +823,21 @@ namespace Shapes
 
             double sx, sy, ex, ey;
 
+            /// 매번 생성하는 Property 이기 때문에 
+            /// LineList 는 새로운 List에  담는 동작 한번만 호출하고, 사용은 새로운 List 를 사용한다.
+            List<CPoint> listAbsolutePoint = new List<CPoint>();
+            listAbsolutePoint = AbsolutePointList;
+
             // 좌변을 제외하고 하변, 상변, 우변에만 경계조건이 부여된다.
-            for (int i = 0; i < m_listPoint.Count; i++)
+            for (int i = 0; i < listAbsolutePoint.Count; i++)
             {
                 // 마지막 PointLine 만 제외한다.
-                if (i < m_listPoint.Count - 1)
+                if (i < listAbsolutePoint.Count - 1)
                 {
-                    sx = m_listPoint[i].m_dX;
-                    sy = m_listPoint[i].m_dY;
-                    ex = m_listPoint[i + 1].m_dX;
-                    ey = m_listPoint[i + 1].m_dY;
+                    sx = listAbsolutePoint[i].m_dX;
+                    sy = listAbsolutePoint[i].m_dY;
+                    ex = listAbsolutePoint[i + 1].m_dX;
+                    ey = listAbsolutePoint[i + 1].m_dY;
 
                     /// 경계조건은 부여하지 않음
                     femm.drawLine(sx, sy, ex, ey);
@@ -732,10 +846,10 @@ namespace Shapes
                 // 마지막 선은 끝점과 첫점을 있는다
                 else
                 {
-                    sx = m_listPoint[i].m_dX;
-                    sy = m_listPoint[i].m_dY;
-                    ex = m_listPoint[0].m_dX;
-                    ey = m_listPoint[0].m_dY;
+                    sx = listAbsolutePoint[i].m_dX;
+                    sy = listAbsolutePoint[i].m_dY;
+                    ex = listAbsolutePoint[0].m_dX;
+                    ey = listAbsolutePoint[0].m_dY;
 
                     femm.drawLine(sx, sy, ex, ey);
                 }
@@ -744,6 +858,8 @@ namespace Shapes
 
         /// <summary>
         /// FEMM 의 Parts Face 색상을 변경하여 선택됨을 표시한다.
+        /// 
+        /// FEMM 에 표시함으로 절대좌표를 사용해야 한다
         /// </summary>
         internal void selectFace(CScriptFEMM femm)
         {
@@ -753,29 +869,34 @@ namespace Shapes
                 return;
             }
 
-            for(int i=0; i < m_listPoint.Count; i++)
+            /// 매번 생성하는 Property 이기 때문에 
+            /// LineList 는 새로운 List에  담는 동작 한번만 호출하고, 사용은 새로운 List 를 사용한다.
+            List<CPoint> listAbsolutePoint = new List<CPoint>();
+            listAbsolutePoint = AbsolutePointList;
+
+            for (int i = 0; i < listAbsolutePoint.Count; i++)
             {
                 CPoint selectPoint = new CPoint();
 
-                if(m_listPoint[i].m_emLineKind == EMLineKind.STRAIGHT)
+                if(listAbsolutePoint[i].m_emLineKind == EMLineKind.STRAIGHT)
                 {
-                    if (i < m_listPoint.Count - 1)
+                    if (i < listAbsolutePoint.Count - 1)
                     {
-                        selectPoint.m_dX = (m_listPoint[i].m_dX + m_listPoint[i + 1].m_dX) / 2.0f;
-                        selectPoint.m_dY = (m_listPoint[i].m_dY + m_listPoint[i + 1].m_dY) / 2.0f;
+                        selectPoint.m_dX = (listAbsolutePoint[i].m_dX + listAbsolutePoint[i + 1].m_dX) / 2.0f;
+                        selectPoint.m_dY = (listAbsolutePoint[i].m_dY + listAbsolutePoint[i + 1].m_dY) / 2.0f;
                     }
                     else
                     {
-                        selectPoint.m_dX = (m_listPoint[i].m_dX + m_listPoint[0].m_dX) / 2.0f;
-                        selectPoint.m_dY = (m_listPoint[i].m_dY + m_listPoint[0].m_dY) / 2.0f;
+                        selectPoint.m_dX = (listAbsolutePoint[i].m_dX + listAbsolutePoint[0].m_dX) / 2.0f;
+                        selectPoint.m_dY = (listAbsolutePoint[i].m_dY + listAbsolutePoint[0].m_dY) / 2.0f;
                     }
 
                     femm.selectLine(selectPoint);
                 }
-                else if(m_listPoint[i].m_emLineKind == EMLineKind.ARC)
+                else if(listAbsolutePoint[i].m_emLineKind == EMLineKind.ARC)
                 {
-                    selectPoint.m_dX = m_listPoint[i].m_dX;
-                    selectPoint.m_dY = m_listPoint[i].m_dY;
+                    selectPoint.m_dX = listAbsolutePoint[i].m_dX;
+                    selectPoint.m_dY = listAbsolutePoint[i].m_dY;
 
                     femm.selectArc(selectPoint);
                 }
@@ -790,6 +911,28 @@ namespace Shapes
         {
             femm.clearSelected();
         }
+
+        internal void writeObject(System.IO.StreamWriter writeStream)
+        {
+            CWriteFile writeFile = new CWriteFile();
+
+            writeFile.writeBeginLine(writeStream, "Shape", 3);
+
+            writeFile.writeDataLine(writeStream, "BasePointX", m_basePoint.m_dX.ToString(), 4);
+            writeFile.writeDataLine(writeStream, "BasePointY", m_basePoint.m_dY.ToString(), 4);
+
+            writeFile.writeDataLine(writeStream, "FaceType", m_emFaceType, 4);
+
+            foreach (CPoint pointLine in m_listRelativePoint)
+            {
+                writeFile.writeDataLine(writeStream, "PointX", pointLine.m_dX.ToString(), 4);
+                writeFile.writeDataLine(writeStream, "PointY", pointLine.m_dY.ToString(), 4);
+                writeFile.writeDataLine(writeStream, "LineKind", pointLine.m_emLineKind.ToString(), 4);
+                writeFile.writeDataLine(writeStream, "ArcDriction", pointLine.m_emDirectionArc.ToString(), 4);
+            }
+
+            writeFile.writeEndLine(writeStream, "Shape", 3);
+        }
     }
     
     /// <summary>
@@ -803,17 +946,16 @@ namespace Shapes
     public class CPoint
     {
         public double m_dX;
-
         public double m_dY;
 
         public EMLineKind m_emLineKind;
-
         public EMDirectionArc m_emDirectionArc;
 
         public CPoint()
         {
             m_dX = 0.0;
             m_dY = 0.0;
+
             m_emLineKind = EMLineKind.STRAIGHT;
             m_emDirectionArc = EMDirectionArc.FORWARD;
         }
@@ -822,6 +964,7 @@ namespace Shapes
         {
             m_dX = x;
             m_dY = y;
+
             m_emLineKind = kind;
             m_emDirectionArc = direction;
         }
@@ -830,29 +973,23 @@ namespace Shapes
     /// <summary>
     /// Line 객체
     /// [유의 사항]
-    ///  - 좌표점만 아니라 라인의 속성도 포함한다.
-    ///    * 좌표점 : 시작점, 끝점 
-    ///    * 라인 정보 : 종류와 Arc 그리기 방향
+    ///  - 라인 정보를 시작점이 가지고 있고, 정작 라인에는 시작과 끝점만 가지고 있다.
+    ///    따라서 라인의 정보는 시작점으로 저장하고 있다. 
     /// </summary>
     public class CLine
     {
         public CPoint m_startPoint = new CPoint();
-
         public CPoint m_endPoint = new CPoint();
 
-        public EMLineKind m_emLineKind;
-
-        public EMDirectionArc m_emDirectionArc;
-
-       public CLine()
+        public CLine()
         {
             m_startPoint.m_dX = 0;
             m_startPoint.m_dY = 0;
             m_endPoint.m_dX = 0;
             m_endPoint.m_dY = 0;
 
-            m_emLineKind = EMLineKind.STRAIGHT;
-            m_emDirectionArc = EMDirectionArc.FORWARD;
+            m_startPoint.m_emLineKind = EMLineKind.STRAIGHT;
+            m_startPoint.m_emDirectionArc = EMDirectionArc.FORWARD;
         }
 
         public CLine(double x1, double y1, double x2, double y2, EMLineKind kind, EMDirectionArc direction)
@@ -862,8 +999,9 @@ namespace Shapes
             m_endPoint.m_dX = x2;
             m_endPoint.m_dY = y2;
 
-            m_emLineKind = kind;
-            m_emDirectionArc = direction;
+            /// Line 정보는 Start 점에 담겨있는 정보를 사용한다.
+            m_startPoint.m_emLineKind = kind;
+            m_startPoint.m_emDirectionArc = direction;
         }
 
         public CLine(CPoint start, CPoint end)
@@ -874,8 +1012,8 @@ namespace Shapes
             m_endPoint.m_dY = end.m_dY;
 
             /// Line 정보는 Start 점에 담겨있는 정보를 사용한다.
-            m_emLineKind = start.m_emLineKind;
-            m_emDirectionArc = start.m_emDirectionArc;
+            m_startPoint.m_emLineKind = start.m_emLineKind;
+            m_startPoint.m_emDirectionArc = start.m_emDirectionArc;
         }
     }
 }

@@ -26,6 +26,7 @@
     <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
     <UseApplicationTrust>false</UseApplicationTrust>
     <BootstrapperEnabled>true</BootstrapperEnabled>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -68,11 +69,11 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ControlPointLine.cs">
+    <Compile Include="PointControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="ControlPointLine.Designer.cs">
-      <DependentUpon>ControlPointLine.cs</DependentUpon>
+    <Compile Include="PointControl.Designer.cs">
+      <DependentUpon>PointControl.cs</DependentUpon>
     </Compile>
     <Compile Include="PopupAboutBox.cs">
       <SubType>Form</SubType>
@@ -117,8 +118,8 @@
     <Compile Include="ReadWriteFile.cs" />
     <Compile Include="ScriptFemm.cs" />
     <Compile Include="Shapes.cs" />
-    <EmbeddedResource Include="ControlPointLine.resx">
-      <DependentUpon>ControlPointLine.cs</DependentUpon>
+    <EmbeddedResource Include="PointControl.resx">
+      <DependentUpon>PointControl.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="PopupAboutBox.resx">
       <DependentUpon>PopupAboutBox.cs</DependentUpon>
@@ -147,6 +148,7 @@
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DependentUpon>Resources.resx</DependentUpon>
+      <DesignTime>True</DesignTime>
     </Compile>
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>

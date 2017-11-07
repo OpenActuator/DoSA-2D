@@ -22,20 +22,38 @@ namespace Scripts
     {
         private static IActiveFEMM m_accessFEMM = null;
 
+        #region Constants
+
+        private const int SW_HIDE = 0;
+        private const int SW_SHOWNORMAL = 1;
+        private const int SW_SHOWMINIMIZED = 2;
+        private const int SW_SHOWMAXIMIZED = 3;
+        private const int SW_SHOW = 5;
+
+        #endregion Constants
+
+        #region APIs
         //-----------------------------------------------------------------------------
         // API 함수 사용
         //-----------------------------------------------------------------------------
         // [주의사항] 꼭 Class 안에 존재해야 함
         //
+
         [DllImport("user32.dll", EntryPoint = "MoveWindow")]
         internal static extern bool MoveWindow(IntPtr hWnd, int X, int Y, int nWidth, int nHeight, bool bRepaint);
 
         //[DllImport("user32.dll")]
-        //public static extern Boolean ShowWindow(IntPtr hWnd, Int32 nCmdShow);
+        //internal static extern Boolean ShowWindow(IntPtr hWnd, Int32 nCmdShow);
 
-        //[DllImport("user32.dll", EntryPoint = "SetWindowPos")]
-        //public static extern bool SetWindowPos(IntPtr hWnd, int hWndInsertAfter, int x, int Y, int cx, int cy, int wFlags);                
+        [DllImport("user32.dll")]
+        private static extern bool ShowWindowAsync(IntPtr hWnd, int nCmdShow);
+
+        [DllImport("user32.dll")]
+        private static extern bool SetForegroundWindow(IntPtr hWnd);
+
         //-----------------------------------------------------------------------------
+
+        #endregion APIs
 
         internal static IActiveFEMM myFEMM
         {
@@ -59,6 +77,12 @@ namespace Scripts
         {
             Process[] processList = Process.GetProcessesByName("femm");
 
+            if (processList.Length > 1)
+            {
+                CNotice.noticeWarning("FEMM 프로그램이 하나만 실행되어 있어야 합니다.");
+                return;
+            }
+
             if (processList.Length != 1)
                 return;
 
@@ -66,9 +90,30 @@ namespace Scripts
 
             Thread.Sleep(100);
             MoveWindow(femmProcess.MainWindowHandle, iPosX, iPosY, iSizeX, iSizeY, true);
+        }
 
-            //const int SW_MAXIMIZE = 3;
-            //ShowWindow(femmProcess.MainWindowHandle, SW_MAXIMIZE);
+        public static void showFEMM()
+        {
+            Process[] processList = Process.GetProcessesByName("femm");
+
+            if (processList.Length > 1)
+            {
+                CNotice.noticeWarning("FEMM 프로그램이 하나만 실행되어 있어야 합니다.");
+                return;
+            }
+
+            if (processList.Length != 1)
+                return;
+
+            Process femmProcess = processList[0];
+
+            Thread.Sleep(100);
+
+            // 윈도우가 최소화 되어 있다면 활성화 시킨다
+            ShowWindowAsync(femmProcess.MainWindowHandle, SW_SHOWNORMAL);
+
+            // 윈도우에 포커스를 줘서 최상위로 만든다
+            SetForegroundWindow(femmProcess.MainWindowHandle);
         }
 
         public static void killProcessOfFEMM()
@@ -193,7 +238,23 @@ namespace Scripts
                 CNotice.printTrace(ex.Message);
                 return;
             }
+        }
 
+        public void settingPre()
+        {
+            string strCommand;
+
+            try
+            {
+                /// If numcontours is -1 all parameters are ignored and default values are used.
+                strCommand = "mi_hidegrid()";
+                sendCommand(strCommand);
+            }
+            catch (Exception ex)
+            {
+                CNotice.printTrace(ex.Message);
+                return;
+            }
         }
 
         public void zoomFit(bool bExceptionZoomout = false)
@@ -459,6 +520,9 @@ namespace Scripts
 
                 strCommand = "mi_clearselected()";
                 sendCommand(strCommand);
+
+                // editmode 를 group 으로 바꾸어서 FEMM 마우스 동작을 막는다.
+                lockEdit();
             }
             catch (Exception ex)
             {
@@ -529,7 +593,6 @@ namespace Scripts
                 CNotice.printTrace(ex.Message);
                 return;
             }
-
         }
 
         internal void drawBoundaryLine(double x1, double y1, double x2, double y2)
@@ -590,8 +653,8 @@ namespace Scripts
 
                 /// Region 의 물성치를 Default 물성치로 지정하여 Block 이 추가되지 않은 영역을 설정 한다.
                 /// 
-                //strCommand = "mi_attachdefault()";
-                //sendCommand(strCommand);
+                strCommand = "mi_attachdefault()";
+                sendCommand(strCommand);
 
                 string strMaterial = "\"" + "Air" + "\"";
 
@@ -697,6 +760,23 @@ namespace Scripts
             return dForce;
         }
 
+        internal void lockEdit()
+        {
+            string strCommand;
+
+            // edit 모드를 group 으로 지정해서 마우스 동작을 막는다.
+            try
+            {
+                /// nodes, segments, arcsegments, blocks, group
+                strCommand = "mi_seteditmode(\"group\")";
+                sendCommand(strCommand);
+            }
+            catch (Exception ex)
+            {
+                CNotice.printTrace(ex.Message);
+                return;
+            }
+        }
 
         internal void selectLine(CPoint selectPoint)
         {
@@ -710,6 +790,10 @@ namespace Scripts
 
                 strCommand = "mi_selectsegment(" + selectPoint.m_dX + "," + selectPoint.m_dY + ")";
                 sendCommand(strCommand);
+
+                /// editmode 를 group 으로 바꾸어서 FEMM 마우스 동작을 막는다.
+                /// - refreshView() 전에 실행해야 한다. 
+                lockEdit();
 
                 /// refresh 를 꼭 해야 색상이 변한다
                 refreshView();
@@ -730,7 +814,7 @@ namespace Scripts
         /// 2. 해결방안
         /// FEMM 이 살아있는지를 확인하기 위하여 임의의 한점을 생성하고 위치를 확인하는 방법을 사용한다.
         /// </summary>
-        public bool checkLive()
+        public bool checkOpen()
         {
             string strCommand;
             string strReturn;
@@ -758,6 +842,10 @@ namespace Scripts
                 /// 확인 후 삭제한다
                 strCommand = "mi_deleteselectednodes()";
                 sendCommand(strCommand);
+
+                /// editmode 를 group 으로 바꾸어서 FEMM 마우스 동작을 막는다.
+                /// - refreshView() 전에 실행해야 한다. 
+                lockEdit();
 
                 refreshView();
             }
@@ -873,6 +961,10 @@ namespace Scripts
 
                 strCommand = "mi_selectarcsegment(" + selectPoint.m_dX + "," + selectPoint.m_dY + ")";
                 sendCommand(strCommand);
+
+                /// editmode 를 group 으로 바꾸어서 FEMM 마우스 동작을 막는다.
+                /// - refreshView() 전에 실행해야 한다. 
+                lockEdit();
 
                 /// refresh 를 꼭 해야 색상이 변한다
                 refreshView();

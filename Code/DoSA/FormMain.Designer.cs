@@ -52,7 +52,6 @@
             this.ribbonButtonCoil = new System.Windows.Forms.RibbonButton();
             this.ribbonButtonMagnet = new System.Windows.Forms.RibbonButton();
             this.ribbonButtonSteel = new System.Windows.Forms.RibbonButton();
-            this.ribbonButtonCheckShape = new System.Windows.Forms.RibbonButton();
             this.ribbonPanelExperiment = new System.Windows.Forms.RibbonPanel();
             this.ribbonButtonForce = new System.Windows.Forms.RibbonButton();
             this.ribbonButtonStroke = new System.Windows.Forms.RibbonButton();
@@ -260,7 +259,6 @@
             this.ribbonPanelDesign.Items.Add(this.ribbonButtonCoil);
             this.ribbonPanelDesign.Items.Add(this.ribbonButtonMagnet);
             this.ribbonPanelDesign.Items.Add(this.ribbonButtonSteel);
-            this.ribbonPanelDesign.Items.Add(this.ribbonButtonCheckShape);
             this.ribbonPanelDesign.Text = "DESIGN";
             // 
             // ribbonButtonCoil
@@ -286,14 +284,6 @@
             this.ribbonButtonSteel.SmallImage = ((System.Drawing.Image)(resources.GetObject("ribbonButtonSteel.SmallImage")));
             this.ribbonButtonSteel.Text = "Steel";
             this.ribbonButtonSteel.Click += new System.EventHandler(this.ribbonButtonSteel_Click);
-            // 
-            // ribbonButtonCheckShape
-            // 
-            this.ribbonButtonCheckShape.Image = ((System.Drawing.Image)(resources.GetObject("ribbonButtonCheckShape.Image")));
-            this.ribbonButtonCheckShape.MinimumSize = new System.Drawing.Size(60, 0);
-            this.ribbonButtonCheckShape.SmallImage = ((System.Drawing.Image)(resources.GetObject("ribbonButtonCheckShape.SmallImage")));
-            this.ribbonButtonCheckShape.Text = "Check";
-            this.ribbonButtonCheckShape.Click += new System.EventHandler(this.ribbonButtonCheckShape_Click);
             // 
             // ribbonPanelExperiment
             // 
@@ -904,7 +894,6 @@
         private System.Windows.Forms.RibbonOrbMenuItem ribbonOrbMenuItemExit;
         private System.Windows.Forms.Button buttonMagnetShape;
         private System.Windows.Forms.Button buttonSteelShape;
-        private System.Windows.Forms.RibbonButton ribbonButtonCheckShape;
         private System.Windows.Forms.RibbonButton ribbonButtonCurrent;
         private System.Windows.Forms.Panel panelCurrent;
         private System.Windows.Forms.DataVisualization.Charting.Chart chartCurrentResult;

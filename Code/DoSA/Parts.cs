@@ -90,11 +90,13 @@ namespace Parts
 
             try
             {
-                // Shape 정보가 있는 경우만 m_face 를 생성한다.
+                // Shape 정보가 있는 경우만 m_face 를 생성하고 읽기 작업을 진행한다.
                 if (listShapeLines.Count > 0)
                     m_face = new CFace();
+                else
+                    return false;
 
-                CPoint pointLine = null;
+                CPoint point = null;
 
                 // 형상 라인을 처리한다.
                 foreach (string strLine in listShapeLines)
@@ -117,20 +119,29 @@ namespace Parts
 
                     switch (arrayString[0])
                     {
-                        // CNode
+                        case "BasePointX":
+                            m_face.BasePoint.m_dX = Double.Parse(arrayString[1]);
+                            break;
+
+                        case "BasePointY":
+                            m_face.BasePoint.m_dY = Double.Parse(arrayString[1]);
+                            break;
+                        
                         case "FaceType":
                             m_face.FaceType = (EMFaceType)Enum.Parse(typeof(EMFaceType), arrayString[1]);
                             break;
 
                         case "PointX":
-                            // PointX 키워드를 만날때 새로운 CPointLine 생성한다.
-                            pointLine = new CPoint();
-                            pointLine.m_dX = Double.Parse(arrayString[1]);
+                            // PointX 키워드를 만날때 새로운 CPoint 생성하고,
+                            // ArcDriction 키워드를 만날때 생성된 CPoint 를 Face 에 추가한다.
+                            // 따라서 저장될때 X, Y, LineKind, ArcDriction 의 순서로 꼭 저장 되어야 한다.
+                            point = new CPoint();
+                            point.m_dX = Double.Parse(arrayString[1]);
                             break;
 
                         case "PointY":
-                            if (pointLine != null)
-                                pointLine.m_dY = Double.Parse(arrayString[1]);
+                            if (point != null)
+                                point.m_dY = Double.Parse(arrayString[1]);
                             else
                             {
                                 CNotice.noticeWarning("저장된 Steel 정보에 문제가 있습니다.");
@@ -139,8 +150,8 @@ namespace Parts
                             break;
 
                         case "LineKind":
-                            if (pointLine != null)
-                                pointLine.m_emLineKind = (EMLineKind)Enum.Parse(typeof(EMLineKind), arrayString[1]);
+                            if (point != null)
+                                point.m_emLineKind = (EMLineKind)Enum.Parse(typeof(EMLineKind), arrayString[1]);
                             else
                             {
                                 CNotice.noticeWarning("저장된 Steel 정보에 문제가 있습니다.");
@@ -149,15 +160,16 @@ namespace Parts
                             break;
 
                         case "ArcDriction":
-                            if (pointLine != null)
-                                pointLine.m_emDirectionArc = (EMDirectionArc)Enum.Parse(typeof(EMDirectionArc), arrayString[1]);
+                            if (point != null)
+                                point.m_emDirectionArc = (EMDirectionArc)Enum.Parse(typeof(EMDirectionArc), arrayString[1]);
                             else
                             {
                                 CNotice.noticeWarning("저장된 Steel 정보에 문제가 있습니다.");
                                 return false;
                             }
-                            // ArcDriction 에서 pointLine 을 저장한다.
-                            m_face.addPoint(pointLine);
+
+                            // ArcDriction 에서 point 을 저장한다.
+                            m_face.addPoint(point);
                             break;
 
                         default:
@@ -546,17 +558,7 @@ namespace Parts
                 // CFace
                 if (Face != null)
                 {
-                    writeFile.writeBeginLine(writeStream, "Shape", 3);
-
-                    foreach (CPoint pointLine in Face.PointList)
-                    {
-                        writeFile.writeDataLine(writeStream, "PointX", pointLine.m_dX.ToString(), 4);
-                        writeFile.writeDataLine(writeStream, "PointY", pointLine.m_dY.ToString(), 4);
-                        writeFile.writeDataLine(writeStream, "LineKind", pointLine.m_emLineKind.ToString(), 4);
-                        writeFile.writeDataLine(writeStream, "ArcDriction", pointLine.m_emDirectionArc.ToString(), 4);
-                    }
-
-                    writeFile.writeEndLine(writeStream, "Shape", 3);
+                    Face.writeObject(writeStream);
                 }
             
                 writeFile.writeEndLine(writeStream, "Coil", 2);
@@ -761,17 +763,7 @@ namespace Parts
                 // CFace
                 if (Face != null)
                 {
-                    writeFile.writeBeginLine(writeStream, "Shape", 3);
-
-                    foreach (CPoint pointLine in Face.PointList)
-                    {
-                        writeFile.writeDataLine(writeStream, "PointX", pointLine.m_dX.ToString(), 4);
-                        writeFile.writeDataLine(writeStream, "PointY", pointLine.m_dY.ToString(), 4);
-                        writeFile.writeDataLine(writeStream, "LineKind", pointLine.m_emLineKind.ToString(), 4);
-                        writeFile.writeDataLine(writeStream, "ArcDriction", pointLine.m_emDirectionArc.ToString(), 4);
-                    }
-
-                    writeFile.writeEndLine(writeStream, "Shape", 3);
+                    Face.writeObject(writeStream);
                 }            
 
                 writeFile.writeEndLine(writeStream, "Magnet", 2);
@@ -953,19 +945,7 @@ namespace Parts
                 // CFace
                 if (Face != null)
                 {
-                    writeFile.writeBeginLine(writeStream, "Shape", 3);
-
-                    writeFile.writeDataLine(writeStream, "FaceType", Face.FaceType, 4);
-
-                    foreach (CPoint pointLine in Face.PointList)
-                    {
-                        writeFile.writeDataLine(writeStream, "PointX", pointLine.m_dX.ToString(), 4);
-                        writeFile.writeDataLine(writeStream, "PointY", pointLine.m_dY.ToString(), 4);
-                        writeFile.writeDataLine(writeStream, "LineKind", pointLine.m_emLineKind.ToString(), 4);
-                        writeFile.writeDataLine(writeStream, "ArcDriction", pointLine.m_emDirectionArc.ToString(), 4);
-                    }
-
-                    writeFile.writeEndLine(writeStream, "Shape", 3);
+                    Face.writeObject(writeStream);
                 }            
 
                 writeFile.writeEndLine(writeStream, "Steel", 2);
