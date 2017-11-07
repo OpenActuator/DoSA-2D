@@ -97,11 +97,12 @@ namespace DoSA
         {
             try
             {
+                /// Net Framework V4.5 가 설치 되었는지를 확인한다.
                 bool retFreamework = checkFramework451();
 
                 if (retFreamework == false)
                 {
-                    DialogResult result = CNotice.noticeWarningOKCancel("DoSA 실행을 위해 Net Framework V4.5 이상의 설치가 필요합니다.\n다운로드 페이지로 이동하겠습니까?");
+                    DialogResult result = CNotice.noticeWarningOKCancel("DoSA 은 Net Framework V4.5 이상의 설치가 필요합니다.\n다운로드 페이지로 이동하겠습니까?");
                     
                     if(result == DialogResult.OK )
                         openWebsite(@"https://www.microsoft.com/ko-kr/download/details.aspx?id=30653");
@@ -129,9 +130,6 @@ namespace DoSA
                 if (false == m_manageFile.isExistFile(strSettingFileFullName))
                 {
                     CNotice.noticeWarning("설정 파일을 찾을 수 없습니다.\n환경 설정 후에 프로그램이 실행 됩니다.");
-
-                    // 초기에 환경변수를 설정 할 때는 Optioal 항목들을 보이지 않는 조건으로 설정한다.
-                    CSettingData.m_bShowProperyGridCollapse = true;
 
                     // 파일자체가 없기 때문에 다이얼로그의 데이터 설정없이 바로 호출한다.
                     if (DialogResult.OK == frmSetting.ShowDialog())
@@ -171,6 +169,22 @@ namespace DoSA
                     // 작업의 편의를 위해 디렉토리를 WorkingDirectory 로 변경한다.
                     m_manageFile.setCurrentDirectory(CSettingData.m_strWorkingDirName);
                 }
+
+                /// FEMM 버전을 확인한다.
+                /// 
+                bool retFEMM = checkVersionOfFEMM();
+
+                if(retFEMM == false)
+                {
+                    DialogResult result = CNotice.noticeWarningOKCancel("DoSA 는 FEMM V4.2(24Sep2017) 이상 버전의 설치가 필요합니다.\n다운로드 페이지로 이동하겠습니까?");
+
+                    if (result == DialogResult.OK)
+                        openWebsite(@"http://www.femm.info/wiki/NewBuild");
+
+                    System.Windows.Forms.Application.ExitThread();
+                    Environment.Exit(0);
+                }
+
             }
             catch (Exception ex)
             {
@@ -1965,12 +1979,6 @@ namespace DoSA
                     /// 복구를 위해 저장해 둔다.
                     m_strBackupNodeName = node.NodeName;
 
-                    // Design Fileds 를 보이는 것을 결정한다.
-                    if (CSettingData.m_bShowProperyGridCollapse == true)
-                        CollapseOrExpandCategory(propertyGridMain, "Design Fields (optional)", true);
-                    else
-                        CollapseOrExpandCategory(propertyGridMain, "Design Fields (optional)", false);
-
                     // Expand Treeview when starting
                     foreach (TreeNode tn in treeViewMain.Nodes)
                         tn.Expand();
@@ -2630,6 +2638,43 @@ namespace DoSA
         private void openWebsite(string strWebAddress)
         {
             System.Diagnostics.Process.Start(strWebAddress);
+        }
+
+        private bool checkVersionOfFEMM()
+        {
+            // FEMM 설치 메인 디렉토리를 얻어낸다.
+            string strFEMMDirName = Path.GetDirectoryName(CSettingData.m_strFemmExeFileFullName);
+            strFEMMDirName = strFEMMDirName.Remove(strFEMMDirName.IndexOf("bin"));
+
+            // readme.txt 의 첫 줄을 읽어낸다.
+            string strReadmeFileFullName = Path.Combine(strFEMMDirName, "readme.txt");
+
+            CReadFile readFile = new CReadFile();
+            string strVersionFEMM = readFile.getLine(strReadmeFileFullName, 1);         // 내용 : FEMM 4.2 12Jan2016
+
+            // readme.txt 에서 FEMM 4.2 버전의 Build 날짜를 읽어낸다.
+            char[] separators = { ' ' };
+            string[] strArray;
+            strArray = strVersionFEMM.Split(separators, StringSplitOptions.None);
+            string strVersionDate = strArray[2];                                        // 내용 : 12Jan2016
+
+            if (strVersionDate.Length < 9)
+            {
+                CNotice.printTrace("FEMM 버전에 문제가 발생했습니다.");
+                return false;
+            }                
+
+            DateTime currentDataTime = new DateTime();
+            DateTime limitDataTime = new DateTime();
+
+            limitDataTime = Convert.ToDateTime("24Sep2017");
+            currentDataTime = Convert.ToDateTime(strVersionDate);
+
+            // 24Sep2017 보다 이전 버전이면 에러를 발생시킨다.
+            if (currentDataTime < limitDataTime)
+                return false;
+            else
+                return true; 
         }
 
         #endregion

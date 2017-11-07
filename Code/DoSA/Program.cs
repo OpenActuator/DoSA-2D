@@ -31,8 +31,8 @@ namespace DoSA
         public static string m_strWorkingDirName { get; set; }
         public static string m_strFemmExeFileFullName { get; set; }
 
-        public static string m_strMaxwellMaterialDirName { get; set; }
-		public static bool m_bShowProperyGridCollapse { get; set; }
+        //public static string m_strMaxwellMaterialDirName { get; set; }
+        //public static bool m_bShowProperyGridCollapse { get; set; }
 
 		// 내부 사용변수
 		// - 프로그램이 실행될때 초기화하여 내부에서 사용한다.
@@ -93,14 +93,12 @@ namespace DoSA
         {
             CSettingData.m_strWorkingDirName = m_strWorkingDirName;
             CSettingData.m_strFemmExeFileFullName = m_strFemmExeFileFullName;
-            CSettingData.m_bShowProperyGridCollapse = m_bShowProperyGridCollapse;
         }
 
         public void copySettingDataToClone()
         {
             m_strWorkingDirName = CSettingData.m_strWorkingDirName;
             m_strFemmExeFileFullName = CSettingData.m_strFemmExeFileFullName;
-            m_bShowProperyGridCollapse = CSettingData.m_bShowProperyGridCollapse;
         }
     }
 }
