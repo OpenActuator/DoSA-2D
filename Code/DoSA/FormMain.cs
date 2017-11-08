@@ -42,7 +42,7 @@ namespace DoSA
 
         private CManageFile m_manageFile = new CManageFile();
 
-        public CScriptFEMM m_femm = null;
+        public CScriptFEMM m_femm;
 
         private string m_strBackupNodeName = string.Empty;
 
@@ -65,6 +65,8 @@ namespace DoSA
             
             // FEMM 에서 지원되는 재질을 Loading 한다.
             loadMaterial();
+
+            m_femm = null;
         }
 
         private void killProcessOfFEMM()
@@ -369,7 +371,7 @@ namespace DoSA
             m_design.m_bChanged = true;
 
             /// 새로운 FEMM 을 연다
-            openNewFEMM();
+            openFEMM();
 
             // 제목줄에 디자인명을 표시한다
             this.Text = "Design Toolkit of Solenoid & Actuator - " + m_design.m_strDesignName;
@@ -434,7 +436,7 @@ namespace DoSA
                 return;
             }
 
-            openNewFEMM();
+            openFEMM();
 
             redrawParts();
 
@@ -690,7 +692,7 @@ namespace DoSA
             // 해석전 현 설정을 저장한다.
             saveDesignFile();
 
-            m_femm = openNewFEMM();
+            m_femm = openFEMM();
 
             m_design.getMaterial(m_femm);
 
@@ -945,8 +947,14 @@ namespace DoSA
                         CNotice.printTrace("형상이 정상적으로 생성되지 못했다.");
                     }
 
-                    if (false == m_femm.checkOpen())
-                        openNewFEMM();
+                    if (m_femm == null)
+                        openFEMM();
+                    else
+                    {
+                        if (false == m_femm.isLiveFEMM())
+                            openFEMM();
+                    }
+
 
                     redrawParts();
                 }
@@ -1088,7 +1096,7 @@ namespace DoSA
             // 해석전 현 설정을 저장한다.
             saveDesignFile();
 
-            m_femm = openNewFEMM(1040);
+            m_femm = openFEMM(1040);
 
             m_design.getMaterial(m_femm);
 
@@ -1109,7 +1117,7 @@ namespace DoSA
             m_femm.moveMovingParts(forceExperiment.MovingStroke);
 
             m_femm.saveAs(strExperimentFullName);
-                       
+                     
             double dForce = m_femm.solveForce(strFieldImageFullName);
 
             string strForce = String.Format("{0,15:N5}", dForce);
@@ -1133,7 +1141,6 @@ namespace DoSA
 
             /// DoSA 를 활성화하여 창을 최상위에 위치시킨다.
             this.Activate();
-
         }
 
         private void closePostView()
@@ -1186,7 +1193,7 @@ namespace DoSA
             // 해석전 현 설정을 저장한다.
             saveDesignFile();
 
-            m_femm = openNewFEMM();
+            m_femm = openFEMM();
 
             m_design.getMaterial(m_femm);
 
@@ -1344,8 +1351,7 @@ namespace DoSA
                 //dYMax = listDataY.Max();
 
                 dYMin = Double.NaN;
-                dYMax = Double.NaN;
-                
+                dYMax = Double.NaN;                
 
                 // X 시간축면 스케일을 설정한다.
                 drawXYChart(chartStrokeResult, listDataX, listDataY, "Stroke [mm]", "Force [N]", dXMin, dXMax, dYMin, dYMax);
@@ -1462,21 +1468,29 @@ namespace DoSA
             return false;
         }
 
-        private CScriptFEMM openNewFEMM(int widthFEMM = 500)
+        private CScriptFEMM openFEMM(int widthFEMM = 500)
         {
-            if (m_femm != null)
+                        
+            // FEMM.exe 가 실행되지 않았으면 FEMM 을 생성하고 크기를 변경한다.
+            if (m_femm == null)
             {
-                quitFEMM();
+                m_femm = new CScriptFEMM();
+            }
+            else
+            {
+                // FEMM.exe 가 실행되어 열려 있는 경우는 내용만 삭제하고 크기만 변경한다.
+                // FEMM.exe 가 실행되었지만 열려 있지 않은 경우라면 (사용자가 강제로 닫은 경우) 는 종료하고 다시 생성한다.
+                if (false == m_femm.isLiveFEMM())
+                {
+                    quitFEMM();
+
+                    m_femm = new CScriptFEMM();
+                }
+                else
+                    m_femm.deleteAll();
             }
 
-            /// 좌측에 FEMM 공간을 확보하기 위해서 DoSA 의 위치를 지정한다
-            this.Left = 600;
-
-            m_femm = new CScriptFEMM();
-
-            const int FEMM_WIDTH = 500;
-
-            CProgramFEMM.moveFEMM(this.Location.X - FEMM_WIDTH, this.Location.Y, widthFEMM);
+            resizeFEMM(widthFEMM);
 
             return m_femm;
         }
@@ -1486,11 +1500,12 @@ namespace DoSA
             if (m_femm == null)
                 return;
 
+            /// 좌측에 FEMM 공간을 확보하기 위해서 DoSA 의 위치를 지정한다
             this.Left = 600;
 
-            const int FEMM_WIDTH = 500;
+            const int FEMM_DEFAULT_WIDTH = 500;
 
-            CProgramFEMM.moveFEMM(this.Location.X - FEMM_WIDTH, this.Location.Y, widthFEMM);
+            CProgramFEMM.moveFEMM(this.Location.X - FEMM_DEFAULT_WIDTH, this.Location.Y, widthFEMM, 900);
 
             m_femm.zoomFit();
         }
@@ -1827,8 +1842,14 @@ namespace DoSA
                     return null;
                 }
 
-                if (false == m_femm.checkOpen())
-                    openNewFEMM();
+
+                if (m_femm == null)
+                    openFEMM();
+                else
+                {
+                    if (false == m_femm.isLiveFEMM())
+                        openFEMM();
+                }
 
                 redrawParts();                
             }
@@ -1993,9 +2014,10 @@ namespace DoSA
                         if (node.GetType().BaseType.Name == "CParts")
                         {
                             /// FEMM 이 없으면 다시 오픈한다.
-                            if (false == m_femm.checkOpen())
+                            if (false == m_femm.isLiveFEMM())
                             {
-                                openNewFEMM();
+                                openFEMM();
+
                                 redrawParts();
                             }
 
@@ -2082,6 +2104,7 @@ namespace DoSA
                             }
 
                             splitContainerRight.Panel1.Controls.Add(this.panelCurrent);
+
                             // 해석결과로 Panel 이미지가 변경된 경우를 대비해서 초기이미지로 복원한다.                        
                             loadDefaultImage(EMKind.CURRENT_EXPERIMENT);
                             break;
@@ -2144,10 +2167,14 @@ namespace DoSA
                     this.treeViewMain.SelectedNode.Remove();
                     deleteRawNode(selectedNodeText);
                 }
-
-                /// FEMM 이 없으면 다시 오픈한다.
-                if (false == m_femm.checkOpen())
-                    openNewFEMM();
+                
+                if (m_femm == null)
+                    openFEMM();
+                else
+                {
+                    if (false == m_femm.isLiveFEMM())
+                        openFEMM();
+                }
 
                 redrawParts();
             }

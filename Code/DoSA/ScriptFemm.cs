@@ -222,16 +222,16 @@ namespace Scripts
             try
             {
                 /// If legend is set to -1 all parameters are ignored and default values are used.
-                strCommand = "mo_showdensityplot(1, 0, 1.5, 0, \"bmag\")";
+                strCommand = "mo_showdensityplot(1, 0, 1.7, 0, \"bmag\")";
                 sendCommand(strCommand);
 
                 /// If numcontours is -1 all parameters are ignored and default values are used.
-                strCommand = "mo_showcontourplot(-1)";
-                sendCommand(strCommand);
+                //strCommand = "mo_showcontourplot(-1)";
+                //sendCommand(strCommand);
 
                 /// 0 is none
-                strCommand = "mo_showvectorplot(0,1)";
-                sendCommand(strCommand);
+                //strCommand = "mo_showvectorplot(0,1)";
+                //sendCommand(strCommand);
             }
             catch (Exception ex)
             {
@@ -700,7 +700,6 @@ namespace Scripts
                 CNotice.printTrace(ex.Message);
                 return;
             }
-
         }
         
         public double solveForce(string strFieldImageFullName = null)
@@ -717,7 +716,7 @@ namespace Scripts
                 sendCommand(strCommand);
 
                 /// mi_loadsolution() 후에 호출해야 한다.
-                /// 깜빡임이 심해서 이미지 저장때문 사용한다.            
+                /// 깜빡임이 심해서 이미지 저장때만 사용한다.            
                 if (strFieldImageFullName != null)
                     settingPost();
 
@@ -814,7 +813,7 @@ namespace Scripts
         /// 2. 해결방안
         /// FEMM 이 살아있는지를 확인하기 위하여 임의의 한점을 생성하고 위치를 확인하는 방법을 사용한다.
         /// </summary>
-        public bool checkOpen()
+        public bool isLiveFEMM()
         {
             string strCommand;
             string strReturn;
@@ -897,9 +896,11 @@ namespace Scripts
                 CNotice.printTrace(ex.Message);
                 return;
             }
-
         }
 
+        /// <summary>  
+        /// 그룹 선택을 통해 모든 객체들을 삭제한다.
+        /// </summary>
         public void deleteAll()
         {
             string strCommand;
@@ -920,7 +921,6 @@ namespace Scripts
                 strCommand = "mi_deleteselected()";
                 sendCommand(strCommand);
 
-                /// refresh 를 꼭 해야 색상이 변한다
                 refreshView();
             }
             catch (Exception ex)
@@ -946,7 +946,6 @@ namespace Scripts
                 CNotice.printTrace(ex.Message);
                 return;
             }
-
         }
 
         internal void selectArc(CPoint selectPoint)
@@ -974,10 +973,9 @@ namespace Scripts
                 CNotice.printTrace(ex.Message);
                 return;
             }
-
         }
 
-        internal void closeDesign()
+        internal void closePre()
         {
             string strCommand;
 
