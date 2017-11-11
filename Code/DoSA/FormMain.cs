@@ -52,7 +52,7 @@ namespace DoSA
         // 초기화
         //----------------------------------------------------------------
 
-        #region---------------------- 생성자 --------------------------------
+        #region----------------------- 프로그램 초기화 --------------------------
 
         public FormMain()
         {
@@ -68,32 +68,6 @@ namespace DoSA
 
             m_femm = null;
         }
-
-        private void killProcessOfFEMM()
-        {
-            int nCount = 0;
-            Process[] processList = null;
-
-            do
-            {
-                processList = Process.GetProcessesByName("femm");
-
-                if (processList.Length > 0)
-                    processList[0].Kill();
-
-                Thread.Sleep(50);
-
-                // 무한 루프를 방지한다.
-                if (nCount > 100)
-                    return;
-
-                nCount++;
-
-            } while (processList.Length > 0);
-        }
-        #endregion
-
-        #region----------------------- 프로그램 초기화 --------------------------
 
         private void initializeProgram()
         {
@@ -438,10 +412,6 @@ namespace DoSA
 
             openFEMM();
 
-            redrawParts();
-
-            m_femm.zoomFit();
-
             // 제목줄에 디자인명을 표시한다
             this.Text = "Design Toolkit of Solenoid & Actuator - " + m_design.m_strDesignName;
 
@@ -675,7 +645,7 @@ namespace DoSA
 
             if (m_manageFile.isExistDirectory(strExperimentDirName) == true)
             {
-                DialogResult ret = CNotice.noticeWarningOKCancel("이전 실험결과가 존재합니다.\n이전 결과를 삭제하고 진행 하시겠습니까?", "신규실험 진행");
+                DialogResult ret = CNotice.noticeWarningOKCancel("이전 시험결과가 존재합니다.\n이전 결과를 삭제하고 진행 하시겠습니까?", "신규시험 진행");
 
                 if (ret == DialogResult.Cancel)
                     return;
@@ -686,13 +656,14 @@ namespace DoSA
                 Thread.Sleep(1000);
             }
 
-            // 실험 디렉토리를 생성한다.
+            // 시험 디렉토리를 생성한다.
             m_manageFile.createDirectory(strExperimentDirName);
 
             // 해석전 현 설정을 저장한다.
             saveDesignFile();
 
-            m_femm = openFEMM();
+            // 혹시 FEMM 의 화면이 닫힌 경우 FEMM 의 화면을 복원합니다.
+            reopenFEMM();
 
             m_design.getMaterial(m_femm);
 
@@ -770,7 +741,7 @@ namespace DoSA
 
                 if (false == m_manageFile.isExistFile(strCurrentFileFullName))
                 {
-                    CNotice.noticeWarning("변위-자기력 실험결과가 존재 하지 않습니다.");
+                    CNotice.noticeWarning("변위-자기력 시험결과가 존재 하지 않습니다.");
                     return;
                 }
 
@@ -823,6 +794,12 @@ namespace DoSA
             if (currentExperiment.StepCount <= 0)
             {
                 CNotice.noticeWarning("전류 스텝은 영보다 커야 합니다.");
+                return false;
+            }
+
+            if (m_design.isDesignShapeOK() == false)
+            {
+                CNotice.printTrace("전류-자기력 시험 전의 형상 검사에서 오류가 발생했습니다.");
                 return false;
             }
             
@@ -920,6 +897,9 @@ namespace DoSA
                     return;
                 }
 
+                // 혹시 FEMM 의 화면이 닫힌 경우 FEMM 의 화면을 복원합니다.
+                reopenFEMM();
+
                 string partName = nodeParts.NodeName;
  
                 PopupShape popupShape = new PopupShape(partName, nodeParts.Face, nodeParts.m_kindKey);
@@ -927,7 +907,7 @@ namespace DoSA
 
                 /// 이해할 수 없지만, 자동으로 Owner 설정이 되는 경우도 있고 아닌 경우도 있기 때문에
                 /// Shape 창에서 MainForm 을 접근할 수 있도록 미리 설정을 한다.
-                popupShape.Owner = this;
+                //popupShape.Owner = this;
 
                 if (DialogResult.OK == popupShape.ShowDialog(this))
                 {
@@ -940,6 +920,9 @@ namespace DoSA
                         /// 형상에 맞추어 코일 설계 사양정보를 초기화 한다.
                         if (nodeParts.m_kindKey == EMKind.COIL)
                             ((CCoil)nodeParts).initialShapeDesignValue();
+
+                        // 혹시 FEMM 의 화면이 닫힌 경우 FEMM 의 화면을 복원합니다.
+                        reopenFEMM();
                     }
                     else
                     {
@@ -947,21 +930,11 @@ namespace DoSA
                         CNotice.printTrace("형상이 정상적으로 생성되지 못했다.");
                     }
 
-                    if (m_femm == null)
-                        openFEMM();
-                    else
-                    {
-                        if (false == m_femm.isLiveFEMM())
-                            openFEMM();
-                    }
-
-
-                    redrawParts();
                 }
                 else
                 {
                     // 삽입 동안 화면에 그렸던 형상을 제거한다.
-                    redrawParts();
+                    redrawPartsInFEMM();
                     return;
                 }                
             }
@@ -988,7 +961,7 @@ namespace DoSA
         {
             CForceExperiment forceExperiment = (CForceExperiment)propertyGridMain.SelectedObject;
 
-            // 현재 실험의 이름을 m_nodeList 에서 찾지 않고
+            // 현재 시험의 이름을 m_nodeList 에서 찾지 않고
             // 현재 표시되고 있는 PropertyGird 창에서 Experiment 이름을 찾아 낸다
             string strExperimentName = ((CForceExperiment)propertyGridMain.SelectedObject).NodeName;
             string strExperimentDirName = Path.Combine(m_design.m_strDesignDirName, strExperimentName);
@@ -1013,7 +986,7 @@ namespace DoSA
             }
             else
             {
-                CNotice.noticeWarning("자기력 가상실험 결과가 존재 하지 않습니다.");
+                CNotice.noticeWarning("자기력 가상시험 결과가 존재 하지 않습니다.");
                 return;
             }
 
@@ -1053,7 +1026,13 @@ namespace DoSA
 
             if (bCheck == false)
             {
-                CNotice.noticeWarning("자기력 실험을 위해서는 하나 이상의 동작부가 설정되어야 합니다.");
+                CNotice.noticeWarning("자기력 시험을 위해서는 하나 이상의 동작부가 설정되어야 합니다.");
+                return false;
+            }
+
+            if (m_design.isDesignShapeOK() == false)
+            {
+                CNotice.printTrace("자기력 시험 전의 형상 검사에서 오류가 발생했습니다.");
                 return false;
             }
 
@@ -1064,7 +1043,7 @@ namespace DoSA
         {
             CForceExperiment forceExperiment = (CForceExperiment)propertyGridMain.SelectedObject;
 
-            // 현재 실험의 이름을 m_nodeList 에서 찾지 않고
+            // 현재 시험의 이름을 m_nodeList 에서 찾지 않고
             // 현재 표시되고 있는 PropertyGird 창에서 Experiment 이름을 찾아 낸다
             string strExperimentName = forceExperiment.NodeName;
             string strExperimentDirName = Path.Combine(m_design.m_strDesignDirName, strExperimentName);
@@ -1079,7 +1058,7 @@ namespace DoSA
 
             if (m_manageFile.isExistDirectory(strExperimentDirName) == true)
             {
-                DialogResult ret = CNotice.noticeWarningOKCancel("이전 실험결과가 존재합니다.\n이전 결과를 삭제하고 진행 하시겠습니까?", "신규실험 진행");
+                DialogResult ret = CNotice.noticeWarningOKCancel("이전 시험결과가 존재합니다.\n이전 결과를 삭제하고 진행 하시겠습니까?", "신규시험 진행");
 
                 if (ret == DialogResult.Cancel)
                     return;
@@ -1090,13 +1069,17 @@ namespace DoSA
                 Thread.Sleep(1000);
             }
 
-            // 실험 디렉토리를 생성한다.
+            // 시험 디렉토리를 생성한다.
             m_manageFile.createDirectory(strExperimentDirName);
 
             // 해석전 현 설정을 저장한다.
             saveDesignFile();
 
-            m_femm = openFEMM(1040);
+            // 혹시 FEMM 의 화면이 닫힌 경우 FEMM 의 화면을 복원합니다.
+            reopenFEMM();
+
+            // 이미지 캡쳐 때문에 해석중에 FEMM 의 넓이를 일시적으로 넓힌다
+            resizeFEMM(1040);
 
             m_design.getMaterial(m_femm);
 
@@ -1117,7 +1100,7 @@ namespace DoSA
             m_femm.moveMovingParts(forceExperiment.MovingStroke);
 
             m_femm.saveAs(strExperimentFullName);
-                     
+
             double dForce = m_femm.solveForce(strFieldImageFullName);
 
             string strForce = String.Format("{0,15:N5}", dForce);
@@ -1147,7 +1130,7 @@ namespace DoSA
         {
             m_femm.closePost();
 
-            redrawParts();
+            redrawPartsInFEMM();
         }
 
         private void buttonStrokeResult_Click(object sender, EventArgs e)
@@ -1176,7 +1159,7 @@ namespace DoSA
 
             if (m_manageFile.isExistDirectory(strExperimentDirName) == true)
             {
-                DialogResult ret = CNotice.noticeWarningOKCancel("이전 실험결과가 존재합니다.\n이전 결과를 삭제하고 진행 하시겠습니까?", "신규실험 진행");
+                DialogResult ret = CNotice.noticeWarningOKCancel("이전 시험결과가 존재합니다.\n이전 결과를 삭제하고 진행 하시겠습니까?", "신규시험 진행");
 
                 if (ret == DialogResult.Cancel)
                     return;
@@ -1187,13 +1170,14 @@ namespace DoSA
                 Thread.Sleep(1000);
             }
 
-            // 실험 디렉토리를 생성한다.
+            // 시험 디렉토리를 생성한다.
             m_manageFile.createDirectory(strExperimentDirName);
 
             // 해석전 현 설정을 저장한다.
             saveDesignFile();
 
-            m_femm = openFEMM();
+            // 혹시 FEMM 의 화면이 닫힌 경우 FEMM 의 화면을 복원합니다.
+            reopenFEMM();
 
             m_design.getMaterial(m_femm);
 
@@ -1265,7 +1249,7 @@ namespace DoSA
         {
             if(m_femm != null)
             {
-                CProgramFEMM.killProcessOfFEMM();
+                CProgramFEMM.killProcessOfFEMMs();
 
                 m_femm = null;
             }
@@ -1299,7 +1283,21 @@ namespace DoSA
 
             if (bCheck == false)
             {
-                CNotice.noticeWarning("자기력 실험을 위해서는 하나 이상의 동작부가 설정되어야 합니다.");
+                CNotice.noticeWarning("자기력 시험을 위해서는 하나 이상의 동작부가 설정되어야 합니다.");
+                return false;
+            }
+            
+            // 구동부를 초기 변위로 이동 후에 형상 검사를 한다.
+            if (m_design.isDesignShapeOK(strokeExperiment.InitialStroke) == false)
+            {
+                CNotice.noticeWarning("변위-자기력 시험 전의 초기변위 형상검사에서 오류가 발생했습니다.");
+                return false;
+            }
+
+            // 구동부를 최대 변위로 이동 후에 형상 검사를 한다.
+            if (m_design.isDesignShapeOK(strokeExperiment.FinalStroke) == false)
+            {
+                CNotice.noticeWarning("변위-자기력 시험 전의 최대변위 형상검사에서 오류가 발생했습니다.");
                 return false;
             }
 
@@ -1324,7 +1322,7 @@ namespace DoSA
 
                 if (false == m_manageFile.isExistFile(strStrokeFileFullName))
                 {
-                    CNotice.noticeWarning("변위-자기력 실험결과가 존재 하지 않습니다.");
+                    CNotice.noticeWarning("변위-자기력 시험결과가 존재 하지 않습니다.");
                     return;
                 }
 
@@ -1401,9 +1399,69 @@ namespace DoSA
         // 기능 함수
         //------------------------------------------------------------------
 
-        #region----------------------- 형상관련 기능함수 ------------------------
+        #region----------------------- FEMM 제어관련 기능함수 ------------------------
 
-        private void redrawParts()
+        private bool checkVersionOfFEMM()
+        {
+            // FEMM 설치 메인 디렉토리를 얻어낸다.
+            string strFEMMDirName = Path.GetDirectoryName(CSettingData.m_strFemmExeFileFullName);
+            strFEMMDirName = strFEMMDirName.Remove(strFEMMDirName.IndexOf("bin"));
+
+            // readme.txt 의 첫 줄을 읽어낸다.
+            string strReadmeFileFullName = Path.Combine(strFEMMDirName, "readme.txt");
+
+            CReadFile readFile = new CReadFile();
+            string strVersionFEMM = readFile.getLine(strReadmeFileFullName, 1);         // 내용 : FEMM 4.2 12Jan2016
+
+            // readme.txt 에서 FEMM 4.2 버전의 Build 날짜를 읽어낸다.
+            char[] separators = { ' ' };
+            string[] strArray;
+            strArray = strVersionFEMM.Split(separators, StringSplitOptions.None);
+            string strVersionDate = strArray[2];                                        // 내용 : 12Jan2016
+
+            if (strVersionDate.Length < 9)
+            {
+                CNotice.printTrace("FEMM 버전에 문제가 발생했습니다.");
+                return false;
+            }
+
+            DateTime currentDataTime = new DateTime();
+            DateTime limitDataTime = new DateTime();
+
+            limitDataTime = Convert.ToDateTime("24Sep2017");
+            currentDataTime = Convert.ToDateTime(strVersionDate);
+
+            // 24Sep2017 보다 이전 버전이면 에러를 발생시킨다.
+            if (currentDataTime < limitDataTime)
+                return false;
+            else
+                return true;
+        }
+        
+        private void killProcessOfFEMM()
+        {
+            int nCount = 0;
+            Process[] processList = null;
+
+            do
+            {
+                processList = Process.GetProcessesByName("femm");
+
+                if (processList.Length > 0)
+                    processList[0].Kill();
+
+                Thread.Sleep(50);
+
+                // 무한 루프를 방지한다.
+                if (nCount > 100)
+                    return;
+
+                nCount++;
+
+            } while (processList.Length > 0);
+        }
+       
+        private void redrawPartsInFEMM()
         {
             m_femm.deleteAll();
 
@@ -1420,79 +1478,54 @@ namespace DoSA
                     }
                 }
             }
-
-            //m_femm.zoomFit();
         }
 
-        private bool checkIntersectionLines()
+        public void openFEMM(int iWidthFEMM = 500)
         {
-            List<CLine> listLineAll = new List<CLine>();
-            List<CLine> listAbsoluteLine = null;
-            CFace face = null;
-
-            foreach (CNode node in m_design.NodeList)
-            {
-                if (node.GetType().BaseType.Name == "CParts")
-                {
-                    CParts nodeParts = (CParts)node;
-
-                    face = nodeParts.Face;
-
-                    if (null != face)
-                    {
-                        listAbsoluteLine = face.AbsoluteLineList;
-
-                        /// 모든 라인들을 하나의 Line List 에 담는다.
-                        foreach (CLine line in listAbsoluteLine)
-                            listLineAll.Add(line);
-                    }
-                }
-            }
-
-            face = new CFace();
-
-            for (int i = 0; i < listLineAll.Count - 1; i++)
-            {
-                for (int j = i + 1; j < listLineAll.Count; j++)
-                {
-                    if (true == face.checkIntersectionLine(listLineAll[i], listLineAll[j]))
-                    {
-                        /// 교차 간섭 함
-                        CNotice.noticeWarning("라인 간섭이 발생 했습니다.");
-
-                        return true;
-                    }
-                }
-            }
-
-            return false;
-        }
-
-        private CScriptFEMM openFEMM(int widthFEMM = 500)
-        {
-                        
             // FEMM.exe 가 실행되지 않았으면 FEMM 을 생성하고 크기를 변경한다.
             if (m_femm == null)
             {
                 m_femm = new CScriptFEMM();
+                resizeFEMM(iWidthFEMM);
             }
-            else
+            // FEMM.exe 가 실행되어 열려 있는 경우는 내용만 삭제하고 크기만 변경한다.
+            // FEMM.exe 가 실행되었지만 열려 있지 않은 경우라면 (사용자가 강제로 닫은 경우) 는 종료하고 다시 생성한다.
+            else if (false == CProgramFEMM.isOpenedWindow())
             {
-                // FEMM.exe 가 실행되어 열려 있는 경우는 내용만 삭제하고 크기만 변경한다.
-                // FEMM.exe 가 실행되었지만 열려 있지 않은 경우라면 (사용자가 강제로 닫은 경우) 는 종료하고 다시 생성한다.
-                if (false == m_femm.isLiveFEMM())
-                {
-                    quitFEMM();
-
-                    m_femm = new CScriptFEMM();
-                }
-                else
-                    m_femm.deleteAll();
+                quitFEMM();
+                m_femm = new CScriptFEMM();
+                resizeFEMM(iWidthFEMM);
             }
+            // 이미 정상적으로 FEMM 이 동작중이라면 화면을 초기화한다.
+            else
+            {   
+                m_femm.deleteAll();
+            }
+                        
+            if(m_femm != null)
+            {
+                redrawPartsInFEMM();
+                m_femm.zoomFit();
+            }
+        }
 
-            resizeFEMM(widthFEMM);
+        public void reopenFEMM(int iWidthFEMM = 500)
+        {
+            if (m_femm == null)
+            {
+                CNotice.printTrace("실행한 적이 없는 FEMM 을 reopen 하려고 하고 있습니다.");
+            }
+            // FEMM.exe 가 실행되어 열려 있는 경우는 내용만 삭제하고 크기만 변경한다.
+            // FEMM.exe 가 실행되었지만 열려 있지 않은 경우라면 (사용자가 강제로 닫은 경우) 는 종료하고 다시 생성한다.
+            else if (false == CProgramFEMM.isOpenedWindow())
+            {
+                quitFEMM();
+                m_femm = new CScriptFEMM();
+                resizeFEMM(iWidthFEMM);
 
-            return m_femm;
+                redrawPartsInFEMM();
+                m_femm.zoomFit();
+            }
         }
 
         private void resizeFEMM(int widthFEMM = 500)
@@ -1773,15 +1806,15 @@ namespace DoSA
 
                 /// 이해할 수 없지만, 자동으로 Owner 설정이 되는 경우도 있고 아닌 경우도 있기 때문에
                 /// Shape 창에서 MainForm 을 접근할 수 있도록 미리 설정을 한다.
-                popupShape.Owner = this;
+                //popupShape.Owner = this;
 
-                if (DialogResult.Cancel == popupShape.ShowDialog())
+                if (DialogResult.Cancel == popupShape.ShowDialog(this))
                 {
                     // 삽입 동안 화면에 그렸던 형상을 제거한다.
-                    redrawParts();
+                    redrawPartsInFEMM();
+
                     return null;
-                }
-                    
+                }                    
 
                 strName = popupShape.m_strPartName;
 
@@ -1841,17 +1874,6 @@ namespace DoSA
 
                     return null;
                 }
-
-
-                if (m_femm == null)
-                    openFEMM();
-                else
-                {
-                    if (false == m_femm.isLiveFEMM())
-                        openFEMM();
-                }
-
-                redrawParts();                
             }
             else
             {
@@ -2013,17 +2035,13 @@ namespace DoSA
                         /// 부품이 선택되면 FEMM 에 선택 표시를 한다
                         if (node.GetType().BaseType.Name == "CParts")
                         {
-                            /// FEMM 이 없으면 다시 오픈한다.
-                            if (false == m_femm.isLiveFEMM())
-                            {
-                                openFEMM();
-
-                                redrawParts();
-                            }
+                            // 혹시 FEMM 의 화면이 닫힌 경우 FEMM 의 화면을 복원합니다.
+                            reopenFEMM();
 
                             CParts parts = (CParts)node;
 
                             parts.Face.clearSelected(m_femm);
+
                             parts.Face.selectFace(m_femm);
                         }
                         /// 부품이 아닌 경우는 선택을 해지한다
@@ -2118,7 +2136,6 @@ namespace DoSA
             {
                 CNotice.printTrace(ex.Message);
             }
-
         }
 
         //트리뷰에서 삭제 한다
@@ -2141,7 +2158,7 @@ namespace DoSA
                         return;
                     }
 
-                    // 가상 실험 Node 의 경우는 결과 디렉토리와 연결이 되기 때문에
+                    // 가상 시험 Node 의 경우는 결과 디렉토리와 연결이 되기 때문에
                     // 해석 결과 디렉토리가 있는 경우는 해석결과를 삭제할지를 물어보고 같이 삭제한다.
                     if (node.GetType().BaseType.Name == "CExperiment")
                     {
@@ -2149,7 +2166,7 @@ namespace DoSA
 
                         if (m_manageFile.isExistDirectory(strExperimentDirName) == true)
                         {
-                            DialogResult ret = CNotice.noticeWarningOKCancel("결과가 존재하는 가상실험입니다.\n삭제를 진행 하시겠습니까?");
+                            DialogResult ret = CNotice.noticeWarningOKCancel("결과가 존재하는 가상시험입니다.\n삭제를 진행 하시겠습니까?");
 
                             if (ret == DialogResult.Cancel)
                                 return;
@@ -2166,17 +2183,12 @@ namespace DoSA
 
                     this.treeViewMain.SelectedNode.Remove();
                     deleteRawNode(selectedNodeText);
-                }
-                
-                if (m_femm == null)
-                    openFEMM();
-                else
-                {
-                    if (false == m_femm.isLiveFEMM())
-                        openFEMM();
-                }
 
-                redrawParts();
+                    redrawPartsInFEMM();
+
+                    // 혹시 FEMM 의 화면이 닫힌 경우 FEMM 의 화면을 복원합니다.
+                    reopenFEMM();
+                }
             }
         }
 
@@ -2666,43 +2678,7 @@ namespace DoSA
         {
             System.Diagnostics.Process.Start(strWebAddress);
         }
-
-        private bool checkVersionOfFEMM()
-        {
-            // FEMM 설치 메인 디렉토리를 얻어낸다.
-            string strFEMMDirName = Path.GetDirectoryName(CSettingData.m_strFemmExeFileFullName);
-            strFEMMDirName = strFEMMDirName.Remove(strFEMMDirName.IndexOf("bin"));
-
-            // readme.txt 의 첫 줄을 읽어낸다.
-            string strReadmeFileFullName = Path.Combine(strFEMMDirName, "readme.txt");
-
-            CReadFile readFile = new CReadFile();
-            string strVersionFEMM = readFile.getLine(strReadmeFileFullName, 1);         // 내용 : FEMM 4.2 12Jan2016
-
-            // readme.txt 에서 FEMM 4.2 버전의 Build 날짜를 읽어낸다.
-            char[] separators = { ' ' };
-            string[] strArray;
-            strArray = strVersionFEMM.Split(separators, StringSplitOptions.None);
-            string strVersionDate = strArray[2];                                        // 내용 : 12Jan2016
-
-            if (strVersionDate.Length < 9)
-            {
-                CNotice.printTrace("FEMM 버전에 문제가 발생했습니다.");
-                return false;
-            }                
-
-            DateTime currentDataTime = new DateTime();
-            DateTime limitDataTime = new DateTime();
-
-            limitDataTime = Convert.ToDateTime("24Sep2017");
-            currentDataTime = Convert.ToDateTime(strVersionDate);
-
-            // 24Sep2017 보다 이전 버전이면 에러를 발생시킨다.
-            if (currentDataTime < limitDataTime)
-                return false;
-            else
-                return true; 
-        }
+        
 
         #endregion
     }

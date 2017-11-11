@@ -706,6 +706,12 @@ namespace Parts
             CPoint blockPoint = null;
             blockPoint = this.Face.getBlockPoint();
 
+            if(blockPoint == null)
+            {
+                CNotice.printTrace("setBlockPropCurrent() 안에서 Block Point 를 찾지 못했습니다");
+                return;
+            }
+
             string strMaterialName = this.m_strMaterial;
 
             string strCircuit = NodeName + "_current";
@@ -874,6 +880,12 @@ namespace Parts
         {
             CPoint blockPoint = null;
             blockPoint = this.Face.getBlockPoint();
+
+            if (blockPoint == null)
+            {
+                CNotice.printTrace("setBlockPropCurrent() 안에서 Block Point 를 찾지 못했습니다");
+                return;
+            }
 
             string strMaterialName = this.m_strMaterial;
 
@@ -1052,6 +1064,12 @@ namespace Parts
         {
             CPoint blockPoint = null;
             blockPoint = this.Face.getBlockPoint();
+
+            if (blockPoint == null)
+            {
+                CNotice.printTrace("setBlockPropCurrent() 안에서 Block Point 를 찾지 못했습니다");
+                return;
+            }
 
             string strMaterialName = this.m_strMaterial;
 

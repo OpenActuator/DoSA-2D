@@ -46,6 +46,11 @@ namespace Shapes
 
         private CPoint m_basePoint = new CPoint();
 
+        private CShapeTools m_shapeTools = new CShapeTools();
+
+        const int MIN_POLYGON_LINE_COUNT = 4;
+        const int MIN_POINT_COUNT = 4;
+
         public CPoint BasePoint
         {
             get { return m_basePoint; }
@@ -73,14 +78,15 @@ namespace Shapes
             {
                 List<CPoint> listPoint = new List<CPoint>();
                 CPoint point = null;
+                CShapeTools shapeTools = new CShapeTools();
 
                 // foreach 를 사용해서 읽어내서 더하게 되면 계속 증가하는 문제가 발생한다.
                 // for 문에서 매번 point 를 new 를 하면 Add 하라.
                 for (int i=0; i < m_listRelativePoint.Count; i++ )
                 {
                     point = new CPoint();
-                    point.m_dX = m_listRelativePoint[i].m_dX + m_basePoint.m_dX;
-                    point.m_dY = m_listRelativePoint[i].m_dY + m_basePoint.m_dY;
+                    point.m_dX = shapeTools.round(m_listRelativePoint[i].m_dX + m_basePoint.m_dX);
+                    point.m_dY = shapeTools.round(m_listRelativePoint[i].m_dY + m_basePoint.m_dY);
                     point.m_emDirectionArc = m_listRelativePoint[i].m_emDirectionArc;
                     point.m_emLineKind = m_listRelativePoint[i].m_emLineKind;
 
@@ -109,7 +115,7 @@ namespace Shapes
         { 
             get
             {
-                if (m_listRelativePoint.Count < 4)
+                if (m_listRelativePoint.Count < MIN_POLYGON_LINE_COUNT)
                 {
                     CNotice.printTrace("Face 의 좌표점이 4개 보다 작은 상태에서 Line List 를 얻으려 하고 있다.");
                     return null;
@@ -118,14 +124,15 @@ namespace Shapes
                 List<CLine> listLine = new List<CLine>();
                 CPoint startPoint = null;
                 CPoint endPoint = null;
+                CShapeTools shapeTools = new CShapeTools();
                 
                 for (int i = 0; i < m_listRelativePoint.Count; i++)
                 {
                     // 기준 점인 Base Point 의 좌표와 상대좌표인 PointList 를 더해서
                     // 절대좌표값을 계산한 후에 형상을 그리기 위한 LineList 를 만든다
                     startPoint = new CPoint();
-                    startPoint.m_dX = m_listRelativePoint[i].m_dX + m_basePoint.m_dX;
-                    startPoint.m_dY = m_listRelativePoint[i].m_dY + m_basePoint.m_dY;
+                    startPoint.m_dX = shapeTools.round(m_listRelativePoint[i].m_dX + m_basePoint.m_dX);
+                    startPoint.m_dY = shapeTools.round(m_listRelativePoint[i].m_dY + m_basePoint.m_dY);
                     startPoint.m_emDirectionArc = m_listRelativePoint[i].m_emDirectionArc;
                     startPoint.m_emLineKind = m_listRelativePoint[i].m_emLineKind;
 
@@ -135,8 +142,8 @@ namespace Shapes
                         // 기준 점인 Base Point 의 좌표와 상대좌표인 PointList 를 더해서
                         // 절대좌표값을 계산한 후에 형상을 그리기 위한 LineList 를 만든다
                         endPoint = new CPoint();
-                        endPoint.m_dX = m_listRelativePoint[i + 1].m_dX + m_basePoint.m_dX;
-                        endPoint.m_dY = m_listRelativePoint[i + 1].m_dY + m_basePoint.m_dY;
+                        endPoint.m_dX = shapeTools.round(m_listRelativePoint[i + 1].m_dX + m_basePoint.m_dX);
+                        endPoint.m_dY = shapeTools.round(m_listRelativePoint[i + 1].m_dY + m_basePoint.m_dY);
                         endPoint.m_emDirectionArc = m_listRelativePoint[i + 1].m_emDirectionArc;
                         endPoint.m_emLineKind = m_listRelativePoint[i + 1].m_emLineKind;
                     }
@@ -144,8 +151,8 @@ namespace Shapes
                     else
                     {
                         endPoint = new CPoint();
-                        endPoint.m_dX = m_listRelativePoint[0].m_dX + m_basePoint.m_dX;
-                        endPoint.m_dY = m_listRelativePoint[0].m_dY + m_basePoint.m_dY;
+                        endPoint.m_dX = shapeTools.round(m_listRelativePoint[0].m_dX + m_basePoint.m_dX);
+                        endPoint.m_dY = shapeTools.round(m_listRelativePoint[0].m_dY + m_basePoint.m_dY);
                         endPoint.m_emDirectionArc = m_listRelativePoint[0].m_emDirectionArc;
                         endPoint.m_emLineKind = m_listRelativePoint[0].m_emLineKind;
                     }
@@ -171,26 +178,41 @@ namespace Shapes
         }
 
         /// <summary>
-        /// 하나의 Face 안의 라인 간섭이 있는지 확인한다.
-        /// 
-        /// Face 내부의 간섭은 상대좌표 사용해도 가능한다.
+        /// Face 안의 형상문제를 확인한다.
         /// </summary>
-        public bool checkFaceShape()
+        public bool isShapeOK()
         {
+            ///-----------------------------------------
+            /// 1. X 음의 좌료 입력 확인
+            ///----------------------------------------- 
             /// 축대칭 모델만 사용하기 때문에 
             /// 내부 포인트의 X 좌표값은 항상 영보다 커야 한다.
             foreach(CPoint point in m_listRelativePoint)
             {
                 if(point.m_dX < 0)
+                {
+                    CNotice.noticeWarning("음의 X 좌표값을 사용했습니다. \n축대칭 해석모델은 1과 4 사분면의 형상만 가능합니다.");
                     return false;
+                }   
             }
 
+            ///-----------------------------------------
+            /// 2. 내부 라인들의 교차 및 겹침 확인
+            ///-----------------------------------------
+            /// 
             /// 매번 생성하는 Property 이기 때문에 
             /// LineList 는 새로운 List에  담는 동작 한번만 호출하고, 사용은 새로운 List 를 사용한다.
             List<CLine> listAbsoluteLine = new List<CLine>();
             listAbsoluteLine = AbsoluteLineList;
 
-            /// 아래와 같이 라인의 교차간섭을 비교한다.
+            if (AbsoluteLineList == null)
+            {
+                CNotice.noticeWarning("파트의 Edge Line 생성에 문제가 발생 하였습니다.");
+                return false;
+            }
+                
+
+            /// 아래와 같이 라인의 교차와 겹칩을 판단한다.
             /// 1 line <=> 2 line ... last line
             /// 2 line <=> 3 line ... last line
             /// ...
@@ -200,96 +222,31 @@ namespace Shapes
             {
                 for (int j = i + 1; j < listAbsoluteLine.Count; j++)
                 {
-                    if (true == checkIntersectionLine(listAbsoluteLine[i], listAbsoluteLine[j]))
+                    if (true == m_shapeTools.isIntersected(listAbsoluteLine[i], listAbsoluteLine[j]))
                     {
-                        /// 사용 중지
-                        ///
-                        /// 교차 알림창 전에 교차형상이 표시되어 사용자가 당황하게 한다.를 당황시킨다.
-                        ///
-                        ///--------------------------------------------------
-                        /// 교차가 발생하는 라인들을 표시한다.
-                        ///--------------------------------------------------
-                        //CProgramFEMM.exitFEMM();
+                        CNotice.noticeWarning("파트 형상라인 간의 교차가 발생 하였습니다.");
+                        return false;
+                    }
 
-                        //CScriptFEMM femm = new CScriptFEMM();
-
-                        //femm.drawLine(listLine[i]);
-                        //femm.drawLine(listLine[j]);
-
-                        //femm.zoomFit();
-                        /////--------------------------------------------------
-                        
-                        /// 교차 간섭 함
+                    if (true == m_shapeTools.isOverlaped(listAbsoluteLine[i], listAbsoluteLine[j]))
+                    {
+                        CNotice.noticeWarning("파트 형상라인 간의 겹침이 발생 하였습니다.");
                         return false;
                     }
                 }
             }
 
-            /// 교차 간섭하지 않음
-            return true;
-        }
-
-        /// <summary>
-        /// 라인 간의 교차를 확인한다.
-        /// 참조 사이트 : http://www5d.biglobe.ne.jp/~tomoya03/shtml/algorithm/IntersectionEX.htm
-        /// </summary>
-        /// If 문 안에서 
-        /// < 와 > 를 사용하면 끝점이 만나는 것도 교차를 판단하고,
-        /// <= 와 >= 를 사용하면 끝점이 만다는 것은 교차로 인정하지 않고 두 직선이 완전히 교차할 때만 인정한다.
-        public bool checkIntersectionLine(CLine first, CLine second)
-        {
-            CPoint start1 = new CPoint();
-            CPoint end1 = new CPoint();
-            CPoint start2 = new CPoint();
-            CPoint end2 = new CPoint();
-
-            start1.m_dX = first.m_startPoint.m_dX;
-            start1.m_dY = first.m_startPoint.m_dY;
-
-            end1.m_dX = first.m_endPoint.m_dX;
-            end1.m_dY = first.m_endPoint.m_dY;
-
-            start2.m_dX = second.m_startPoint.m_dX;
-            start2.m_dY = second.m_startPoint.m_dY;
-
-            end2.m_dX = second.m_endPoint.m_dX;
-            end2.m_dY = second.m_endPoint.m_dY;
-
-            ///// 교차 했음에도 교차가 없는 것으로 리턴이 되어서 교차 알고리즘 1안은 사용을 중지한 상태이다.
-            /////
-            ///// x 좌표에 의한 체크 
-            //if (start1.m_dX >= end1.m_dX)
-            //{
-            //    if ((start1.m_dX <= start2.m_dX && start1.m_dX <= end2.m_dX) || (end1.m_dX >= start2.m_dX && end1.m_dX >= end2.m_dX))
-            //        return false;
-            //}
-            //else
-            //{
-            //    if ((end1.m_dX <= start2.m_dX && end1.m_dX <= end2.m_dX) || (start1.m_dX >= start2.m_dX && start1.m_dX >= end2.m_dX))
-            //        return false;
-            //}
-
-            ///// y 좌표에 의한 체크 
-            //if (start1.m_dY >= end1.m_dY)
-            //{
-            //    if ((start1.m_dY <= start2.m_dY && start1.m_dY <= end2.m_dY) || (end1.m_dY >= start2.m_dY && end1.m_dY >= end2.m_dY))
-            //        return false;
-            //}
-            //else
-            //{
-            //    if ((end1.m_dY <= start2.m_dY && end1.m_dY <= end2.m_dY) || (start1.m_dY >= start2.m_dY && start1.m_dY >= end2.m_dY))
-            //        return false;
-            //}
-
-            if (((start1.m_dX - end1.m_dX) * (start2.m_dY - start1.m_dY) + (start1.m_dY - end1.m_dY) * (start1.m_dX - start2.m_dX)) *
-                ((start1.m_dX - end1.m_dX) * (end2.m_dY - start1.m_dY) + (start1.m_dY - end1.m_dY) * (start1.m_dX - end2.m_dX)) >= 0.0)
+            ///-----------------------------------------
+            /// 3. 면적 확인을 한다.
+            ///----------------------------------------- 
+            if (m_shapeTools.calcArea(this) == 0)
+            {
+                CNotice.noticeWarning("생성하려는 파트 형상의 면적이 없습니다.");
                 return false;
+            }
 
-            if (((start2.m_dX - end2.m_dX) * (start1.m_dY - start2.m_dY) + (start2.m_dY - end2.m_dY) * (start2.m_dX - start1.m_dX)) *
-                ((start2.m_dX - end2.m_dX) * (end1.m_dY - start2.m_dY) + (start2.m_dY - end2.m_dY) * (start2.m_dX - end1.m_dX)) >= 0.0)
-                return false;
 
-            return true;
+             return true;
         }
 
         /// <summary>
@@ -299,9 +256,6 @@ namespace Shapes
         {
             double bigX, smallX;
             double bigY, smallY;
-
-            if(x1 == x2 || y1 == y2)
-                return false;
 
             m_listRelativePoint.Clear();
 
@@ -360,7 +314,7 @@ namespace Shapes
             double x1, y1, x2, y2;
             bool bDirectionArc = false;
 
-            if(m_listRelativePoint.Count < 4)
+            if (m_listRelativePoint.Count < MIN_POINT_COUNT)
             {
                 CNotice.printTrace("4 개보다 작은점을 가진 Face 의 형상을 그리려고 하고 있다.");
                 return false;
@@ -413,7 +367,7 @@ namespace Shapes
         /// <returns></returns>
         public bool setPolygonPoints(List<CPoint> listPoint)
         {
-            if(listPoint.Count < 4)
+            if (listPoint.Count < MIN_POINT_COUNT)
             {
                 CNotice.printTrace("4개 미만의 좌표점으로 다각형을 만들려고 하고 있습니다.");
                 return false;
@@ -427,141 +381,6 @@ namespace Shapes
                 m_listRelativePoint.Add(pointLine);
 
             return true;
-        }
-
-        /// <summary>
-        /// 짝수인지 홀수인지 아니며 영인지를 판단한다.
-        /// </summary>
-        private EMNumberKind checkNumber(int num)
-        {
-            // even number
-            if (num == 0)
-                return EMNumberKind.ZERO;
-            // even number
-            else if (num % 2 == 0)
-                return EMNumberKind.EVEN;
-            // odd number
-            else
-                return EMNumberKind.ODD;
-        }
-
-        /// <summary>
-        /// 재귀호출을 사용해서 FACE 내부점을 찾아낸다.
-        /// 재질 블럭점을 찾는 것이기 때문에 절대좌표를 사용해야 한다.
-        /// 
-        /// 참고 사이트 : http://bowbowbow.tistory.com/24
-        /// </summary>
-        /// <param name="minX">내부점을 찾는 구간의 X 점 최소값</param>
-        /// <param name="maxX">내부점을 찾는 구간의 X 점 최대값</param>
-        /// <param name="baseY">내부 좌표값을 찾은 Y 위치 </param>
-        /// <returns></returns>
-        private CPoint findInsidePoint(double minX, double maxX, double baseY)
-        {
-            int nRightIntersection = 0;
-            int nLeftIntersection = 0;
-
-            double centerX = (minX + maxX) / 2.0f;
-
-            CLine rightLine = new CLine();
-            CLine leftLine = new CLine();
-
-            /// create a right check line
-            rightLine.m_startPoint.m_dX = centerX;
-            rightLine.m_startPoint.m_dY = baseY;
-            rightLine.m_endPoint.m_dX = 1e300;
-            rightLine.m_endPoint.m_dY = baseY;
-
-            /// create a left check line
-            leftLine.m_startPoint.m_dX = centerX;
-            leftLine.m_startPoint.m_dY = baseY;
-            leftLine.m_endPoint.m_dX = -1e300;
-            leftLine.m_endPoint.m_dY = baseY;
-
-            /// 매번 생성하는 Property 이기 때문에 
-            /// LineList 는 새로운 List에  담는 동작 한번만 호출하고, 사용은 새로운 List 를 사용한다.
-            List<CLine> listAbsoluteLine = new List<CLine>();
-            listAbsoluteLine = AbsoluteLineList;
-
-            foreach (CLine line in listAbsoluteLine)
-            {
-                if (true == checkIntersectionLine(line, rightLine))
-                    nRightIntersection ++;
-
-                if (true == checkIntersectionLine(line, leftLine))
-                    nLeftIntersection ++;
-            }
-            
-            CPoint point = new CPoint();
-
-            /// 양측이 홀수이면 Inside Point 이다.
-            if (EMNumberKind.ODD == checkNumber(nRightIntersection) && EMNumberKind.ODD == checkNumber(nLeftIntersection))
-            {
-                point.m_dX = centerX;
-                point.m_dY = baseY;
-
-                return point;
-            }
-            /// 왼쪽이 짝수이면 X 값의 최소값과 중심값 사이의 중점을 다시 확인한다.
-            else if (EMNumberKind.EVEN == checkNumber(nLeftIntersection))
-            {
-                return findInsidePoint(minX, centerX, baseY);
-            }
-            /// 오른쪽이 짝수이면 X 값의 중심값과 최대값 사이의 중점을 다시 확인한다.
-            else if (EMNumberKind.EVEN == checkNumber(nRightIntersection))
-            {
-                return findInsidePoint(centerX, maxX, baseY);
-            }
-            else
-            {
-                CNotice.printTrace("Inside Point 를 찾지 못하는 알고리즘 오류가 발생했습니다.");
-
-                // 어쩔수 없이 중심값을 리턴한다.
-                point.m_dX = centerX;
-                point.m_dY = baseY;
-
-                return point;
-            }
-        }
-
-        /// <summary>
-        /// Face 의 면적을 계산한다.
-        /// 단, 다각형의 면적 계산은 정확하지 않다. (개선 필요함)
-        ///
-        /// 면적계산을 상대좌표를 상관이 없기 때문에 사용한다.
-        /// </summary>
-        /// <returns>Face 면적</returns>
-        public double calcArea()
-        {
-            double dArea = 0;
-
-            double minX = 0;
-            double maxX = 0;
-            double minY = 0;
-            double maxY = 0;
-
-            /// Rectangle 은 4 좌표의 평균점을 사용한다.
-            if (FaceType == EMFaceType.RECTANGLE)
-            {
-                getMinMaxX(ref minX, ref maxX);
-                getMinMaxY(ref minY, ref maxY);
-
-                /// 가로, 세로 곱
-                return (maxX - minX) * (maxY - minY);
-            }
-            /// Polygon 의 다각형 면적 계산은 단순한 형상에서만 가능하고 오차가 있는 것으로 판단된다.
-            /// 추후 : 검증하라.
-            else
-            {
-                /// The last vertex is the 'previous' one to the first
-                int j = m_listRelativePoint.Count - 1;  
-                for (int i = 0; i < m_listRelativePoint.Count; i++)
-                {
-                    dArea += (m_listRelativePoint[j].m_dX + m_listRelativePoint[i].m_dX) * (m_listRelativePoint[j].m_dY - m_listRelativePoint[i].m_dY);
-
-                    j = i;  /// j is previous vertex to i
-                }
-                return Math.Abs(dArea / 2.0f);
-            }
         }
 
         /// <summary>
@@ -596,15 +415,19 @@ namespace Shapes
             }
             else
             {
-                double minX = 0;
-                double maxX = 0;
-                double minY = 0;
-                double maxY = 0;
+                double minX, maxX, minY, maxY;
+                minX = maxX = minY = maxY = 0;
 
                 getMinMaxX(ref minX, ref maxX);
                 getMinMaxY(ref minY, ref maxY);
 
-                blockPoint = findInsidePoint(minX, maxX, (minY + maxY) / 2.0f);
+                blockPoint = m_shapeTools.findInsidePoint(this, minX, maxX, (minY + maxY) / 2.0f);
+
+                /// 기준 높이 Base Y 에 Face 의 절점이 위치하면,
+                /// 내부점을 찾지 못해서 null 이 넘어오면 Base Y 값을 변경하여 다시 한번 시도해 본다.
+                /// 만약, 두번째의 시도에도 null 이 넘어오면 Block Point 의 재질을 입력하지 않도록 null 을 그대로 리턴한다.
+                if(blockPoint == null)
+                    blockPoint = m_shapeTools.findInsidePoint(this, minX, maxX, (minY + maxY) / 2.0f + (minY - maxY) /10.0f);
             }
 
             return blockPoint;
@@ -700,34 +523,6 @@ namespace Shapes
         public int getPointCount()
         {
             return m_listRelativePoint.Count;
-        }
-
-        public bool insertPoint(int nIndex, CPoint pointLine)
-        {
-            // nIndex 가 List 크기보다 크면 바로 리턴한다.
-            if (nIndex >= m_listRelativePoint.Count)
-                return false;
-
-            //**************************************************
-            // 동작 확인이 필요함
-            //**************************************************
-            m_listRelativePoint.Insert(nIndex + 1, pointLine);
-            return true;
-        }
-
-        public bool deletePoint(int nIndex)
-        {
-            // nIndex 가 List 크기보다 크면 바로 리턴한다.
-            if (nIndex >= m_listRelativePoint.Count)
-                return false;
-
-            m_listRelativePoint.RemoveAt(nIndex);
-            return true;
-        }
-
-        public void deleteAllPoint()
-        {
-            m_listRelativePoint.Clear();
         }
 
         /// <summary>
@@ -1021,5 +816,329 @@ namespace Shapes
             m_startPoint.m_emLineKind = start.m_emLineKind;
             m_startPoint.m_emDirectionArc = start.m_emDirectionArc;
         }
+    }
+
+    class CShapeTools
+    {
+        // double 형인 좌표 값을 비교할 때 
+        // 유효 동일한 값이 다른 값으로 처리되는 문제를 해결하기 위해 
+        // 특정 이하의 자리수를 반올림한 다음 비교한다.
+        private bool isEqual(double a, double b)
+        {
+            return Math.Equals(round(a), round(b));
+        }
+
+        public double round(double a)
+        {
+            // 기본 좌표 단위는 mm 이다. 
+            // 따라서 0.000001 mm (즉, nm) 까지만 사용하고 반올림을 처리한다.
+            const int VALID_DIGIT = 6;
+
+            return Math.Round(a, VALID_DIGIT);
+        }
+
+        /// <summary>
+        /// 두 라인의 교차를 확인한다.
+        /// </summary>
+        public bool isIntersected(CLine firstLine, CLine secondLine)
+        {
+            double dFL_P1_X = round(firstLine.m_startPoint.m_dX);
+            double dFL_P1_Y = round(firstLine.m_startPoint.m_dY);
+
+            double dFL_P2_X = round(firstLine.m_endPoint.m_dX);
+            double dFL_P2_Y = round(firstLine.m_endPoint.m_dY);
+
+            double dSL_P1_X = round(secondLine.m_startPoint.m_dX);
+            double dSL_P1_Y = round(secondLine.m_startPoint.m_dY);
+
+            double dSL_P2_X = round(secondLine.m_endPoint.m_dX);
+            double dSL_P2_Y = round(secondLine.m_endPoint.m_dY);
+
+            /// 알고리즘 2 번
+            /// 
+            /// ">" 를 ">=" 로 변경한 것은 꼭지점끼리 만나는 경우는 교차로 취급하지 않기 위해서이다.
+            if (((dFL_P1_X - dFL_P2_X) * (dSL_P1_Y - dFL_P1_Y) + (dFL_P1_Y - dFL_P2_Y) * (dFL_P1_X - dSL_P1_X)) *
+                ((dFL_P1_X - dFL_P2_X) * (dSL_P2_Y - dFL_P1_Y) + (dFL_P1_Y - dFL_P2_Y) * (dFL_P1_X - dSL_P2_X)) >= 0.0)
+                return false;
+
+            if (((dSL_P1_X - dSL_P2_X) * (dFL_P1_Y - dSL_P1_Y) + (dSL_P1_Y - dSL_P2_Y) * (dSL_P1_X - dFL_P1_X)) *
+                ((dSL_P1_X - dSL_P2_X) * (dFL_P2_Y - dSL_P1_Y) + (dSL_P1_Y - dSL_P2_Y) * (dSL_P1_X - dFL_P2_X)) >= 0.0)
+                return false;
+
+            return true;
+        }
+
+        /// <summary>
+        /// 두 라인의 겹침을 확인한다.
+        /// </summary>
+        public bool isOverlaped(CLine firstLine, CLine secondLine)
+        {
+
+            double dFL_P1_X = firstLine.m_startPoint.m_dX;
+            double dFL_P1_Y = firstLine.m_startPoint.m_dY;
+
+            double dFL_P2_X = firstLine.m_endPoint.m_dX;
+            double dFL_P2_Y = firstLine.m_endPoint.m_dY;
+
+            double dSL_P1_X = secondLine.m_startPoint.m_dX;
+            double dSL_P1_Y = secondLine.m_startPoint.m_dY;
+
+            double dSL_P2_X = secondLine.m_endPoint.m_dX;
+            double dSL_P2_Y = secondLine.m_endPoint.m_dY;
+
+            /// 첫번째 라인의 직선방정식 기울기와 Y 절편을 계산한다.
+            double dA = (dFL_P2_Y - dFL_P1_Y) / (dFL_P2_X - dFL_P1_X);
+            double dB = dFL_P1_Y - dA * (dFL_P1_X);
+
+            /// 첫번째 라인의 직선방정식에 두번째 라인 두점의 X 값을 입력하여 Y 값을 계산한다.
+            double dStartY = dA * dSL_P1_X + dB;
+            double dEndY = dA * dSL_P2_X + dB;
+
+            double dBigX = Math.Max(dFL_P1_X, dFL_P2_X);
+            double dSmallX = Math.Min(dFL_P1_X, dFL_P2_X);
+
+            // 계산된 Y 값과 실제 두번째 라인 두점의 값이 일치하면 
+            // 하나의 직선 방정식 위에 두개의 라인이 존재한다고 판단할 수 있다.
+            if (isEqual(dStartY, dSL_P1_Y) && isEqual(dEndY, dSL_P2_Y))
+            {
+                // 하나의 직선 방정식 위에 두개의 라인이 존재하더라도 두 라인이 떨어져 있을 수 있다.
+                // 하나의 직선 방정식 위에 존재하면서 두개의 라인이 겹치는지를 아래의 조건을 판단하고 있다.
+                // ( 방법은 두번째 라인의 두점의 X 값이 첫번째 라인의 X 값들 사이에 있는지로 검사하고 있다.)
+                if (round(dBigX) >= round(dSL_P1_X) && round(dSmallX) <= round(dSL_P1_X) || round(dBigX) >= round(dSL_P2_X) && round(dSmallX) <= round(dSL_P2_X))
+                    return true;
+                else
+                    return false;
+            }
+            else
+                return false;
+        }
+
+        private bool isPerchedOnLine(CLine line, CPoint point)
+        {
+            double dL_P1_X = line.m_startPoint.m_dX;
+            double dL_P1_Y = line.m_startPoint.m_dY;
+
+            double dL_P2_X = line.m_endPoint.m_dX;
+            double dL_P2_Y = line.m_endPoint.m_dY;
+
+            double dP_X = point.m_dX;
+            double dP_Y = point.m_dY;
+
+            /// 라인의 X 구간 
+            double dBigX = Math.Max(dL_P1_X, dL_P2_X);
+            double dSmallX = Math.Min(dL_P1_X, dL_P2_X);
+
+            /// 라인의 Y 구간 
+            double dBigY = Math.Max(dL_P1_Y, dL_P2_Y);
+            double dSmallY = Math.Min(dL_P1_Y, dL_P2_Y);
+
+            /// 직선이 수직선인 경우는 예외 처리한다.
+            if (isEqual(dL_P2_X, dL_P1_X))
+            {
+                /// 점의 X 좌표가 직선의 X 좌표와 일치하면 라인 위의 점이다.
+                if(isEqual(dL_P1_X, dP_X))
+                {
+                    if(round(dBigY) >= round(dP_Y) && round(dSmallY) <= round(dP_Y))
+                        return true;
+                }
+            }
+            /// 직선이 수평선인 경우는 예외 처리한다.
+            else if (isEqual(dL_P2_Y, dL_P1_Y))
+            {
+                /// 점의 Y 좌표가 직선의 Y 좌표와 일치하면 라인 위의 점이다.
+                if (isEqual(dL_P1_Y, dP_Y))
+                {
+                    if (round(dBigX) >= round(dP_X) && round(dSmallX) <= round(dP_X))
+                        return true;
+                }
+            }
+            else
+            {
+                /// 라인의 직선방정식 기울기와 Y 절편을 계산한다.
+                double dL_A = (dL_P2_Y - dL_P1_Y) / (dL_P2_X - dL_P1_X);
+                double dL_B = dL_P1_Y - dL_A * (dL_P1_X);
+
+                /// 라인의 직선방정식에 점의 X 값을 입력하여 Y 값을 계산한다.
+                double dP_Calc_Y = dL_A * dP_X + dL_B;
+
+                /// 계산된 Y 값과 좌표 Y 값이 일치하면 직선의 방정식위에 있는 점이다.
+                if (isEqual(dP_Calc_Y, dP_Y))
+                {
+                    /// 직선의 방정식 위에 있는 점 중에서 실제 라인 위에 있는 점인지를 판단한다.
+                    if ((round(dBigX) >= round(dP_X) && round(dSmallX) <= round(dP_X)) && (round(dBigY) >= round(dP_Y) && round(dSmallY) <= round(dP_Y)))
+                        return true;
+                }
+            }
+            
+            return false;
+        }
+
+        /// <summary>
+        /// 두 라인의 접촉을 확인한다.
+        /// 
+        /// 하나의 선에 다른 선의 양 절점이 올라탔는지를 확인해서 접촉을 판단한다.
+        /// </summary>
+        public bool isContacted(CLine firstLine, CLine secondLine)
+        {
+            // 첫번째 라인에 두번째 라인의 양점이 올라갔는지를 판단한다.
+            if (true == isPerchedOnLine(firstLine, secondLine.m_startPoint))
+                return true;
+
+            if (true == isPerchedOnLine(firstLine, secondLine.m_endPoint))
+                return true;
+
+            // 두번째 라인에 첫번째 라인의 양점이 올라갔는지를 판단한다.
+            if (true == isPerchedOnLine(secondLine, firstLine.m_startPoint))
+                return true;
+
+            if (true == isPerchedOnLine(secondLine, firstLine.m_endPoint))
+                return true;
+
+            return false;
+        }
+        
+        /// <summary>
+        /// Face 의 면적을 계산한다.
+        /// 단, 다각형의 면적 계산은 정확하지 않다. (개선 필요함)
+        ///
+        /// 면적계산을 상대좌표를 상관이 없기 때문에 사용한다.
+        /// </summary>
+        /// <returns>Face 면적</returns>
+        public double calcArea(CFace face)
+        {
+            double dArea = 0;
+
+            double minX = 0;
+            double maxX = 0;
+            double minY = 0;
+            double maxY = 0;
+
+            /// Rectangle 은 4 좌표의 평균점을 사용한다.
+            if (face.FaceType == EMFaceType.RECTANGLE)
+            {
+                face.getMinMaxX(ref minX, ref maxX);
+                face.getMinMaxY(ref minY, ref maxY);
+
+                /// 가로, 세로 곱
+                return (maxX - minX) * (maxY - minY);
+            }
+            /// Polygon 의 다각형 면적 계산은 단순한 형상에서만 가능하고 오차가 있는 것으로 판단된다.
+            /// 추후 : 검증하라.
+            else
+            {
+                /// The last vertex is the 'previous' one to the first
+                int j = face.RelativePointList.Count - 1;
+
+                for (int i = 0; i < face.RelativePointList.Count; i++)
+                {
+                    dArea += (face.RelativePointList[j].m_dX + face.RelativePointList[i].m_dX) * (face.RelativePointList[j].m_dY - face.RelativePointList[i].m_dY);
+
+                    j = i;  /// j is previous vertex to i
+                }
+                return Math.Abs(dArea / 2.0f);
+            }
+        }
+
+        /// <summary>
+        /// 재귀호출을 사용해서 FACE 내부점을 찾아낸다.
+        /// 재질 블럭점을 찾는 것이기 때문에 절대좌표를 사용해야 한다.
+        /// 
+        /// 참고 사이트 : http://bowbowbow.tistory.com/24
+        /// </summary>
+        /// <param name="minX">내부점을 찾는 구간의 X 점 최소값</param>
+        /// <param name="maxX">내부점을 찾는 구간의 X 점 최대값</param>
+        /// <param name="baseY">내부 좌표값을 찾은 Y 위치 </param>
+        /// <returns></returns>
+        public CPoint findInsidePoint(CFace face, double minX, double maxX, double baseY)
+        {
+            int nRightIntersection = 0;
+            int nLeftIntersection = 0;
+
+            // 자리수 정리
+            minX = round(minX);
+            maxX = round(maxX);
+            baseY = round(baseY);
+
+            double centerX = (minX + maxX) / 2.0f;
+
+            CLine rightLine = new CLine();
+            CLine leftLine = new CLine();
+
+            /// create a right check line
+            rightLine.m_startPoint.m_dX = centerX;
+            rightLine.m_startPoint.m_dY = baseY;
+            rightLine.m_endPoint.m_dX = 1e300;
+            rightLine.m_endPoint.m_dY = baseY;
+
+            /// create a left check line
+            leftLine.m_startPoint.m_dX = centerX;
+            leftLine.m_startPoint.m_dY = baseY;
+            leftLine.m_endPoint.m_dX = -1e300;
+            leftLine.m_endPoint.m_dY = baseY;
+
+            /// 매번 생성하는 Property 이기 때문에 
+            /// LineList 는 새로운 List에  담는 동작 한번만 호출하고, 사용은 새로운 List 를 사용한다.
+            List<CLine> listAbsoluteLine = new List<CLine>();
+            listAbsoluteLine = face.AbsoluteLineList;
+
+            foreach (CLine line in listAbsoluteLine)
+            {
+                if (true == isIntersected(line, rightLine))
+                    nRightIntersection++;
+
+                if (true == isIntersected(line, leftLine))
+                    nLeftIntersection++;
+            }
+
+            CPoint point = new CPoint();
+
+            /// 양측이 홀수이면 Inside Point 이다.
+            if (EMNumberKind.ODD == getNumberKind(nRightIntersection) && EMNumberKind.ODD == getNumberKind(nLeftIntersection))
+            {
+                point.m_dX = centerX;
+                point.m_dY = baseY;
+
+                return point;
+            }
+            /// 왼쪽이 짝수이면 X 값의 최소값과 중심값 사이의 중점을 다시 확인한다.
+            else if (EMNumberKind.EVEN == getNumberKind(nLeftIntersection))
+            {
+                return findInsidePoint(face, minX, centerX, baseY);
+            }
+            /// 오른쪽이 짝수이면 X 값의 중심값과 최대값 사이의 중점을 다시 확인한다.
+            else if (EMNumberKind.EVEN == getNumberKind(nRightIntersection))
+            {
+                return findInsidePoint(face, centerX, maxX, baseY);
+            }
+            else
+            {
+                /// Block Point 를 찾기 위해서 findInsidePoint() 를 호출할 때
+                /// Face 형상의 문제로 오류가 발생하여 Face 바깥의 지점으로 계산이 리턴되면
+                /// Block Point 가 추가되지 못해서
+                /// FEMM 에서 Block Point 에 재질 인가 할 때 다른 Block Point 에 인가되는 문제가 발생한다.
+                /// 
+                /// 따라서 findInsidePoint() 에서 내부점을 찾지 못할 때는
+                /// 중심의 좌표값을 넘기지 않고 null 을 리턴하여 Block Point 재질 설정 동작을 막는다.
+                CNotice.noticeWarning("특정 부품의 재질 설정 좌표점을 계산하지 못하였습니다.\n부품들의 형상을 확인 요청 드립니다.");
+                return null;
+            }
+        }
+        
+        /// <summary>
+        /// 짝수인지 홀수인지 아니면 영인지를 판단한다.
+        /// </summary>
+        private EMNumberKind getNumberKind(int num)
+        {
+            // even number
+            if (num == 0)
+                return EMNumberKind.ZERO;
+            // even number
+            else if (num % 2 == 0)
+                return EMNumberKind.EVEN;
+            // odd number
+            else
+                return EMNumberKind.ODD;
+        }
+
     }
 }

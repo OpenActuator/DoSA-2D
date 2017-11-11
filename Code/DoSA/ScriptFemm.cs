@@ -20,7 +20,7 @@ namespace Scripts
 
     public static class CProgramFEMM
     {
-        private static IActiveFEMM m_accessFEMM = null;
+        private static IActiveFEMM m_FEMM = null;
 
         #region Constants
 
@@ -61,25 +61,55 @@ namespace Scripts
             {   
                 if (checkFEMM() != true)
                 {
-                    m_accessFEMM = new ActiveFEMMClass();
+                    m_FEMM = new ActiveFEMMClass();
                 }
 
-                return m_accessFEMM;
+                return m_FEMM;
             }
 
             private set
             {
-                m_accessFEMM = value;
+                m_FEMM = value;
             }
         }
 
-        public static void moveFEMM(int iPosX, int iPosY, int iSizeX = 500, int iSizeY = 900)
+        public static void loadProcessOfFEMM()
+        {
+            if (checkFEMM() != true)
+            {
+                m_FEMM = new ActiveFEMMClass();
+            }
+        }
+
+        public static bool isOpenedWindow()
         {
             Process[] processList = Process.GetProcessesByName("femm");
 
             if (processList.Length > 1)
             {
-                CNotice.noticeWarning("FEMM 프로그램이 하나만 실행되어 있어야 합니다.");
+                CNotice.noticeWarning("DoSA 실행 중에 FEMM 프로그램은 하나만 실행되어야 합니다.");
+                return false;
+            }
+
+            if (processList.Length != 1)
+                return false;
+
+            Process femmProcess = processList[0];
+
+            // Window 닫혀 있으면 Main Window Handle 값이 null 이다.
+            if (femmProcess.MainWindowTitle != "")
+                return true;
+            else
+                return false;
+        }
+
+        public static void moveFEMM(int iPosX, int iPosY, int iSizeX = 500, int iSizeY = 900)
+        {
+            Process[] processList = Process.GetProcessesByName("femm");
+               
+            if (processList.Length > 1)
+            {
+                CNotice.noticeWarning("DoSA 실행 중에 FEMM 프로그램은 하나만 실행되어야 합니다.");
                 return;
             }
 
@@ -98,7 +128,7 @@ namespace Scripts
 
             if (processList.Length > 1)
             {
-                CNotice.noticeWarning("FEMM 프로그램이 하나만 실행되어 있어야 합니다.");
+                CNotice.noticeWarning("DoSA 실행 중에 FEMM 프로그램은 하나만 실행되어야 합니다.");
                 return;
             }
 
@@ -116,12 +146,13 @@ namespace Scripts
             SetForegroundWindow(femmProcess.MainWindowHandle);
         }
 
-        public static void killProcessOfFEMM()
+        public static void killProcessOfFEMMs()
         {
             int nCount = 0;
 
             Process[] processList = null;
 
+            // 실행되어 있는 모든 FEMM 을 종료시킨다.
             do
             {
                 processList = Process.GetProcessesByName("femm");
@@ -196,6 +227,11 @@ namespace Scripts
                 m_strBC = "\"" + "BC" + "\"";
 
                 string strCommand;
+
+                /// FEMM 이 실행되지 않은 상태에서 sendCommand 만 호출하면 FEMM 이 실행된다.
+                /// 그런데 newdocument(0) 란 명령어로 FEMM 을 실행 시키면 실행과 동시에 Document 가 만들어질 때 문제가 발생한다.
+                /// 이를 해결하기 위해서 아래와 같이 FEMM 프로세스를 먼저 호출하고 Document 를 연다 
+                CProgramFEMM.loadProcessOfFEMM();
 
                 // 스크립트 생성과 동시에 전자기장 모델를 시작한다.
                 strCommand = "newdocument(0)";
@@ -813,53 +849,52 @@ namespace Scripts
         /// 2. 해결방안
         /// FEMM 이 살아있는지를 확인하기 위하여 임의의 한점을 생성하고 위치를 확인하는 방법을 사용한다.
         /// </summary>
-        public bool isLiveFEMM()
-        {
-            string strCommand;
-            string strReturn;
+        //public bool isLiveFEMM()
+        //{
+        //    string strCommand;
+        //    string strReturn;
 
-            double farX = 1e10;
-            double farY = 1e10;
+        //    double farX = 1e10;
+        //    double farY = 1e10;
 
-            try
-            {
-                // 확인점을 추가, 선택, 삭제하기 전에 기존 선택된 객체들은 선택을 해제 해주어야 한다.
-                strCommand = "mi_clearselected()";
-                sendCommand(strCommand);
+        //    try
+        //    {
+        //        // 확인점을 추가, 선택, 삭제하기 전에 기존 선택된 객체들은 선택을 해제 해주어야 한다.
+        //        strCommand = "mi_clearselected()";
+        //        sendCommand(strCommand);
 
-                /// nodes, segments, arcsegments, blocks, group
-                strCommand = "mi_seteditmode(\"nodes\")";
-                sendCommand(strCommand);
+        //        /// nodes, segments, arcsegments, blocks, group
+        //        strCommand = "mi_seteditmode(\"nodes\")";
+        //        sendCommand(strCommand);
 
-                /// 아주 먼곳에 임의의 한점을 생성한다
-                strCommand = "mi_addnode(" + farX.ToString() + "," + farY.ToString() + ")";
-                sendCommand(strCommand);
+        //        /// 아주 먼곳에 임의의 한점을 생성한다
+        //        strCommand = "mi_addnode(" + farX.ToString() + "," + farY.ToString() + ")";
+        //        sendCommand(strCommand);
                         
-                strCommand = "mi_selectnode(" + farX.ToString() + "," + farY.ToString() + ")";
-                strReturn = sendCommand(strCommand);
+        //        strCommand = "mi_selectnode(" + farX.ToString() + "," + farY.ToString() + ")";
+        //        strReturn = sendCommand(strCommand);
 
-                /// 확인 후 삭제한다
-                strCommand = "mi_deleteselectednodes()";
-                sendCommand(strCommand);
+        //        /// 확인 후 삭제한다
+        //        strCommand = "mi_deleteselectednodes()";
+        //        sendCommand(strCommand);
 
-                /// editmode 를 group 으로 바꾸어서 FEMM 마우스 동작을 막는다.
-                /// - refreshView() 전에 실행해야 한다. 
-                lockEdit();
+        //        /// editmode 를 group 으로 바꾸어서 FEMM 마우스 동작을 막는다.
+        //        /// - refreshView() 전에 실행해야 한다. 
+        //        lockEdit();
 
-                refreshView();
-            }
-            catch (Exception ex)
-            {
-                CNotice.printTrace(ex.Message);
-                return false;
-            }
+        //        refreshView();
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        CNotice.printTrace(ex.Message);
+        //        return false;
+        //    }
 
-            if (strReturn == "error")
-                return false;
-            else
-                return true;
-
-        }
+        //    if (strReturn == "error")
+        //        return false;
+        //    else
+        //        return true;
+        //}
 
         internal void clearSelected()
         {

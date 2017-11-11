@@ -19,21 +19,21 @@ namespace Nodes
     // Enum 사용목적
     // - Treeview ImageList 의 인덱스
     // - CNode 에서 상속받은 객체들의 종류 구분
-	public enum EMKind
-	{
-		PARTS,
-		COIL,
-		MAGNET,
-		STEEL,
-		EXPERIMENTS,
-		FORCE_EXPERIMENT,
-		STROKE_EXPERIMENT,
+    public enum EMKind
+    {
+        PARTS,
+        COIL,
+        MAGNET,
+        STEEL,
+        EXPERIMENTS,
+        FORCE_EXPERIMENT,
+        STROKE_EXPERIMENT,
         CURRENT_EXPERIMENT
-	};
+    };
 
     public class CNode
     {
-		public EMKind m_kindKey;
+        public EMKind m_kindKey;
 
         private string m_nodeName;
 
@@ -42,7 +42,7 @@ namespace Nodes
         public string NodeName
         {
             get { return m_nodeName; }
-            set { m_nodeName = value; } 
+            set { m_nodeName = value; }
         }
 
         // 작업파일 저장을 각 객체에서 진행하고 있다.
@@ -59,7 +59,7 @@ namespace Nodes
         // Design 디렉토리는 복사가 가능하기 때문에 아래의 디렉토리는 저장하지는 않는다
         public string m_strDesignDirName;
 
-        // Design 에 사용되는 부품이나 실험조건을 저장하는 List 이다.
+        // Design 에 사용되는 부품이나 시험조건을 저장하는 List 이다.
         private List<CNode> m_listNode = new List<CNode>();
 
         public bool m_bChanged;
@@ -138,11 +138,13 @@ namespace Nodes
             double dFaceArea = 0;
             double dSumArea = 0;
 
+            CShapeTools shapeTools = new CShapeTools();
+
             foreach (CNode node in m_listNode)
             {
                 if (node.GetType().BaseType.Name == "CParts")
                 {
-                    dFaceArea = ((CParts)node).Face.calcArea();
+                    dFaceArea = shapeTools.calcArea(((CParts)node).Face);
 
                     dSumArea += dFaceArea;
                 }
@@ -450,6 +452,154 @@ namespace Nodes
             }
 
             return false;
+        }
+
+        private bool isIntersectedAllLines()
+        {
+            List<CLine> listLineAll = new List<CLine>();
+            List<CLine> listAbsoluteLine = null;
+            CFace face = null;
+
+            foreach (CNode node in NodeList)
+            {
+                if (node.GetType().BaseType.Name == "CParts")
+                {
+                    CParts nodeParts = (CParts)node;
+
+                    face = nodeParts.Face;
+
+                    if (null != face)
+                    {
+                        listAbsoluteLine = face.AbsoluteLineList;
+
+                        /// 모든 라인들을 하나의 Line List 에 담는다.
+                        foreach (CLine line in listAbsoluteLine)
+                            listLineAll.Add(line);
+                    }
+                }
+            }
+
+            CShapeTools shapeTools = new CShapeTools();
+
+            for (int i = 0; i < listLineAll.Count - 1; i++)
+            {
+                for (int j = i + 1; j < listLineAll.Count; j++)
+                {
+                    if (true == shapeTools.isIntersected(listLineAll[i], listLineAll[j]))
+                    {
+                        return true;
+                    }
+                }
+            }
+
+            return false;
+        }
+        
+        private bool isContactedMovingParts()
+        {
+            List<CLine> listMovingPartLines = new List<CLine>();
+            List<CLine> listFixedPartLines = new List<CLine>();
+            List<CLine> listAbsoluteLine = null;
+            CFace face = null;
+
+            foreach (CNode node in NodeList)
+            {
+                if (node.GetType().BaseType.Name == "CParts")
+                {
+                    CParts nodeParts = (CParts)node;
+
+                    face = nodeParts.Face;
+
+                    if (null != face)
+                    {
+                        listAbsoluteLine = face.AbsoluteLineList;
+
+                        if(nodeParts.MovingPart == EMMoving.MOVING)
+                        {
+                            /// Moving Part 라인들을 하나의 Line List 에 담는다.
+                            foreach (CLine line in listAbsoluteLine)
+                                listMovingPartLines.Add(line);
+                        }
+                        else
+                        {
+                            /// Moving Part 라인들을 하나의 Line List 에 담는다.
+                            foreach (CLine line in listAbsoluteLine)
+                                listFixedPartLines.Add(line);
+                        }
+
+                    }
+                }
+            }
+
+            CShapeTools shapeTools = new CShapeTools();
+
+            for (int i = 0; i < listMovingPartLines.Count - 1; i++)
+            {
+                for (int j = i + 1; j < listFixedPartLines.Count; j++)
+                {
+                    if (true == shapeTools.isContacted(listMovingPartLines[i], listFixedPartLines[j]))
+                    {
+                        return true;
+                    }
+                }
+            }
+
+            return false;
+        }
+
+
+        internal bool isDesignShapeOK(double dStroke = 0)
+        {
+            CFace face = null;
+            bool bError = false;
+            CParts nodeParts = null;
+
+            // Moving Part 를 Stroke 만큼 이동시킨다.
+            foreach (CNode node in NodeList)
+            {
+                if (node.GetType().BaseType.Name == "CParts")
+                {
+                    nodeParts = (CParts)node;
+
+                    if(nodeParts.MovingPart == EMMoving.MOVING)
+                    {
+                        face = nodeParts.Face;
+                        face.BasePoint.m_dY = face.BasePoint.m_dY + dStroke;
+                    }
+                }
+            }
+
+            if (isIntersectedAllLines() == true)
+            {
+                CNotice.noticeWarning("Design 의 파트간의 라인 교차가 발생 했습니다.");
+                bError = true;
+            }
+
+            if (isContactedMovingParts() == true)
+            {
+                CNotice.noticeWarning("Design 의 구동 파트와 고정 파트간의 접촉이 발생 했습니다.");
+                bError = true;
+            }
+
+            // Moving Part 를 Stroke 만큼 복원 시킨다.
+            foreach (CNode node in NodeList)
+            {
+                if (node.GetType().BaseType.Name == "CParts")
+                {
+                    nodeParts = (CParts)node;
+
+                    if (nodeParts.MovingPart == EMMoving.MOVING)
+                    {
+                        face = nodeParts.Face;
+                        face.BasePoint.m_dY = face.BasePoint.m_dY - dStroke;
+                    }
+                }
+            }
+
+            if (bError == true)
+                return false;
+            else
+                return true;
         }
     }
 }

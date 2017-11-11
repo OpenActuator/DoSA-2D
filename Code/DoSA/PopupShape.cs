@@ -20,6 +20,7 @@ namespace Shapes
     {
         const int POPUP_SIZE_X = 380;
         const int POPUP_SIZE_Y = 580;
+
         const int MIN_POLYGON_CONTROL_COUNT = 4;
         const int RECTANGLE_CONTROL_COUNT = 2;
 
@@ -27,7 +28,7 @@ namespace Shapes
 
         private List<CPointControl> m_listPointControl = null;
 
-        public string m_strPartName = string.Empty;
+        public string m_strPartName;
 
         /// <summary>
         /// PopupShape 의 FaceType 변경만으로 Popup 창의 형태와 초기화가 이루어진다.
@@ -129,6 +130,8 @@ namespace Shapes
 
             textBoxBaseX.Text = "0.0";
             textBoxBaseY.Text = "0.0";
+
+            m_strPartName = string.Empty;
         }
 
         /// <summary>
@@ -243,8 +246,8 @@ namespace Shapes
         /// </summary>
         private void addRectanglePointControl(Panel panel)
         {
-            this.addPointControl(new CPointControl(), false, panel);
-            this.addPointControl(new CPointControl(), false, panel);
+            for(int i=0 ; i< RECTANGLE_CONTROL_COUNT; i++)
+                this.addPointControl(new CPointControl(), false, panel);
 
             this.resetSequence();
         }
@@ -254,11 +257,9 @@ namespace Shapes
         /// </summary>
         private void addPolylinePointControl(Panel panel)
         {
-            this.addPointControl(new CPointControl(), true, panel);
-            this.addPointControl(new CPointControl(), true, panel);
-            this.addPointControl(new CPointControl(), true, panel);
-            this.addPointControl(new CPointControl(), true, panel);
-
+            for(int i=0 ; i< MIN_POLYGON_CONTROL_COUNT; i++)
+                this.addPointControl(new CPointControl(), true, panel);
+       
             this.resetSequence();
         }
 
@@ -274,16 +275,19 @@ namespace Shapes
 
             try
             {
-                /// addControlPointLine() 이 호출될 때 실행되지 않고 이벤트가 발생할 때 동작한다.
-                /// addControlPointLine() 안에 있어서 넘어오는 파라메터에 바로 접근함으로서 
-                /// Event 호출에서 문제가 되는 변수 접근 문제를 해결할 수 있다.
+                #region------------------------- 이벤트 호출 영역 ------------------------------
+                /// 이벤트 호출 영역은 addControlPointLine() 안에 있으나 호출 때 동작하는 영역이 아니다.
+                /// 단, 함수내에 있는 이유는 addControlPointLine() 안에 있어서
+                /// 파라메터로 넘어오는 변수를 직접 접근할 수 있어, 이벤트 함수의 변수 접근 문제를 해결했다.
+                /// 
                 pointControl.AddCoordinates += (s, e) =>
                 {
                     /// 추가 버튼 클릭했을때 현재 컨트롤 아래 추가
-                    /// 1. 컨트롤 추가
+                    /// - 컨트롤 추가 
+                    ///  * addPointControl() 의 호출 영역을 호출 한다.
                     CPointControl current = this.addPointControl(new CPointControl(), showButton, panel);
 
-                    /// 2. 컨트롤 정렬
+                    /// - 컨트롤 정렬
                     List<CPointControl> sortList = new List<CPointControl>();
                     for (int i = 0; i < panel.Controls.Count; i++)
                     {
@@ -311,7 +315,7 @@ namespace Shapes
                         if (this.panelPointLine.Controls.Count == RECTANGLE_CONTROL_COUNT)
                         {
                             e.Cancel = true;
-                            MessageBox.Show("Rectangle 일때는 좌표가 2개 필요하므로 삭제할 수 없습니다.");
+                            CNotice.noticeWarning("Rectangle 일때는 최소한 2개의 좌표가 필요합니다.");
                             return;
                         }
                     }
@@ -320,7 +324,7 @@ namespace Shapes
                         if (this.panelPointLine.Controls.Count <= MIN_POLYGON_CONTROL_COUNT)
                         {
                             e.Cancel = true;
-                            MessageBox.Show("Polygon 일때는 좌표가 4개 이상 필요하므로 삭제할 수 없습니다.");
+                            CNotice.noticeWarning("Polygon 일때는 최소한 4개의 좌표가 필요합니다.");
                             return;
                         }
                     }
@@ -330,14 +334,31 @@ namespace Shapes
                 pointControl.RemoveComplete += (s, e) =>
                 {
                     this.resetSequence();
+
+                    /// 1. PointControl 삭제때 Add 버튼 하나만 표시하기
+                    /// 
+                    /// 정렬이 끝난 후에 PointControl Panel 의 가장 아래 PointControl ADD 버튼만 보이게 하여
+                    /// PointControl 의 삽입이 항상 아래에서만 이루어지도록 해서 Tab 의 문제를 해결 했다.
+                    for (int i = 0; i < panelPointLine.Controls.Count; i++)
+                    {
+                        if (i == 0)
+                            ((CPointControl)panelPointLine.Controls[i]).showAddButton();
+                        else
+                            ((CPointControl)panelPointLine.Controls[i]).hideAddButton();
+                    }
                 };
+                #endregion
+
+                #region------------------------ 함수 호출 영역 -----------------------------
 
                 panel.Controls.Add(pointControl);
                 pointControl.BringToFront();
 
                 this.resetSequence();
 
-                /// PointControl Panel 에서 가장 아래의 PointControl ADD 버튼만 보이게 하여
+                /// 2. PointControl 추가때 Add 버튼 하나만 표시하기
+                /// 
+                /// 정렬이 끝난 후에 PointControl Panel 의 가장 아래 PointControl ADD 버튼만 보이게 하여
                 /// PointControl 의 삽입이 항상 아래에서만 이루어지도록 해서 Tab 의 문제를 해결 했다.
                 for (int i = 0; i < panelPointLine.Controls.Count; i++)
                 {
@@ -348,6 +369,8 @@ namespace Shapes
                 }
 
                 return pointControl;
+
+                #endregion
             }
             catch (Exception ex)
             {
@@ -358,7 +381,11 @@ namespace Shapes
            
         
         /// <summary>
-        /// 순번 다시 채번
+        /// Point Control 은 추가나 삭제가 가능하다.
+        /// 따라서 각 Point Control 의 순번을 List 안에서의 번호를 일치시킨다.
+        /// 
+        /// 추가나 삭제때 꼭 호출이 되어야 한다.
+        /// (단, 추가는 마지막 Point Control 에서만 이루어지도록 해서 순서 변경이 없도록 하였다)
         /// </summary>
         private void resetSequence()
         {
@@ -373,14 +400,6 @@ namespace Shapes
             {
                 CNotice.printTrace(ex.Message);
             }  
-        }
-
-        /// <summary>
-        /// 좌표 clear
-        /// </summary>
-        public void clearControls()
-        {
-            this.panelPointLine.Controls.Clear();
         }
 
         private void btnAdd_Click(object sender, EventArgs e)
@@ -405,8 +424,10 @@ namespace Shapes
             this.DialogResult = DialogResult.Cancel;
         }
 
-        private bool verifyInputData()
+        private bool isInputDataOK()
         {
+            /// 1. 입력값 확인
+            /// 
             if (textBoxPartName.Text.Length == 0)
             {
                 CNotice.noticeWarning("파트 이름을 입력해 주십시요");
@@ -428,24 +449,29 @@ namespace Shapes
                 }
             }
 
-            /// 2. 형상 유효성 확인
-            /// 
-            CFace face = makeFace();
+            string strX1, strY1, strX2, strY2;
 
-            if( face == null )
+            /// 동일한 좌표값이 점이 중복으로 있는 경우
+            for (int i = 0; i < ListPointControl.Count - 1; i++)
             {
-                CNotice.noticeWarning("형상 생성에 문제가 있습니다.");
-                return false;
-            }
-                
-            if( false == face.checkFaceShape())
-            {
-                CNotice.noticeWarning("Face 형상에 문제가 발생했습니다. \n(라인 교차 or 음의 X 좌표)");
-                return false;
+                for (int j = i + 1; j < ListPointControl.Count; j++)
+                {
+                    strX1 = ListPointControl[i].StrCoordX.Trim();
+                    strY1 = ListPointControl[i].StrCoordY.Trim();
+                    strX2 = ListPointControl[j].StrCoordX.Trim();
+                    strY2 = ListPointControl[j].StrCoordY.Trim();
+
+                    if(strX1 == strX2 && strY1 == strY2)
+                    {
+                        CNotice.noticeWarning("동안한 좌표의 두점이 존재합니다.");
+                        return false;
+                    }
+                }
             }
 
-            /// 형상의 초기생성인지 수정인지를 m_strPartName 의 유무로 파악한다.
-            if(m_strPartName.Length == 0)
+            /// 파트 초기 생성때는 m_strPartName = string.Empty 로 PopupShape 객체를 생성하고,
+            /// 파트 수정 때는 m_strPartName 에 이름을 넣어서  PopupShape 객체를 생성하기 때문에 파트의 수정인지를 m_strPartName 로 파악한다.
+            if (m_strPartName.Length == 0)
             {
                 /// [문제]
                 ///  - Form 에서는 Parent를 사용할 수 없어 Owner 속성을 사용하지만
@@ -474,13 +500,38 @@ namespace Shapes
         private void buttonOK_Click(object sender, EventArgs e)
         {
             /// 완벽한 입력인 상태에서만 Draw 및 저장이 가능한다.
-            bool retVerify = verifyInputData();
+            if ( isInputDataOK() == false)
+                return;
 
-            if(retVerify == true)
+            /// 형상 유효성 확인
+            /// 
+            CFace face = makeFace();
+
+            if (face == null)
             {
-                m_strPartName = textBoxPartName.Text;
-                this.DialogResult = DialogResult.OK;
+                CNotice.noticeWarning("형상 생성에 문제가 발생 하였습니다.");
+                return;
             }
+
+            if (false == face.isShapeOK())
+            {
+                CNotice.printTrace("Face 형상에 문제가 발생했다.");
+                return;
+            }
+            
+            m_strPartName = textBoxPartName.Text;
+            this.DialogResult = DialogResult.OK;
+
+            FormMain formMain = ((FormMain)this.Owner);
+
+            if (formMain == null)
+            {
+                CNotice.printTrace("부모 창인 Main Form 을 얻어오지 못했다.");
+                return;
+            }
+
+            // 혹시 FEMM 의 화면이 닫힌 경우 FEMM 의 화면을 복원합니다.
+            formMain.reopenFEMM();
         }
 
         // Base Point 와 상대좌표로 좌표값이 저장되는 Face 가 생성된다.
@@ -558,57 +609,66 @@ namespace Shapes
             try
             {
                 /// 완벽한 입력인 상태에서만 Draw 가 가능한다.
-                bool retVerify = verifyInputData();
+                bool retVerify = isInputDataOK();
 
-                if (retVerify == true)
+                if (retVerify == false)
+                    return;
+
+                /// [문제]
+                ///  - Form 에서는 Parent를 사용할 수 없어 Owner 속성을 사용하지만
+                ///    종종 Owner 가 null 로 넘어오는 문제가 발생한다.
+                /// [해결]
+                ///  - PopupShape 창을 생성하기 전에 Owner 속성을 FormMain 으로 초기화 해 두어야
+                ///    확실하게 FormMain 을 얻을 수 있다.
+                FormMain formMain = ((FormMain)this.Owner);
+
+                if (formMain == null)
                 {
-                    /// [문제]
-                    ///  - Form 에서는 Parent를 사용할 수 없어 Owner 속성을 사용하지만
-                    ///    종종 Owner 가 null 로 넘어오는 문제가 발생한다.
-                    /// [해결]
-                    ///  - PopupShape 창을 생성하기 전에 Owner 속성을 FormMain 으로 초기화 해 두어야
-                    ///    확실하게 FormMain 을 얻을 수 있다.
-                    FormMain formMain = ((FormMain)this.Owner);
+                    CNotice.printTrace("부모 창인 Main Form 을 얻어오지 못했다.");
+                    return;
+                }
+                    
+                /// 형상 유효성 확인
+                /// 
+                CFace face = makeFace();
 
-                    if (formMain == null)
+                if (face == null)
+                {
+                    CNotice.noticeWarning("형상 생성에 문제가 발생 하였습니다.");
+                    return;
+                }
+
+                if (false == face.isShapeOK())
+                {
+                    CNotice.printTrace("Face 형상에 문제가 발생했다.");
+                    return ;
+                }
+                    
+                CScriptFEMM femm = formMain.m_femm;
+
+                femm.deleteAll();
+
+                /// 1. 작업 중인 Face 를 제외하고 형상 그리기
+                foreach (CNode node in formMain.m_design.NodeList)
+                {
+                    if (node.GetType().BaseType.Name == "CParts")
                     {
-                        CNotice.printTrace("부모 창인 Main Form 을 얻어오지 못했다.");
-                        return;
-                    }
-
-                    CScriptFEMM femm = formMain.m_femm;
-
-                    femm.deleteAll();
-
-                    /// 1. 혹시 수정중이라면, 현재 작업 중인 Face 를 제외하고 형상 그리기
-                    foreach (CNode node in formMain.m_design.NodeList)
-                    {
-                        if (node.GetType().BaseType.Name == "CParts")
+                        if (node.NodeName != m_strPartName)
                         {
-                            if (node.NodeName != m_strPartName)
-                            {
-                                ((CParts)node).Face.drawFace(femm);
-                            }
+                            ((CParts)node).Face.drawFace(femm);
                         }
                     }
-
-                    /// 2. 현재 수정중이거나 생성중인 Face 의 형상 그리기 
-                    CFace face = makeFace();
-
-                    if (null != face)
-                    {
-                        face.drawFace(femm);
-                    }
-                    else
-                    {
-                        CNotice.noticeWarning("형상이 정상적으로 생성되지 못하였습니다.");
-                        CNotice.printTrace("형상이 정상적으로 생성되지 못했다.");
-                    }
-
-                    CProgramFEMM.showFEMM();
-
-                    //femm.zoomFit();
                 }
+
+                /// 2. 작업중인 Face 형상 그리기
+                face.drawFace(femm);
+                   
+                // FEMM 을 최상위로 올린다.
+                CProgramFEMM.showFEMM();
+
+                // 혹시 FEMM 의 화면이 닫힌 경우 FEMM 의 화면을 복원합니다.
+                formMain.reopenFEMM();
+    
             }
             catch (Exception ex)
             {
@@ -665,7 +725,7 @@ namespace Shapes
 
                 CFace face = null; 
 
-                // 모든 데이터가 입력되어 있는 상태에서 수정만 일어나는 경우
+                // 모든 데이터가 입력된 경우는 폐곡선의 정상적인 Face 를 그린다.
                 if(retCheck == true)
                 {
                     face = makeFace();
@@ -679,14 +739,19 @@ namespace Shapes
                         CNotice.printTrace("형상이 정상적으로 생성 되지 못했다.");
                     }
                 }
-                // 모든 데이터가 아직 입력되지 않은 상태
+                // 모든 데이터가 아직 입력되지 않은 상태는 입력중인 데이터만으로 그림을 그린다.
                 else
                 {
-                    float fX, fY, fPX, fPY;
-                    fX = fY = fPX = fPY = 0;
+                    double dP1_X, dP1_Y, dP2_X, dP2_Y;
+                    double dBase_X, dBase_Y;
 
                     bool bArc, bArcDirection;
+
+                    dP1_X = dP1_Y = dP2_X = dP2_Y = dBase_X = dBase_Y = 0;                   
                     bArc = bArcDirection = false;
+
+                    dBase_X = Double.Parse(textBoxBaseX.Text.Trim());
+                    dBase_Y = Double.Parse(textBoxBaseY.Text.Trim());
 
                     for (int i = 0; i < ListPointControl.Count; i++)
                     {
@@ -695,18 +760,19 @@ namespace Shapes
                         if (ListPointControl[i].StrCoordX.Trim().Length == 0)
                             retCheck = false;
                         else
-                            fX = (float)Double.Parse(ListPointControl[i].StrCoordX.Trim());
+                            dP1_X = Double.Parse(ListPointControl[i].StrCoordX.Trim()) + dBase_X;
 
                         if (ListPointControl[i].StrCoordY.Trim().Length == 0)
                             retCheck = false;
                         else
-                            fY = (float)Double.Parse(ListPointControl[i].StrCoordY.Trim());
+                            dP1_Y = Double.Parse(ListPointControl[i].StrCoordY.Trim()) + dBase_Y;
 
+                        /// X, Y 값이 모두 입력된 Point Control 인 경우
                         if (retCheck == true)
                         {
                             if (i == 0)
                                 /// 사각형, 다각형 모두 적용된다.
-                                femm.drawPoint(fX, fY);
+                                femm.drawPoint(dP1_X, dP1_Y);
                             else
                             {
                                 if(this.FaceType == EMFaceType.RECTANGLE)
@@ -719,22 +785,21 @@ namespace Shapes
                                 bArcDirection = ListPointControl[i].IsArcDirection;
                                     
                                 if (bArc == true)
-                                    femm.drawArc(fPX, fPY, fX, fY, bArcDirection);
+                                    femm.drawArc(dP2_X, dP2_Y, dP1_X, dP1_Y, bArcDirection);
                                 else
-                                    femm.drawLine(fPX, fPY, fX, fY);
+                                    femm.drawLine(dP2_X, dP2_Y, dP1_X, dP1_Y);
                             }
 
-                            fPX = fX;
-                            fPY = fY;
+                            // 이번 점을 이전 점으로 저장한다.
+                            dP2_X = dP1_X;
+                            dP2_Y = dP1_Y;
                         }
                         /// 채워지지 않은 좌표값을 발견하면 바로 빠져 나간다
                         else
                             break;
                     }
                 }
-
-                //femm.zoomFit();
-            }
+             }
             catch (Exception ex)
             {
                 CNotice.printTrace(ex.Message);
@@ -745,9 +810,13 @@ namespace Shapes
         {
             FormMain formMain = ((FormMain)this.Owner);
 
-            CScriptFEMM femm = formMain.m_femm;
+            if (formMain == null)
+            {
+                CNotice.printTrace("부모 창인 Main Form 을 얻어오지 못했다.");
+                return;
+            }
 
-            femm.zoomFit();
+            formMain.m_femm.zoomFit();
 
             CProgramFEMM.showFEMM();
         }
@@ -765,7 +834,21 @@ namespace Shapes
         {
             drawTemporaryFace();
         }
-        
+
+        private void textBoxBaseX_KeyUp(object sender, KeyEventArgs e)
+        {
+            /// Enter 에서만 동작한다.
+            if (e.KeyCode == Keys.Enter)
+            {
+                drawTemporaryFace();
+            }
+        }
+
+        private void textBoxBaseX_Leave(object sender, EventArgs e)
+        {
+            drawTemporaryFace();
+        }    
+    
         private void textBoxBaseY_KeyPress(object sender, KeyPressEventArgs e)
         {
             /// 숫자, 소수점, Back, 엔터만 입력 가능하도록함
@@ -785,5 +868,7 @@ namespace Shapes
                 e.Handled = true;
             }
         }
+
+
     }
 }

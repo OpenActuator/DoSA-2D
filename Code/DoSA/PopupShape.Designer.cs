@@ -326,6 +326,8 @@
             this.textBoxBaseX.TabIndex = 0;
             this.textBoxBaseX.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
             this.textBoxBaseX.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.textBoxBaseX_KeyPress);
+            this.textBoxBaseX.KeyUp += new System.Windows.Forms.KeyEventHandler(this.textBoxBaseX_KeyUp);
+            this.textBoxBaseX.Leave += new System.EventHandler(this.textBoxBaseX_Leave);
             // 
             // textBoxBaseY
             // 
@@ -370,6 +372,7 @@
             this.Controls.Add(this.panelBotton);
             this.Name = "PopupShape";
             this.Padding = new System.Windows.Forms.Padding(4);
+            this.ShowIcon = false;
             this.Text = "형상 입력";
             this.panelBotton.ResumeLayout(false);
             this.panelFaceType.ResumeLayout(false);

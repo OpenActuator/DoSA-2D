@@ -149,7 +149,7 @@ namespace Experiments
         [DisplayNameAttribute("Final Stroke [mm]"), CategoryAttribute("Stroke Fields"), DescriptionAttribute("최종 변위")]
         public double FinalStroke { get; set; }
 
-        [DisplayNameAttribute("Step Count"), CategoryAttribute("Stroke Fields"), DescriptionAttribute("실험 등분 수")]
+        [DisplayNameAttribute("Step Count"), CategoryAttribute("Stroke Fields"), DescriptionAttribute("시험 등분 수")]
         public int StepCount { get; set; }
 
         public CStrokeExperiment()
@@ -282,7 +282,7 @@ namespace Experiments
         [DisplayNameAttribute("Final Current [A]"), CategoryAttribute("Current Fields"), DescriptionAttribute("최종 전류")]
         public double FinalCurrent { get; set; }
 
-        [DisplayNameAttribute("Step Count"), CategoryAttribute("Current Fields"), DescriptionAttribute("실험 등분 수")]
+        [DisplayNameAttribute("Step Count"), CategoryAttribute("Current Fields"), DescriptionAttribute("시험 등분 수")]
         public int StepCount { get; set; }
 
         public CCurrentExperiment()

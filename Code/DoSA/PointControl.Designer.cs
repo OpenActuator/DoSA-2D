@@ -100,6 +100,8 @@
             this.textBoxX.TabIndex = 0;
             this.textBoxX.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
             this.textBoxX.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.textBoxX_KeyPress);
+            this.textBoxX.KeyUp += new System.Windows.Forms.KeyEventHandler(this.textBoxX_KeyUp);
+            this.textBoxX.Leave += new System.EventHandler(this.textBoxX_Leave);
             // 
             // textBoxY
             // 
@@ -112,7 +114,7 @@
             this.textBoxY.KeyUp += new System.Windows.Forms.KeyEventHandler(this.textBoxY_KeyUp);
             this.textBoxY.Leave += new System.EventHandler(this.textBoxY_Leave);
             // 
-            // ControlPointLine
+            // CPointControl
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
@@ -124,7 +126,7 @@
             this.Controls.Add(this.checkBoxArcDirection);
             this.Controls.Add(this.checkBoxKind);
             this.Controls.Add(this.labelNo);
-            this.Name = "ControlPointLine";
+            this.Name = "CPointControl";
             this.Size = new System.Drawing.Size(336, 28);
             this.ResumeLayout(false);
             this.PerformLayout();

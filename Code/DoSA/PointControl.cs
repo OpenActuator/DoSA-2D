@@ -171,6 +171,20 @@ namespace Shapes
             ((PopupShape)this.Parent.Parent).drawTemporaryFace();
         }
 
+        private void textBoxX_KeyUp(object sender, KeyEventArgs e)
+        {
+            /// Enter 에서만 동작한다.
+            if (e.KeyCode == Keys.Enter)
+            {
+                ((PopupShape)this.Parent.Parent).drawTemporaryFace();
+            }
+        }
+
+        private void textBoxX_Leave(object sender, EventArgs e)
+        {
+            ((PopupShape)this.Parent.Parent).drawTemporaryFace();
+        }
+
         private void checkBoxKind_Click(object sender, EventArgs e)
         {
             ((PopupShape)this.Parent.Parent).drawTemporaryFace();
@@ -183,7 +197,7 @@ namespace Shapes
 
         #endregion
 
-        #region-------------------------- 입력문자 제한 기능 -----------------------------
+        #region-------------------------- 동작 제한 기능 -----------------------------
 
         private void textBoxX_KeyPress(object sender, KeyPressEventArgs e)
         {
@@ -205,8 +219,6 @@ namespace Shapes
             }
         }
 
-        #endregion
-        
         internal void hideAddButton()
         {
             buttonAdd.Visible = false;
@@ -216,6 +228,9 @@ namespace Shapes
         {
             buttonAdd.Visible = true;
         }
+
+        #endregion
+        
     }
 
     /// <summary>

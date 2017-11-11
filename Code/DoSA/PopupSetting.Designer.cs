@@ -141,6 +141,7 @@
             this.Controls.Add(this.buttonSettingOK);
             this.Controls.Add(this.buttonSettingCancel);
             this.Name = "PopupSetting";
+            this.ShowIcon = false;
             this.Text = "Setting";
             this.groupBoxSetting.ResumeLayout(false);
             this.groupBoxSetting.PerformLayout();
