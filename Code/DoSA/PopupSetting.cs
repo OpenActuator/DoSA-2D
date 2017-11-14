@@ -26,6 +26,11 @@ namespace DoSA
             uploadSettingData();
         }
 
+        public void setMeshLevelPercent(double dMeshLevelPercent)
+        {
+            textBoxMeshSizeLevel.Text = dMeshLevelPercent.ToString();
+        }
+
         private void buttonSettingOK_Click(object sender, EventArgs e)
         {
             bool bCheck;
@@ -47,8 +52,7 @@ namespace DoSA
             CSettingData.m_strWorkingDirName = textBoxWorkingDirectory.Text;
             CSettingData.m_strFemmExeFileFullName = textBoxFemmPath.Text;
 
-            //Optional항목 보일때 셋팅
-            //CSettingData.m_bShowProperyGridCollapse = checkBoxProperyGridCollapse.Checked;
+            CSettingData.m_dMeshLevelPercent = Double.Parse(textBoxMeshSizeLevel.Text);
         }
 
         private void uploadSettingData()
@@ -56,7 +60,7 @@ namespace DoSA
             textBoxWorkingDirectory.Text = CSettingData.m_strWorkingDirName;
             textBoxFemmPath.Text = CSettingData.m_strFemmExeFileFullName;
 
-            //checkBoxProperyGridCollapse.Checked = CSettingData.m_bShowProperyGridCollapse;
+            textBoxMeshSizeLevel.Text = CSettingData.m_dMeshLevelPercent.ToString();
         }
 
         private void buttonSettingCancel_Click(object sender, EventArgs e)

@@ -1,6 +1,6 @@
 $begin "DoSA_Project"
-	Writed=2017-11-07 오후 4:19:37
-	DoSA_Version=0.9.3.0
+	Writed=2017-11-13 오후 6:48:27
+	DoSA_Version=0.9.5.0
 	File_Version=1.0.0.0
 	$begin "Design"
 		DesignName=Solenoid

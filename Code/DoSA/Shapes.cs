@@ -329,7 +329,7 @@ namespace Shapes
             // Face 를 그릴 때는 모두 다각형으로 취급한다.
             for (int i = 0; i < listAbsolutePoint.Count; i++)
             {
-                // 마지막 PointLine 만 제외한다.
+                // 마지막 Point 만 제외한다.
                 if (i < listAbsolutePoint.Count - 1)
                 {
                     x1 = listAbsolutePoint[i].m_dX;
@@ -377,8 +377,8 @@ namespace Shapes
 
             m_emFaceType = EMFaceType.POLYGON;
 
-            foreach (CPoint pointLine in listPoint)
-                m_listRelativePoint.Add(pointLine);
+            foreach (CPoint point in listPoint)
+                m_listRelativePoint.Add(point);
 
             return true;
         }
@@ -563,7 +563,7 @@ namespace Shapes
             // 좌변을 제외하고 하변, 상변, 우변에만 경계조건이 부여된다.
             for (int i = 0; i < listAbsolutePoint.Count; i++)
             {
-                // 마지막 PointLine 만 제외한다.
+                // 마지막 Point 만 제외한다.
                 if (i < listAbsolutePoint.Count - 1)
                 {
                     sx = listAbsolutePoint[i].m_dX;
@@ -599,7 +599,7 @@ namespace Shapes
         /// <param name="x2">사각형 둘째점의 X 좌표</param>
         /// <param name="y2">사각형 둘째점의 Y 좌표</param>
         /// <param name="dMeshSize">Mesh Size (0 이면 Auto Mesh)</param>
-        internal void setInsideBoundary(CScriptFEMM femm, double x1, double y1, double x2, double y2, double dMeshSize = 0)
+        internal void setInsideRegion(CScriptFEMM femm, double x1, double y1, double x2, double y2, double dMeshSize = 0)
         {
             setRectanglePoints(x1, y1, x2, y2);
 
@@ -626,7 +626,7 @@ namespace Shapes
             // 좌변을 제외하고 하변, 상변, 우변에만 경계조건이 부여된다.
             for (int i = 0; i < listAbsolutePoint.Count; i++)
             {
-                // 마지막 PointLine 만 제외한다.
+                // 마지막 Point 만 제외한다.
                 if (i < listAbsolutePoint.Count - 1)
                 {
                     sx = listAbsolutePoint[i].m_dX;
@@ -724,12 +724,12 @@ namespace Shapes
 
             writeFile.writeDataLine(writeStream, "FaceType", m_emFaceType, 4);
 
-            foreach (CPoint pointLine in m_listRelativePoint)
+            foreach (CPoint pointe in m_listRelativePoint)
             {
-                writeFile.writeDataLine(writeStream, "PointX", pointLine.m_dX.ToString(), 4);
-                writeFile.writeDataLine(writeStream, "PointY", pointLine.m_dY.ToString(), 4);
-                writeFile.writeDataLine(writeStream, "LineKind", pointLine.m_emLineKind.ToString(), 4);
-                writeFile.writeDataLine(writeStream, "ArcDriction", pointLine.m_emDirectionArc.ToString(), 4);
+                writeFile.writeDataLine(writeStream, "PointX", pointe.m_dX.ToString(), 4);
+                writeFile.writeDataLine(writeStream, "PointY", pointe.m_dY.ToString(), 4);
+                writeFile.writeDataLine(writeStream, "LineKind", pointe.m_emLineKind.ToString(), 4);
+                writeFile.writeDataLine(writeStream, "ArcDriction", pointe.m_emDirectionArc.ToString(), 4);
             }
 
             writeFile.writeEndLine(writeStream, "Shape", 3);
@@ -742,7 +742,7 @@ namespace Shapes
     ///  - 포인트 정보와 라인 정보를 모두 가지고 있다.
     ///    * 포인트 정보 : X,Y 좌표값
     ///    * 라인 정보 : 현 포인트에서 시작되는 라인의 종류와 Arc 그리기 방향
-    ///  - 관련 라인은 현 포인터의 X,Y 좌표값으로 시작해서, CPointLine List 다음 포인트의 X,Y 좌표값으로 끝난다.
+    ///  - 관련 라인은 현 포인터의 X,Y 좌표값으로 시작해서, CPoint List 다음 포인트의 X,Y 좌표값으로 끝난다.
     /// </summary>
     public class CPoint
     {

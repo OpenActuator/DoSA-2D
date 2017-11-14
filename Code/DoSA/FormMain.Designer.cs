@@ -66,9 +66,29 @@
             this.propertyGridMain = new System.Windows.Forms.PropertyGrid();
             this.splitterHorizontal = new System.Windows.Forms.Splitter();
             this.splitContainerRight = new System.Windows.Forms.SplitContainer();
-            this.panelEmpty = new System.Windows.Forms.Panel();
+            this.panelStroke = new System.Windows.Forms.Panel();
+            this.labelProgressStroke = new System.Windows.Forms.Label();
+            this.progressBarStroke = new System.Windows.Forms.ProgressBar();
+            this.chartStrokeResult = new System.Windows.Forms.DataVisualization.Charting.Chart();
+            this.buttonLoadStrokeResult = new System.Windows.Forms.Button();
+            this.pictureBoxStroke = new System.Windows.Forms.PictureBox();
+            this.buttonExperimentStroke = new System.Windows.Forms.Button();
             this.messageListView = new gtLibrary.MessageListView();
             this.columnHeaderMessage = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.panelCurrent = new System.Windows.Forms.Panel();
+            this.labelProgressCurrent = new System.Windows.Forms.Label();
+            this.progressBarCurrent = new System.Windows.Forms.ProgressBar();
+            this.chartCurrentResult = new System.Windows.Forms.DataVisualization.Charting.Chart();
+            this.buttonLoadCurrentResult = new System.Windows.Forms.Button();
+            this.pictureBoxCurrent = new System.Windows.Forms.PictureBox();
+            this.buttonExperimentCurrent = new System.Windows.Forms.Button();
+            this.panelForce = new System.Windows.Forms.Panel();
+            this.buttonLoadForceResult = new System.Windows.Forms.Button();
+            this.labelN = new System.Windows.Forms.Label();
+            this.labelForce = new System.Windows.Forms.Label();
+            this.textBoxForce = new System.Windows.Forms.TextBox();
+            this.pictureBoxForce = new System.Windows.Forms.PictureBox();
+            this.buttonExperimentForce = new System.Windows.Forms.Button();
             this.panelSteel = new System.Windows.Forms.Panel();
             this.buttonSteelShape = new System.Windows.Forms.Button();
             this.chartBHCurve = new System.Windows.Forms.DataVisualization.Charting.Chart();
@@ -79,27 +99,11 @@
             this.buttonMagnetDown = new System.Windows.Forms.Button();
             this.buttonMagnetUp = new System.Windows.Forms.Button();
             this.pictureBoxMagnet = new System.Windows.Forms.PictureBox();
-            this.panelStroke = new System.Windows.Forms.Panel();
-            this.chartStrokeResult = new System.Windows.Forms.DataVisualization.Charting.Chart();
-            this.buttonLoadStrokeResult = new System.Windows.Forms.Button();
-            this.pictureBoxStroke = new System.Windows.Forms.PictureBox();
-            this.buttonExperimentStroke = new System.Windows.Forms.Button();
-            this.panelForce = new System.Windows.Forms.Panel();
-            this.buttonLoadForceResult = new System.Windows.Forms.Button();
-            this.labelN = new System.Windows.Forms.Label();
-            this.labelForce = new System.Windows.Forms.Label();
-            this.textBoxForce = new System.Windows.Forms.TextBox();
-            this.pictureBoxForce = new System.Windows.Forms.PictureBox();
-            this.buttonExperimentForce = new System.Windows.Forms.Button();
-            this.panelCurrent = new System.Windows.Forms.Panel();
-            this.chartCurrentResult = new System.Windows.Forms.DataVisualization.Charting.Chart();
-            this.buttonLoadCurrentResult = new System.Windows.Forms.Button();
-            this.pictureBoxCurrent = new System.Windows.Forms.PictureBox();
-            this.buttonExperimentCurrent = new System.Windows.Forms.Button();
             this.panelCoil = new System.Windows.Forms.Panel();
             this.buttonCoilShape = new System.Windows.Forms.Button();
             this.pictureBoxCoil = new System.Windows.Forms.PictureBox();
             this.buttonDesignCoil = new System.Windows.Forms.Button();
+            this.panelEmpty = new System.Windows.Forms.Panel();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainerLeft)).BeginInit();
             this.splitContainerLeft.Panel1.SuspendLayout();
             this.splitContainerLeft.Panel2.SuspendLayout();
@@ -108,18 +112,18 @@
             this.splitContainerRight.Panel1.SuspendLayout();
             this.splitContainerRight.Panel2.SuspendLayout();
             this.splitContainerRight.SuspendLayout();
+            this.panelStroke.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.chartStrokeResult)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBoxStroke)).BeginInit();
+            this.panelCurrent.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.chartCurrentResult)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBoxCurrent)).BeginInit();
+            this.panelForce.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBoxForce)).BeginInit();
             this.panelSteel.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.chartBHCurve)).BeginInit();
             this.panelMagnet.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBoxMagnet)).BeginInit();
-            this.panelStroke.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.chartStrokeResult)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBoxStroke)).BeginInit();
-            this.panelForce.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBoxForce)).BeginInit();
-            this.panelCurrent.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.chartCurrentResult)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBoxCurrent)).BeginInit();
             this.panelCoil.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBoxCoil)).BeginInit();
             this.SuspendLayout();
@@ -432,13 +436,77 @@
             this.splitContainerRight.SplitterDistance = 558;
             this.splitContainerRight.TabIndex = 3;
             // 
-            // panelEmpty
+            // panelStroke
             // 
-            this.panelEmpty.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.panelEmpty.Location = new System.Drawing.Point(0, 0);
-            this.panelEmpty.Name = "panelEmpty";
-            this.panelEmpty.Size = new System.Drawing.Size(742, 554);
-            this.panelEmpty.TabIndex = 0;
+            this.panelStroke.Controls.Add(this.labelProgressStroke);
+            this.panelStroke.Controls.Add(this.progressBarStroke);
+            this.panelStroke.Controls.Add(this.chartStrokeResult);
+            this.panelStroke.Controls.Add(this.buttonLoadStrokeResult);
+            this.panelStroke.Controls.Add(this.pictureBoxStroke);
+            this.panelStroke.Controls.Add(this.buttonExperimentStroke);
+            this.panelStroke.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.panelStroke.Location = new System.Drawing.Point(0, 0);
+            this.panelStroke.Name = "panelStroke";
+            this.panelStroke.Size = new System.Drawing.Size(742, 554);
+            this.panelStroke.TabIndex = 0;
+            // 
+            // labelProgressStroke
+            // 
+            this.labelProgressStroke.AutoSize = true;
+            this.labelProgressStroke.Location = new System.Drawing.Point(185, 490);
+            this.labelProgressStroke.Name = "labelProgressStroke";
+            this.labelProgressStroke.Size = new System.Drawing.Size(81, 12);
+            this.labelProgressStroke.TabIndex = 18;
+            this.labelProgressStroke.Text = "Stroke Step : ";
+            // 
+            // progressBarStroke
+            // 
+            this.progressBarStroke.Location = new System.Drawing.Point(185, 510);
+            this.progressBarStroke.Name = "progressBarStroke";
+            this.progressBarStroke.Size = new System.Drawing.Size(520, 23);
+            this.progressBarStroke.TabIndex = 17;
+            // 
+            // chartStrokeResult
+            // 
+            this.chartStrokeResult.BorderlineColor = System.Drawing.Color.Black;
+            this.chartStrokeResult.BorderlineDashStyle = System.Windows.Forms.DataVisualization.Charting.ChartDashStyle.Solid;
+            chartArea1.Name = "ChartArea1";
+            this.chartStrokeResult.ChartAreas.Add(chartArea1);
+            this.chartStrokeResult.Location = new System.Drawing.Point(185, 60);
+            this.chartStrokeResult.Name = "chartStrokeResult";
+            this.chartStrokeResult.Size = new System.Drawing.Size(520, 400);
+            this.chartStrokeResult.TabIndex = 10;
+            this.chartStrokeResult.Text = "Movement Result";
+            this.chartStrokeResult.Visible = false;
+            // 
+            // buttonLoadStrokeResult
+            // 
+            this.buttonLoadStrokeResult.Location = new System.Drawing.Point(25, 120);
+            this.buttonLoadStrokeResult.Name = "buttonLoadStrokeResult";
+            this.buttonLoadStrokeResult.Size = new System.Drawing.Size(130, 50);
+            this.buttonLoadStrokeResult.TabIndex = 4;
+            this.buttonLoadStrokeResult.Text = "Result";
+            this.buttonLoadStrokeResult.UseVisualStyleBackColor = true;
+            this.buttonLoadStrokeResult.Click += new System.EventHandler(this.buttonStrokeResult_Click);
+            // 
+            // pictureBoxStroke
+            // 
+            this.pictureBoxStroke.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.pictureBoxStroke.Location = new System.Drawing.Point(185, 60);
+            this.pictureBoxStroke.Name = "pictureBoxStroke";
+            this.pictureBoxStroke.Size = new System.Drawing.Size(520, 400);
+            this.pictureBoxStroke.TabIndex = 1;
+            this.pictureBoxStroke.TabStop = false;
+            // 
+            // buttonExperimentStroke
+            // 
+            this.buttonExperimentStroke.Location = new System.Drawing.Point(25, 60);
+            this.buttonExperimentStroke.Name = "buttonExperimentStroke";
+            this.buttonExperimentStroke.Size = new System.Drawing.Size(130, 50);
+            this.buttonExperimentStroke.TabIndex = 0;
+            this.buttonExperimentStroke.Text = "Stroke Test";
+            this.buttonExperimentStroke.UseVisualStyleBackColor = true;
+            this.buttonExperimentStroke.Click += new System.EventHandler(this.buttonExperimentStroke_Click);
             // 
             // messageListView
             // 
@@ -458,6 +526,147 @@
             // 
             this.columnHeaderMessage.Width = 732;
             // 
+            // panelCurrent
+            // 
+            this.panelCurrent.Controls.Add(this.labelProgressCurrent);
+            this.panelCurrent.Controls.Add(this.progressBarCurrent);
+            this.panelCurrent.Controls.Add(this.chartCurrentResult);
+            this.panelCurrent.Controls.Add(this.buttonLoadCurrentResult);
+            this.panelCurrent.Controls.Add(this.pictureBoxCurrent);
+            this.panelCurrent.Controls.Add(this.buttonExperimentCurrent);
+            this.panelCurrent.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.panelCurrent.Location = new System.Drawing.Point(0, 0);
+            this.panelCurrent.Name = "panelCurrent";
+            this.panelCurrent.Size = new System.Drawing.Size(742, 554);
+            this.panelCurrent.TabIndex = 0;
+            // 
+            // labelProgressCurrent
+            // 
+            this.labelProgressCurrent.AutoSize = true;
+            this.labelProgressCurrent.Location = new System.Drawing.Point(185, 490);
+            this.labelProgressCurrent.Name = "labelProgressCurrent";
+            this.labelProgressCurrent.Size = new System.Drawing.Size(87, 12);
+            this.labelProgressCurrent.TabIndex = 16;
+            this.labelProgressCurrent.Text = "Current Step : ";
+            // 
+            // progressBarCurrent
+            // 
+            this.progressBarCurrent.Location = new System.Drawing.Point(185, 510);
+            this.progressBarCurrent.Name = "progressBarCurrent";
+            this.progressBarCurrent.Size = new System.Drawing.Size(520, 23);
+            this.progressBarCurrent.TabIndex = 15;
+            // 
+            // chartCurrentResult
+            // 
+            this.chartCurrentResult.BorderlineColor = System.Drawing.Color.Black;
+            this.chartCurrentResult.BorderlineDashStyle = System.Windows.Forms.DataVisualization.Charting.ChartDashStyle.Solid;
+            chartArea2.Name = "ChartArea1";
+            this.chartCurrentResult.ChartAreas.Add(chartArea2);
+            this.chartCurrentResult.Location = new System.Drawing.Point(185, 60);
+            this.chartCurrentResult.Name = "chartCurrentResult";
+            this.chartCurrentResult.Size = new System.Drawing.Size(520, 400);
+            this.chartCurrentResult.TabIndex = 14;
+            this.chartCurrentResult.Text = "Movement Result";
+            this.chartCurrentResult.Visible = false;
+            // 
+            // buttonLoadCurrentResult
+            // 
+            this.buttonLoadCurrentResult.Location = new System.Drawing.Point(25, 120);
+            this.buttonLoadCurrentResult.Name = "buttonLoadCurrentResult";
+            this.buttonLoadCurrentResult.Size = new System.Drawing.Size(130, 50);
+            this.buttonLoadCurrentResult.TabIndex = 13;
+            this.buttonLoadCurrentResult.Text = "Result";
+            this.buttonLoadCurrentResult.UseVisualStyleBackColor = true;
+            this.buttonLoadCurrentResult.Click += new System.EventHandler(this.buttonCurrentResult_Click);
+            // 
+            // pictureBoxCurrent
+            // 
+            this.pictureBoxCurrent.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.pictureBoxCurrent.Location = new System.Drawing.Point(185, 60);
+            this.pictureBoxCurrent.Name = "pictureBoxCurrent";
+            this.pictureBoxCurrent.Size = new System.Drawing.Size(520, 400);
+            this.pictureBoxCurrent.TabIndex = 12;
+            this.pictureBoxCurrent.TabStop = false;
+            // 
+            // buttonExperimentCurrent
+            // 
+            this.buttonExperimentCurrent.Location = new System.Drawing.Point(25, 60);
+            this.buttonExperimentCurrent.Name = "buttonExperimentCurrent";
+            this.buttonExperimentCurrent.Size = new System.Drawing.Size(130, 50);
+            this.buttonExperimentCurrent.TabIndex = 11;
+            this.buttonExperimentCurrent.Text = "Current Test";
+            this.buttonExperimentCurrent.UseVisualStyleBackColor = true;
+            this.buttonExperimentCurrent.Click += new System.EventHandler(this.buttonExperimentCurrent_Click);
+            // 
+            // panelForce
+            // 
+            this.panelForce.Controls.Add(this.buttonLoadForceResult);
+            this.panelForce.Controls.Add(this.labelN);
+            this.panelForce.Controls.Add(this.labelForce);
+            this.panelForce.Controls.Add(this.textBoxForce);
+            this.panelForce.Controls.Add(this.pictureBoxForce);
+            this.panelForce.Controls.Add(this.buttonExperimentForce);
+            this.panelForce.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.panelForce.Location = new System.Drawing.Point(0, 0);
+            this.panelForce.Name = "panelForce";
+            this.panelForce.Size = new System.Drawing.Size(742, 554);
+            this.panelForce.TabIndex = 0;
+            // 
+            // buttonLoadForceResult
+            // 
+            this.buttonLoadForceResult.Location = new System.Drawing.Point(25, 120);
+            this.buttonLoadForceResult.Name = "buttonLoadForceResult";
+            this.buttonLoadForceResult.Size = new System.Drawing.Size(130, 50);
+            this.buttonLoadForceResult.TabIndex = 7;
+            this.buttonLoadForceResult.Text = "Result";
+            this.buttonLoadForceResult.UseVisualStyleBackColor = true;
+            this.buttonLoadForceResult.Click += new System.EventHandler(this.buttonForceResult_Click);
+            // 
+            // labelN
+            // 
+            this.labelN.AutoSize = true;
+            this.labelN.Location = new System.Drawing.Point(141, 443);
+            this.labelN.Name = "labelN";
+            this.labelN.Size = new System.Drawing.Size(14, 12);
+            this.labelN.TabIndex = 5;
+            this.labelN.Text = "N";
+            // 
+            // labelForce
+            // 
+            this.labelForce.AutoSize = true;
+            this.labelForce.Location = new System.Drawing.Point(25, 424);
+            this.labelForce.Name = "labelForce";
+            this.labelForce.Size = new System.Drawing.Size(45, 12);
+            this.labelForce.TabIndex = 5;
+            this.labelForce.Text = "Force :";
+            // 
+            // textBoxForce
+            // 
+            this.textBoxForce.Location = new System.Drawing.Point(25, 440);
+            this.textBoxForce.Name = "textBoxForce";
+            this.textBoxForce.Size = new System.Drawing.Size(110, 21);
+            this.textBoxForce.TabIndex = 4;
+            this.textBoxForce.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
+            // 
+            // pictureBoxForce
+            // 
+            this.pictureBoxForce.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.pictureBoxForce.Location = new System.Drawing.Point(185, 60);
+            this.pictureBoxForce.Name = "pictureBoxForce";
+            this.pictureBoxForce.Size = new System.Drawing.Size(520, 400);
+            this.pictureBoxForce.TabIndex = 2;
+            this.pictureBoxForce.TabStop = false;
+            // 
+            // buttonExperimentForce
+            // 
+            this.buttonExperimentForce.Location = new System.Drawing.Point(25, 60);
+            this.buttonExperimentForce.Name = "buttonExperimentForce";
+            this.buttonExperimentForce.Size = new System.Drawing.Size(130, 50);
+            this.buttonExperimentForce.TabIndex = 1;
+            this.buttonExperimentForce.Text = "Force Test";
+            this.buttonExperimentForce.UseVisualStyleBackColor = true;
+            this.buttonExperimentForce.Click += new System.EventHandler(this.buttonExperimentForce_Click);
+            // 
             // panelSteel
             // 
             this.panelSteel.Controls.Add(this.buttonSteelShape);
@@ -470,7 +679,7 @@
             // 
             // buttonSteelShape
             // 
-            this.buttonSteelShape.Location = new System.Drawing.Point(25, 420);
+            this.buttonSteelShape.Location = new System.Drawing.Point(25, 410);
             this.buttonSteelShape.Name = "buttonSteelShape";
             this.buttonSteelShape.Size = new System.Drawing.Size(130, 50);
             this.buttonSteelShape.TabIndex = 7;
@@ -482,9 +691,9 @@
             // 
             this.chartBHCurve.BorderlineColor = System.Drawing.Color.Black;
             this.chartBHCurve.BorderlineDashStyle = System.Windows.Forms.DataVisualization.Charting.ChartDashStyle.Solid;
-            chartArea1.Name = "ChartArea1";
-            this.chartBHCurve.ChartAreas.Add(chartArea1);
-            this.chartBHCurve.Location = new System.Drawing.Point(185, 70);
+            chartArea3.Name = "ChartArea1";
+            this.chartBHCurve.ChartAreas.Add(chartArea3);
+            this.chartBHCurve.Location = new System.Drawing.Point(185, 60);
             this.chartBHCurve.Name = "chartBHCurve";
             this.chartBHCurve.Size = new System.Drawing.Size(520, 400);
             this.chartBHCurve.TabIndex = 0;
@@ -506,7 +715,7 @@
             // 
             // buttonMagnetShape
             // 
-            this.buttonMagnetShape.Location = new System.Drawing.Point(25, 420);
+            this.buttonMagnetShape.Location = new System.Drawing.Point(25, 410);
             this.buttonMagnetShape.Name = "buttonMagnetShape";
             this.buttonMagnetShape.Size = new System.Drawing.Size(130, 50);
             this.buttonMagnetShape.TabIndex = 6;
@@ -516,7 +725,7 @@
             // 
             // buttonMagnetRight
             // 
-            this.buttonMagnetRight.Location = new System.Drawing.Point(100, 130);
+            this.buttonMagnetRight.Location = new System.Drawing.Point(100, 120);
             this.buttonMagnetRight.Name = "buttonMagnetRight";
             this.buttonMagnetRight.Size = new System.Drawing.Size(55, 50);
             this.buttonMagnetRight.TabIndex = 5;
@@ -526,7 +735,7 @@
             // 
             // buttonMagnetLeft
             // 
-            this.buttonMagnetLeft.Location = new System.Drawing.Point(25, 130);
+            this.buttonMagnetLeft.Location = new System.Drawing.Point(25, 120);
             this.buttonMagnetLeft.Name = "buttonMagnetLeft";
             this.buttonMagnetLeft.Size = new System.Drawing.Size(55, 50);
             this.buttonMagnetLeft.TabIndex = 4;
@@ -536,7 +745,7 @@
             // 
             // buttonMagnetDown
             // 
-            this.buttonMagnetDown.Location = new System.Drawing.Point(62, 190);
+            this.buttonMagnetDown.Location = new System.Drawing.Point(62, 180);
             this.buttonMagnetDown.Name = "buttonMagnetDown";
             this.buttonMagnetDown.Size = new System.Drawing.Size(55, 50);
             this.buttonMagnetDown.TabIndex = 3;
@@ -546,7 +755,7 @@
             // 
             // buttonMagnetUp
             // 
-            this.buttonMagnetUp.Location = new System.Drawing.Point(62, 70);
+            this.buttonMagnetUp.Location = new System.Drawing.Point(62, 60);
             this.buttonMagnetUp.Name = "buttonMagnetUp";
             this.buttonMagnetUp.Size = new System.Drawing.Size(55, 50);
             this.buttonMagnetUp.TabIndex = 2;
@@ -558,188 +767,11 @@
             // 
             this.pictureBoxMagnet.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.pictureBoxMagnet.Image = ((System.Drawing.Image)(resources.GetObject("pictureBoxMagnet.Image")));
-            this.pictureBoxMagnet.Location = new System.Drawing.Point(185, 70);
+            this.pictureBoxMagnet.Location = new System.Drawing.Point(185, 60);
             this.pictureBoxMagnet.Name = "pictureBoxMagnet";
             this.pictureBoxMagnet.Size = new System.Drawing.Size(520, 400);
             this.pictureBoxMagnet.TabIndex = 1;
             this.pictureBoxMagnet.TabStop = false;
-            // 
-            // panelStroke
-            // 
-            this.panelStroke.Controls.Add(this.chartStrokeResult);
-            this.panelStroke.Controls.Add(this.buttonLoadStrokeResult);
-            this.panelStroke.Controls.Add(this.pictureBoxStroke);
-            this.panelStroke.Controls.Add(this.buttonExperimentStroke);
-            this.panelStroke.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.panelStroke.Location = new System.Drawing.Point(0, 0);
-            this.panelStroke.Name = "panelStroke";
-            this.panelStroke.Size = new System.Drawing.Size(742, 554);
-            this.panelStroke.TabIndex = 0;
-            // 
-            // chartStrokeResult
-            // 
-            this.chartStrokeResult.BorderlineColor = System.Drawing.Color.Black;
-            this.chartStrokeResult.BorderlineDashStyle = System.Windows.Forms.DataVisualization.Charting.ChartDashStyle.Solid;
-            chartArea2.Name = "ChartArea1";
-            this.chartStrokeResult.ChartAreas.Add(chartArea2);
-            this.chartStrokeResult.Location = new System.Drawing.Point(185, 70);
-            this.chartStrokeResult.Name = "chartStrokeResult";
-            this.chartStrokeResult.Size = new System.Drawing.Size(520, 400);
-            this.chartStrokeResult.TabIndex = 10;
-            this.chartStrokeResult.Text = "Movement Result";
-            this.chartStrokeResult.Visible = false;
-            // 
-            // buttonLoadStrokeResult
-            // 
-            this.buttonLoadStrokeResult.Location = new System.Drawing.Point(25, 130);
-            this.buttonLoadStrokeResult.Name = "buttonLoadStrokeResult";
-            this.buttonLoadStrokeResult.Size = new System.Drawing.Size(130, 50);
-            this.buttonLoadStrokeResult.TabIndex = 4;
-            this.buttonLoadStrokeResult.Text = "Result";
-            this.buttonLoadStrokeResult.UseVisualStyleBackColor = true;
-            this.buttonLoadStrokeResult.Click += new System.EventHandler(this.buttonStrokeResult_Click);
-            // 
-            // pictureBoxStroke
-            // 
-            this.pictureBoxStroke.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.pictureBoxStroke.Location = new System.Drawing.Point(185, 70);
-            this.pictureBoxStroke.Name = "pictureBoxStroke";
-            this.pictureBoxStroke.Size = new System.Drawing.Size(520, 400);
-            this.pictureBoxStroke.TabIndex = 1;
-            this.pictureBoxStroke.TabStop = false;
-            // 
-            // buttonExperimentStroke
-            // 
-            this.buttonExperimentStroke.Location = new System.Drawing.Point(25, 70);
-            this.buttonExperimentStroke.Name = "buttonExperimentStroke";
-            this.buttonExperimentStroke.Size = new System.Drawing.Size(130, 50);
-            this.buttonExperimentStroke.TabIndex = 0;
-            this.buttonExperimentStroke.Text = "Stroke Test";
-            this.buttonExperimentStroke.UseVisualStyleBackColor = true;
-            this.buttonExperimentStroke.Click += new System.EventHandler(this.buttonExperimentStroke_Click);
-            // 
-            // panelForce
-            // 
-            this.panelForce.Controls.Add(this.buttonLoadForceResult);
-            this.panelForce.Controls.Add(this.labelN);
-            this.panelForce.Controls.Add(this.labelForce);
-            this.panelForce.Controls.Add(this.textBoxForce);
-            this.panelForce.Controls.Add(this.pictureBoxForce);
-            this.panelForce.Controls.Add(this.buttonExperimentForce);
-            this.panelForce.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.panelForce.Location = new System.Drawing.Point(0, 0);
-            this.panelForce.Name = "panelForce";
-            this.panelForce.Size = new System.Drawing.Size(742, 554);
-            this.panelForce.TabIndex = 0;
-            // 
-            // buttonLoadForceResult
-            // 
-            this.buttonLoadForceResult.Location = new System.Drawing.Point(25, 130);
-            this.buttonLoadForceResult.Name = "buttonLoadForceResult";
-            this.buttonLoadForceResult.Size = new System.Drawing.Size(130, 50);
-            this.buttonLoadForceResult.TabIndex = 7;
-            this.buttonLoadForceResult.Text = "Result";
-            this.buttonLoadForceResult.UseVisualStyleBackColor = true;
-            this.buttonLoadForceResult.Click += new System.EventHandler(this.buttonForceResult_Click);
-            // 
-            // labelN
-            // 
-            this.labelN.AutoSize = true;
-            this.labelN.Location = new System.Drawing.Point(150, 452);
-            this.labelN.Name = "labelN";
-            this.labelN.Size = new System.Drawing.Size(14, 12);
-            this.labelN.TabIndex = 5;
-            this.labelN.Text = "N";
-            // 
-            // labelForce
-            // 
-            this.labelForce.AutoSize = true;
-            this.labelForce.Location = new System.Drawing.Point(23, 434);
-            this.labelForce.Name = "labelForce";
-            this.labelForce.Size = new System.Drawing.Size(45, 12);
-            this.labelForce.TabIndex = 5;
-            this.labelForce.Text = "Force :";
-            // 
-            // textBoxForce
-            // 
-            this.textBoxForce.Location = new System.Drawing.Point(25, 449);
-            this.textBoxForce.Name = "textBoxForce";
-            this.textBoxForce.Size = new System.Drawing.Size(119, 21);
-            this.textBoxForce.TabIndex = 4;
-            this.textBoxForce.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
-            // 
-            // pictureBoxForce
-            // 
-            this.pictureBoxForce.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.pictureBoxForce.Location = new System.Drawing.Point(185, 70);
-            this.pictureBoxForce.Name = "pictureBoxForce";
-            this.pictureBoxForce.Size = new System.Drawing.Size(520, 400);
-            this.pictureBoxForce.TabIndex = 2;
-            this.pictureBoxForce.TabStop = false;
-            // 
-            // buttonExperimentForce
-            // 
-            this.buttonExperimentForce.Location = new System.Drawing.Point(25, 70);
-            this.buttonExperimentForce.Name = "buttonExperimentForce";
-            this.buttonExperimentForce.Size = new System.Drawing.Size(130, 50);
-            this.buttonExperimentForce.TabIndex = 1;
-            this.buttonExperimentForce.Text = "Force Test";
-            this.buttonExperimentForce.UseVisualStyleBackColor = true;
-            this.buttonExperimentForce.Click += new System.EventHandler(this.buttonExperimentForce_Click);
-            // 
-            // panelCurrent
-            // 
-            this.panelCurrent.Controls.Add(this.chartCurrentResult);
-            this.panelCurrent.Controls.Add(this.buttonLoadCurrentResult);
-            this.panelCurrent.Controls.Add(this.pictureBoxCurrent);
-            this.panelCurrent.Controls.Add(this.buttonExperimentCurrent);
-            this.panelCurrent.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.panelCurrent.Location = new System.Drawing.Point(0, 0);
-            this.panelCurrent.Name = "panelCurrent";
-            this.panelCurrent.Size = new System.Drawing.Size(742, 554);
-            this.panelCurrent.TabIndex = 0;
-            // 
-            // chartCurrentResult
-            // 
-            this.chartCurrentResult.BorderlineColor = System.Drawing.Color.Black;
-            this.chartCurrentResult.BorderlineDashStyle = System.Windows.Forms.DataVisualization.Charting.ChartDashStyle.Solid;
-            chartArea3.Name = "ChartArea1";
-            this.chartCurrentResult.ChartAreas.Add(chartArea3);
-            this.chartCurrentResult.Location = new System.Drawing.Point(185, 70);
-            this.chartCurrentResult.Name = "chartCurrentResult";
-            this.chartCurrentResult.Size = new System.Drawing.Size(520, 400);
-            this.chartCurrentResult.TabIndex = 14;
-            this.chartCurrentResult.Text = "Movement Result";
-            this.chartCurrentResult.Visible = false;
-            // 
-            // buttonLoadCurrentResult
-            // 
-            this.buttonLoadCurrentResult.Location = new System.Drawing.Point(25, 130);
-            this.buttonLoadCurrentResult.Name = "buttonLoadCurrentResult";
-            this.buttonLoadCurrentResult.Size = new System.Drawing.Size(130, 50);
-            this.buttonLoadCurrentResult.TabIndex = 13;
-            this.buttonLoadCurrentResult.Text = "Result";
-            this.buttonLoadCurrentResult.UseVisualStyleBackColor = true;
-            this.buttonLoadCurrentResult.Click += new System.EventHandler(this.buttonCurrentResult_Click);
-            // 
-            // pictureBoxCurrent
-            // 
-            this.pictureBoxCurrent.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.pictureBoxCurrent.Location = new System.Drawing.Point(185, 70);
-            this.pictureBoxCurrent.Name = "pictureBoxCurrent";
-            this.pictureBoxCurrent.Size = new System.Drawing.Size(520, 400);
-            this.pictureBoxCurrent.TabIndex = 12;
-            this.pictureBoxCurrent.TabStop = false;
-            // 
-            // buttonExperimentCurrent
-            // 
-            this.buttonExperimentCurrent.Location = new System.Drawing.Point(25, 70);
-            this.buttonExperimentCurrent.Name = "buttonExperimentCurrent";
-            this.buttonExperimentCurrent.Size = new System.Drawing.Size(130, 50);
-            this.buttonExperimentCurrent.TabIndex = 11;
-            this.buttonExperimentCurrent.Text = "Current Test";
-            this.buttonExperimentCurrent.UseVisualStyleBackColor = true;
-            this.buttonExperimentCurrent.Click += new System.EventHandler(this.buttonExperimentCurrent_Click);
             // 
             // panelCoil
             // 
@@ -750,12 +782,12 @@
             this.panelCoil.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panelCoil.Location = new System.Drawing.Point(0, 0);
             this.panelCoil.Name = "panelCoil";
-            this.panelCoil.Size = new System.Drawing.Size(730, 554);
+            this.panelCoil.Size = new System.Drawing.Size(742, 554);
             this.panelCoil.TabIndex = 0;
             // 
             // buttonCoilShape
             // 
-            this.buttonCoilShape.Location = new System.Drawing.Point(25, 420);
+            this.buttonCoilShape.Location = new System.Drawing.Point(25, 410);
             this.buttonCoilShape.Name = "buttonCoilShape";
             this.buttonCoilShape.Size = new System.Drawing.Size(130, 50);
             this.buttonCoilShape.TabIndex = 4;
@@ -767,7 +799,7 @@
             // 
             this.pictureBoxCoil.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.pictureBoxCoil.Image = ((System.Drawing.Image)(resources.GetObject("pictureBoxCoil.Image")));
-            this.pictureBoxCoil.Location = new System.Drawing.Point(185, 70);
+            this.pictureBoxCoil.Location = new System.Drawing.Point(185, 60);
             this.pictureBoxCoil.Name = "pictureBoxCoil";
             this.pictureBoxCoil.Size = new System.Drawing.Size(520, 400);
             this.pictureBoxCoil.TabIndex = 2;
@@ -775,13 +807,21 @@
             // 
             // buttonDesignCoil
             // 
-            this.buttonDesignCoil.Location = new System.Drawing.Point(25, 70);
+            this.buttonDesignCoil.Location = new System.Drawing.Point(25, 60);
             this.buttonDesignCoil.Name = "buttonDesignCoil";
             this.buttonDesignCoil.Size = new System.Drawing.Size(130, 50);
             this.buttonDesignCoil.TabIndex = 1;
             this.buttonDesignCoil.Text = "Coil Design";
             this.buttonDesignCoil.UseVisualStyleBackColor = true;
             this.buttonDesignCoil.Click += new System.EventHandler(this.buttonDesignCoil_Click);
+            // 
+            // panelEmpty
+            // 
+            this.panelEmpty.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.panelEmpty.Location = new System.Drawing.Point(0, 0);
+            this.panelEmpty.Name = "panelEmpty";
+            this.panelEmpty.Size = new System.Drawing.Size(742, 554);
+            this.panelEmpty.TabIndex = 0;
             // 
             // FormMain
             // 
@@ -806,19 +846,21 @@
             this.splitContainerRight.Panel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.splitContainerRight)).EndInit();
             this.splitContainerRight.ResumeLayout(false);
+            this.panelStroke.ResumeLayout(false);
+            this.panelStroke.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.chartStrokeResult)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBoxStroke)).EndInit();
+            this.panelCurrent.ResumeLayout(false);
+            this.panelCurrent.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.chartCurrentResult)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBoxCurrent)).EndInit();
+            this.panelForce.ResumeLayout(false);
+            this.panelForce.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBoxForce)).EndInit();
             this.panelSteel.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.chartBHCurve)).EndInit();
             this.panelMagnet.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.pictureBoxMagnet)).EndInit();
-            this.panelStroke.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.chartStrokeResult)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBoxStroke)).EndInit();
-            this.panelForce.ResumeLayout(false);
-            this.panelForce.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBoxForce)).EndInit();
-            this.panelCurrent.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.chartCurrentResult)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBoxCurrent)).EndInit();
             this.panelCoil.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.pictureBoxCoil)).EndInit();
             this.ResumeLayout(false);
@@ -900,6 +942,10 @@
         private System.Windows.Forms.Button buttonLoadCurrentResult;
         private System.Windows.Forms.PictureBox pictureBoxCurrent;
         private System.Windows.Forms.Button buttonExperimentCurrent;
+        private System.Windows.Forms.Label labelProgressCurrent;
+        private System.Windows.Forms.ProgressBar progressBarCurrent;
+        private System.Windows.Forms.Label labelProgressStroke;
+        private System.Windows.Forms.ProgressBar progressBarStroke;
 	}
 }
 

@@ -16,7 +16,7 @@ namespace Shapes
         /// <summary>
         /// 좌표 제거 이벤트 핸들러
         /// </summary>
-        public delegate void CoordinatesRemoveEventHandler(object sender, PointLineRemoveEventArgs e);
+        public delegate void CoordinatesRemoveEventHandler(object sender, PointControlRemoveEventArgs e);
 
         /// <summary>
         /// 좌표 제거 이벤트
@@ -99,15 +99,15 @@ namespace Shapes
             InitializeComponent();
         }             
 
-        public CPointControl(CPoint pointLine)
+        public CPointControl(CPoint point)
         {
             InitializeComponent();
 
-            StrCoordX = pointLine.m_dX.ToString();
-            StrCoordY = pointLine.m_dY.ToString();
+            StrCoordX = point.m_dX.ToString();
+            StrCoordY = point.m_dY.ToString();
 
-            IsArc = (pointLine.m_emLineKind == EMLineKind.ARC) ? true : false;
-            IsArcDirection = (pointLine.m_emDirectionArc == EMDirectionArc.BACKWARD) ? true : false;            
+            IsArc = (point.m_emLineKind == EMLineKind.ARC) ? true : false;
+            IsArcDirection = (point.m_emDirectionArc == EMDirectionArc.BACKWARD) ? true : false;            
         }
 
         #endregion
@@ -121,7 +121,7 @@ namespace Shapes
 
             if (RemoveCoordinates != null)
             {
-                PointLineRemoveEventArgs args = new PointLineRemoveEventArgs();
+                PointControlRemoveEventArgs args = new PointControlRemoveEventArgs();
                 RemoveCoordinates(this, args);
 
                 if (args.Cancel) return;
@@ -236,7 +236,7 @@ namespace Shapes
     /// <summary>
     /// 좌표 제거 이벤트 인자
     /// </summary>
-    public class PointLineRemoveEventArgs
+    public class PointControlRemoveEventArgs
     {
         /// <summary>
         /// 삭제 취소 여부

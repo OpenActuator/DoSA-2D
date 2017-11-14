@@ -1,6 +1,6 @@
 $begin "DoSA_Project"
-	Writed=2017-11-07 오후 4:19:28
-	DoSA_Version=0.9.3.0
+	Writed=2017-11-13 오후 6:47:59
+	DoSA_Version=0.9.5.0
 	File_Version=1.0.0.0
 	$begin "Design"
 		DesignName=LV
@@ -9,7 +9,7 @@ $begin "DoSA_Project"
 			KindKey=COIL
 			MovingParts=FIXED
 			Material=Copper
-			CurrentDirection=IN
+			CurrentDirection=OUT
 			Turns=126
 			Resistance=15.74769
 			Layers=6
@@ -154,9 +154,9 @@ $begin "DoSA_Project"
 			NodeName=stroke
 			Voltage=2.5
 			Current=0.15875
-			InitialStroke=-0.5
-			FinalStroke=0.5
-			StepCount=5
+			InitialStroke=-0.7
+			FinalStroke=0.1
+			StepCount=20
 		$end "StrokeExperiment"
 		$begin "CurrentExperiment"
 			NodeName=current

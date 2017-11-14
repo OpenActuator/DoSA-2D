@@ -90,6 +90,12 @@ namespace DoSA
                 // 실행파일의 위치를 읽어낸다.
                 CSettingData.m_strProgramDirName = System.Windows.Forms.Application.StartupPath;
 
+                // Log 디렉토리가 없으면 생성 한다.
+                string strLogDirName = Path.Combine(CSettingData.m_strProgramDirName, "Log");
+
+                if (m_manageFile.isExistDirectory(strLogDirName) == false)
+                    m_manageFile.createDirectory(strLogDirName);
+
                 // 출력방향을 결정함 (아래 코드가 동작하면 파일 출력, 동작하지 않으면 Output 창 출력)
                 Trace.Listeners.Add(new TextWriterTraceListener(Path.Combine(CSettingData.m_strProgramDirName, "Log", DateTime.Now.ToString("yyyyMMdd_HH_mm_ss") + ".Log")));
 
@@ -106,6 +112,9 @@ namespace DoSA
                 if (false == m_manageFile.isExistFile(strSettingFileFullName))
                 {
                     CNotice.noticeWarning("설정 파일을 찾을 수 없습니다.\n환경 설정 후에 프로그램이 실행 됩니다.");
+
+                    /// ini 파일이 없는 최초 실행인 경우는 1 % 로 초기화 한다.
+                    frmSetting.setMeshLevelPercent(1.0f);
 
                     // 파일자체가 없기 때문에 다이얼로그의 데이터 설정없이 바로 호출한다.
                     if (DialogResult.OK == frmSetting.ShowDialog())
@@ -415,7 +424,7 @@ namespace DoSA
             // 제목줄에 디자인명을 표시한다
             this.Text = "Design Toolkit of Solenoid & Actuator - " + m_design.m_strDesignName;
 
-            CNotice.printUserMessage(m_design.m_strDesignName + " 디자인이 생성 되었습니다.");    
+            CNotice.printUserMessage(m_design.m_strDesignName + " 디자인이 오픈 되었습니다.");    
         }
 
         private void ribbonOrbMenuItemClose_Click(object sender, EventArgs e)
@@ -430,6 +439,8 @@ namespace DoSA
 
             // 저장을 하고 나면 초기화 한다.
             m_design.m_bChanged = false;
+
+            CNotice.printUserMessage(m_design.m_strDesignName + " 디자인이 닫혔습니다.");
 
             // 기존 디자인 데이터를 모두 삭제한다.
             closeDesign();
@@ -451,6 +462,7 @@ namespace DoSA
             if (true == saveDesignFile())
             {
                 CNotice.noticeInfomation(m_design.m_strDesignName + " 디자인의 저장이 완료 되었습니다.", "저장 알림");
+
                 CNotice.printUserMessage(m_design.m_strDesignName + " 디자인의 저장이 완료 되었습니다.");
             }
         }
@@ -540,8 +552,8 @@ namespace DoSA
                     this.Text = "Design Toolkit of Solenoid & Actuator - " + m_design.m_strDesignName;
 
                     CNotice.noticeInfomation(m_design.m_strDesignName + " 디자인으로 저장 되었습니다.", "다른 이름 저장 알림");
-                    CNotice.printUserMessage(m_design.m_strDesignName + " 디자인으로 저장 되었습니다.");
 
+                    CNotice.printUserMessage(m_design.m_strDesignName + " 디자인으로 다른이름 저장 되었습니다.");
                 }
                 catch (Exception ex)
                 {
@@ -596,7 +608,6 @@ namespace DoSA
         
         private void ribbonButtonSetting_Click(object sender, EventArgs e)
         {
-
             PopupSetting frmSetting = new PopupSetting();
 
             if (DialogResult.OK == frmSetting.ShowDialog())
@@ -605,15 +616,9 @@ namespace DoSA
 
         private void ribbonButtonHelp_Click(object sender, EventArgs e)
         {
-            //string strHelpFileFullName = Path.Combine(CSettingData.m_strProgramDirName, "Help", "TofU-2D_User_Guide.pdf");
+            PopupHelp frmHelp = new PopupHelp();
 
-            //if (m_manageFile.isExistFile(strHelpFileFullName) == false)
-            //{
-            //    CNotice.noticeWarning("도움말 파일이 존재하지 않습니다.\nTofU 디렉토리 > Help > TofU-2D Guide.pdf 를 확인하세요.");
-            //    return;
-            //}
-
-            //System.Diagnostics.Process.Start(strHelpFileFullName);
+            frmHelp.ShowDialog();
         }
 
         private void ribbonButtonAbout_Click(object sender, EventArgs e)
@@ -665,6 +670,8 @@ namespace DoSA
             // 혹시 FEMM 의 화면이 닫힌 경우 FEMM 의 화면을 복원합니다.
             reopenFEMM();
 
+            CProgramFEMM.showFEMM();
+
             m_design.getMaterial(m_femm);
 
             m_design.drawDesign(m_femm);
@@ -672,14 +679,24 @@ namespace DoSA
             /// 전류, 전압을 영으로 설정해서 기본모델을 만든다.
             m_design.setBlockPropeties(m_femm, 0);
 
+            double minX, maxX, minY, maxY;
+            minX = maxX = minY = maxY = 0;
+
+            m_design.getModelMinMaxX(ref minX, ref maxX);
+            m_design.getModelMinMaxY(ref minY, ref maxY);
+
             /// Stroke 가 양이면 Plus 만 경계영역을 만들 때 반영하고
             /// Stroke 가 음이면 Minus 만 경계영역을 만들 때 반영한다.
             if (currentExperiment.MovingStroke >= 0)
+            {
                 m_design.setBoundary(m_femm, currentExperiment.MovingStroke, 0);
+                maxY = maxY + currentExperiment.MovingStroke;
+            }
             else
+            {
                 m_design.setBoundary(m_femm, 0, currentExperiment.MovingStroke);
-
-            m_femm.zoomFit(true);
+                minY = minY + currentExperiment.MovingStroke;
+            }
 
             m_femm.saveAs(strExperimentFullName);
 
@@ -691,10 +708,19 @@ namespace DoSA
             int nStepCount = currentExperiment.StepCount;
 
             double dStepIncrease = Math.Abs(dFinalCurrent - dInitialCurrent) / nStepCount;
-
             double dCurrent;
 
+            /// Progress Bar 설정
+            progressBarCurrent.Style = ProgressBarStyle.Blocks;
+            progressBarCurrent.Minimum = 0;
+            progressBarCurrent.Maximum = nStepCount;
+            progressBarCurrent.Step = 1;
+            progressBarCurrent.Value = 0;
+
             List<string> listString = new List<string>();
+
+            DateTime previousTime = new DateTime();
+            previousTime = DateTime.Now;
 
             /// 총 계산횟수는 Step + 1 회이다.
             for (int i = 0; i < nStepCount + 1; i++)
@@ -703,13 +729,21 @@ namespace DoSA
 
                 m_design.changeCurrent(m_femm, dCurrent);
 
-                double dForce = m_femm.solveForce();
+                progressBarCurrent.PerformStep();
+                labelProgressCurrent.Text = "Current Step : " + i.ToString() + " / " + nStepCount.ToString();
+
+                double dForce = m_femm.solveForce(minX, minY, maxX, maxY);                
 
                 string strCurrent = String.Format("{0}", dCurrent);
                 string strForce = String.Format("{0}", dForce);
 
                 listString.Add(strCurrent + "," + strForce);
             }
+
+            DateTime currentTime = new DateTime();
+            currentTime = DateTime.Now;
+
+            TimeSpan diffTime = currentTime - previousTime;
 
             closePostView();
 
@@ -721,6 +755,19 @@ namespace DoSA
 
             // Result 버튼이 동작하게 한다.
             buttonLoadCurrentResult.Enabled = true;
+
+            if (diffTime.Hours > 0)
+                CNotice.printUserMessage(strExperimentName + " 시험이 완료 되었습니다. ( 소요시간 : " +
+                                            diffTime.Hours.ToString() + " 시 " +
+                                            diffTime.Minutes.ToString() + " 분 " +
+                                            diffTime.Seconds.ToString() + " 초 )");
+            else
+                CNotice.printUserMessage(strExperimentName + " 시험이 완료 되었습니다. ( 소요시간 : " +
+                                            diffTime.Minutes.ToString() + " 분 " +
+                                            diffTime.Seconds.ToString() + " 초 )");
+
+            /// DoSA 를 활성화하여 창을 최상위에 위치시킨다.
+            this.Activate();
         }
 
         private void plotCurrentResult()
@@ -900,9 +947,7 @@ namespace DoSA
                 // 혹시 FEMM 의 화면이 닫힌 경우 FEMM 의 화면을 복원합니다.
                 reopenFEMM();
 
-                string partName = nodeParts.NodeName;
- 
-                PopupShape popupShape = new PopupShape(partName, nodeParts.Face, nodeParts.m_kindKey);
+                PopupShape popupShape = new PopupShape(nodeParts.NodeName, nodeParts.Face, nodeParts.m_kindKey);
                 popupShape.StartPosition = FormStartPosition.CenterParent;
 
                 /// 이해할 수 없지만, 자동으로 Owner 설정이 되는 경우도 있고 아닌 경우도 있기 때문에
@@ -927,6 +972,7 @@ namespace DoSA
                     else
                     {
                         CNotice.noticeWarning("형상이 정상적으로 생성되지 못하였습니다.");
+
                         CNotice.printTrace("형상이 정상적으로 생성되지 못했다.");
                     }
 
@@ -947,6 +993,8 @@ namespace DoSA
 
             // 수정 되었음을 기록한다.
             m_design.m_bChanged = true;
+
+            CNotice.printUserMessage(nodeParts.NodeName + " 파트가 수정 되었습니다.");
 
             /// 수정된 코일형상을 프로퍼티에 표시한다.
             propertyGridMain.Refresh();
@@ -1081,27 +1129,47 @@ namespace DoSA
             // 이미지 캡쳐 때문에 해석중에 FEMM 의 넓이를 일시적으로 넓힌다
             resizeFEMM(1040);
 
+            CProgramFEMM.showFEMM();
+           
             m_design.getMaterial(m_femm);
 
             m_design.drawDesign(m_femm);
 
             m_design.setBlockPropeties(m_femm, forceExperiment.Voltage);
+            
+            double minX, maxX, minY, maxY;
+            minX = maxX = minY = maxY = 0;
+
+            m_design.getModelMinMaxX(ref minX, ref maxX);
+            m_design.getModelMinMaxY(ref minY, ref maxY);
 
             /// Stroke 가 양이면 Plus 만 경계영역을 만들 때 반영하고
             /// Stroke 가 음이면 Minus 만 경계영역을 만들 때 반영한다.
             if (forceExperiment.MovingStroke >= 0)
+            {
                 m_design.setBoundary(m_femm, forceExperiment.MovingStroke, 0);
+                maxY = maxY + forceExperiment.MovingStroke;
+            }
             else
+            {
                 m_design.setBoundary(m_femm, 0, forceExperiment.MovingStroke);
-
-            m_femm.zoomFit(true);
+                minY = minY + forceExperiment.MovingStroke;
+            }
 
             /// 저장 전에 이동량을 반영한다.
             m_femm.moveMovingParts(forceExperiment.MovingStroke);
 
             m_femm.saveAs(strExperimentFullName);
 
-            double dForce = m_femm.solveForce(strFieldImageFullName);
+            DateTime previousTime = new DateTime();
+            previousTime = DateTime.Now;
+
+            double dForce = m_femm.solveForce(minX, minY, maxX, maxY, strFieldImageFullName);
+
+            DateTime currentTime = new DateTime();
+            currentTime = DateTime.Now;
+
+            TimeSpan diffTime = currentTime - previousTime;
 
             string strForce = String.Format("{0,15:N5}", dForce);
 
@@ -1122,6 +1190,16 @@ namespace DoSA
             // Result 버튼이 동작하게 한다.
             buttonLoadForceResult.Enabled = true;
 
+            if (diffTime.Hours > 0)
+                CNotice.printUserMessage(strExperimentName + " 시험이 완료 되었습니다. ( 소요시간 : " +
+                                            diffTime.Hours.ToString() + " 시 " +
+                                            diffTime.Minutes.ToString() + " 분 " +
+                                            diffTime.Seconds.ToString() + " 초 )");
+            else
+                CNotice.printUserMessage(strExperimentName + " 시험이 완료 되었습니다. ( 소요시간 : " +
+                                            diffTime.Minutes.ToString() + " 분 " +
+                                            diffTime.Seconds.ToString() + " 초 )");
+
             /// DoSA 를 활성화하여 창을 최상위에 위치시킨다.
             this.Activate();
         }
@@ -1131,6 +1209,8 @@ namespace DoSA
             m_femm.closePost();
 
             redrawPartsInFEMM();
+
+            m_femm.zoomFit();
         }
 
         private void buttonStrokeResult_Click(object sender, EventArgs e)
@@ -1179,40 +1259,65 @@ namespace DoSA
             // 혹시 FEMM 의 화면이 닫힌 경우 FEMM 의 화면을 복원합니다.
             reopenFEMM();
 
+            CProgramFEMM.showFEMM();
+
             m_design.getMaterial(m_femm);
 
             m_design.drawDesign(m_femm);
 
             m_design.setBlockPropeties(m_femm, strokeExperiment.Voltage);
 
+            double minX, maxX, minY, maxY;
+            minX = maxX = minY = maxY = 0;
+
+            m_design.getModelMinMaxX(ref minX, ref maxX);
+            m_design.getModelMinMaxY(ref minY, ref maxY);
+
             /// 최소, 최대변위의 부호에 따라 해석영역의 크기를 다르게 제작한다.
-            if( dFinalStroke > 0 )
+            if( dFinalStroke >= 0 )
             {
-                if( dInitialStroke > 0 )
+                if( dInitialStroke >= 0 )
+                {
                     m_design.setBoundary(m_femm, dFinalStroke, 0);
+                    maxY = maxY + dFinalStroke;
+                }
                 else
+                {
                     m_design.setBoundary(m_femm, dFinalStroke, dInitialStroke);
+                    maxY = maxY + dFinalStroke;
+                    minY = minY + dInitialStroke;
+                }                    
             }
             else
             {
-                if( dInitialStroke > 0 )
+                if( dInitialStroke >= 0 )
                 {
                     CNotice.printTrace("최소, 최대변위에 발생할 수 없는 경우가 발생했다.");
                     return;
                 }
                 else
+                {
                     m_design.setBoundary(m_femm, 0, dInitialStroke);
+                    minY = minY + dInitialStroke;
+                }                    
             }
-            
-            m_femm.zoomFit(true);
 
             m_femm.saveAs(strExperimentFullName);
 
             double dStepIncrease = Math.Abs(dFinalStroke - dInitialStroke) / nStepCount;
-
             double dStroke;
+
+            /// Progress Bar 설정
+            progressBarStroke.Style = ProgressBarStyle.Blocks;
+            progressBarStroke.Minimum = 0;
+            progressBarStroke.Maximum = nStepCount;
+            progressBarStroke.Step = 1;
+            progressBarStroke.Value = 0;
  
-            List<string> listString = new List<string>();      
+            List<string> listString = new List<string>();
+
+            DateTime previousTime = new DateTime();
+            previousTime = DateTime.Now;
                  
             /// 총 계산횟수는 Step + 1 회이다.
             for (int i = 0; i < nStepCount + 1; i++ )
@@ -1222,7 +1327,10 @@ namespace DoSA
                 /// 항상 초기위치 기준으로 이동한다.
                 m_femm.moveMovingParts(dStroke);
 
-                double dForce = m_femm.solveForce();
+                progressBarStroke.PerformStep();
+                labelProgressStroke.Text = "Storke Step : " + i.ToString() + " / " + nStepCount.ToString();
+
+                double dForce = m_femm.solveForce(minX, minY, maxX, maxY);
 
                 /// 해석을 마치고 나면 구동부를 다시 초기위치로 복귀시킨다.
                 m_femm.moveMovingParts(-dStroke);
@@ -1232,6 +1340,11 @@ namespace DoSA
 
                 listString.Add(strStroke + "," + strForce);
             }
+
+            DateTime currentTime = new DateTime();
+            currentTime = DateTime.Now;
+
+            TimeSpan diffTime = currentTime - previousTime;
 
             closePostView();
 
@@ -1243,6 +1356,19 @@ namespace DoSA
             
             // Result 버튼이 동작하게 한다.
             buttonLoadStrokeResult.Enabled = true;
+
+            if(diffTime.Hours > 0)
+                CNotice.printUserMessage(   strExperimentName + " 시험이 완료 되었습니다. ( 소요시간 : " +
+                                            diffTime.Hours.ToString() + " 시 " +
+                                            diffTime.Minutes.ToString() + " 분 " +
+                                            diffTime.Seconds.ToString() + " 초 )");
+            else
+                CNotice.printUserMessage(   strExperimentName + " 시험이 완료 되었습니다. ( 소요시간 : " +
+                                            diffTime.Minutes.ToString() + " 분 " +
+                                            diffTime.Seconds.ToString() + " 초 )");
+
+            /// DoSA 를 활성화하여 창을 최상위에 위치시킨다.
+            this.Activate();
         }
 
         private void quitFEMM()
@@ -1866,10 +1992,13 @@ namespace DoSA
                     /// 형상에 맞추어 코일 설계 사양정보를 초기화 한다.
                     if(emKind == EMKind.COIL)
                         ((CCoil)retNode).initialShapeDesignValue();
+                    
+                    CNotice.printUserMessage(strName + " 파트가 생성 되었습니다.");
                 }                    
                 else
                 {
                     CNotice.noticeWarning("형상이 정상적으로 생성되지 못하였습니다.");
+
                     CNotice.printTrace("형상이 정상적으로 생성되지 못했다.");
 
                     return null;
@@ -1943,6 +2072,8 @@ namespace DoSA
                         CNotice.printTrace("엉뚱한 파트종류가 접근 되었다.");
                         return null;
                 }
+
+                CNotice.printUserMessage(strName + " 시험이 생성 되었습니다.");
             }                
 
             // 수정 되었음을 기록한다.
@@ -1952,6 +2083,7 @@ namespace DoSA
             {
                 // Treeview 에 추가한다
                 addTreeNode(strName, emKind);
+
                 // 해당 Node 의 Properies View 와 Information Windows 를 표시한다
                 showNode(strName);
             }
@@ -2096,10 +2228,12 @@ namespace DoSA
                             if (m_manageFile.isExistFile(strResultForceStrokeFileFullName) == true)
                             {
                                 buttonLoadStrokeResult.Enabled = true;
+                                progressBarStroke.Value = progressBarStroke.Maximum;
                             }
                             else
                             {
                                 buttonLoadStrokeResult.Enabled = false;
+                                progressBarStroke.Value = 0;
                             }
 
                             splitContainerRight.Panel1.Controls.Add(this.panelStroke);
@@ -2115,10 +2249,12 @@ namespace DoSA
                             if (m_manageFile.isExistFile(strResultForceCurrentFileFullName) == true)
                             {
                                 buttonLoadCurrentResult.Enabled = true;
+                                progressBarCurrent.Value = progressBarCurrent.Maximum;
                             }
                             else
                             {
                                 buttonLoadCurrentResult.Enabled = false;
+                                progressBarCurrent.Value = 0;
                             }
 
                             splitContainerRight.Panel1.Controls.Add(this.panelCurrent);

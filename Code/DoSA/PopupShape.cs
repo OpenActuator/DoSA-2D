@@ -30,6 +30,8 @@ namespace Shapes
 
         public string m_strPartName;
 
+        private bool m_bCreatePopupWindow;
+
         /// <summary>
         /// PopupShape 의 FaceType 변경만으로 Popup 창의 형태와 초기화가 이루어진다.
         /// </summary>
@@ -43,19 +45,19 @@ namespace Shapes
                 switch (this.m_faceType)
                 {
                     case EMFaceType.RECTANGLE:
-                        this.panelPointLine.Controls.Clear();
+                        this.panelPointControl.Controls.Clear();
                         this.m_faceType = EMFaceType.RECTANGLE;
 
-                        this.addRectanglePointControl(this.panelPointLine);
+                        this.addRectanglePointControl(this.panelPointControl);
                         this.Size = new Size(POPUP_SIZE_X, POPUP_SIZE_Y);
 
                         break;
 
                     case EMFaceType.POLYGON:
-                        this.panelPointLine.Controls.Clear();
+                        this.panelPointControl.Controls.Clear();
                         this.m_faceType = EMFaceType.POLYGON;
 
-                        this.addPolylinePointControl(this.panelPointLine);
+                        this.addPolylinePointControl(this.panelPointControl);
                         this.Size = new Size(POPUP_SIZE_X, POPUP_SIZE_Y);
                         break;
 
@@ -77,9 +79,9 @@ namespace Shapes
                 { 
                     m_listPointControl = new List<CPointControl>();
 
-                    for (int i = this.panelPointLine.Controls.Count - 1; i >= 0; i--)
+                    for (int i = this.panelPointControl.Controls.Count - 1; i >= 0; i--)
                     {
-                        m_listPointControl.Add((CPointControl)this.panelPointLine.Controls[i]);
+                        m_listPointControl.Add((CPointControl)this.panelPointControl.Controls[i]);
                     }
 
                     return m_listPointControl;
@@ -99,6 +101,13 @@ namespace Shapes
         public PopupShape(EMFaceType drawType, EMKind emKind)
         {
             InitializeComponent();
+
+            m_strPartName = string.Empty;
+
+            m_bCreatePopupWindow = true;
+            
+            textBoxBaseX.Text = "0.0";
+            textBoxBaseY.Text = "0.0";
 
             switch (emKind)
             {
@@ -127,11 +136,6 @@ namespace Shapes
             /// 코일의 경우는 코일계산 때문에 Rectangle 로 고정을 해야 한다.
             if (emKind == EMKind.COIL)
                 comboBoxFaceType.Enabled = false;
-
-            textBoxBaseX.Text = "0.0";
-            textBoxBaseY.Text = "0.0";
-
-            m_strPartName = string.Empty;
         }
 
         /// <summary>
@@ -142,6 +146,8 @@ namespace Shapes
             InitializeComponent();
 
             m_strPartName = partName;
+
+            m_bCreatePopupWindow = false;
 
             try
             {
@@ -178,7 +184,7 @@ namespace Shapes
 
                 if (face.getPointCount() < MIN_POLYGON_CONTROL_COUNT)
                 {
-                    CNotice.printTrace("CPointLine 가 4개 미만인 CFace 로 PopupShape 생성자를 호출했다.");
+                    CNotice.printTrace("CPoint 가 4개 미만인 CFace 로 PopupShape 생성자를 호출했다.");
                     return;
                 }
 
@@ -209,7 +215,7 @@ namespace Shapes
                         // 기본 생성 Control 수 보다 작을 때는 있는 Control 에 데이터를 담고
                         // 클 때는 Control 를 생성하면서 데이터를 담은다.
                         if(i >= MIN_POLYGON_CONTROL_COUNT)
-                            this.addPointControl(new CPointControl(), true, this.panelPointLine);
+                            this.addPointControl(new CPointControl(), true, this.panelPointControl);
 
                         this.ListPointControl[i].StrCoordX = face.RelativePointList[i].m_dX.ToString();
                         this.ListPointControl[i].StrCoordY = face.RelativePointList[i].m_dY.ToString();
@@ -276,8 +282,8 @@ namespace Shapes
             try
             {
                 #region------------------------- 이벤트 호출 영역 ------------------------------
-                /// 이벤트 호출 영역은 addControlPointLine() 안에 있으나 호출 때 동작하는 영역이 아니다.
-                /// 단, 함수내에 있는 이유는 addControlPointLine() 안에 있어서
+                /// 이벤트 호출 영역은 addControlPoint() 안에 있으나 호출 때 동작하는 영역이 아니다.
+                /// 단, 함수내에 있는 이유는 addControlPoint() 안에 있어서
                 /// 파라메터로 넘어오는 변수를 직접 접근할 수 있어, 이벤트 함수의 변수 접근 문제를 해결했다.
                 /// 
                 pointControl.AddCoordinates += (s, e) =>
@@ -312,7 +318,7 @@ namespace Shapes
                 {
                     if (this.m_faceType == EMFaceType.RECTANGLE)
                     {
-                        if (this.panelPointLine.Controls.Count == RECTANGLE_CONTROL_COUNT)
+                        if (this.panelPointControl.Controls.Count == RECTANGLE_CONTROL_COUNT)
                         {
                             e.Cancel = true;
                             CNotice.noticeWarning("Rectangle 일때는 최소한 2개의 좌표가 필요합니다.");
@@ -321,7 +327,7 @@ namespace Shapes
                     }
                     else
                     {
-                        if (this.panelPointLine.Controls.Count <= MIN_POLYGON_CONTROL_COUNT)
+                        if (this.panelPointControl.Controls.Count <= MIN_POLYGON_CONTROL_COUNT)
                         {
                             e.Cancel = true;
                             CNotice.noticeWarning("Polygon 일때는 최소한 4개의 좌표가 필요합니다.");
@@ -330,21 +336,25 @@ namespace Shapes
                     }
                 };
 
-                /// addControlPointLine() 이 호출될 때 실행되지 않고 이벤트가 발생할 때 동작한다.
+                /// addControlPoint() 이 호출될 때 실행되지 않고 이벤트가 발생할 때 동작한다.
                 pointControl.RemoveComplete += (s, e) =>
                 {
                     this.resetSequence();
 
-                    /// 1. PointControl 삭제때 Add 버튼 하나만 표시하기
-                    /// 
-                    /// 정렬이 끝난 후에 PointControl Panel 의 가장 아래 PointControl ADD 버튼만 보이게 하여
-                    /// PointControl 의 삽입이 항상 아래에서만 이루어지도록 해서 Tab 의 문제를 해결 했다.
-                    for (int i = 0; i < panelPointLine.Controls.Count; i++)
+                    // 생성창에서만 Add 버튼을 하나로 표시한다
+                    if(m_bCreatePopupWindow == true)
                     {
-                        if (i == 0)
-                            ((CPointControl)panelPointLine.Controls[i]).showAddButton();
-                        else
-                            ((CPointControl)panelPointLine.Controls[i]).hideAddButton();
+                        /// PointControl 삭제때 Add 버튼 하나만 표시하기
+                        /// 
+                        /// 정렬이 끝난 후에 PointControl Panel 의 가장 아래 PointControl ADD 버튼만 보이게 하여
+                        /// PointControl 의 삽입이 항상 아래에서만 이루어지도록 해서 Tab 의 문제를 해결 했다.
+                        for (int i = 0; i < panelPointControl.Controls.Count; i++)
+                        {
+                            if (i == 0)
+                                ((CPointControl)panelPointControl.Controls[i]).showAddButton();
+                            else
+                                ((CPointControl)panelPointControl.Controls[i]).hideAddButton();
+                        }
                     }
                 };
                 #endregion
@@ -356,16 +366,20 @@ namespace Shapes
 
                 this.resetSequence();
 
-                /// 2. PointControl 추가때 Add 버튼 하나만 표시하기
-                /// 
-                /// 정렬이 끝난 후에 PointControl Panel 의 가장 아래 PointControl ADD 버튼만 보이게 하여
-                /// PointControl 의 삽입이 항상 아래에서만 이루어지도록 해서 Tab 의 문제를 해결 했다.
-                for (int i = 0; i < panelPointLine.Controls.Count; i++)
+                // 생성창에서만 Add 버튼을 하나로 표시한다
+                if (m_bCreatePopupWindow == true)
                 {
-                    if (i == 0)
-                        ((CPointControl)panelPointLine.Controls[i]).showAddButton();
-                    else
-                        ((CPointControl)panelPointLine.Controls[i]).hideAddButton();
+                    /// 2. PointControl 추가때 Add 버튼 하나만 표시하기
+                    /// 
+                    /// 정렬이 끝난 후에 PointControl Panel 의 가장 아래 PointControl ADD 버튼만 보이게 하여
+                    /// PointControl 의 삽입이 항상 아래에서만 이루어지도록 해서 Tab 의 문제를 해결 했다.
+                    for (int i = 0; i < panelPointControl.Controls.Count; i++)
+                    {
+                        if (i == 0)
+                            ((CPointControl)panelPointControl.Controls[i]).showAddButton();
+                        else
+                            ((CPointControl)panelPointControl.Controls[i]).hideAddButton();
+                    }
                 }
 
                 return pointControl;
@@ -391,9 +405,9 @@ namespace Shapes
         {
             try
             {
-                for (int i = 0; i < this.panelPointLine.Controls.Count; i++)
+                for (int i = 0; i < this.panelPointControl.Controls.Count; i++)
                 {
-                    ((CPointControl)this.panelPointLine.Controls[i]).Sequence = this.panelPointLine.Controls.Count - i;
+                    ((CPointControl)this.panelPointControl.Controls[i]).Sequence = this.panelPointControl.Controls.Count - i;
                 }
             }
             catch (Exception ex)
@@ -411,7 +425,7 @@ namespace Shapes
                 return;
             }
 
-            this.addPointControl(new CPointControl(), true, this.panelPointLine);
+            this.addPointControl(new CPointControl(), true, this.panelPointControl);
         }
 
         private void comboBoxdrawType_SelectedIndexChanged(object sender, EventArgs e)
@@ -569,30 +583,30 @@ namespace Shapes
                         return null;
                     }
 
-                    List<CPoint> listPointLine = new List<CPoint>();
+                    List<CPoint> listPoint = new List<CPoint>();
 
-                    foreach (CPointControl controlPointLine in ListPointControl)
+                    foreach (CPointControl pointControl in ListPointControl)
                     {
                         // 매번 신규로 생성을 해야 한다.
-                        CPoint pointLine = new CPoint();
+                        CPoint point = new CPoint();
 
-                        pointLine.m_dX = Double.Parse(controlPointLine.StrCoordX);
-                        pointLine.m_dY = Double.Parse(controlPointLine.StrCoordY);
+                        point.m_dX = Double.Parse(pointControl.StrCoordX);
+                        point.m_dY = Double.Parse(pointControl.StrCoordY);
 
-                        if (controlPointLine.IsArc == true)
-                            pointLine.m_emLineKind = EMLineKind.ARC;
+                        if (pointControl.IsArc == true)
+                            point.m_emLineKind = EMLineKind.ARC;
                         else
-                            pointLine.m_emLineKind = EMLineKind.STRAIGHT;
+                            point.m_emLineKind = EMLineKind.STRAIGHT;
 
-                        if (controlPointLine.IsArcDirection == true)
-                            pointLine.m_emDirectionArc = EMDirectionArc.BACKWARD;
+                        if (pointControl.IsArcDirection == true)
+                            point.m_emDirectionArc = EMDirectionArc.BACKWARD;
                         else
-                            pointLine.m_emDirectionArc = EMDirectionArc.FORWARD;
+                            point.m_emDirectionArc = EMDirectionArc.FORWARD;
 
-                        listPointLine.Add(pointLine);
+                        listPoint.Add(point);
                     }
 
-                    face.setPolygonPoints(listPointLine);
+                    face.setPolygonPoints(listPoint);
                 }
 
                 return face;
@@ -868,7 +882,5 @@ namespace Shapes
                 e.Handled = true;
             }
         }
-
-
     }
 }

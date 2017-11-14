@@ -37,7 +37,13 @@
             this.label1 = new System.Windows.Forms.Label();
             this.buttonSettingOK = new System.Windows.Forms.Button();
             this.buttonSettingCancel = new System.Windows.Forms.Button();
+            this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.label4 = new System.Windows.Forms.Label();
+            this.textBoxMeshSizeLevel = new System.Windows.Forms.TextBox();
+            this.label5 = new System.Windows.Forms.Label();
+            this.label2 = new System.Windows.Forms.Label();
             this.groupBoxSetting.SuspendLayout();
+            this.groupBox1.SuspendLayout();
             this.SuspendLayout();
             // 
             // groupBoxSetting
@@ -50,7 +56,7 @@
             this.groupBoxSetting.Controls.Add(this.label1);
             this.groupBoxSetting.Location = new System.Drawing.Point(12, 12);
             this.groupBoxSetting.Name = "groupBoxSetting";
-            this.groupBoxSetting.Size = new System.Drawing.Size(506, 105);
+            this.groupBoxSetting.Size = new System.Drawing.Size(455, 105);
             this.groupBoxSetting.TabIndex = 10;
             this.groupBoxSetting.TabStop = false;
             this.groupBoxSetting.Text = "Directories";
@@ -58,14 +64,14 @@
             // textBoxFemmPath
             // 
             this.textBoxFemmPath.BackColor = System.Drawing.SystemColors.Window;
-            this.textBoxFemmPath.Location = new System.Drawing.Point(165, 67);
+            this.textBoxFemmPath.Location = new System.Drawing.Point(141, 69);
             this.textBoxFemmPath.Name = "textBoxFemmPath";
-            this.textBoxFemmPath.Size = new System.Drawing.Size(284, 21);
+            this.textBoxFemmPath.Size = new System.Drawing.Size(272, 21);
             this.textBoxFemmPath.TabIndex = 16;
             // 
             // buttonSelectFemmPath
             // 
-            this.buttonSelectFemmPath.Location = new System.Drawing.Point(455, 65);
+            this.buttonSelectFemmPath.Location = new System.Drawing.Point(419, 67);
             this.buttonSelectFemmPath.Name = "buttonSelectFemmPath";
             this.buttonSelectFemmPath.Size = new System.Drawing.Size(27, 23);
             this.buttonSelectFemmPath.TabIndex = 17;
@@ -87,14 +93,14 @@
             // textBoxWorkingDirectory
             // 
             this.textBoxWorkingDirectory.BackColor = System.Drawing.SystemColors.Window;
-            this.textBoxWorkingDirectory.Location = new System.Drawing.Point(165, 30);
+            this.textBoxWorkingDirectory.Location = new System.Drawing.Point(141, 28);
             this.textBoxWorkingDirectory.Name = "textBoxWorkingDirectory";
-            this.textBoxWorkingDirectory.Size = new System.Drawing.Size(284, 21);
+            this.textBoxWorkingDirectory.Size = new System.Drawing.Size(272, 21);
             this.textBoxWorkingDirectory.TabIndex = 3;
             // 
             // buttonSelectWorkingDirectory
             // 
-            this.buttonSelectWorkingDirectory.Location = new System.Drawing.Point(455, 28);
+            this.buttonSelectWorkingDirectory.Location = new System.Drawing.Point(419, 28);
             this.buttonSelectWorkingDirectory.Name = "buttonSelectWorkingDirectory";
             this.buttonSelectWorkingDirectory.Size = new System.Drawing.Size(27, 23);
             this.buttonSelectWorkingDirectory.TabIndex = 4;
@@ -114,7 +120,7 @@
             // 
             // buttonSettingOK
             // 
-            this.buttonSettingOK.Location = new System.Drawing.Point(284, 153);
+            this.buttonSettingOK.Location = new System.Drawing.Point(353, 161);
             this.buttonSettingOK.Name = "buttonSettingOK";
             this.buttonSettingOK.Size = new System.Drawing.Size(114, 36);
             this.buttonSettingOK.TabIndex = 12;
@@ -124,7 +130,7 @@
             // 
             // buttonSettingCancel
             // 
-            this.buttonSettingCancel.Location = new System.Drawing.Point(404, 153);
+            this.buttonSettingCancel.Location = new System.Drawing.Point(353, 203);
             this.buttonSettingCancel.Name = "buttonSettingCancel";
             this.buttonSettingCancel.Size = new System.Drawing.Size(114, 36);
             this.buttonSettingCancel.TabIndex = 11;
@@ -132,19 +138,72 @@
             this.buttonSettingCancel.UseVisualStyleBackColor = true;
             this.buttonSettingCancel.Click += new System.EventHandler(this.buttonSettingCancel_Click);
             // 
+            // groupBox1
+            // 
+            this.groupBox1.Controls.Add(this.label4);
+            this.groupBox1.Controls.Add(this.textBoxMeshSizeLevel);
+            this.groupBox1.Controls.Add(this.label5);
+            this.groupBox1.Controls.Add(this.label2);
+            this.groupBox1.Location = new System.Drawing.Point(12, 123);
+            this.groupBox1.Name = "groupBox1";
+            this.groupBox1.Size = new System.Drawing.Size(307, 119);
+            this.groupBox1.TabIndex = 13;
+            this.groupBox1.TabStop = false;
+            this.groupBox1.Text = "ETC";
+            // 
+            // label4
+            // 
+            this.label4.AutoSize = true;
+            this.label4.Location = new System.Drawing.Point(230, 32);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(15, 12);
+            this.label4.TabIndex = 5;
+            this.label4.Text = "%";
+            // 
+            // textBoxMeshSizeLevel
+            // 
+            this.textBoxMeshSizeLevel.BackColor = System.Drawing.SystemColors.Window;
+            this.textBoxMeshSizeLevel.Location = new System.Drawing.Point(141, 29);
+            this.textBoxMeshSizeLevel.Name = "textBoxMeshSizeLevel";
+            this.textBoxMeshSizeLevel.Size = new System.Drawing.Size(83, 21);
+            this.textBoxMeshSizeLevel.TabIndex = 4;
+            this.textBoxMeshSizeLevel.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
+            // 
+            // label5
+            // 
+            this.label5.AutoSize = true;
+            this.label5.Location = new System.Drawing.Point(128, 57);
+            this.label5.Name = "label5";
+            this.label5.Size = new System.Drawing.Size(172, 12);
+            this.label5.TabIndex = 3;
+            this.label5.Text = "( = Mesh Size / Model Size )";
+            // 
+            // label2
+            // 
+            this.label2.AutoSize = true;
+            this.label2.Location = new System.Drawing.Point(24, 32);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(108, 12);
+            this.label2.TabIndex = 3;
+            this.label2.Text = "Mesh Size Level :";
+            // 
             // PopupSetting
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(528, 198);
+            this.ClientSize = new System.Drawing.Size(482, 253);
+            this.Controls.Add(this.groupBox1);
             this.Controls.Add(this.groupBoxSetting);
             this.Controls.Add(this.buttonSettingOK);
             this.Controls.Add(this.buttonSettingCancel);
             this.Name = "PopupSetting";
             this.ShowIcon = false;
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "Setting";
             this.groupBoxSetting.ResumeLayout(false);
             this.groupBoxSetting.PerformLayout();
+            this.groupBox1.ResumeLayout(false);
+            this.groupBox1.PerformLayout();
             this.ResumeLayout(false);
 
         }
@@ -160,5 +219,10 @@
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Button buttonSettingOK;
         private System.Windows.Forms.Button buttonSettingCancel;
+        private System.Windows.Forms.GroupBox groupBox1;
+        private System.Windows.Forms.Label label4;
+        private System.Windows.Forms.TextBox textBoxMeshSizeLevel;
+        private System.Windows.Forms.Label label2;
+        private System.Windows.Forms.Label label5;
     }
 }

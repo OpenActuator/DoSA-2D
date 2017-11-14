@@ -13,6 +13,7 @@ using System.IO;
 using Scripts;
 using Shapes;
 using System.Windows.Forms;
+using DoSA;
 
 namespace Nodes
 {
@@ -64,8 +65,6 @@ namespace Nodes
 
         public bool m_bChanged;
 
-        const double MESH_DENSITY = 0.02;
-
         // Get 전용로 오픈한다
         public List<CNode> NodeList
         {
@@ -108,8 +107,8 @@ namespace Nodes
 
             if (m_listNode.Count == 0)
                 return false;
-            
-            foreach(CNode node in m_listNode)
+
+            foreach (CNode node in m_listNode)
             {
                 if (node.GetType().BaseType.Name == "CParts")
                 {
@@ -152,7 +151,7 @@ namespace Nodes
 
             return dSumArea;
         }
-                
+
         public bool getModelMinMaxY(ref double dMinY, ref double dMaxY)
         {
             /// 비교 값을 초기화 한다.
@@ -244,28 +243,28 @@ namespace Nodes
 
             m_listNode.Clear();
         }
-        
+
         // 해당 종류의 노드 갯수를 얻어 온다
-		public int getKindNodeSize(EMKind kind)
-		{
-			int size = 0;
+        public int getKindNodeSize(EMKind kind)
+        {
+            int size = 0;
 
-			foreach (CNode node in m_listNode)
-			{
-				if (node.m_kindKey == kind)
-					size++;
-			}
+            foreach (CNode node in m_listNode)
+            {
+                if (node.m_kindKey == kind)
+                    size++;
+            }
 
-			return size;
-		}
+            return size;
+        }
 
-		internal void writeObject(StreamWriter writeStream)
+        internal void writeObject(StreamWriter writeStream)
         {
             CWriteFile writeFile = new CWriteFile();
 
             writeFile.writeBeginLine(writeStream, "Design", 1);
             writeFile.writeDataLine(writeStream, "DesignName", m_strDesignName, 2);
-            
+
             foreach (CNode node in NodeList)
             {
                 node.writeObject(writeStream);
@@ -299,7 +298,7 @@ namespace Nodes
         internal void setBlockPropeties(CScriptFEMM femm, double dVolt)
         {
             // Mesh Size 는 길이단위이기 때문에 면적을 루트 취한 값과 곱하고 있다.
-            double dMeshSize = Math.Sqrt(this.calcShapeModelArea()) * MESH_DENSITY;
+            double dMeshSize = Math.Sqrt(this.calcShapeModelArea()) * CSettingData.m_dMeshLevelPercent / 100.0f;
 
             foreach (CNode node in NodeList)
             {
@@ -327,7 +326,7 @@ namespace Nodes
         internal void changeCurrent(CScriptFEMM femm, double dCurrent)
         {
             // Mesh Size 는 길이단위이기 때문에 면적을 루트 취한 값과 곱하고 있다.
-            double dMeshSize = Math.Sqrt(this.calcShapeModelArea()) * MESH_DENSITY;
+            double dMeshSize = Math.Sqrt(this.calcShapeModelArea()) * CSettingData.m_dMeshLevelPercent / 100.0f;
 
             foreach (CNode node in NodeList)
             {
@@ -363,17 +362,17 @@ namespace Nodes
                     strMaterial = nodeParts.getMaterial();
 
                     /// 현 파트의 재료가 기존에 저장된 Material 과 겹치는지를 확인한다.
-                    foreach(string strTemp in listMaterial)
+                    foreach (string strTemp in listMaterial)
                         if (strTemp == strMaterial)
                             bCheck = true;
 
                     // 겹치지 않는 재료만 추가한다.
-                    if(bCheck == false)
+                    if (bCheck == false)
                     {
                         listMaterial.Add(strMaterial);
                         femm.getMaterial(nodeParts.getMaterial());
                     }
-                        
+
                 }
             }
         }
@@ -381,11 +380,9 @@ namespace Nodes
         internal void setBoundary(CScriptFEMM femm, double dPlusMovingStroke = 0, double dMinusMovingStroke = 0)
         {
             const int iPaddingPercent = 200;
-            
-            double minX = 0;
-            double maxX = 0;
-            double minY = 0;
-            double maxY = 0;
+
+            double minX, minY, maxX, maxY;
+            minX = minY = maxX = maxY = 0;
 
             this.getModelMinMaxX(ref minX, ref maxX);
             this.getModelMinMaxY(ref minY, ref maxY);
@@ -394,7 +391,7 @@ namespace Nodes
             double lengthY = Math.Abs(maxY - minY);
 
             // Mesh Size 는 길이단위이기 때문에 면적을 루트 취한 값과 곱하고 있다.
-            double dMeshSize = Math.Sqrt(this.calcShapeModelArea()) * MESH_DENSITY;
+            double dMeshSize = Math.Sqrt(this.calcShapeModelArea()) * CSettingData.m_dMeshLevelPercent / 100.0f;
 
             double padLengthX = lengthX * iPaddingPercent / 100.0f;
             double padLengthY = lengthY * iPaddingPercent / 100.0f;
@@ -403,29 +400,23 @@ namespace Nodes
             /// - 100.0f 는 Percent 를 배수로 환산한다.
             double padLength = (padLengthX > padLengthY) ? padLengthX : padLengthY;
 
-
             CFace face = new CFace();
 
-            //CPoint blockPoint = new CPoint();
-
-            /// 외부 Region 을 생성한다.
+            /// 외부 Region 을 생성 및 경계조건을 부여한다.
             /// - X min 값 : 0
             /// - Mesh : AutoMesh
-            face.setOutsideBoundary(   femm, 0, maxY + padLength + dPlusMovingStroke, 
+            face.setOutsideBoundary(femm, 0, maxY + padLength + dPlusMovingStroke,
                                 maxX + padLength, minY - padLength + dMinusMovingStroke, 0);
 
-
-            /// 내부 Region 은 메쉬를 위해 추가했지만
-            /// Lorenz Force 와 Virtual Force 차이가 감소하지 않아서 사용을 보류하고 있다.
-            /// 
-            //const double dRatioRegion = 5.0f;
+            /// 내부 Region 은 경계조건과 상관없이 메쉬만를 위해 추가하였다.
+            /// 내부 Region 의 메쉬 크기는 기본 메쉬의 3배로 설정한다.
+            const double dRatioRegion = 5.0f;
 
             /// 내부 Region 을 생성한다.
             /// - X min 값 : 0
-            /// - Mesh : 지정메쉬 
-            //face.setInsideBoundary(   femm, 0, maxY + padLengthY / dRatioRegion + dPlusMovingStroke,
-            //                    maxX + padLengthX / dRatioRegion, minY - padLengthY / dRatioRegion + dMinusMovingStroke, dMeshSize);
-
+            /// - Mesh : 지정메쉬 * 3.0f
+            face.setInsideRegion(   femm, 0, maxY + padLengthY / dRatioRegion + dPlusMovingStroke,
+                                maxX + padLengthX / dRatioRegion, minY - padLengthY / dRatioRegion + dMinusMovingStroke, dMeshSize * 3.0f);
         }
 
         /// <summary>
@@ -494,7 +485,7 @@ namespace Nodes
 
             return false;
         }
-        
+
         private bool isContactedMovingParts()
         {
             List<CLine> listMovingPartLines = new List<CLine>();
@@ -514,7 +505,7 @@ namespace Nodes
                     {
                         listAbsoluteLine = face.AbsoluteLineList;
 
-                        if(nodeParts.MovingPart == EMMoving.MOVING)
+                        if (nodeParts.MovingPart == EMMoving.MOVING)
                         {
                             /// Moving Part 라인들을 하나의 Line List 에 담는다.
                             foreach (CLine line in listAbsoluteLine)
@@ -561,7 +552,7 @@ namespace Nodes
                 {
                     nodeParts = (CParts)node;
 
-                    if(nodeParts.MovingPart == EMMoving.MOVING)
+                    if (nodeParts.MovingPart == EMMoving.MOVING)
                     {
                         face = nodeParts.Face;
                         face.BasePoint.m_dY = face.BasePoint.m_dY + dStroke;
@@ -601,5 +592,6 @@ namespace Nodes
             else
                 return true;
         }
+
     }
 }

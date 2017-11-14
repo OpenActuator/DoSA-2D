@@ -39,7 +39,7 @@
             this.labelPartName = new System.Windows.Forms.Label();
             this.comboBoxFaceType = new System.Windows.Forms.ComboBox();
             this.labelFaceType = new System.Windows.Forms.Label();
-            this.panelPointLine = new System.Windows.Forms.Panel();
+            this.panelPointControl = new System.Windows.Forms.Panel();
             this.labelX = new System.Windows.Forms.Label();
             this.labelArc = new System.Windows.Forms.Label();
             this.labelNo = new System.Windows.Forms.Label();
@@ -210,17 +210,17 @@
             this.labelFaceType.TabIndex = 12;
             this.labelFaceType.Text = "Face Type :";
             // 
-            // panelPointLine
+            // panelPointControl
             // 
-            this.panelPointLine.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            this.panelPointControl.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.panelPointLine.AutoScroll = true;
-            this.panelPointLine.BackColor = System.Drawing.SystemColors.Control;
-            this.panelPointLine.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.panelPointLine.Location = new System.Drawing.Point(7, 176);
-            this.panelPointLine.Name = "panelPointLine";
-            this.panelPointLine.Size = new System.Drawing.Size(350, 254);
-            this.panelPointLine.TabIndex = 1;
+            this.panelPointControl.AutoScroll = true;
+            this.panelPointControl.BackColor = System.Drawing.SystemColors.Control;
+            this.panelPointControl.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.panelPointControl.Location = new System.Drawing.Point(7, 176);
+            this.panelPointControl.Name = "panelPointControl";
+            this.panelPointControl.Size = new System.Drawing.Size(350, 254);
+            this.panelPointControl.TabIndex = 1;
             // 
             // labelX
             // 
@@ -364,7 +364,7 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(364, 542);
             this.Controls.Add(this.panelBasePoint);
-            this.Controls.Add(this.panelPointLine);
+            this.Controls.Add(this.panelPointControl);
             this.Controls.Add(this.panelTitle);
             this.Controls.Add(this.buttonCancel);
             this.Controls.Add(this.buttonOK);
@@ -391,7 +391,7 @@
         private System.Windows.Forms.Button buttonCancel;
         private System.Windows.Forms.Button buttonOK;
         private System.Windows.Forms.Panel panelFaceType;
-        private System.Windows.Forms.Panel panelPointLine;
+        private System.Windows.Forms.Panel panelPointControl;
         private System.Windows.Forms.ComboBox comboBoxFaceType;
         private System.Windows.Forms.Label labelX;
         private System.Windows.Forms.Label labelArc;

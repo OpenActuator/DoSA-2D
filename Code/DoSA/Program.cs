@@ -14,14 +14,16 @@ namespace DoSA
         /// The main entry point for the application.
         /// </summary>
         [STAThread]
-        static void Main()
+        static void Main(string[] args)
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
+         
             Application.Run(new FormMain());
+
+            // args.Length, args[0]
         }
     }
-
 
     public static class CSettingData
     {
@@ -31,8 +33,7 @@ namespace DoSA
         public static string m_strWorkingDirName { get; set; }
         public static string m_strFemmExeFileFullName { get; set; }
 
-        //public static string m_strMaxwellMaterialDirName { get; set; }
-        //public static bool m_bShowProperyGridCollapse { get; set; }
+        public static double m_dMeshLevelPercent { get; set; }
 
 		// 내부 사용변수
 		// - 프로그램이 실행될때 초기화하여 내부에서 사용한다.
@@ -77,6 +78,16 @@ namespace DoSA
                 return false;
             }
 
+            if(m_dMeshLevelPercent <= 0.05f)
+            {
+                if (bOpenNoticeDialog == true)
+                    CNotice.noticeWarning("메쉬 크기 레벨은 0.05% 보다 큰 값이어야 합니다.");
+                else
+                    CNotice.printTrace("메쉬 크기 레벨은 0.05% 보다 큰 값이어야 합니다.");
+
+                return false;
+            }
+            
             return true;
         }
     }
@@ -87,18 +98,21 @@ namespace DoSA
         // 저장 변수들
         public string m_strWorkingDirName { get; set; }
         public string m_strFemmExeFileFullName { get; set; }
-        public bool m_bShowProperyGridCollapse { get; set; }
+        public double m_dMeshLevelPercent { get; set; }
+
 
         public void copyCloneToSettingData()
         {
             CSettingData.m_strWorkingDirName = m_strWorkingDirName;
             CSettingData.m_strFemmExeFileFullName = m_strFemmExeFileFullName;
+            CSettingData.m_dMeshLevelPercent = m_dMeshLevelPercent;
         }
 
         public void copySettingDataToClone()
         {
             m_strWorkingDirName = CSettingData.m_strWorkingDirName;
             m_strFemmExeFileFullName = CSettingData.m_strFemmExeFileFullName;
+            m_dMeshLevelPercent = CSettingData.m_dMeshLevelPercent;
         }
     }
 }

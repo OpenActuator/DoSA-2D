@@ -7,11 +7,10 @@ using System.Threading.Tasks;
 // Properties Category
 using System.ComponentModel;
 
-
-using Nodes;
-
 using System.IO;
 
+using Nodes;
+using Scripts;
 using gtLibrary;
 
 namespace Experiments
@@ -255,6 +254,7 @@ namespace Experiments
 
             return true;
         }
+
     }
 
     public class CCurrentExperiment : CExperiment

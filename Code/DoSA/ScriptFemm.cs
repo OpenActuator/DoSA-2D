@@ -313,9 +313,7 @@ namespace Scripts
                 CNotice.printTrace(ex.Message);
                 return;
             }
-
         }
-
 
         public void drawPoint(double x1, double y1)
         {
@@ -738,17 +736,29 @@ namespace Scripts
             }
         }
         
-        public double solveForce(string strFieldImageFullName = null)
+        public double solveForce(double minX, double minY, double maxX, double maxY, string strFieldImageFullName = null)
         {
             string strCommand;
             double dForce;
 
+            const double dOutSpace = 0.2f;
+
+            maxX = maxX + Math.Abs(maxX - minX) * dOutSpace;
+            minY = minY - Math.Abs(maxY - minY) * dOutSpace;
+            maxY = maxY + Math.Abs(maxY - minY) * dOutSpace;
+
             try
             {
+                strCommand = "mi_zoom(" + minX.ToString() + "," + minY.ToString() + "," + maxX.ToString() + "," + maxY.ToString() + ")";
+                sendCommand(strCommand);
+
                 strCommand = "mi_analyse()";
                 sendCommand(strCommand);
 
                 strCommand = "mi_loadsolution()";
+                sendCommand(strCommand);
+
+                strCommand = "mo_zoom(" + minX.ToString() + "," + minY.ToString() + "," + maxX.ToString() + "," + maxY.ToString() + ")";
                 sendCommand(strCommand);
 
                 /// mi_loadsolution() 후에 호출해야 한다.
