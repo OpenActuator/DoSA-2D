@@ -189,7 +189,7 @@ namespace Shapes
             /// 내부 포인트의 X 좌표값은 항상 영보다 커야 한다.
             foreach(CPoint point in m_listRelativePoint)
             {
-                if(point.m_dX < 0)
+                if((point.m_dX + m_basePoint.m_dX) < 0)
                 {
                     CNotice.noticeWarning("음의 X 좌표값을 사용했습니다. \n축대칭 해석모델은 1과 4 사분면의 형상만 가능합니다.");
                     return false;

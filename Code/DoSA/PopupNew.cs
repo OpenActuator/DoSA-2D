@@ -38,7 +38,7 @@ namespace DoSA
             this.DialogResult = DialogResult.Cancel;
         }
 
-        private bool verifyInputData()
+        private bool isInputDataOK()
         {
             try
             {
@@ -113,9 +113,9 @@ namespace DoSA
             // 검증전에 설정 되어야 함
             m_strName = textBoxName.Text;  
             
-            bool retVerify = verifyInputData();
+            bool retOK = isInputDataOK();
 
-            if(retVerify == true)
+            if(retOK == true)
                 this.DialogResult = DialogResult.OK;
         }
 

@@ -133,7 +133,7 @@ namespace DoSA
                 {
                     frmSetting.loadSettingFromFile();
 
-                    if (CSettingData.verifyData(false) == false)
+                    if (CSettingData.isDataOK(false) == false)
                     {
                         CNotice.noticeWarning("환경설정에 문제가 있습니다. \n환경 설정 후에 프로그램이 실행 됩니다.");
 
@@ -645,7 +645,7 @@ namespace DoSA
             string strStrokeFileFullName = Path.Combine(strExperimentDirName, strExperimentName + ".csv");
 
 
-            if (false == verifyCurrentExperiment(currentExperiment))
+            if (false == isCurrentExperimentOK(currentExperiment))
                 return;
 
             if (m_manageFile.isExistDirectory(strExperimentDirName) == true)
@@ -830,7 +830,7 @@ namespace DoSA
             }
         }
 
-        private bool verifyCurrentExperiment(CCurrentExperiment currentExperiment)
+        private bool isCurrentExperimentOK(CCurrentExperiment currentExperiment)
         {
             if (currentExperiment.InitialCurrent >= currentExperiment.FinalCurrent)
             {
@@ -1058,7 +1058,7 @@ namespace DoSA
             }
         }
 
-        private bool verifyForceExperiment(CForceExperiment forceExperiment)
+        private bool isForceExperimentOK(CForceExperiment forceExperiment)
         {
             bool bCheck = false;
 
@@ -1101,7 +1101,7 @@ namespace DoSA
             string strFieldImageFullName = Path.Combine(strExperimentDirName, strExperimentName + ".bmp");            
             
 
-            if (false == verifyForceExperiment(forceExperiment))
+            if (false == isForceExperimentOK(forceExperiment))
                 return;
 
             if (m_manageFile.isExistDirectory(strExperimentDirName) == true)
@@ -1234,7 +1234,7 @@ namespace DoSA
             string strStrokeFileFullName = Path.Combine(strExperimentDirName, strExperimentName + ".csv");
 
             
-            if (false == verifyStrokeExperiment(strokeExperiment))
+            if (false == isStrokeExperimentOK(strokeExperiment))
                 return;
 
             if (m_manageFile.isExistDirectory(strExperimentDirName) == true)
@@ -1381,7 +1381,7 @@ namespace DoSA
             }
         }
 
-        private bool verifyStrokeExperiment(CStrokeExperiment strokeExperiment)
+        private bool isStrokeExperimentOK(CStrokeExperiment strokeExperiment)
         {
             bool bCheck = false;
 

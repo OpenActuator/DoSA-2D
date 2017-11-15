@@ -39,7 +39,7 @@ namespace DoSA
 		// - 프로그램이 실행될때 초기화하여 내부에서 사용한다.
 		public static string m_strProgramDirName { get; set; }
 
-        public static bool verifyData(bool bOpenNoticeDialog = true)
+        public static bool isDataOK(bool bOpenNoticeDialog = true)
         {
             bool bCheck = false;
 

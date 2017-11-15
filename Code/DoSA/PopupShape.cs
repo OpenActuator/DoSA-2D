@@ -623,9 +623,9 @@ namespace Shapes
             try
             {
                 /// 완벽한 입력인 상태에서만 Draw 가 가능한다.
-                bool retVerify = isInputDataOK();
+                bool retOK = isInputDataOK();
 
-                if (retVerify == false)
+                if (retOK == false)
                     return;
 
                 /// [문제]
