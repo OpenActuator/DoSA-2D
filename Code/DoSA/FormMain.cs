@@ -155,20 +155,25 @@ namespace DoSA
                     m_manageFile.setCurrentDirectory(CSettingData.m_strWorkingDirName);
                 }
 
+                ///*****************************************************************
+                /// 관리자 권한이 없어서 readme.txt 접근이 안되는 문제가 발생한다.
+                /// 추후 Tofu 처럼 권한을 부여하라.
+                ///*****************************************************************
+
                 /// FEMM 버전을 확인한다.
                 /// 
-                bool retFEMM = checkVersionOfFEMM();
+                //bool retFEMM = checkVersionOfFEMM();
 
-                if(retFEMM == false)
-                {
-                    DialogResult result = CNotice.noticeWarningOKCancel("DoSA 는 FEMM V4.2(24Sep2017) 이상 버전의 설치가 필요합니다.\n다운로드 페이지로 이동하겠습니까?");
+                //if(retFEMM == false)
+                //{
+                //    DialogResult result = CNotice.noticeWarningOKCancel("DoSA 는 FEMM V4.2(24Sep2017) 이상 버전의 설치가 필요합니다.\n다운로드 페이지로 이동하겠습니까?");
 
-                    if (result == DialogResult.OK)
-                        openWebsite(@"http://www.femm.info/wiki/NewBuild");
+                //    if (result == DialogResult.OK)
+                //        openWebsite(@"http://www.femm.info/wiki/NewBuild");
 
-                    System.Windows.Forms.Application.ExitThread();
-                    Environment.Exit(0);
-                }
+                //    System.Windows.Forms.Application.ExitThread();
+                //    Environment.Exit(0);
+                //}
 
             }
             catch (Exception ex)
