@@ -32,7 +32,6 @@
             this.buttonExampleDirectory = new System.Windows.Forms.Button();
             this.buttonSolenoidGuide = new System.Windows.Forms.Button();
             this.buttonVCMGuide = new System.Windows.Forms.Button();
-            this.buttonInstallGuide = new System.Windows.Forms.Button();
             this.buttonDoSAUserGuide = new System.Windows.Forms.Button();
             this.buttonHelpClose = new System.Windows.Forms.Button();
             this.groupBox1.SuspendLayout();
@@ -43,7 +42,6 @@
             this.groupBox1.Controls.Add(this.buttonExampleDirectory);
             this.groupBox1.Controls.Add(this.buttonSolenoidGuide);
             this.groupBox1.Controls.Add(this.buttonVCMGuide);
-            this.groupBox1.Controls.Add(this.buttonInstallGuide);
             this.groupBox1.Controls.Add(this.buttonDoSAUserGuide);
             this.groupBox1.Location = new System.Drawing.Point(12, 12);
             this.groupBox1.Name = "groupBox1";
@@ -54,7 +52,7 @@
             // 
             // buttonExampleDirectory
             // 
-            this.buttonExampleDirectory.Location = new System.Drawing.Point(57, 168);
+            this.buttonExampleDirectory.Location = new System.Drawing.Point(57, 162);
             this.buttonExampleDirectory.Name = "buttonExampleDirectory";
             this.buttonExampleDirectory.Size = new System.Drawing.Size(250, 31);
             this.buttonExampleDirectory.TabIndex = 4;
@@ -64,7 +62,7 @@
             // 
             // buttonSolenoidGuide
             // 
-            this.buttonSolenoidGuide.Location = new System.Drawing.Point(57, 131);
+            this.buttonSolenoidGuide.Location = new System.Drawing.Point(57, 116);
             this.buttonSolenoidGuide.Name = "buttonSolenoidGuide";
             this.buttonSolenoidGuide.Size = new System.Drawing.Size(250, 31);
             this.buttonSolenoidGuide.TabIndex = 3;
@@ -74,7 +72,7 @@
             // 
             // buttonVCMGuide
             // 
-            this.buttonVCMGuide.Location = new System.Drawing.Point(57, 94);
+            this.buttonVCMGuide.Location = new System.Drawing.Point(57, 70);
             this.buttonVCMGuide.Name = "buttonVCMGuide";
             this.buttonVCMGuide.Size = new System.Drawing.Size(250, 31);
             this.buttonVCMGuide.TabIndex = 2;
@@ -82,19 +80,9 @@
             this.buttonVCMGuide.UseVisualStyleBackColor = true;
             this.buttonVCMGuide.Click += new System.EventHandler(this.buttonVCMGuide_Click);
             // 
-            // buttonInstallGuide
-            // 
-            this.buttonInstallGuide.Location = new System.Drawing.Point(57, 57);
-            this.buttonInstallGuide.Name = "buttonInstallGuide";
-            this.buttonInstallGuide.Size = new System.Drawing.Size(250, 31);
-            this.buttonInstallGuide.TabIndex = 1;
-            this.buttonInstallGuide.Text = "DoSA 설치 설명서";
-            this.buttonInstallGuide.UseVisualStyleBackColor = true;
-            this.buttonInstallGuide.Click += new System.EventHandler(this.buttonInstallGuide_Click);
-            // 
             // buttonDoSAUserGuide
             // 
-            this.buttonDoSAUserGuide.Location = new System.Drawing.Point(57, 20);
+            this.buttonDoSAUserGuide.Location = new System.Drawing.Point(57, 24);
             this.buttonDoSAUserGuide.Name = "buttonDoSAUserGuide";
             this.buttonDoSAUserGuide.Size = new System.Drawing.Size(250, 31);
             this.buttonDoSAUserGuide.TabIndex = 1;
@@ -104,7 +92,7 @@
             // 
             // buttonHelpClose
             // 
-            this.buttonHelpClose.Location = new System.Drawing.Point(261, 253);
+            this.buttonHelpClose.Location = new System.Drawing.Point(261, 233);
             this.buttonHelpClose.Name = "buttonHelpClose";
             this.buttonHelpClose.Size = new System.Drawing.Size(114, 36);
             this.buttonHelpClose.TabIndex = 13;
@@ -116,7 +104,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(384, 301);
+            this.ClientSize = new System.Drawing.Size(384, 276);
             this.Controls.Add(this.buttonHelpClose);
             this.Controls.Add(this.groupBox1);
             this.Name = "PopupHelp";
@@ -135,7 +123,6 @@
         private System.Windows.Forms.Button buttonDoSAUserGuide;
         private System.Windows.Forms.Button buttonSolenoidGuide;
         private System.Windows.Forms.Button buttonVCMGuide;
-        private System.Windows.Forms.Button buttonInstallGuide;
         private System.Windows.Forms.Button buttonExampleDirectory;
     }
 }

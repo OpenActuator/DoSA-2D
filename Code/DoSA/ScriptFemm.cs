@@ -40,10 +40,10 @@ namespace Scripts
         //
 
         [DllImport("user32.dll", EntryPoint = "MoveWindow")]
-        internal static extern bool MoveWindow(IntPtr hWnd, int X, int Y, int nWidth, int nHeight, bool bRepaint);
+        public static extern bool MoveWindow(IntPtr hWnd, int X, int Y, int nWidth, int nHeight, bool bRepaint);
 
         //[DllImport("user32.dll")]
-        //internal static extern Boolean ShowWindow(IntPtr hWnd, Int32 nCmdShow);
+        //public static extern Boolean ShowWindow(IntPtr hWnd, Int32 nCmdShow);
 
         [DllImport("user32.dll")]
         private static extern bool ShowWindowAsync(IntPtr hWnd, int nCmdShow);
@@ -54,8 +54,18 @@ namespace Scripts
         //-----------------------------------------------------------------------------
 
         #endregion APIs
+        
+        private static bool checkFEMM()
+        {
+            Process[] processList = Process.GetProcessesByName("femm");
 
-        internal static IActiveFEMM myFEMM
+            if (processList.Length < 1)
+                return false;
+
+            return true;
+        }
+
+        public static IActiveFEMM myFEMM
         {
             get
             {   
@@ -173,15 +183,6 @@ namespace Scripts
             myFEMM = null;
         }
 
-        private static bool checkFEMM()
-        {
-            Process[] processList = Process.GetProcessesByName("femm");
-
-            if (processList.Length < 1)
-                return false;
-
-            return true;
-        }
     }
    
     /// <summary>
@@ -594,7 +595,7 @@ namespace Scripts
 
         }
 
-        internal void getMaterial(string strMaterial)
+        public void getMaterial(string strMaterial)
         {
             string strCommand;
 
@@ -613,7 +614,7 @@ namespace Scripts
 
         }
 
-        internal void addBoundaryConditon()
+        public void addBoundaryConditon()
         {
             string strCommand;
 
@@ -629,7 +630,7 @@ namespace Scripts
             }
         }
 
-        internal void drawBoundaryLine(double x1, double y1, double x2, double y2)
+        public void drawBoundaryLine(double x1, double y1, double x2, double y2)
         {
             string strCommand;
 
@@ -673,7 +674,7 @@ namespace Scripts
 
         }
 
-        internal void setRegionBlockProp(CPoint blockPoint, double dMeshSize)
+        public void setRegionBlockProp(CPoint blockPoint, double dMeshSize)
         {
             string strCommand;
 
@@ -709,7 +710,7 @@ namespace Scripts
 
         }
 
-        internal void saveAs(string strExperimentFullName)
+        public void saveAs(string strExperimentFullName)
         {
             string strCommand;
 
@@ -805,7 +806,7 @@ namespace Scripts
             return dForce;
         }
 
-        internal void lockEdit()
+        public void lockEdit()
         {
             string strCommand;
 
@@ -823,7 +824,7 @@ namespace Scripts
             }
         }
 
-        internal void selectLine(CPoint selectPoint)
+        public void selectLine(CPoint selectPoint)
         {
             string strCommand;
 
@@ -906,7 +907,7 @@ namespace Scripts
         //        return true;
         //}
 
-        internal void clearSelected()
+        public void clearSelected()
         {
             string strCommand;
 
@@ -993,7 +994,7 @@ namespace Scripts
             }
         }
 
-        internal void selectArc(CPoint selectPoint)
+        public void selectArc(CPoint selectPoint)
         {
             string strCommand;
 
@@ -1020,7 +1021,7 @@ namespace Scripts
             }
         }
 
-        internal void closePre()
+        public void closePre()
         {
             string strCommand;
 
@@ -1037,7 +1038,7 @@ namespace Scripts
             }
         }
 
-        internal bool attachDefault(string strExperimentFullName, CPoint pointBoundaryBlock)
+        public bool attachDefault(string strExperimentFullName, CPoint pointBoundaryBlock)
         {
             CReadFile readFile = new CReadFile();
             CManageFile manageFile = new CManageFile();
@@ -1129,7 +1130,7 @@ namespace Scripts
             return true;
         }
 
-        internal void openDesign(string strExperimentFullName)
+        public void openDesign(string strExperimentFullName)
         {
             string strCommand;
 

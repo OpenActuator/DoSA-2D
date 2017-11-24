@@ -13,15 +13,15 @@ using Nodes;
 
 using System.IO;
 
-
 namespace DoSA
 {
     public partial class PopupNew : Form
     {
-        public string m_strName;
-
         CManageFile m_manageFile = new CManageFile();
-        private string m_strNewKind;
+
+        private string m_strNewKind; 
+        
+        public string m_strName;
 
         public PopupNew(string strNewKind)
         {
@@ -33,7 +33,7 @@ namespace DoSA
             m_strNewKind = strNewKind;
         }
 
-		private void buttonCancel_Click(object sender, EventArgs e)
+        private void buttonCancel_Click(object sender, EventArgs e)
         {
             this.DialogResult = DialogResult.Cancel;
         }
@@ -70,7 +70,7 @@ namespace DoSA
                             // 기존 디자인이 이미 존재할 때 삭제하고 새롭게 시작할지를 물어 온다
                             DialogResult ret = CNotice.noticeWarningOKCancel("동일한 디자인이 작업디렉토리에 이미 존재 합니다.\n기존 디자인을 삭제 하시겠습니까?");
 
-                            if(ret == DialogResult.OK)
+                            if (ret == DialogResult.OK)
                             {
                                 m_manageFile.deleteDirectory(directoryName);
                                 return true;
@@ -111,11 +111,11 @@ namespace DoSA
         private void buttonOK_Click(object sender, EventArgs e)
         {
             // 검증전에 설정 되어야 함
-            m_strName = textBoxName.Text;  
-            
+            m_strName = textBoxName.Text;
+
             bool retOK = isInputDataOK();
 
-            if(retOK == true)
+            if (retOK == true)
                 this.DialogResult = DialogResult.OK;
         }
 
@@ -132,5 +132,6 @@ namespace DoSA
                 buttonOK.PerformClick();
             }
         }
+
     }
 }

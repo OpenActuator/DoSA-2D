@@ -40,19 +40,6 @@ namespace DoSA
             System.Diagnostics.Process.Start(strHelpFileFullName);
         }
 
-        private void buttonInstallGuide_Click(object sender, EventArgs e)
-        {
-            string strHelpFileFullName = Path.Combine(CSettingData.m_strProgramDirName, "Help", "DoSA_Install_Guide.pdf");
-
-            if (m_manageFile.isExistFile(strHelpFileFullName) == false)
-            {
-                CNotice.noticeWarning("도움말 파일이 존재하지 않습니다.\nDoSA 디렉토리 > Help > DoSA_Install_Guide.pdf 를 확인하세요.");
-                return;
-            }
-
-            System.Diagnostics.Process.Start(strHelpFileFullName);
-        }
-
         private void buttonVCMGuide_Click(object sender, EventArgs e)
         {
             string strHelpFileFullName = Path.Combine(CSettingData.m_strProgramDirName, "Help", "VCM_Sample_Guide.pdf");

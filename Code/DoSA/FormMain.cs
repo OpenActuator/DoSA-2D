@@ -38,19 +38,17 @@ namespace DoSA
 		const int FIRST_PARTS_INDEX = 0;
 		const int FIRST_ANALYSIS_INDEX = 1;
 
-		public CDesign m_design = new CDesign();
-
         private CManageFile m_manageFile = new CManageFile();
-
-        public CScriptFEMM m_femm;
 
         private string m_strBackupNodeName = string.Empty;
 
+        public CDesign m_design = new CDesign();
+
+        public CScriptFEMM m_femm;
+
+
         #endregion
 
-        //----------------------------------------------------------------
-        // 초기화
-        //----------------------------------------------------------------
 
         #region----------------------- 프로그램 초기화 --------------------------
 
@@ -300,9 +298,6 @@ namespace DoSA
         }
         #endregion
 
-        //-----------------------------------------------------------------
-        // 이벤트
-        //-----------------------------------------------------------------
         
         #region--------------------- Ribbon Menu ---------------------------
 
@@ -636,8 +631,7 @@ namespace DoSA
         #endregion
 
         #region----------------------- Button -------------------------------
-
-
+        
         private void buttonExperimentCurrent_Click(object sender, EventArgs e)
         {
             CCurrentExperiment currentExperiment = (CCurrentExperiment)propertyGridMain.SelectedObject;
@@ -775,89 +769,6 @@ namespace DoSA
             this.Activate();
         }
 
-        private void plotCurrentResult()
-        {
-            // 기존 이미지를 숨기로 결과를 표시할 Chart 를 보이게 한다.
-            chartCurrentResult.Visible = true;
-            pictureBoxCurrent.Visible = false;
-
-            try
-            {
-                CCurrentExperiment currentExperiment = (CCurrentExperiment)propertyGridMain.SelectedObject;
-
-                //// 현재 표시되고 있는 PropertyGird 창에서 Experiment 이름을 찾아 낸다
-                string strExperimentName = currentExperiment.NodeName;
-                string strExperimentDirName = Path.Combine(m_design.m_strDesignDirName, strExperimentName);
-
-                string strCurrentFileFullName = Path.Combine(strExperimentDirName, strExperimentName + ".csv");
-
-                if (false == m_manageFile.isExistFile(strCurrentFileFullName))
-                {
-                    CNotice.noticeWarning("변위-자기력 시험결과가 존재 하지 않습니다.");
-                    return;
-                }
-
-                List<double> listDataX = new List<double>();
-                List<double> listDataY = new List<double>();
-
-                CReadFile readFile = new CReadFile();
-
-                readFile.readCSVData(strCurrentFileFullName, 0, ref listDataX, 0);
-                readFile.readCSVData(strCurrentFileFullName, 1, ref listDataY, 0);
-
-                if (listDataX.Count != listDataY.Count)
-                {
-                    CNotice.printTrace("CSV 파일의 각열의 행수가 일치하지 않습니다.");
-                    return;
-                }
-
-                double dXMin, dXMax, dYMin, dYMax;
-
-                dXMin = currentExperiment.InitialCurrent;
-                dXMax = currentExperiment.FinalCurrent;
-
-                //dYMin = listDataY.Min();
-                //dYMax = listDataY.Max();
-
-                dYMin = Double.NaN;
-                dYMax = Double.NaN;
-
-
-                // X 시간축면 스케일을 설정한다.
-                drawXYChart(chartCurrentResult, listDataX, listDataY, "Current [A]", "Force [N]", dXMin, dXMax, dYMin, dYMax);
-
-            }
-            catch (Exception ex)
-            {
-                CNotice.printTrace(ex.Message);
-                CNotice.printTrace("변위해석 결과의 차트에서 예외가 발생했습니다.");
-                return;
-            }
-        }
-
-        private bool isCurrentExperimentOK(CCurrentExperiment currentExperiment)
-        {
-            if (currentExperiment.InitialCurrent >= currentExperiment.FinalCurrent)
-            {
-                CNotice.noticeWarning("최종전류가 초기전류보다 커야 합니다.");
-                return false;
-            }
-
-            if (currentExperiment.StepCount <= 0)
-            {
-                CNotice.noticeWarning("전류 스텝은 영보다 커야 합니다.");
-                return false;
-            }
-
-            if (m_design.isDesignShapeOK() == false)
-            {
-                CNotice.printTrace("전류-자기력 시험 전의 형상 검사에서 오류가 발생했습니다.");
-                return false;
-            }
-            
-            return true;
-        }
-
         private void buttonCurrentResult_Click(object sender, EventArgs e)
         {
             plotCurrentResult();
@@ -937,161 +848,11 @@ namespace DoSA
             changePartsShape(nodeParts);
         }
 
-        private void changePartsShape(CParts nodeParts)
-        {
-            try
-            {
-                // 형상이 설정되지 않는 경우는
-                // Part 별로 다른 형상을 기본값으로 PopupShape 객체를 생성한다.
-                if (nodeParts.Face == null)
-                {
-                    CNotice.printTrace("Face 가 초기화 되지 않은 Parts 가 생성되어 있다.");
-                    return;
-                }
-
-                // 혹시 FEMM 의 화면이 닫힌 경우 FEMM 의 화면을 복원합니다.
-                reopenFEMM();
-
-                PopupShape popupShape = new PopupShape(nodeParts.NodeName, nodeParts.Face, nodeParts.m_kindKey);
-                popupShape.StartPosition = FormStartPosition.CenterParent;
-
-                /// 이해할 수 없지만, 자동으로 Owner 설정이 되는 경우도 있고 아닌 경우도 있기 때문에
-                /// Shape 창에서 MainForm 을 접근할 수 있도록 미리 설정을 한다.
-                //popupShape.Owner = this;
-
-                if (DialogResult.OK == popupShape.ShowDialog(this))
-                {
-                    CFace face = popupShape.makeFace();
-
-                    if (null != face)
-                    {
-                        nodeParts.Face = face;
-
-                        /// 형상에 맞추어 코일 설계 사양정보를 초기화 한다.
-                        if (nodeParts.m_kindKey == EMKind.COIL)
-                            ((CCoil)nodeParts).initialShapeDesignValue();
-
-                        // 혹시 FEMM 의 화면이 닫힌 경우 FEMM 의 화면을 복원합니다.
-                        reopenFEMM();
-                    }
-                    else
-                    {
-                        CNotice.noticeWarning("형상이 정상적으로 생성되지 못하였습니다.");
-
-                        CNotice.printTrace("형상이 정상적으로 생성되지 못했다.");
-                    }
-
-                }
-                else
-                {
-                    // 삽입 동안 화면에 그렸던 형상을 제거한다.
-                    redrawPartsInFEMM();
-                    return;
-                }                
-            }
-            catch (Exception ex)
-            {
-                CNotice.printTrace(ex.Message);
-                CNotice.printTrace("형상 생성과정에서 예외가 발생했습니다.");
-                return;
-            }
-
-            // 수정 되었음을 기록한다.
-            m_design.m_bChanged = true;
-
-            CNotice.printUserMessage(nodeParts.NodeName + " 파트가 수정 되었습니다.");
-
-            /// 수정된 코일형상을 프로퍼티에 표시한다.
-            propertyGridMain.Refresh();
-        }
-
         private void buttonForceResult_Click(object sender, EventArgs e)
         {
             plotForceResult();
         }
-
-        private void plotForceResult()
-        {
-            CForceExperiment forceExperiment = (CForceExperiment)propertyGridMain.SelectedObject;
-
-            // 현재 시험의 이름을 m_nodeList 에서 찾지 않고
-            // 현재 표시되고 있는 PropertyGird 창에서 Experiment 이름을 찾아 낸다
-            string strExperimentName = ((CForceExperiment)propertyGridMain.SelectedObject).NodeName;
-            string strExperimentDirName = Path.Combine(m_design.m_strDesignDirName, strExperimentName);
-
-            string desityImageFileFullName = Path.Combine(strExperimentDirName, strExperimentName + ".bmp");
-            string strForceFileFullName = Path.Combine(strExperimentDirName, strExperimentName + ".txt");
-
-            bool bCheck = false;
-
-            string strReturn;
-            double dForce;
-            CReadFile readfile = new CReadFile();
-
-            bCheck = m_manageFile.isExistFile(strForceFileFullName);
-
-            if (bCheck == true)
-            {
-                strReturn = readfile.pickoutString(strForceFileFullName, "force:", 7, 21);
-                dForce = Double.Parse(strReturn);
-
-                textBoxForce.Text = dForce.ToString();
-            }
-            else
-            {
-                CNotice.noticeWarning("자기력 가상시험 결과가 존재 하지 않습니다.");
-                return;
-            }
-
-            bCheck = m_manageFile.isExistFile(desityImageFileFullName);
-
-            if (bCheck == true)
-            {
-                // 파일을 잡고 있지 않기 위해서 임시 이미지를 사용하고 Dispose 한다.
-                Image tmpImage = Image.FromFile(desityImageFileFullName);
-
-                pictureBoxForce.Image = new Bitmap(tmpImage);
-                pictureBoxForce.SizeMode = PictureBoxSizeMode.StretchImage;
-
-                // 이미지이 연결을 끊어서 사용 가능하게 한다.
-                tmpImage.Dispose();
-            }
-            else
-            {
-                CNotice.noticeWarning("자속밀도 패턴이 존재 하지 않습니다.");
-                return;
-            }
-        }
-
-        private bool isForceExperimentOK(CForceExperiment forceExperiment)
-        {
-            bool bCheck = false;
-
-            foreach (CNode node in m_design.NodeList)
-            {
-                // 자기회로 재료만 지정
-                if (node.GetType().BaseType.Name == "CParts")
-                {
-                    if (((CParts)node).MovingPart == EMMoving.MOVING)
-                        bCheck = true;
-                }
-            }
-
-            if (bCheck == false)
-            {
-                CNotice.noticeWarning("자기력 시험을 위해서는 하나 이상의 동작부가 설정되어야 합니다.");
-                return false;
-            }
-
-            if (m_design.isDesignShapeOK() == false)
-            {
-                CNotice.printTrace("자기력 시험 전의 형상 검사에서 오류가 발생했습니다.");
-                return false;
-            }
-
-            return true;
-        }
-
+        
         private void buttonExperimentForce_Click(object sender, EventArgs e)
         {
             CForceExperiment forceExperiment = (CForceExperiment)propertyGridMain.SelectedObject;
@@ -1208,16 +969,7 @@ namespace DoSA
             /// DoSA 를 활성화하여 창을 최상위에 위치시킨다.
             this.Activate();
         }
-
-        private void closePostView()
-        {
-            m_femm.closePost();
-
-            redrawPartsInFEMM();
-
-            m_femm.zoomFit();
-        }
-
+        
         private void buttonStrokeResult_Click(object sender, EventArgs e)
         {
             plotStrokeResult();
@@ -1375,128 +1127,9 @@ namespace DoSA
             /// DoSA 를 활성화하여 창을 최상위에 위치시킨다.
             this.Activate();
         }
-
-        private void quitFEMM()
-        {
-            if(m_femm != null)
-            {
-                CProgramFEMM.killProcessOfFEMMs();
-
-                m_femm = null;
-            }
-        }
-
-        private bool isStrokeExperimentOK(CStrokeExperiment strokeExperiment)
-        {
-            bool bCheck = false;
-
-            if (strokeExperiment.InitialStroke >= strokeExperiment.FinalStroke)
-            {
-                CNotice.noticeWarning("최종변위가 초기변위보다 커야 합니다.");
-                return false;
-            }
-
-            if (strokeExperiment.StepCount <= 0)
-            {
-                CNotice.noticeWarning("변위 스텝은 영보다 커야 합니다.");
-                return false;
-            }
-
-            foreach (CNode node in m_design.NodeList)
-            {
-                // 자기회로 재료만 지정
-                if (node.GetType().BaseType.Name == "CParts")
-                {
-                    if (((CParts)node).MovingPart == EMMoving.MOVING)
-                        bCheck = true;
-                }
-            }
-
-            if (bCheck == false)
-            {
-                CNotice.noticeWarning("자기력 시험을 위해서는 하나 이상의 동작부가 설정되어야 합니다.");
-                return false;
-            }
-            
-            // 구동부를 초기 변위로 이동 후에 형상 검사를 한다.
-            if (m_design.isDesignShapeOK(strokeExperiment.InitialStroke) == false)
-            {
-                CNotice.noticeWarning("변위-자기력 시험 전의 초기변위 형상검사에서 오류가 발생했습니다.");
-                return false;
-            }
-
-            // 구동부를 최대 변위로 이동 후에 형상 검사를 한다.
-            if (m_design.isDesignShapeOK(strokeExperiment.FinalStroke) == false)
-            {
-                CNotice.noticeWarning("변위-자기력 시험 전의 최대변위 형상검사에서 오류가 발생했습니다.");
-                return false;
-            }
-
-            return true;
-        }
-
-        private void plotStrokeResult()
-        {
-            // 기존 이미지를 숨기로 결과를 표시할 Chart 를 보이게 한다.
-            chartStrokeResult.Visible = true;
-            pictureBoxStroke.Visible = false;
-
-            try
-            {
-                CStrokeExperiment strokeExperiment = (CStrokeExperiment)propertyGridMain.SelectedObject;
-
-                //// 현재 표시되고 있는 PropertyGird 창에서 Experiment 이름을 찾아 낸다
-                string strExperimentName = strokeExperiment.NodeName;
-                string strExperimentDirName = Path.Combine(m_design.m_strDesignDirName, strExperimentName);
-
-                string strStrokeFileFullName = Path.Combine(strExperimentDirName, strExperimentName + ".csv");
-
-                if (false == m_manageFile.isExistFile(strStrokeFileFullName))
-                {
-                    CNotice.noticeWarning("변위-자기력 시험결과가 존재 하지 않습니다.");
-                    return;
-                }
-
-                List<double> listDataX = new List<double>();
-                List<double> listDataY = new List<double>();
-
-                CReadFile readFile = new CReadFile();
-
-                readFile.readCSVData(strStrokeFileFullName, 0, ref listDataX, 0);
-                readFile.readCSVData(strStrokeFileFullName, 1, ref listDataY, 0);
-
-                if (listDataX.Count != listDataY.Count)
-                {
-                    CNotice.printTrace("CSV 파일의 각열의 행수가 일치하지 않습니다.");
-                    return;
-                }
-
-                double dXMin, dXMax, dYMin, dYMax;
-
-                dXMin = strokeExperiment.InitialStroke;
-                dXMax = strokeExperiment.FinalStroke;
-
-                //dYMin = listDataY.Min();
-                //dYMax = listDataY.Max();
-
-                dYMin = Double.NaN;
-                dYMax = Double.NaN;                
-
-                // X 시간축면 스케일을 설정한다.
-                drawXYChart(chartStrokeResult, listDataX, listDataY, "Stroke [mm]", "Force [N]", dXMin, dXMax, dYMin, dYMax);
-
-            }
-            catch (Exception ex)
-            {
-                CNotice.printTrace(ex.Message);
-                CNotice.printTrace("변위해석 결과의 차트에서 예외가 발생했습니다.");
-                return;
-            }
-        }
-
-
+        
         #endregion
-
+              
         #region---------------------- Windows Message -----------------------
 
         /// <summary>
@@ -1526,9 +1159,6 @@ namespace DoSA
 
         #endregion
 
-        //------------------------------------------------------------------
-        // 기능 함수
-        //------------------------------------------------------------------
 
         #region----------------------- FEMM 제어관련 기능함수 ------------------------
 
@@ -1674,7 +1304,303 @@ namespace DoSA
             m_femm.zoomFit();
         }
 
+        private void quitFEMM()
+        {
+            if (m_femm != null)
+            {
+                CProgramFEMM.killProcessOfFEMMs();
+
+                m_femm = null;
+            }
+        }
+
+        private void closePostView()
+        {
+            m_femm.closePost();
+
+            redrawPartsInFEMM();
+
+            m_femm.zoomFit();
+        }
+
         #endregion
+
+        #region----------------------- 가상시험 관련 -------------------------------
+
+        private bool isForceExperimentOK(CForceExperiment forceExperiment)
+        {
+            bool bCheck = false;
+
+            foreach (CNode node in m_design.NodeList)
+            {
+                // 자기회로 재료만 지정
+                if (node.GetType().BaseType.Name == "CParts")
+                {
+                    if (((CParts)node).MovingPart == EMMoving.MOVING)
+                        bCheck = true;
+                }
+            }
+
+            if (bCheck == false)
+            {
+                CNotice.noticeWarning("자기력 시험을 위해서는 하나 이상의 동작부가 설정되어야 합니다.");
+                return false;
+            }
+
+            if (m_design.isDesignShapeOK() == false)
+            {
+                CNotice.printTrace("자기력 시험 전의 형상 검사에서 오류가 발생했습니다.");
+                return false;
+            }
+
+            return true;
+        }
+
+        private bool isStrokeExperimentOK(CStrokeExperiment strokeExperiment)
+        {
+            bool bCheck = false;
+
+            if (strokeExperiment.InitialStroke >= strokeExperiment.FinalStroke)
+            {
+                CNotice.noticeWarning("최종변위가 초기변위보다 커야 합니다.");
+                return false;
+            }
+
+            if (strokeExperiment.StepCount <= 0)
+            {
+                CNotice.noticeWarning("변위 스텝은 영보다 커야 합니다.");
+                return false;
+            }
+
+            foreach (CNode node in m_design.NodeList)
+            {
+                // 자기회로 재료만 지정
+                if (node.GetType().BaseType.Name == "CParts")
+                {
+                    if (((CParts)node).MovingPart == EMMoving.MOVING)
+                        bCheck = true;
+                }
+            }
+
+            if (bCheck == false)
+            {
+                CNotice.noticeWarning("자기력 시험을 위해서는 하나 이상의 동작부가 설정되어야 합니다.");
+                return false;
+            }
+
+            // 구동부를 초기 변위로 이동 후에 형상 검사를 한다.
+            if (m_design.isDesignShapeOK(strokeExperiment.InitialStroke) == false)
+            {
+                CNotice.noticeWarning("변위-자기력 시험 전의 초기변위 형상검사에서 오류가 발생했습니다.");
+                return false;
+            }
+
+            // 구동부를 최대 변위로 이동 후에 형상 검사를 한다.
+            if (m_design.isDesignShapeOK(strokeExperiment.FinalStroke) == false)
+            {
+                CNotice.noticeWarning("변위-자기력 시험 전의 최대변위 형상검사에서 오류가 발생했습니다.");
+                return false;
+            }
+
+            return true;
+        }
+
+        private bool isCurrentExperimentOK(CCurrentExperiment currentExperiment)
+        {
+            if (currentExperiment.InitialCurrent >= currentExperiment.FinalCurrent)
+            {
+                CNotice.noticeWarning("최종전류가 초기전류보다 커야 합니다.");
+                return false;
+            }
+
+            if (currentExperiment.StepCount <= 0)
+            {
+                CNotice.noticeWarning("전류 스텝은 영보다 커야 합니다.");
+                return false;
+            }
+
+            if (m_design.isDesignShapeOK() == false)
+            {
+                CNotice.printTrace("전류-자기력 시험 전의 형상 검사에서 오류가 발생했습니다.");
+                return false;
+            }
+
+            return true;
+        }
+
+        private void plotForceResult()
+        {
+            CForceExperiment forceExperiment = (CForceExperiment)propertyGridMain.SelectedObject;
+
+            // 현재 시험의 이름을 m_nodeList 에서 찾지 않고
+            // 현재 표시되고 있는 PropertyGird 창에서 Experiment 이름을 찾아 낸다
+            string strExperimentName = ((CForceExperiment)propertyGridMain.SelectedObject).NodeName;
+            string strExperimentDirName = Path.Combine(m_design.m_strDesignDirName, strExperimentName);
+
+            string desityImageFileFullName = Path.Combine(strExperimentDirName, strExperimentName + ".bmp");
+            string strForceFileFullName = Path.Combine(strExperimentDirName, strExperimentName + ".txt");
+
+            bool bCheck = false;
+
+            string strReturn;
+            double dForce;
+            CReadFile readfile = new CReadFile();
+
+            bCheck = m_manageFile.isExistFile(strForceFileFullName);
+
+            if (bCheck == true)
+            {
+                strReturn = readfile.pickoutString(strForceFileFullName, "force:", 7, 21);
+                dForce = Double.Parse(strReturn);
+
+                textBoxForce.Text = dForce.ToString();
+            }
+            else
+            {
+                CNotice.noticeWarning("자기력 가상시험 결과가 존재 하지 않습니다.");
+                return;
+            }
+
+            bCheck = m_manageFile.isExistFile(desityImageFileFullName);
+
+            if (bCheck == true)
+            {
+                // 파일을 잡고 있지 않기 위해서 임시 이미지를 사용하고 Dispose 한다.
+                Image tmpImage = Image.FromFile(desityImageFileFullName);
+
+                pictureBoxForce.Image = new Bitmap(tmpImage);
+                pictureBoxForce.SizeMode = PictureBoxSizeMode.StretchImage;
+
+                // 이미지이 연결을 끊어서 사용 가능하게 한다.
+                tmpImage.Dispose();
+            }
+            else
+            {
+                CNotice.noticeWarning("자속밀도 패턴이 존재 하지 않습니다.");
+                return;
+            }
+        }
+
+        private void plotStrokeResult()
+        {
+            // 기존 이미지를 숨기로 결과를 표시할 Chart 를 보이게 한다.
+            chartStrokeResult.Visible = true;
+            pictureBoxStroke.Visible = false;
+
+            try
+            {
+                CStrokeExperiment strokeExperiment = (CStrokeExperiment)propertyGridMain.SelectedObject;
+
+                //// 현재 표시되고 있는 PropertyGird 창에서 Experiment 이름을 찾아 낸다
+                string strExperimentName = strokeExperiment.NodeName;
+                string strExperimentDirName = Path.Combine(m_design.m_strDesignDirName, strExperimentName);
+
+                string strStrokeFileFullName = Path.Combine(strExperimentDirName, strExperimentName + ".csv");
+
+                if (false == m_manageFile.isExistFile(strStrokeFileFullName))
+                {
+                    CNotice.noticeWarning("변위-자기력 시험결과가 존재 하지 않습니다.");
+                    return;
+                }
+
+                List<double> listDataX = new List<double>();
+                List<double> listDataY = new List<double>();
+
+                CReadFile readFile = new CReadFile();
+
+                readFile.readCSVData(strStrokeFileFullName, 0, ref listDataX, 0);
+                readFile.readCSVData(strStrokeFileFullName, 1, ref listDataY, 0);
+
+                if (listDataX.Count != listDataY.Count)
+                {
+                    CNotice.printTrace("CSV 파일의 각열의 행수가 일치하지 않습니다.");
+                    return;
+                }
+
+                double dXMin, dXMax, dYMin, dYMax;
+
+                dXMin = strokeExperiment.InitialStroke;
+                dXMax = strokeExperiment.FinalStroke;
+
+                //dYMin = listDataY.Min();
+                //dYMax = listDataY.Max();
+
+                dYMin = Double.NaN;
+                dYMax = Double.NaN;
+
+                // X 시간축면 스케일을 설정한다.
+                drawXYChart(chartStrokeResult, listDataX, listDataY, "Stroke [mm]", "Force [N]", dXMin, dXMax, dYMin, dYMax);
+
+            }
+            catch (Exception ex)
+            {
+                CNotice.printTrace(ex.Message);
+                CNotice.printTrace("변위해석 결과의 차트에서 예외가 발생했습니다.");
+                return;
+            }
+        }
+
+        private void plotCurrentResult()
+        {
+            // 기존 이미지를 숨기로 결과를 표시할 Chart 를 보이게 한다.
+            chartCurrentResult.Visible = true;
+            pictureBoxCurrent.Visible = false;
+
+            try
+            {
+                CCurrentExperiment currentExperiment = (CCurrentExperiment)propertyGridMain.SelectedObject;
+
+                //// 현재 표시되고 있는 PropertyGird 창에서 Experiment 이름을 찾아 낸다
+                string strExperimentName = currentExperiment.NodeName;
+                string strExperimentDirName = Path.Combine(m_design.m_strDesignDirName, strExperimentName);
+
+                string strCurrentFileFullName = Path.Combine(strExperimentDirName, strExperimentName + ".csv");
+
+                if (false == m_manageFile.isExistFile(strCurrentFileFullName))
+                {
+                    CNotice.noticeWarning("변위-자기력 시험결과가 존재 하지 않습니다.");
+                    return;
+                }
+
+                List<double> listDataX = new List<double>();
+                List<double> listDataY = new List<double>();
+
+                CReadFile readFile = new CReadFile();
+
+                readFile.readCSVData(strCurrentFileFullName, 0, ref listDataX, 0);
+                readFile.readCSVData(strCurrentFileFullName, 1, ref listDataY, 0);
+
+                if (listDataX.Count != listDataY.Count)
+                {
+                    CNotice.printTrace("CSV 파일의 각열의 행수가 일치하지 않습니다.");
+                    return;
+                }
+
+                double dXMin, dXMax, dYMin, dYMax;
+
+                dXMin = currentExperiment.InitialCurrent;
+                dXMax = currentExperiment.FinalCurrent;
+
+                //dYMin = listDataY.Min();
+                //dYMax = listDataY.Max();
+
+                dYMin = Double.NaN;
+                dYMax = Double.NaN;
+
+
+                // X 시간축면 스케일을 설정한다.
+                drawXYChart(chartCurrentResult, listDataX, listDataY, "Current [A]", "Force [N]", dXMin, dXMax, dYMin, dYMax);
+
+            }
+            catch (Exception ex)
+            {
+                CNotice.printTrace(ex.Message);
+                CNotice.printTrace("변위해석 결과의 차트에서 예외가 발생했습니다.");
+                return;
+            }
+        }
+
+        #endregion        
 
         #region-------------------------- Save & Load Data -------------------------
 
@@ -1881,6 +1807,7 @@ namespace DoSA
                 }
             }
         }
+
         #endregion
 
         #region------------------------- TreeView 관련 -------------------------
@@ -2819,8 +2746,75 @@ namespace DoSA
         {
             System.Diagnostics.Process.Start(strWebAddress);
         }
-        
 
+        private void changePartsShape(CParts nodeParts)
+        {
+            try
+            {
+                // 형상이 설정되지 않는 경우는
+                // Part 별로 다른 형상을 기본값으로 PopupShape 객체를 생성한다.
+                if (nodeParts.Face == null)
+                {
+                    CNotice.printTrace("Face 가 초기화 되지 않은 Parts 가 생성되어 있다.");
+                    return;
+                }
+
+                // 혹시 FEMM 의 화면이 닫힌 경우 FEMM 의 화면을 복원합니다.
+                reopenFEMM();
+
+                PopupShape popupShape = new PopupShape(nodeParts.NodeName, nodeParts.Face, nodeParts.m_kindKey);
+                popupShape.StartPosition = FormStartPosition.CenterParent;
+
+                /// 이해할 수 없지만, 자동으로 Owner 설정이 되는 경우도 있고 아닌 경우도 있기 때문에
+                /// Shape 창에서 MainForm 을 접근할 수 있도록 미리 설정을 한다.
+                //popupShape.Owner = this;
+
+                if (DialogResult.OK == popupShape.ShowDialog(this))
+                {
+                    CFace face = popupShape.makeFace();
+
+                    if (null != face)
+                    {
+                        nodeParts.Face = face;
+
+                        /// 형상에 맞추어 코일 설계 사양정보를 초기화 한다.
+                        if (nodeParts.m_kindKey == EMKind.COIL)
+                            ((CCoil)nodeParts).initialShapeDesignValue();
+
+                        // 혹시 FEMM 의 화면이 닫힌 경우 FEMM 의 화면을 복원합니다.
+                        reopenFEMM();
+                    }
+                    else
+                    {
+                        CNotice.noticeWarning("형상이 정상적으로 생성되지 못하였습니다.");
+
+                        CNotice.printTrace("형상이 정상적으로 생성되지 못했다.");
+                    }
+
+                }
+                else
+                {
+                    // 삽입 동안 화면에 그렸던 형상을 제거한다.
+                    redrawPartsInFEMM();
+                    return;
+                }
+            }
+            catch (Exception ex)
+            {
+                CNotice.printTrace(ex.Message);
+                CNotice.printTrace("형상 생성과정에서 예외가 발생했습니다.");
+                return;
+            }
+
+            // 수정 되었음을 기록한다.
+            m_design.m_bChanged = true;
+
+            CNotice.printUserMessage(nodeParts.NodeName + " 파트가 수정 되었습니다.");
+
+            /// 수정된 코일형상을 프로퍼티에 표시한다.
+            propertyGridMain.Refresh();
+        }
+        
         #endregion
     }
 }

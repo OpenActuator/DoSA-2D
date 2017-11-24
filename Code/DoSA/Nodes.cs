@@ -74,6 +74,100 @@ namespace Nodes
             }
         }
 
+
+        private bool isIntersectedAllLines()
+        {
+            List<CLine> listLineAll = new List<CLine>();
+            List<CLine> listAbsoluteLine = null;
+            CFace face = null;
+
+            foreach (CNode node in NodeList)
+            {
+                if (node.GetType().BaseType.Name == "CParts")
+                {
+                    CParts nodeParts = (CParts)node;
+
+                    face = nodeParts.Face;
+
+                    if (null != face)
+                    {
+                        listAbsoluteLine = face.AbsoluteLineList;
+
+                        /// 모든 라인들을 하나의 Line List 에 담는다.
+                        foreach (CLine line in listAbsoluteLine)
+                            listLineAll.Add(line);
+                    }
+                }
+            }
+
+            CShapeTools shapeTools = new CShapeTools();
+
+            for (int i = 0; i < listLineAll.Count - 1; i++)
+            {
+                for (int j = i + 1; j < listLineAll.Count; j++)
+                {
+                    if (true == shapeTools.isIntersected(listLineAll[i], listLineAll[j]))
+                    {
+                        return true;
+                    }
+                }
+            }
+
+            return false;
+        }
+
+        private bool isContactedMovingParts()
+        {
+            List<CLine> listMovingPartLines = new List<CLine>();
+            List<CLine> listFixedPartLines = new List<CLine>();
+            List<CLine> listAbsoluteLine = null;
+            CFace face = null;
+
+            foreach (CNode node in NodeList)
+            {
+                if (node.GetType().BaseType.Name == "CParts")
+                {
+                    CParts nodeParts = (CParts)node;
+
+                    face = nodeParts.Face;
+
+                    if (null != face)
+                    {
+                        listAbsoluteLine = face.AbsoluteLineList;
+
+                        if (nodeParts.MovingPart == EMMoving.MOVING)
+                        {
+                            /// Moving Part 라인들을 하나의 Line List 에 담는다.
+                            foreach (CLine line in listAbsoluteLine)
+                                listMovingPartLines.Add(line);
+                        }
+                        else
+                        {
+                            /// Moving Part 라인들을 하나의 Line List 에 담는다.
+                            foreach (CLine line in listAbsoluteLine)
+                                listFixedPartLines.Add(line);
+                        }
+
+                    }
+                }
+            }
+
+            CShapeTools shapeTools = new CShapeTools();
+
+            for (int i = 0; i < listMovingPartLines.Count - 1; i++)
+            {
+                for (int j = i + 1; j < listFixedPartLines.Count; j++)
+                {
+                    if (true == shapeTools.isContacted(listMovingPartLines[i], listFixedPartLines[j]))
+                    {
+                        return true;
+                    }
+                }
+            }
+
+            return false;
+        }
+
         public CDesign()
         {
             // 꼭 초기화가 되어야 한다.
@@ -258,7 +352,7 @@ namespace Nodes
             return size;
         }
 
-        internal void writeObject(StreamWriter writeStream)
+        public void writeObject(StreamWriter writeStream)
         {
             CWriteFile writeFile = new CWriteFile();
 
@@ -295,7 +389,7 @@ namespace Nodes
             femm.zoomFit();
         }
 
-        internal void setBlockPropeties(CScriptFEMM femm, double dVolt)
+        public void setBlockPropeties(CScriptFEMM femm, double dVolt)
         {
             // Mesh Size 는 길이단위이기 때문에 면적을 루트 취한 값과 곱하고 있다.
             double dMeshSize = Math.Sqrt(this.calcShapeModelArea()) * CSettingData.m_dMeshLevelPercent / 100.0f;
@@ -323,7 +417,7 @@ namespace Nodes
             }
         }
 
-        internal void changeCurrent(CScriptFEMM femm, double dCurrent)
+        public void changeCurrent(CScriptFEMM femm, double dCurrent)
         {
             // Mesh Size 는 길이단위이기 때문에 면적을 루트 취한 값과 곱하고 있다.
             double dMeshSize = Math.Sqrt(this.calcShapeModelArea()) * CSettingData.m_dMeshLevelPercent / 100.0f;
@@ -342,7 +436,7 @@ namespace Nodes
             }
         }
 
-        internal void getMaterial(CScriptFEMM femm)
+        public void getMaterial(CScriptFEMM femm)
         {
             List<string> listMaterial = new List<string>();
             string strMaterial = "Air";
@@ -377,7 +471,7 @@ namespace Nodes
             }
         }
 
-        internal void setBoundary(CScriptFEMM femm, double dPlusMovingStroke = 0, double dMinusMovingStroke = 0)
+        public void setBoundary(CScriptFEMM femm, double dPlusMovingStroke = 0, double dMinusMovingStroke = 0)
         {
             const int iPaddingPercent = 200;
 
@@ -429,7 +523,7 @@ namespace Nodes
         ///    이름 겹침으로 수정이 잘못되었음을 확인하고 이름을 복원하는 방법을 사용해 해결함
         /// </summary>
         /// <returns>이름이 겹치면 true 리턴</returns>
-        internal bool duplicateNodeName()
+        public bool duplicateNodeName()
         {
             /// 비교의 앞 이름은 m_listNode.Count - 1 까지 이다.
             for (int i = 0; i < m_listNode.Count - 1; i++)
@@ -445,101 +539,7 @@ namespace Nodes
             return false;
         }
 
-        private bool isIntersectedAllLines()
-        {
-            List<CLine> listLineAll = new List<CLine>();
-            List<CLine> listAbsoluteLine = null;
-            CFace face = null;
-
-            foreach (CNode node in NodeList)
-            {
-                if (node.GetType().BaseType.Name == "CParts")
-                {
-                    CParts nodeParts = (CParts)node;
-
-                    face = nodeParts.Face;
-
-                    if (null != face)
-                    {
-                        listAbsoluteLine = face.AbsoluteLineList;
-
-                        /// 모든 라인들을 하나의 Line List 에 담는다.
-                        foreach (CLine line in listAbsoluteLine)
-                            listLineAll.Add(line);
-                    }
-                }
-            }
-
-            CShapeTools shapeTools = new CShapeTools();
-
-            for (int i = 0; i < listLineAll.Count - 1; i++)
-            {
-                for (int j = i + 1; j < listLineAll.Count; j++)
-                {
-                    if (true == shapeTools.isIntersected(listLineAll[i], listLineAll[j]))
-                    {
-                        return true;
-                    }
-                }
-            }
-
-            return false;
-        }
-
-        private bool isContactedMovingParts()
-        {
-            List<CLine> listMovingPartLines = new List<CLine>();
-            List<CLine> listFixedPartLines = new List<CLine>();
-            List<CLine> listAbsoluteLine = null;
-            CFace face = null;
-
-            foreach (CNode node in NodeList)
-            {
-                if (node.GetType().BaseType.Name == "CParts")
-                {
-                    CParts nodeParts = (CParts)node;
-
-                    face = nodeParts.Face;
-
-                    if (null != face)
-                    {
-                        listAbsoluteLine = face.AbsoluteLineList;
-
-                        if (nodeParts.MovingPart == EMMoving.MOVING)
-                        {
-                            /// Moving Part 라인들을 하나의 Line List 에 담는다.
-                            foreach (CLine line in listAbsoluteLine)
-                                listMovingPartLines.Add(line);
-                        }
-                        else
-                        {
-                            /// Moving Part 라인들을 하나의 Line List 에 담는다.
-                            foreach (CLine line in listAbsoluteLine)
-                                listFixedPartLines.Add(line);
-                        }
-
-                    }
-                }
-            }
-
-            CShapeTools shapeTools = new CShapeTools();
-
-            for (int i = 0; i < listMovingPartLines.Count - 1; i++)
-            {
-                for (int j = i + 1; j < listFixedPartLines.Count; j++)
-                {
-                    if (true == shapeTools.isContacted(listMovingPartLines[i], listFixedPartLines[j]))
-                    {
-                        return true;
-                    }
-                }
-            }
-
-            return false;
-        }
-
-
-        internal bool isDesignShapeOK(double dStroke = 0)
+        public bool isDesignShapeOK(double dStroke = 0)
         {
             CFace face = null;
             bool bError = false;

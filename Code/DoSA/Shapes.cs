@@ -534,7 +534,7 @@ namespace Shapes
         /// <param name="x2">사각형 둘째점의 X 좌표</param>
         /// <param name="y2">사각형 둘째점의 Y 좌표</param>
         /// <param name="dMeshSize"></param>
-        internal void setOutsideBoundary(CScriptFEMM femm, double x1, double y1, double x2, double y2, double dMeshSize = 0)
+        public void setOutsideBoundary(CScriptFEMM femm, double x1, double y1, double x2, double y2, double dMeshSize = 0)
         {            
             femm.addBoundaryConditon();
 
@@ -599,7 +599,7 @@ namespace Shapes
         /// <param name="x2">사각형 둘째점의 X 좌표</param>
         /// <param name="y2">사각형 둘째점의 Y 좌표</param>
         /// <param name="dMeshSize">Mesh Size (0 이면 Auto Mesh)</param>
-        internal void setInsideRegion(CScriptFEMM femm, double x1, double y1, double x2, double y2, double dMeshSize = 0)
+        public void setInsideRegion(CScriptFEMM femm, double x1, double y1, double x2, double y2, double dMeshSize = 0)
         {
             setRectanglePoints(x1, y1, x2, y2);
 
@@ -656,7 +656,7 @@ namespace Shapes
         /// 
         /// FEMM 에 표시함으로 절대좌표를 사용해야 한다
         /// </summary>
-        internal void selectFace(CScriptFEMM femm)
+        public void selectFace(CScriptFEMM femm)
         {
             if(femm == null)
             {
@@ -708,12 +708,12 @@ namespace Shapes
         /// FEMM 의 Parts 선택 표시를 제거한다.
         /// </summary>
         /// <param name="femm"></param>
-        internal void clearSelected(CScriptFEMM femm)
+        public void clearSelected(CScriptFEMM femm)
         {
             femm.clearSelected();
         }
 
-        internal void writeObject(System.IO.StreamWriter writeStream)
+        public void writeObject(System.IO.StreamWriter writeStream)
         {
             CWriteFile writeFile = new CWriteFile();
 
@@ -826,6 +826,81 @@ namespace Shapes
         private bool isEqual(double a, double b)
         {
             return Math.Equals(round(a), round(b));
+        }        
+        /// <summary>
+        /// 짝수인지 홀수인지 아니면 영인지를 판단한다.
+        /// </summary>
+        private EMNumberKind getNumberKind(int num)
+        {
+            // even number
+            if (num == 0)
+                return EMNumberKind.ZERO;
+            // even number
+            else if (num % 2 == 0)
+                return EMNumberKind.EVEN;
+            // odd number
+            else
+                return EMNumberKind.ODD;
+        }
+
+        private bool isPerchedOnLine(CLine line, CPoint point)
+        {
+            double dL_P1_X = line.m_startPoint.m_dX;
+            double dL_P1_Y = line.m_startPoint.m_dY;
+
+            double dL_P2_X = line.m_endPoint.m_dX;
+            double dL_P2_Y = line.m_endPoint.m_dY;
+
+            double dP_X = point.m_dX;
+            double dP_Y = point.m_dY;
+
+            /// 라인의 X 구간 
+            double dBigX = Math.Max(dL_P1_X, dL_P2_X);
+            double dSmallX = Math.Min(dL_P1_X, dL_P2_X);
+
+            /// 라인의 Y 구간 
+            double dBigY = Math.Max(dL_P1_Y, dL_P2_Y);
+            double dSmallY = Math.Min(dL_P1_Y, dL_P2_Y);
+
+            /// 직선이 수직선인 경우는 예외 처리한다.
+            if (isEqual(dL_P2_X, dL_P1_X))
+            {
+                /// 점의 X 좌표가 직선의 X 좌표와 일치하면 라인 위의 점이다.
+                if (isEqual(dL_P1_X, dP_X))
+                {
+                    if (round(dBigY) >= round(dP_Y) && round(dSmallY) <= round(dP_Y))
+                        return true;
+                }
+            }
+            /// 직선이 수평선인 경우는 예외 처리한다.
+            else if (isEqual(dL_P2_Y, dL_P1_Y))
+            {
+                /// 점의 Y 좌표가 직선의 Y 좌표와 일치하면 라인 위의 점이다.
+                if (isEqual(dL_P1_Y, dP_Y))
+                {
+                    if (round(dBigX) >= round(dP_X) && round(dSmallX) <= round(dP_X))
+                        return true;
+                }
+            }
+            else
+            {
+                /// 라인의 직선방정식 기울기와 Y 절편을 계산한다.
+                double dL_A = (dL_P2_Y - dL_P1_Y) / (dL_P2_X - dL_P1_X);
+                double dL_B = dL_P1_Y - dL_A * (dL_P1_X);
+
+                /// 라인의 직선방정식에 점의 X 값을 입력하여 Y 값을 계산한다.
+                double dP_Calc_Y = dL_A * dP_X + dL_B;
+
+                /// 계산된 Y 값과 좌표 Y 값이 일치하면 직선의 방정식위에 있는 점이다.
+                if (isEqual(dP_Calc_Y, dP_Y))
+                {
+                    /// 직선의 방정식 위에 있는 점 중에서 실제 라인 위에 있는 점인지를 판단한다.
+                    if ((round(dBigX) >= round(dP_X) && round(dSmallX) <= round(dP_X)) && (round(dBigY) >= round(dP_Y) && round(dSmallY) <= round(dP_Y)))
+                        return true;
+                }
+            }
+
+            return false;
         }
 
         public double round(double a)
@@ -911,66 +986,6 @@ namespace Shapes
             }
             else
                 return false;
-        }
-
-        private bool isPerchedOnLine(CLine line, CPoint point)
-        {
-            double dL_P1_X = line.m_startPoint.m_dX;
-            double dL_P1_Y = line.m_startPoint.m_dY;
-
-            double dL_P2_X = line.m_endPoint.m_dX;
-            double dL_P2_Y = line.m_endPoint.m_dY;
-
-            double dP_X = point.m_dX;
-            double dP_Y = point.m_dY;
-
-            /// 라인의 X 구간 
-            double dBigX = Math.Max(dL_P1_X, dL_P2_X);
-            double dSmallX = Math.Min(dL_P1_X, dL_P2_X);
-
-            /// 라인의 Y 구간 
-            double dBigY = Math.Max(dL_P1_Y, dL_P2_Y);
-            double dSmallY = Math.Min(dL_P1_Y, dL_P2_Y);
-
-            /// 직선이 수직선인 경우는 예외 처리한다.
-            if (isEqual(dL_P2_X, dL_P1_X))
-            {
-                /// 점의 X 좌표가 직선의 X 좌표와 일치하면 라인 위의 점이다.
-                if(isEqual(dL_P1_X, dP_X))
-                {
-                    if(round(dBigY) >= round(dP_Y) && round(dSmallY) <= round(dP_Y))
-                        return true;
-                }
-            }
-            /// 직선이 수평선인 경우는 예외 처리한다.
-            else if (isEqual(dL_P2_Y, dL_P1_Y))
-            {
-                /// 점의 Y 좌표가 직선의 Y 좌표와 일치하면 라인 위의 점이다.
-                if (isEqual(dL_P1_Y, dP_Y))
-                {
-                    if (round(dBigX) >= round(dP_X) && round(dSmallX) <= round(dP_X))
-                        return true;
-                }
-            }
-            else
-            {
-                /// 라인의 직선방정식 기울기와 Y 절편을 계산한다.
-                double dL_A = (dL_P2_Y - dL_P1_Y) / (dL_P2_X - dL_P1_X);
-                double dL_B = dL_P1_Y - dL_A * (dL_P1_X);
-
-                /// 라인의 직선방정식에 점의 X 값을 입력하여 Y 값을 계산한다.
-                double dP_Calc_Y = dL_A * dP_X + dL_B;
-
-                /// 계산된 Y 값과 좌표 Y 값이 일치하면 직선의 방정식위에 있는 점이다.
-                if (isEqual(dP_Calc_Y, dP_Y))
-                {
-                    /// 직선의 방정식 위에 있는 점 중에서 실제 라인 위에 있는 점인지를 판단한다.
-                    if ((round(dBigX) >= round(dP_X) && round(dSmallX) <= round(dP_X)) && (round(dBigY) >= round(dP_Y) && round(dSmallY) <= round(dP_Y)))
-                        return true;
-                }
-            }
-            
-            return false;
         }
 
         /// <summary>
@@ -1123,22 +1138,5 @@ namespace Shapes
                 return null;
             }
         }
-        
-        /// <summary>
-        /// 짝수인지 홀수인지 아니면 영인지를 판단한다.
-        /// </summary>
-        private EMNumberKind getNumberKind(int num)
-        {
-            // even number
-            if (num == 0)
-                return EMNumberKind.ZERO;
-            // even number
-            else if (num % 2 == 0)
-                return EMNumberKind.EVEN;
-            // odd number
-            else
-                return EMNumberKind.ODD;
-        }
-
     }
 }

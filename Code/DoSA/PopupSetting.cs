@@ -17,18 +17,13 @@ namespace DoSA
     public partial class PopupSetting : Form
     {
         CManageFile m_manageFile = new CManageFile();
-
+        
         public PopupSetting()
         {
             InitializeComponent();
 
             // Setting Form 으로 올린다.
             uploadSettingData();
-        }
-
-        public void setMeshLevelPercent(double dMeshLevelPercent)
-        {
-            textBoxMeshSizeLevel.Text = dMeshLevelPercent.ToString();
         }
 
         private void buttonSettingOK_Click(object sender, EventArgs e)
@@ -95,6 +90,11 @@ namespace DoSA
 
             if (result == DialogResult.OK)
                 this.textBoxFemmPath.Text = openFileDialog.FileName;
+        }
+
+        public void setMeshLevelPercent(double dMeshLevelPercent)
+        {
+            textBoxMeshSizeLevel.Text = dMeshLevelPercent.ToString();
         }
 
         public bool saveSettingToFile()
