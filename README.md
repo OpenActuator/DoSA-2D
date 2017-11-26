@@ -1,6 +1,6 @@
 # DoSA (Ver 0.9.5)
 
-This program is Design Toolkit of Solenoid &amp; Actuator
+This program is Designer of Solenoid &amp; Actuator
 
 Youtube Video : https://youtu.be/-mVG9GJzjM0
 <br><br>
