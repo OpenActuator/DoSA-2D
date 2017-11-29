@@ -690,7 +690,15 @@ namespace Shapes
             }  
         }
 
-        internal void drawTemporaryFace()
+
+        /// <summary>
+        /// 형상 입력때나 수정때 형상을 다시 그린다
+        ///  - 수정 부품만 빼고 타 부품들은 다시 그리고, 수정 부품은 창에 기록된 값을 그린다.
+        /// </summary>
+        /// <param name="pointControl"></param>
+        /// <param name="coord"></param>
+        /// 파라메터는 현재 수정중인 점을 찾아서 붉게 표시하기 위함이다.
+        internal void drawTemporaryFace(CPointControl pointControl)
         {
             try
             {
@@ -736,6 +744,12 @@ namespace Shapes
                     if (ListPointControl[i].StrCoordY.Trim().Length == 0)
                         retCheck = false;
                 }
+                
+                double dBase_X, dBase_Y;
+                dBase_X = dBase_Y = 0;
+
+                dBase_X = Double.Parse(textBoxBaseX.Text.Trim());
+                dBase_Y = Double.Parse(textBoxBaseY.Text.Trim());
 
                 CFace face = null; 
 
@@ -757,15 +771,11 @@ namespace Shapes
                 else
                 {
                     double dP1_X, dP1_Y, dP2_X, dP2_Y;
-                    double dBase_X, dBase_Y;
 
                     bool bArc, bArcDirection;
 
-                    dP1_X = dP1_Y = dP2_X = dP2_Y = dBase_X = dBase_Y = 0;                   
+                    dP1_X = dP1_Y = dP2_X = dP2_Y = 0;                   
                     bArc = bArcDirection = false;
-
-                    dBase_X = Double.Parse(textBoxBaseX.Text.Trim());
-                    dBase_Y = Double.Parse(textBoxBaseY.Text.Trim());
 
                     for (int i = 0; i < ListPointControl.Count; i++)
                     {
@@ -813,7 +823,26 @@ namespace Shapes
                             break;
                     }
                 }
-             }
+
+                /// 선택된 좌표점을 붉은 색으로 표시한다.
+                /// 
+                /// Base X, Y 변경 할때나 Leave 이벤트는 제외해야 함으로 null 을 넘겨오도록 되어 있다.
+                if (pointControl != null)
+                {
+                    /// XY 값 모두 들어 있는 경우에만 표시를 한다.
+                    if (pointControl.StrCoordX != "" && pointControl.StrCoordY != "")
+                    {
+                        CPoint selectedPoint = new CPoint();
+
+                        selectedPoint.m_dX = Double.Parse(pointControl.StrCoordX) + dBase_X;
+                        selectedPoint.m_dY = Double.Parse(pointControl.StrCoordY) + dBase_Y;
+
+                        femm.clearSelected();
+
+                        femm.selectPoint(selectedPoint);
+                    }
+                }
+            }
             catch (Exception ex)
             {
                 CNotice.printTrace(ex.Message);
@@ -840,13 +869,13 @@ namespace Shapes
             /// Enter 에서만 동작한다.
             if (e.KeyCode == Keys.Enter)
             {
-                drawTemporaryFace();
+                drawTemporaryFace(null);
             }
         }
 
         private void textBoxBaseY_Leave(object sender, EventArgs e)
         {
-            drawTemporaryFace();
+            drawTemporaryFace(null);
         }
 
         private void textBoxBaseX_KeyUp(object sender, KeyEventArgs e)
@@ -854,14 +883,14 @@ namespace Shapes
             /// Enter 에서만 동작한다.
             if (e.KeyCode == Keys.Enter)
             {
-                drawTemporaryFace();
+                drawTemporaryFace(null);
             }
         }
 
         private void textBoxBaseX_Leave(object sender, EventArgs e)
         {
-            drawTemporaryFace();
-        }    
+            drawTemporaryFace(null);
+        }
     
         private void textBoxBaseY_KeyPress(object sender, KeyPressEventArgs e)
         {

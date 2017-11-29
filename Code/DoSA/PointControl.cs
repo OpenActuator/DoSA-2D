@@ -135,7 +135,7 @@ namespace Shapes
             }
 
             // 백업한 PopupShape 를 사용한다.
-            backupPopupShape.drawTemporaryFace();
+            backupPopupShape.drawTemporaryFace(null);
         }
 
         private void buttonAdd_Click(object sender, EventArgs e)
@@ -162,13 +162,19 @@ namespace Shapes
             /// Enter 에서만 동작한다.
             if (e.KeyCode == Keys.Enter)
             {
-                ((PopupShape)this.Parent.Parent).drawTemporaryFace();
+                ((PopupShape)this.Parent.Parent).drawTemporaryFace(this);
             }
         }
 
         private void textBoxY_Leave(object sender, EventArgs e)
         {
-            ((PopupShape)this.Parent.Parent).drawTemporaryFace();
+            // 점표시를 하지 않기 위해 null 를 넘긴다.
+            ((PopupShape)this.Parent.Parent).drawTemporaryFace(null);
+        }
+
+        private void textBoxY_Enter(object sender, EventArgs e)
+        {
+            ((PopupShape)this.Parent.Parent).drawTemporaryFace(this);
         }
 
         private void textBoxX_KeyUp(object sender, KeyEventArgs e)
@@ -176,23 +182,29 @@ namespace Shapes
             /// Enter 에서만 동작한다.
             if (e.KeyCode == Keys.Enter)
             {
-                ((PopupShape)this.Parent.Parent).drawTemporaryFace();
+                ((PopupShape)this.Parent.Parent).drawTemporaryFace(this);
             }
         }
 
         private void textBoxX_Leave(object sender, EventArgs e)
         {
-            ((PopupShape)this.Parent.Parent).drawTemporaryFace();
+            // 점표시를 하지 않기 위해 null 를 넘긴다.
+            ((PopupShape)this.Parent.Parent).drawTemporaryFace(null);
+        }
+
+        private void textBoxX_Enter(object sender, EventArgs e)
+        {
+            ((PopupShape)this.Parent.Parent).drawTemporaryFace(this);
         }
 
         private void checkBoxKind_Click(object sender, EventArgs e)
         {
-            ((PopupShape)this.Parent.Parent).drawTemporaryFace();
+            ((PopupShape)this.Parent.Parent).drawTemporaryFace(this);
         }
 
         private void checkBoxArcDirection_Click(object sender, EventArgs e)
         {
-            ((PopupShape)this.Parent.Parent).drawTemporaryFace();
+            ((PopupShape)this.Parent.Parent).drawTemporaryFace(this);
         }
 
         #endregion

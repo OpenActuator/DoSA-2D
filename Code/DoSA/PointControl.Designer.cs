@@ -99,6 +99,7 @@
             this.textBoxX.Size = new System.Drawing.Size(70, 21);
             this.textBoxX.TabIndex = 0;
             this.textBoxX.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
+            this.textBoxX.Enter += new System.EventHandler(this.textBoxX_Enter);
             this.textBoxX.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.textBoxX_KeyPress);
             this.textBoxX.KeyUp += new System.Windows.Forms.KeyEventHandler(this.textBoxX_KeyUp);
             this.textBoxX.Leave += new System.EventHandler(this.textBoxX_Leave);
@@ -110,6 +111,7 @@
             this.textBoxY.Size = new System.Drawing.Size(70, 21);
             this.textBoxY.TabIndex = 1;
             this.textBoxY.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
+            this.textBoxY.Enter += new System.EventHandler(this.textBoxY_Enter);
             this.textBoxY.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.textBoxY_KeyPress);
             this.textBoxY.KeyUp += new System.Windows.Forms.KeyEventHandler(this.textBoxY_KeyUp);
             this.textBoxY.Leave += new System.EventHandler(this.textBoxY_Leave);

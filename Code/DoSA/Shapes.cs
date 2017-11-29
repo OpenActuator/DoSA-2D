@@ -39,7 +39,6 @@ namespace Shapes
         ZERO
     }
 
-
     public class CFace
     {
         const int INDEX_ERROR = -1;
@@ -651,68 +650,6 @@ namespace Shapes
             }
         }
 
-        /// <summary>
-        /// FEMM 의 Parts Face 색상을 변경하여 선택됨을 표시한다.
-        /// 
-        /// FEMM 에 표시함으로 절대좌표를 사용해야 한다
-        /// </summary>
-        public void selectFace(CScriptFEMM femm)
-        {
-            if(femm == null)
-            {
-                CNotice.printTrace("Null femm 을 호출했습니다.");
-                return;
-            }
-
-            /// 매번 생성하는 Property 이기 때문에 
-            /// LineList 는 새로운 List에  담는 동작 한번만 호출하고, 사용은 새로운 List 를 사용한다.
-            List<CPoint> listAbsolutePoint = new List<CPoint>();
-            listAbsolutePoint = AbsolutePointList;
-
-            CPoint selectPoint = new CPoint();
-            CPoint startPoint = null;
-            CPoint endPoint = null;
-            
-            for (int i = 0; i < listAbsolutePoint.Count; i++)
-            {
-                if(listAbsolutePoint[i].m_emLineKind == EMLineKind.STRAIGHT)
-                {
-                    //// 마지막 라인만 다르게 처리한다.
-                    if (i < listAbsolutePoint.Count - 1)
-                    {
-                        startPoint = listAbsolutePoint[i];
-                        endPoint = listAbsolutePoint[i + 1];
-                    }
-                    else
-                    {
-                        startPoint = listAbsolutePoint[i];
-                        endPoint = listAbsolutePoint[0];
-                    }
-
-                    selectPoint.m_dX = (startPoint.m_dX + endPoint.m_dX) / 2.0f;
-                    selectPoint.m_dY = (startPoint.m_dY + endPoint.m_dY) / 2.0f;
-
-                    femm.selectLine(selectPoint);
-                }
-                else if(listAbsolutePoint[i].m_emLineKind == EMLineKind.ARC)
-                {
-                    selectPoint.m_dX = listAbsolutePoint[i].m_dX;
-                    selectPoint.m_dY = listAbsolutePoint[i].m_dY;
-
-                    femm.selectArc(selectPoint);
-                }
-            }            
-        }
-
-        /// <summary>
-        /// FEMM 의 Parts 선택 표시를 제거한다.
-        /// </summary>
-        /// <param name="femm"></param>
-        public void clearSelected(CScriptFEMM femm)
-        {
-            femm.clearSelected();
-        }
-
         public void writeObject(System.IO.StreamWriter writeStream)
         {
             CWriteFile writeFile = new CWriteFile();
@@ -843,7 +780,7 @@ namespace Shapes
                 return EMNumberKind.ODD;
         }
 
-        private bool isPerchedOnLine(CLine line, CPoint point)
+        public bool isPerchedOnLine(CLine line, CPoint point)
         {
             double dL_P1_X = line.m_startPoint.m_dX;
             double dL_P1_Y = line.m_startPoint.m_dY;

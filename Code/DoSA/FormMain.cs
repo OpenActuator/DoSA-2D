@@ -1812,6 +1812,62 @@ namespace DoSA
 
         #region------------------------- TreeView 관련 -------------------------
 
+
+        //트리뷰에서 삭제 한다
+        private void treeView_KeyUp(object sender, KeyEventArgs e)
+        {
+            // Delete 키에서 Tree 를 삭제한다.
+            if (e.KeyCode == Keys.Delete)
+            {
+                // [주의] 
+                // Node Name 이 SelectedNode.Name 아니라 SelectedNode.Text 에 들어 있다
+                string selectedNodeText = this.treeViewMain.SelectedNode.Text;
+
+                if (selectedNodeText != "Parts" && selectedNodeText != "Experiment")
+                {
+                    CNode node = m_design.getNode(selectedNodeText);
+
+                    if (node == null)
+                    {
+                        CNotice.printTrace("트리명의 노드가 m_design 에 존재하지 않습니다.");
+                        return;
+                    }
+
+                    // 가상 시험 Node 의 경우는 결과 디렉토리와 연결이 되기 때문에
+                    // 해석 결과 디렉토리가 있는 경우는 해석결과를 삭제할지를 물어보고 같이 삭제한다.
+                    if (node.GetType().BaseType.Name == "CExperiment")
+                    {
+                        string strExperimentDirName = Path.Combine(m_design.m_strDesignDirName, node.NodeName);
+
+                        if (m_manageFile.isExistDirectory(strExperimentDirName) == true)
+                        {
+                            DialogResult ret = CNotice.noticeWarningOKCancel("결과가 존재하는 가상시험입니다.\n삭제를 진행 하시겠습니까?");
+
+                            if (ret == DialogResult.Cancel)
+                                return;
+
+                            m_manageFile.deleteDirectory(strExperimentDirName);
+
+                            // 삭제되는 시간이 필요한 듯 한다.
+                            Thread.Sleep(1000);
+                        }
+                    }
+
+                    // 수정 되었음을 기록한다.
+                    m_design.m_bChanged = true;
+
+                    this.treeViewMain.SelectedNode.Remove();
+                    deleteRawNode(selectedNodeText);
+
+                    redrawPartsInFEMM();
+
+                    // 혹시 FEMM 의 화면이 닫힌 경우 FEMM 의 화면을 복원합니다.
+                    reopenFEMM();
+                }
+            }
+        }
+
+        // 형상 수정창을 띄운다
         private void treeViewMain_DoubleClick(object sender, EventArgs e)
         {
             // [주의] 
@@ -1834,6 +1890,14 @@ namespace DoSA
                 // 수정 되었음을 기록한다.
                 m_design.m_bChanged = true;
             }
+        }
+
+        //트리 노드를 선택
+        private void treeView_AfterSelect(object sender, TreeViewEventArgs e)
+        {
+            // 신기하게 treeViewMain_Click 나 treeViewMain_MouseUp 이벤트에서 동작시키면 이상하게 동작한다.
+            // 그래서 중복 호출이 되더라도 AfterSelect 을 사용한다.
+            showNode(this.treeViewMain.SelectedNode.Text);
         }
 
         //노드 추가를 위한 유효성검사
@@ -2060,14 +2124,6 @@ namespace DoSA
             treeViewMain.SelectedNode = treeNode;
         }
 
-        //트리 노드를 선택
-        private void treeView_AfterSelect(object sender, TreeViewEventArgs e)
-        {
-            // 신기하게 treeViewMain_Click 나 treeViewMain_MouseUp 이벤트에서 동작시키면 이상하게 동작한다.
-            // 그래서 중복 호출이 되더라도 AfterSelect 을 사용한다.
-            showNode(this.treeViewMain.SelectedNode.Text);            
-        }
-
         // 선택한 노드를 Information Window 와 Property View 에 보여준다
         private void showNode(string nodeName)
         {
@@ -2104,9 +2160,9 @@ namespace DoSA
 
                             CParts parts = (CParts)node;
 
-                            parts.Face.clearSelected(m_femm);
+                            m_femm.clearSelected();
 
-                            parts.Face.selectFace(m_femm);
+                            selectFace(parts);
                         }
                         /// 부품이 아닌 경우는 선택을 해지한다
                         else
@@ -2206,58 +2262,143 @@ namespace DoSA
             }
         }
 
-        //트리뷰에서 삭제 한다
-        private void treeView_KeyUp(object sender, KeyEventArgs e)
+        public class CSortDataSet
         {
-            // Delete 키에서 Tree 를 삭제한다.
-            if (e.KeyCode == Keys.Delete)
+            public double m_dLength;
+            public int m_iIndex;
+
+            public CSortDataSet(double length, int index)
             {
-                // [주의] 
-                // Node Name 이 SelectedNode.Name 아니라 SelectedNode.Text 에 들어 있다
-                string selectedNodeText = this.treeViewMain.SelectedNode.Text;
+                m_dLength = length;
+                m_iIndex = index;
+            }
+        }
+        
+        /// <summary>
+        /// FEMM 의 Parts Face 색상을 변경하여 선택됨을 표시한다.
+        /// 
+        /// FEMM 에 표시함으로 절대좌표를 사용해야 한다
+        /// </summary>
+        private void selectFace(CParts parts)
+        {
+            /// 매번 생성하는 Property 이기 때문에 
+            /// LineList 는 새로운 List에  담는 동작 한번만 호출하고, 사용은 새로운 List 를 사용한다.
+            List<CPoint> listAbsolutePoints = new List<CPoint>();
+            listAbsolutePoints = parts.Face.AbsolutePointList;
 
-                if (selectedNodeText != "Parts" && selectedNodeText != "Experiment")
+            /// 디자인의 모든 포인트를 담는다.
+            List<CPoint> listAbsoluteAllPoint = new List<CPoint>();
+
+            foreach(CNode node in m_design.NodeList)
+            {
+                /// 부품이 선택되면 FEMM 에 선택 표시를 한다
+                if (node.GetType().BaseType.Name == "CParts")
                 {
-                    CNode node = m_design.getNode(selectedNodeText);
-
-                    if (node == null)
+                    foreach(CPoint point in ((CParts)node).Face.AbsolutePointList)
                     {
-                        CNotice.printTrace("트리명의 노드가 m_design 에 존재하지 않습니다.");
-                        return;
+                        listAbsoluteAllPoint.Add(point);
+                    }
+                }
+            }
+            
+            CPoint selectPoint = new CPoint();
+            CPoint startPoint = new CPoint();
+            CPoint endPoint = new CPoint();
+            CLine line = new CLine();
+
+            List<CPoint> listPointOnLine = new List<CPoint>();
+            List<CSortDataSet> listDataSet = new List<CSortDataSet>();
+            double dLength;
+            int index;
+
+            CShapeTools shapeTools = new CShapeTools();
+            
+            for (int i = 0; i < listAbsolutePoints.Count; i++)
+            {
+                if(listAbsolutePoints[i].m_emLineKind == EMLineKind.STRAIGHT)
+                {
+                    //// 마지막 라인만 다르게 처리한다.
+                    if (i < listAbsolutePoints.Count - 1)
+                    {
+                        startPoint = listAbsolutePoints[i];
+                        endPoint = listAbsolutePoints[i + 1];
+                    }
+                    else
+                    {
+                        startPoint = listAbsolutePoints[i];
+                        endPoint = listAbsolutePoints[0];
                     }
 
-                    // 가상 시험 Node 의 경우는 결과 디렉토리와 연결이 되기 때문에
-                    // 해석 결과 디렉토리가 있는 경우는 해석결과를 삭제할지를 물어보고 같이 삭제한다.
-                    if (node.GetType().BaseType.Name == "CExperiment")
+                    line.m_startPoint = startPoint;
+                    line.m_endPoint = endPoint;
+                                       
+                    listPointOnLine.Clear();
+                    listDataSet.Clear();
+                    index = 0;
+
+                    /// 선택한 라인 위에 있는 모든 점들을 하나의 List 에 담는다.
+                    foreach(CPoint point in listAbsoluteAllPoint)
                     {
-                        string strExperimentDirName = Path.Combine(m_design.m_strDesignDirName, node.NodeName);
-
-                        if (m_manageFile.isExistDirectory(strExperimentDirName) == true)
+                        if(true == shapeTools.isPerchedOnLine(line, point))
                         {
-                            DialogResult ret = CNotice.noticeWarningOKCancel("결과가 존재하는 가상시험입니다.\n삭제를 진행 하시겠습니까?");
-
-                            if (ret == DialogResult.Cancel)
-                                return;
-
-                            m_manageFile.deleteDirectory(strExperimentDirName);
-
-                            // 삭제되는 시간이 필요한 듯 한다.
-                            Thread.Sleep(1000);
+                            listPointOnLine.Add(point);
                         }
                     }
 
-                    // 수정 되었음을 기록한다.
-                    m_design.m_bChanged = true;
+                    // 양단에 두점에 라인위에 있는 경우는 라인을 분리하는 점이 없음을 의미한다.
+                    if (listPointOnLine.Count == 2)
+                    {
+                        selectPoint.m_dX = (startPoint.m_dX + endPoint.m_dX) / 2.0f;
+                        selectPoint.m_dY = (startPoint.m_dY + endPoint.m_dY) / 2.0f;
 
-                    this.treeViewMain.SelectedNode.Remove();
-                    deleteRawNode(selectedNodeText);
+                        m_femm.selectLine(selectPoint);
+                    }
+                    else
+                    {
+                        /// 시작점과 라인위에 모든점의 길이를 계산하고 
+                        /// 인덱스와 같이 클래스로 만들어서 CSortDataSet 형태로 List 에 저장한다.
+                        foreach(CPoint point in listPointOnLine)
+                        {
+                            dLength = Math.Sqrt(    Math.Pow(startPoint.m_dX - point.m_dX, 2) +
+                                                    Math.Pow(startPoint.m_dY - point.m_dY, 2));
 
-                    redrawPartsInFEMM();
+                            listDataSet.Add(new CSortDataSet(dLength, index));
+                            index ++;
+                        }
 
-                    // 혹시 FEMM 의 화면이 닫힌 경우 FEMM 의 화면을 복원합니다.
-                    reopenFEMM();
+                        /// List Sort 함수를 정렬 동작을 delegate 함수로 표현하면서 바로 정렬한다.
+                        ///
+                        /// CSortDataSet 의 Length 로 CSortDataSet 을 정렬 한다.
+                        listDataSet.Sort(delegate(CSortDataSet A, CSortDataSet B)
+                        {
+                            if (A.m_dLength > B.m_dLength) return 1;
+                            else if (A.m_dLength < B.m_dLength) return -1;
+                            return 0;
+                        });         
+               
+                        /// 길이로 정렬된 CSortDataSet 의 인덱스를 사용하여
+                        /// 라인위의 점들로 분리된 라인들을 하나씩 선택한다.
+                        for(int j = 0; j < listPointOnLine.Count-1; j++)
+                        {
+                            startPoint = listPointOnLine[listDataSet[j].m_iIndex];
+                            endPoint = listPointOnLine[listDataSet[j+1].m_iIndex];
+
+                            selectPoint.m_dX = (startPoint.m_dX + endPoint.m_dX) / 2.0f;
+                            selectPoint.m_dY = (startPoint.m_dY + endPoint.m_dY) / 2.0f;
+
+                            m_femm.selectLine(selectPoint);
+                        }
+                    }               
+                    
                 }
-            }
+                else if(listAbsolutePoints[i].m_emLineKind == EMLineKind.ARC)
+                {
+                    selectPoint.m_dX = listAbsolutePoints[i].m_dX;
+                    selectPoint.m_dY = listAbsolutePoints[i].m_dY;
+
+                    m_femm.selectArc(selectPoint);
+                }
+            }        
         }
 
         /// 트리를 삭제 한다

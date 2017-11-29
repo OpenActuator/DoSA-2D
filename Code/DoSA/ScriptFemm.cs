@@ -849,7 +849,33 @@ namespace Scripts
                 CNotice.printTrace(ex.Message);
                 return;
             }
+        }
 
+        public void selectPoint(CPoint selectPoint)
+        {
+            string strCommand;
+
+            try
+            {
+                /// nodes, segments, arcsegments, blocks, group
+                strCommand = "mi_seteditmode(\"nodes\")";
+                sendCommand(strCommand);
+
+                strCommand = "mi_selectnode(" + selectPoint.m_dX + "," + selectPoint.m_dY + ")";
+                sendCommand(strCommand);
+
+                /// editmode 를 group 으로 바꾸어서 FEMM 마우스 동작을 막는다.
+                /// - refreshView() 전에 실행해야 한다. 
+                lockEdit();
+
+                /// refresh 를 꼭 해야 색상이 변한다
+                refreshView();
+            }
+            catch (Exception ex)
+            {
+                CNotice.printTrace(ex.Message);
+                return;
+            }
         }
 
         /// <summary>
