@@ -1,4 +1,4 @@
-# DoSA (Ver 0.9.5)
+# DoSA (Ver 0.9.6)
 
 This program is an open source program for design of Solenoid &amp; Actuator
 
