@@ -695,10 +695,9 @@ namespace Shapes
         /// 형상 입력때나 수정때 형상을 다시 그린다
         ///  - 수정 부품만 빼고 타 부품들은 다시 그리고, 수정 부품은 창에 기록된 값을 그린다.
         /// </summary>
-        /// <param name="pointControl"></param>
-        /// <param name="coord"></param>
-        /// 파라메터는 현재 수정중인 점을 찾아서 붉게 표시하기 위함이다.
-        internal void drawTemporaryFace(CPointControl pointControl)
+        /// <param name="pointControl">좌표점 PointControl</param>
+        /// <param name="bRedraw">형상 수정이 없어도 강제로 ARC 변경때 강제로 수정함</param>
+        internal void drawTemporaryFace(CPointControl pointControl, bool bRedraw = false)
         {
             try
             {
@@ -718,22 +717,51 @@ namespace Shapes
 
                 CScriptFEMM femm = formMain.m_femm;
 
-                femm.deleteAll();
+                CNode nodeParts = formMain.m_design.getNode(m_strPartName);
 
-                /// 1. 혹시 수정중이라면, 현재 작업 중인 Face 를 제외하고 형상 그리기
-                foreach (CNode node in formMain.m_design.NodeList)
+                /// 0. 해당 좌표점의 수정이 있었는지를 판단한다.
+                ///  - 수정이 있는 경우만 다시 그리기 위해서이다.
+                bool retCheck = false;
+
+                /// 좌표 Control 에 빈칸이 존재하는 지를 확인함
+                for (int i = 0; i < ListPointControl.Count; i++)
                 {
-                    if (node.GetType().BaseType.Name == "CParts")
+                    /// 해당 좌표점만 비교한다.
+                    /// 만약, Parts 의 모든 좌표점을 비교하면 다른 좌표점이 수정되었을때 나머지 좌표점의 수정이 없어도 다시 그리기가 된다.
+                    if (ListPointControl[i] == pointControl)
                     {
-                        if (node.NodeName != m_strPartName)
-                        {
-                            ((CParts)node).Face.drawFace(femm);
-                        }
+                        if (((CParts)nodeParts).Face.RelativePointList[i].m_dX != Double.Parse(ListPointControl[i].StrCoordX.Trim()))
+                            retCheck = true;
+
+                        if (((CParts)nodeParts).Face.RelativePointList[i].m_dY != Double.Parse(ListPointControl[i].StrCoordY.Trim()))
+                            retCheck = true;
                     }
                 }
 
+                // Arc 관련 이벤트 호출이면 강제로 다시그리기를 한다.
+                if (bRedraw == true)
+                    retCheck = true;
+
+                if(retCheck == true)
+                {
+                    femm.deleteAll();
+
+                    /// 1. 혹시 수정중이라면, 현재 작업 중인 Face 를 제외하고 형상 그리기
+                    foreach (CNode node in formMain.m_design.NodeList)
+                    {
+                        if (node.GetType().BaseType.Name == "CParts")
+                        {
+                            if (node.NodeName != m_strPartName)
+                            {
+                                ((CParts)node).Face.drawFace(femm);
+                            }
+                        }
+                    }
+
+                }
+
                 /// 2. 현재 수정중이거나 생성중인 Face 의 형상 그리기 
-                bool retCheck = true;
+                retCheck = true;
 
                 /// 좌표 Control 에 빈칸이 존재하는 지를 확인함
                 for (int i = 0; i < ListPointControl.Count; i++)

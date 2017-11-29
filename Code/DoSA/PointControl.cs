@@ -196,15 +196,15 @@ namespace Shapes
         {
             ((PopupShape)this.Parent.Parent).drawTemporaryFace(this);
         }
-
+        
         private void checkBoxKind_Click(object sender, EventArgs e)
         {
-            ((PopupShape)this.Parent.Parent).drawTemporaryFace(this);
+            ((PopupShape)this.Parent.Parent).drawTemporaryFace(this, true);
         }
 
         private void checkBoxArcDirection_Click(object sender, EventArgs e)
         {
-            ((PopupShape)this.Parent.Parent).drawTemporaryFace(this);
+            ((PopupShape)this.Parent.Parent).drawTemporaryFace(this, true);
         }
 
         #endregion
