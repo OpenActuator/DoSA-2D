@@ -664,8 +664,6 @@ namespace DoSA
             // 혹시 FEMM 의 화면이 닫힌 경우 FEMM 의 화면을 복원합니다.
             reopenFEMM();
 
-            CProgramFEMM.showFEMM();
-
             m_design.getMaterial(m_femm);
 
             m_design.drawDesign(m_femm);
@@ -889,8 +887,6 @@ namespace DoSA
 
             // 이미지 캡쳐 때문에 해석중에 FEMM 의 넓이를 일시적으로 넓힌다
             resizeFEMM(1040);
-
-            CProgramFEMM.showFEMM();
            
             m_design.getMaterial(m_femm);
 
@@ -1010,8 +1006,6 @@ namespace DoSA
 
             // 혹시 FEMM 의 화면이 닫힌 경우 FEMM 의 화면을 복원합니다.
             reopenFEMM();
-
-            CProgramFEMM.showFEMM();
 
             m_design.getMaterial(m_femm);
 
@@ -1241,7 +1235,8 @@ namespace DoSA
             // FEMM.exe 가 실행되지 않았으면 FEMM 을 생성하고 크기를 변경한다.
             if (m_femm == null)
             {
-                m_femm = new CScriptFEMM();
+                m_femm = new CScriptFEMM();                
+                
                 resizeFEMM(iWidthFEMM);
             }
             // FEMM.exe 가 실행되어 열려 있는 경우는 내용만 삭제하고 크기만 변경한다.
@@ -1250,6 +1245,7 @@ namespace DoSA
             {
                 quitFEMM();
                 m_femm = new CScriptFEMM();
+
                 resizeFEMM(iWidthFEMM);
             }
             // 이미 정상적으로 FEMM 이 동작중이라면 화면을 초기화한다.
@@ -1288,6 +1284,10 @@ namespace DoSA
         {
             if (m_femm == null)
                 return;
+
+            /// Minimized 가 되어 있으면 FEMM 프로그램 크기동작이 먹지 않는다.
+            /// 먼저 실행이 되어야 한다.
+            CProgramFEMM.showFEMM();
 
             /// 좌측에 FEMM 공간을 확보하기 위해서 DoSA 의 위치를 지정한다
             this.Left = 600;
