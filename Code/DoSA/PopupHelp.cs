@@ -66,17 +66,5 @@ namespace DoSA
             System.Diagnostics.Process.Start(strHelpFileFullName);
         }
 
-        private void buttonExampleDirectory_Click(object sender, EventArgs e)
-        {
-            string strSampleDirName = Path.Combine(CSettingData.m_strProgramDirName, "Sample");
-
-            if (m_manageFile.isExistDirectory(strSampleDirName) == false)
-            {
-                CNotice.noticeWarning("샘플 파일 디렉토리가 존재하지 않습니다.\nDoSA 디렉토리 > Sample 디렉토리를 확인하세요.");
-                return;
-            }
-
-            System.Diagnostics.Process.Start(strSampleDirName);
-        }
     }
 }
