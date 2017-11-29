@@ -42,8 +42,9 @@ namespace Scripts
         [DllImport("user32.dll", EntryPoint = "MoveWindow")]
         public static extern bool MoveWindow(IntPtr hWnd, int X, int Y, int nWidth, int nHeight, bool bRepaint);
 
-        [DllImport("user32.dll")]
-        public static extern Boolean ShowWindow(IntPtr hWnd, Int32 nCmdShow);
+        /// 동작하지 SW_SHOW 가 동작하지 않아서 아래의 두 함수로 SHOW 를 동작시키고 있다.
+        //[DllImport("user32.dll")]
+        //public static extern Boolean ShowWindow(IntPtr hWnd, Int32 nCmdShow);
 
         [DllImport("user32.dll")]
         private static extern bool ShowWindowAsync(IntPtr hWnd, int nCmdShow);
@@ -127,10 +128,6 @@ namespace Scripts
                 return;
 
             Process femmProcess = processList[0];
-
-
-            //Thread.Sleep(1000);
-            //ShowWindow(femmProcess.MainWindowHandle, SW_SHOW);
 
             Thread.Sleep(100);
             MoveWindow(femmProcess.MainWindowHandle, iPosX, iPosY, iSizeX, iSizeY, true);
