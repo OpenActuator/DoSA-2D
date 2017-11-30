@@ -2,7 +2,7 @@
 
 This program is an open source program for design of Solenoid &amp; Actuator
 
-Youtube Video : https://youtu.be/AMPY6ZBbO9
+Youtube Video : https://youtu.be/AMPY6ZBbO9Y
 <br><br>
 Detail Information : http://openactuator.org
 <br><br>
