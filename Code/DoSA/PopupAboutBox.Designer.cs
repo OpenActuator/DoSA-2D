@@ -122,7 +122,7 @@
             this.labelProductName.Name = "labelProductName";
             this.labelProductName.Size = new System.Drawing.Size(456, 16);
             this.labelProductName.TabIndex = 19;
-            this.labelProductName.Text = "DoSA (Design Toolkit of Solenoid & Actuator)";
+            this.labelProductName.Text = "DoSA (Designer of Solenoid and Actuator)";
             this.labelProductName.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
             // buttonOpenActuator
