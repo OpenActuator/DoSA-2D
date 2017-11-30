@@ -723,18 +723,22 @@ namespace Shapes
                 ///  - 수정이 있는 경우만 다시 그리기 위해서이다.
                 bool retCheck = false;
 
-                /// 좌표 Control 에 빈칸이 존재하는 지를 확인함
-                for (int i = 0; i < ListPointControl.Count; i++)
+                /// 초기 생성때는 이전 nodeParts 가 없음으로 사용하지 않고, 기존 노드의 수정때만 사용한다.
+                if(nodeParts != null)
                 {
-                    /// 해당 좌표점만 비교한다.
-                    /// 만약, Parts 의 모든 좌표점을 비교하면 다른 좌표점이 수정되었을때 나머지 좌표점의 수정이 없어도 다시 그리기가 된다.
-                    if (ListPointControl[i] == pointControl)
+                    /// 좌표 Control 에 빈칸이 존재하는 지를 확인함
+                    for (int i = 0; i < ListPointControl.Count; i++)
                     {
-                        if (((CParts)nodeParts).Face.RelativePointList[i].m_dX != Double.Parse(ListPointControl[i].StrCoordX.Trim()))
-                            retCheck = true;
+                        /// 해당 좌표점만 비교한다.
+                        /// 만약, Parts 의 모든 좌표점을 비교하면 다른 좌표점이 수정되었을때 나머지 좌표점의 수정이 없어도 다시 그리기가 된다.
+                        if (ListPointControl[i] == pointControl)
+                        {
+                            if (((CParts)nodeParts).Face.RelativePointList[i].m_dX != Double.Parse(ListPointControl[i].StrCoordX.Trim()))
+                                retCheck = true;
 
-                        if (((CParts)nodeParts).Face.RelativePointList[i].m_dY != Double.Parse(ListPointControl[i].StrCoordY.Trim()))
-                            retCheck = true;
+                            if (((CParts)nodeParts).Face.RelativePointList[i].m_dY != Double.Parse(ListPointControl[i].StrCoordY.Trim()))
+                                retCheck = true;
+                        }
                     }
                 }
 

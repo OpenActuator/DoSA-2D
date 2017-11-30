@@ -162,18 +162,20 @@ namespace Shapes
             /// Enter 에서만 동작한다.
             if (e.KeyCode == Keys.Enter)
             {
-                ((PopupShape)this.Parent.Parent).drawTemporaryFace(this);
+                // 점 선택을 하고, 다시 그린다.
+                ((PopupShape)this.Parent.Parent).drawTemporaryFace(this, true);
             }
         }
 
         private void textBoxY_Leave(object sender, EventArgs e)
         {
-            // 점표시를 하지 않기 위해 null 를 넘긴다.
-            ((PopupShape)this.Parent.Parent).drawTemporaryFace(null);
+            // 점 선택을 하지않고, 다시 그린다.
+            ((PopupShape)this.Parent.Parent).drawTemporaryFace(null,true);
         }
 
         private void textBoxY_Enter(object sender, EventArgs e)
         {
+            // 점만 선택하고, 다시그리지 않는다.
             ((PopupShape)this.Parent.Parent).drawTemporaryFace(this);
         }
 
@@ -182,28 +184,32 @@ namespace Shapes
             /// Enter 에서만 동작한다.
             if (e.KeyCode == Keys.Enter)
             {
-                ((PopupShape)this.Parent.Parent).drawTemporaryFace(this);
+                // 점 선택을 하고, 다시 그린다.
+                ((PopupShape)this.Parent.Parent).drawTemporaryFace(this, true);
             }
         }
 
         private void textBoxX_Leave(object sender, EventArgs e)
         {
-            // 점표시를 하지 않기 위해 null 를 넘긴다.
-            ((PopupShape)this.Parent.Parent).drawTemporaryFace(null);
+            // 점 선택을 하지않고, 다시 그린다.
+            ((PopupShape)this.Parent.Parent).drawTemporaryFace(null, true);
         }
-
+                
         private void textBoxX_Enter(object sender, EventArgs e)
         {
+            // 점만 선택하고, 다시그리지 않는다.
             ((PopupShape)this.Parent.Parent).drawTemporaryFace(this);
         }
         
         private void checkBoxKind_Click(object sender, EventArgs e)
         {
+            // 점 선택을 하고, 다시 그린다.
             ((PopupShape)this.Parent.Parent).drawTemporaryFace(this, true);
         }
 
         private void checkBoxArcDirection_Click(object sender, EventArgs e)
         {
+            // 점 선택을 하고, 다시 그린다.
             ((PopupShape)this.Parent.Parent).drawTemporaryFace(this, true);
         }
 
