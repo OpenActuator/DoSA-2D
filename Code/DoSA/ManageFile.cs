@@ -11,6 +11,8 @@ using System.IO;
 
 // Debugging
 using System.Diagnostics;
+using System.Resources;
+using System.Windows.Forms;
 
 namespace gtLibrary
 {
@@ -25,7 +27,9 @@ namespace gtLibrary
             {
                 if (false == isExistFile(strFileFullPathName))
                 {
-                    CNotice.printTrace("존재하지 않는 " + strFileFullPathName + " 를 삭제할려고 합니다.");
+                    ResourceManager resManager = ResourceManager.CreateFileBasedResourceManager("LanguageResource", Application.StartupPath, null);
+
+                    CNotice.printTrace(resManager.GetString("TIAA2") + strFileFullPathName + resManager.GetString("_TDNE"));
                     return false;
                 }
 
@@ -61,7 +65,9 @@ namespace gtLibrary
 
                 if (false == isExistFile(sourceFileFullPathName))
                 {
-                    CNotice.printTrace("존재하지 않는 " + sourceFileFullPathName + " 를 복사하려고 합니다.");
+                    ResourceManager resManager = ResourceManager.CreateFileBasedResourceManager("LanguageResource", Application.StartupPath, null);
+
+                    CNotice.printTrace(resManager.GetString("TIAA") + sourceFileFullPathName + resManager.GetString("_TDNE"));
                     return false;
                 }
 
@@ -71,7 +77,9 @@ namespace gtLibrary
                 // 이미 파일이 존재하면 복사를 취소 한다.
                 if (true == isExistFile(destFileFullPathName) && bOverWrite == false)
                 {
-                    CNotice.printTrace("존재하지 않는 " + destFileFullPathName + " 를 덮어 쓰기를 하려고 합니다.");
+                    ResourceManager resManager = ResourceManager.CreateFileBasedResourceManager("LanguageResource", Application.StartupPath, null);
+
+                    CNotice.printTrace(resManager.GetString("TIAA4") + destFileFullPathName + resManager.GetString("_TDNE"));
                     return false;
                 }
 
@@ -96,7 +104,9 @@ namespace gtLibrary
             {
                 if (false == isExistDirectory(dirPath))
                 {
-                    CNotice.printTrace("존재하지 않는 " + dirPath + " 의 내부 디렉토리정보를 얻으려고 합니다.");
+                    ResourceManager resManager = ResourceManager.CreateFileBasedResourceManager("LanguageResource", Application.StartupPath, null);
+
+                    CNotice.printTrace(resManager.GetString("TIAA3") + dirPath + resManager.GetString("_DITD"));
                     return null;
                 }
 
@@ -145,7 +155,9 @@ namespace gtLibrary
             {
                 if (true == isExistDirectory(dirPath))
                 {
-                    CNotice.printTrace("존재하는 " + dirPath + " 를 생성하려고 합니다.");
+                    ResourceManager resManager = ResourceManager.CreateFileBasedResourceManager("LanguageResource", Application.StartupPath, null);
+
+                    CNotice.printTrace(resManager.GetString("TIAA1") + dirPath + resManager.GetString("_TAE"));
                     return false;
                 }
 
@@ -166,7 +178,9 @@ namespace gtLibrary
 			{
 				if (false == isExistDirectory(dirPath))
 				{
-					CNotice.printTrace("존재하지 않는 " + dirPath + " 를 삭제할려고 합니다.");
+                    ResourceManager resManager = ResourceManager.CreateFileBasedResourceManager("LanguageResource", Application.StartupPath, null);
+
+                    CNotice.printTrace(resManager.GetString("TIAA2") + dirPath + resManager.GetString("_TDNE"));
 					return false;
 				}
 

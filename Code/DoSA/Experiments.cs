@@ -23,10 +23,10 @@ namespace Experiments
     {
         private double m_dCurrent;
 
-        [DisplayNameAttribute("Voltage [V]"), CategoryAttribute("\t\tInput Fields"), DescriptionAttribute("인가 전압")]
+        [DisplayNameAttribute("Voltage [V]"), CategoryAttribute("\t\tInput Fields"), DescriptionAttribute("Input Voltage")]
         public double Voltage { get; set; }
 
-        [DisplayNameAttribute("Max. Current [A]"), CategoryAttribute("\t\tInput Fields"), DescriptionAttribute("최대 인가 전류")]
+        [DisplayNameAttribute("Max. Current [A]"), CategoryAttribute("\t\tInput Fields"), DescriptionAttribute("Maximum Input Current")]
         [ReadOnly(true)]
         public double Current 
         {
@@ -39,7 +39,7 @@ namespace Experiments
 
     public class CForceExperiment : CExperiment
     {
-        [DisplayNameAttribute("Moving Stroke [mm]"), CategoryAttribute("Stroke Fields"), DescriptionAttribute("이동 변위")]
+        [DisplayNameAttribute("Moving Displacement [mm]"), CategoryAttribute("Stroke Fields"), DescriptionAttribute("Moving Displacement")]
         public double MovingStroke { get; set; }
 
         public CForceExperiment()
@@ -100,7 +100,7 @@ namespace Experiments
 
                     if (arrayString.Length != 2)
                     {
-                        CNotice.noticeWarning("저장된 ForceExperiment 정보에 문제가 있습니다.");
+                        CNotice.noticeWarningID("TIAP3");
                         return false;
                     }
 
@@ -142,13 +142,13 @@ namespace Experiments
     public class CStrokeExperiment : CExperiment
     {
 
-        [DisplayNameAttribute("Initial Stroke [mm]"), CategoryAttribute("Stroke Fields"), DescriptionAttribute("초기 변위")]
+        [DisplayNameAttribute("Initial Displacement [mm]"), CategoryAttribute("Stroke Fields"), DescriptionAttribute("Initial Displacement")]
         public double InitialStroke { get; set; }
 
-        [DisplayNameAttribute("Final Stroke [mm]"), CategoryAttribute("Stroke Fields"), DescriptionAttribute("최종 변위")]
+        [DisplayNameAttribute("Final Displacement [mm]"), CategoryAttribute("Stroke Fields"), DescriptionAttribute("Final Displacement")]
         public double FinalStroke { get; set; }
 
-        [DisplayNameAttribute("Step Count"), CategoryAttribute("Stroke Fields"), DescriptionAttribute("시험 등분 수")]
+        [DisplayNameAttribute("Step Count"), CategoryAttribute("Stroke Fields"), DescriptionAttribute("Step Count")]
         public int StepCount { get; set; }
 
         public CStrokeExperiment()
@@ -211,7 +211,7 @@ namespace Experiments
 
                     if (arrayString.Length != 2)
                     {
-                        CNotice.noticeWarning("저장된 StrokeExperiment 정보에 문제가 있습니다.");
+                        CNotice.noticeWarningID("TIAP6");
                         return false;
                     }
 
@@ -273,16 +273,16 @@ namespace Experiments
         //-------------------------------------------------
 
 
-        [DisplayNameAttribute("Moving Stroke [mm]"), CategoryAttribute("Stroke Fields"), DescriptionAttribute("이동 변위")]
+        [DisplayNameAttribute("Moving Displacement [mm]"), CategoryAttribute("Stroke Fields"), DescriptionAttribute("Moving Displacement")]
         public double MovingStroke { get; set; }
 
-        [DisplayNameAttribute("Initial Current [A]"), CategoryAttribute("Current Fields"), DescriptionAttribute("초기 전류")]
+        [DisplayNameAttribute("Initial Current [A]"), CategoryAttribute("Current Fields"), DescriptionAttribute("Initial Current")]
         public double InitialCurrent { get; set; }
 
-        [DisplayNameAttribute("Final Current [A]"), CategoryAttribute("Current Fields"), DescriptionAttribute("최종 전류")]
+        [DisplayNameAttribute("Final Current [A]"), CategoryAttribute("Current Fields"), DescriptionAttribute("Final Current")]
         public double FinalCurrent { get; set; }
 
-        [DisplayNameAttribute("Step Count"), CategoryAttribute("Current Fields"), DescriptionAttribute("시험 등분 수")]
+        [DisplayNameAttribute("Step Count"), CategoryAttribute("Current Fields"), DescriptionAttribute("Step Count")]
         public int StepCount { get; set; }
 
         public CCurrentExperiment()
@@ -345,7 +345,7 @@ namespace Experiments
 
                     if (arrayString.Length != 2)
                     {
-                        CNotice.noticeWarning("저장된 StrokeExperiment 정보에 문제가 있습니다.");
+                        CNotice.noticeWarningID("TIAP8");
                         return false;
                     }
 

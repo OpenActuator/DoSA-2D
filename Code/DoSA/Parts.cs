@@ -65,7 +65,7 @@ namespace Parts
             set { m_face = value; }
         }
 
-        [DisplayNameAttribute("Moving Parts"), CategoryAttribute("\t\tSpecification Fields"), DescriptionAttribute("동작부품과 고정부품의 구분")]
+        [DisplayNameAttribute("Moving Parts"), CategoryAttribute("\t\tSpecification Fields"), DescriptionAttribute("Distinguishing between moving parts and fixed parts")]
         public EMMoving MovingPart { get; set; }        
  
         // 같은 strMaterial 을 가지고 두가지 형태로 접근하고 있다.
@@ -105,15 +105,16 @@ namespace Parts
 
                     arrayString = strTemp.Split('=');
 
+                    /// 각 줄의 String 배열은 항상 2개이여야 한다.
                     if (arrayString.Length != 2)
                     {
-                        CNotice.noticeWarning("저장된 Steel 정보에 문제가 있습니다.");
+                        CNotice.noticeWarningID("TIAP5");
                         return false;
                     }
 
                     if (m_face == null)
                     {
-                        CNotice.printTrace("m_face 가 생성되지 않은 상태에서 형상 정보의 저장을 시도하고 있다.");
+                        CNotice.printTraceID("IIAT");
                         return false;
                     }
 
@@ -144,7 +145,7 @@ namespace Parts
                                 point.m_dY = Double.Parse(arrayString[1]);
                             else
                             {
-                                CNotice.noticeWarning("저장된 Steel 정보에 문제가 있습니다.");
+                                CNotice.noticeWarningID("YCWX");
                                 return false;
                             }
                             break;
@@ -154,7 +155,7 @@ namespace Parts
                                 point.m_emLineKind = (EMLineKind)Enum.Parse(typeof(EMLineKind), arrayString[1]);
                             else
                             {
-                                CNotice.noticeWarning("저장된 Steel 정보에 문제가 있습니다.");
+                                CNotice.noticeWarningID("TIAP9");
                                 return false;
                             }
                             break;
@@ -164,7 +165,7 @@ namespace Parts
                                 point.m_emDirectionArc = (EMDirectionArc)Enum.Parse(typeof(EMDirectionArc), arrayString[1]);
                             else
                             {
-                                CNotice.noticeWarning("저장된 Steel 정보에 문제가 있습니다.");
+                                CNotice.noticeWarningID("TIAP10");
                                 return false;
                             }
 
@@ -193,22 +194,22 @@ namespace Parts
         // 상위 strMaterial 을 사용하기 때문에  { get; set; } 형식은 사용해서는 안된다
         // Property Change Event 에서 라벨이름으로 사용되고 있음을 주의하라
         [TypeConverter(typeof(CCoilWirePropertyConverter))]
-        [DisplayNameAttribute("Part Material"), CategoryAttribute("\t\tSpecification Fields"), DescriptionAttribute("부품 재질명")]
+        [DisplayNameAttribute("Part Material"), CategoryAttribute("\t\tSpecification Fields"), DescriptionAttribute("Name of part material")]
         public string Material
         {
             get { return m_strMaterial; }
             set { m_strMaterial = value; }
         }
 
-        [DisplayNameAttribute("Curent Direction"), CategoryAttribute("\t\tSpecification Fields"), DescriptionAttribute("전압 인가 방향")]
+        [DisplayNameAttribute("Curent Direction"), CategoryAttribute("\t\tSpecification Fields"), DescriptionAttribute("Voltage Direction")]
         public EMCurrentDirection CurrentDirection { get; set; }
 
-        [DisplayNameAttribute("Coil Turns"), CategoryAttribute("\tCalculated Fields"), DescriptionAttribute("코일 턴 수")]
+        [DisplayNameAttribute("Coil Turns"), CategoryAttribute("\tCalculated Fields"), DescriptionAttribute("Coil Turns")]
         public int Turns { get; set; }
 
         private double m_dResistance;
 
-        [DisplayNameAttribute("Coil Resistance [Ω]"), CategoryAttribute("\tCalculated Fields"), DescriptionAttribute("코일 저항")]
+        [DisplayNameAttribute("Coil Resistance [Ω]"), CategoryAttribute("\tCalculated Fields"), DescriptionAttribute("Coil Resistance")]
         public double Resistance
         {
             // 소수점 5째 자리 까지만 출력한다.
@@ -217,35 +218,35 @@ namespace Parts
         }
 
         [ReadOnlyAttribute(true)]
-        [DisplayNameAttribute("Coil Layers"), CategoryAttribute("\tCalculated Fields"), DescriptionAttribute("코일 층 수")]
+        [DisplayNameAttribute("Coil Layers"), CategoryAttribute("\tCalculated Fields"), DescriptionAttribute("Number of coil layers")]
         public int Layers { get; set; }
 
         [ReadOnlyAttribute(true)]
-        [DisplayNameAttribute("Turns of One Layer"), CategoryAttribute("\tCalculated Fields"), DescriptionAttribute("한층의 턴 수")]
+        [DisplayNameAttribute("Turns of One Layer"), CategoryAttribute("\tCalculated Fields"), DescriptionAttribute("Turns of one layer")]
         public int TurnsOfOneLayer { get; set; }
 
-        [DisplayNameAttribute("Coil Wire Grade"), CategoryAttribute("Design Fields (optional)"), DescriptionAttribute("코일 선 등급")]
+        [DisplayNameAttribute("Coil Wire Grade"), CategoryAttribute("Design Fields (optional)"), DescriptionAttribute("Coil Wire Grade")]
         public EMCoilWireGrade  CoilWireGrade { get; set; }
 
         [ReadOnlyAttribute(true)]
-        [DisplayNameAttribute("Inner Diameter [mm]"), CategoryAttribute("Design Fields (optional)"), DescriptionAttribute("코일 내경")]
+        [DisplayNameAttribute("Inner Diameter [mm]"), CategoryAttribute("Design Fields (optional)"), DescriptionAttribute("Inner Diameter of coil")]
         public double InnerDiameter { get; set; }
 
         [ReadOnlyAttribute(true)]
-        [DisplayNameAttribute("Outer Diameter [mm]"), CategoryAttribute("Design Fields (optional)"), DescriptionAttribute("코일 외경")]
+        [DisplayNameAttribute("Outer Diameter [mm]"), CategoryAttribute("Design Fields (optional)"), DescriptionAttribute("Outer Diameter of coil")]
         public double OuterDiameter { get; set; }
 
         [ReadOnlyAttribute(true)]
-        [DisplayNameAttribute("Coil Height [mm]"), CategoryAttribute("Design Fields (optional)"), DescriptionAttribute("코일 높이")]
+        [DisplayNameAttribute("Coil Height [mm]"), CategoryAttribute("Design Fields (optional)"), DescriptionAttribute("Coil Height")]
         public double Height { get; set; }
 
         // Property Change Event 에서 라벨이름으로 사용되고 있음을 주의하라
-        [DisplayNameAttribute("Copper Diameter [mm]"), CategoryAttribute("Design Fields (optional)"), DescriptionAttribute("내부 동선의 지름")]
+        [DisplayNameAttribute("Copper Diameter [mm]"), CategoryAttribute("Design Fields (optional)"), DescriptionAttribute("Diameter of internal copper wire")]
         public double CopperDiameter { get; set; }
         
         private double m_dWireDiameter;
 
-        [DisplayNameAttribute("Wire Diameter [mm]"), CategoryAttribute("Design Fields (optional)"), DescriptionAttribute("에나멜선의 외경")]
+        [DisplayNameAttribute("Wire Diameter [mm]"), CategoryAttribute("Design Fields (optional)"), DescriptionAttribute("Outer diameter of enameled wire")]
         public double WireDiameter
         {
             // 소수점 5째 자리 까지만 출력한다.
@@ -253,16 +254,16 @@ namespace Parts
             set { m_dWireDiameter = value; }
         }
 
-        [DisplayNameAttribute("Coil Temperature [℃]"), CategoryAttribute("Design Fields (optional)"), DescriptionAttribute("코일 온도")]
+        [DisplayNameAttribute("Coil Temperature [℃]"), CategoryAttribute("Design Fields (optional)"), DescriptionAttribute("Coil Temperature")]
         public double Temperature { get; set; }
 
-        [DisplayNameAttribute("Horizontal Coefficient"),CategoryAttribute("Design Fields (optional)"),DescriptionAttribute("가로방향 정렬계수, 참고치[Bonded:0.95, Enameled:0.9]")]
+        [DisplayNameAttribute("Horizontal Coefficient"), CategoryAttribute("Design Fields (optional)"), DescriptionAttribute("Horizontal coefficient, [Bonded:0.95, Enameled:0.9]")]
         public double HorizontalCoefficient { get; set; }
 
-        [DisplayNameAttribute("Vertical Coefficient"), CategoryAttribute("Design Fields (optional)"), DescriptionAttribute("높이방향 정렬계수, 참고치[Bonded:1.13, Enameled:0.98]")]
+        [DisplayNameAttribute("Vertical Coefficient"), CategoryAttribute("Design Fields (optional)"), DescriptionAttribute("Vertical Coefficient, [Bonded:1.13, Enameled:0.98]")]
         public double VerticalCoefficient { get; set; }
 
-        [DisplayNameAttribute("Resistance Coefficient"), CategoryAttribute("Design Fields (optional)"), DescriptionAttribute("코일저항 보정계수, 참고치[Bonded:1.1, Enameled:1.0]")]
+        [DisplayNameAttribute("Resistance Coefficient"), CategoryAttribute("Design Fields (optional)"), DescriptionAttribute("Coil Resistance Coefficient, [Bonded:1.1, Enameled:1.0]")]
         public double ResistanceCoefficient { get; set; }
        
         public CCoil()
@@ -376,49 +377,49 @@ namespace Parts
         {
             if (InnerDiameter <= 0.0f)
             {
-                CNotice.noticeWarning("Inner Diameter 값이 초기화 되지 않았습니다.");
+                CNotice.noticeWarningID("TIDV");
                 return;
             }
 
             if (OuterDiameter <= 0.0f)
             {
-                CNotice.noticeWarning("Outer Diameter 값이 초기화 되지 않았습니다.");
+                CNotice.noticeWarningID("TODV");
                 return;
             }
 
             if (OuterDiameter <= InnerDiameter)
             {
-                CNotice.noticeWarning("Outer Diameter 는 Inner Diameter 보다 커야 합니다.");
+                CNotice.noticeWarningID("ODSB");
                 return;
             }
 
             if (Height <= 0.0f)
             {
-                CNotice.noticeWarning("Coil Height 값이 초기화 되지 않았습니다.");
+                CNotice.noticeWarningID("CHVI");
                 return;
             }
 
             if (CopperDiameter <= 0.0f)
             {
-                CNotice.noticeWarning("Copper Diameter 값을 입력 하세요.");
+                CNotice.noticeWarningID("ETCD");
                 return;
             }
 
             if (HorizontalCoefficient <= 0.0f)
             {
-                CNotice.noticeWarning("Horizontal Coefficient 값을 입력 하세요.");
+                CNotice.noticeWarningID("ETVF");
                 return;
             }
 
             if (VerticalCoefficient <= 0.0f)
             {
-                CNotice.noticeWarning("Vertical Coefficient 값을 입력 하세요.");
+                CNotice.noticeWarningID("ETVF2");
                 return;
             }
 
             if (ResistanceCoefficient <= 0.0f)
             {
-                CNotice.noticeWarning("Resistance Coefficient 값을 입력 하세요.");
+                CNotice.noticeWarningID("ETVF1");
                 return;
             }
 
@@ -478,7 +479,7 @@ namespace Parts
                 }
                 else
                 {
-                    CNotice.printTrace("Coil Wire 재질 선택에 문제가 발생했다.");
+                    CNotice.printTraceID("TIAP1");
                     return;
                 }
 
@@ -501,7 +502,7 @@ namespace Parts
         {
             if (Face == null)
             {
-                CNotice.printTrace("형상이 초기화 되지 않은 Coil 에서 Design Value 를 초기화하려 한다.");
+                CNotice.printTraceID("YATT3");
                 return false;
             }
 
@@ -587,7 +588,7 @@ namespace Parts
 
             if (m_kindKey != EMKind.COIL)
             {
-                CNotice.printTrace("다른 객체를 Coil 로 읽으려고 하고 있습니다.");
+                CNotice.printTraceID("YATT7");
                 return false;
             }      
     
@@ -708,7 +709,7 @@ namespace Parts
 
             if(blockPoint == null)
             {
-                CNotice.printTrace("setBlockPropCurrent() 안에서 Block Point 를 찾지 못했습니다");
+                CNotice.printTraceID("NBPF");
                 return;
             }
 
@@ -729,14 +730,14 @@ namespace Parts
     {
         // 상위 strMaterial 을 사용하기 때문에  { get; set; } 형식은 사용해서는 안된다
         [TypeConverter(typeof(CMagnetPropertyConverter))]
-        [DisplayNameAttribute("Part Material"), CategoryAttribute("\t\tSpecification Fields"), DescriptionAttribute("부품 재질명")]
+        [DisplayNameAttribute("Part Material"), CategoryAttribute("\t\tSpecification Fields"), DescriptionAttribute("Name of Part Material")]
         public string Material
         {
             get { return m_strMaterial; }
             set { m_strMaterial = value; }
         }
 
-        [DisplayNameAttribute("Direction"), CategoryAttribute("\t\tSpecification Fields"), DescriptionAttribute("착자방향 결정")]
+        [DisplayNameAttribute("Direction"), CategoryAttribute("\t\tSpecification Fields"), DescriptionAttribute("Determination of magnetization direction")]
         public EMMagnetDirection emMagnetDirection { get; set; }
 
         public CMagnet()
@@ -797,7 +798,7 @@ namespace Parts
 
             if (m_kindKey != EMKind.MAGNET)
             {
-                CNotice.printTrace("다른 객체를 Magnet 로 읽으려고 하고 있습니다.");
+                CNotice.printTraceID("YATT5");
                 return false;
             }
 
@@ -829,7 +830,7 @@ namespace Parts
 
                     if (arrayString.Length != 2)
                     {
-                        CNotice.noticeWarning("저장된 Magnet 정보에 문제가 있습니다.");
+                        CNotice.noticeWarningID("TIAP4");
                         return false;
                     }
 
@@ -883,7 +884,7 @@ namespace Parts
 
             if (blockPoint == null)
             {
-                CNotice.printTrace("setBlockPropCurrent() 안에서 Block Point 를 찾지 못했습니다");
+                CNotice.printTraceID("NBPF");
                 return;
             }
 
@@ -921,7 +922,7 @@ namespace Parts
     {
         // 상위 strMaterial 을 사용하기 때문에  { get; set; } 형식은 사용해서는 안된다
         [TypeConverter(typeof(CSteelPropertyConverter))]
-        [DisplayNameAttribute("Part Material"), CategoryAttribute("\t\tSpecification Fields"), DescriptionAttribute("부품 재질명")]
+        [DisplayNameAttribute("Part Material"), CategoryAttribute("\t\tSpecification Fields"), DescriptionAttribute("Name of Part Material")]
         public string Material
         {
             get { return m_strMaterial; }
@@ -985,7 +986,7 @@ namespace Parts
 
             if (m_kindKey != EMKind.STEEL)
             {
-                CNotice.printTrace("다른 객체를 Steel 로 읽으려고 하고 있습니다.");
+                CNotice.printTraceID("YATT6");
                 return false;
             }
 
@@ -1017,7 +1018,7 @@ namespace Parts
 
                     if (arrayString.Length != 2)
                     {
-                        CNotice.noticeWarning("저장된 Steel 정보에 문제가 있습니다.");
+                        CNotice.noticeWarningID("TIAP5");
                         return false;
                     }
 
@@ -1067,7 +1068,7 @@ namespace Parts
 
             if (blockPoint == null)
             {
-                CNotice.printTrace("setBlockPropCurrent() 안에서 Block Point 를 찾지 못했습니다");
+                CNotice.printTraceID("NBPF");
                 return;
             }
 

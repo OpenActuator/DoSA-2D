@@ -38,9 +38,11 @@
             this.buttonSettingOK = new System.Windows.Forms.Button();
             this.buttonSettingCancel = new System.Windows.Forms.Button();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.comboBoxLanguage = new System.Windows.Forms.ComboBox();
             this.label4 = new System.Windows.Forms.Label();
             this.textBoxMeshSizeLevel = new System.Windows.Forms.TextBox();
             this.label5 = new System.Windows.Forms.Label();
+            this.label6 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
             this.groupBoxSetting.SuspendLayout();
             this.groupBox1.SuspendLayout();
@@ -120,7 +122,7 @@
             // 
             // buttonSettingOK
             // 
-            this.buttonSettingOK.Location = new System.Drawing.Point(353, 161);
+            this.buttonSettingOK.Location = new System.Drawing.Point(353, 198);
             this.buttonSettingOK.Name = "buttonSettingOK";
             this.buttonSettingOK.Size = new System.Drawing.Size(114, 36);
             this.buttonSettingOK.TabIndex = 12;
@@ -130,7 +132,7 @@
             // 
             // buttonSettingCancel
             // 
-            this.buttonSettingCancel.Location = new System.Drawing.Point(353, 203);
+            this.buttonSettingCancel.Location = new System.Drawing.Point(353, 240);
             this.buttonSettingCancel.Name = "buttonSettingCancel";
             this.buttonSettingCancel.Size = new System.Drawing.Size(114, 36);
             this.buttonSettingCancel.TabIndex = 11;
@@ -140,21 +142,35 @@
             // 
             // groupBox1
             // 
+            this.groupBox1.Controls.Add(this.comboBoxLanguage);
             this.groupBox1.Controls.Add(this.label4);
             this.groupBox1.Controls.Add(this.textBoxMeshSizeLevel);
             this.groupBox1.Controls.Add(this.label5);
+            this.groupBox1.Controls.Add(this.label6);
             this.groupBox1.Controls.Add(this.label2);
             this.groupBox1.Location = new System.Drawing.Point(12, 123);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(307, 119);
+            this.groupBox1.Size = new System.Drawing.Size(307, 153);
             this.groupBox1.TabIndex = 13;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "ETC";
             // 
+            // comboBoxLanguage
+            // 
+            this.comboBoxLanguage.FormattingEnabled = true;
+            this.comboBoxLanguage.Items.AddRange(new object[] {
+            "Korean",
+            "English"});
+            this.comboBoxLanguage.Location = new System.Drawing.Point(141, 38);
+            this.comboBoxLanguage.Name = "comboBoxLanguage";
+            this.comboBoxLanguage.Size = new System.Drawing.Size(103, 20);
+            this.comboBoxLanguage.TabIndex = 6;
+            this.comboBoxLanguage.Text = "Korean";
+            // 
             // label4
             // 
             this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(230, 32);
+            this.label4.Location = new System.Drawing.Point(250, 83);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(15, 12);
             this.label4.TabIndex = 5;
@@ -163,25 +179,35 @@
             // textBoxMeshSizeLevel
             // 
             this.textBoxMeshSizeLevel.BackColor = System.Drawing.SystemColors.Window;
-            this.textBoxMeshSizeLevel.Location = new System.Drawing.Point(141, 29);
+            this.textBoxMeshSizeLevel.Location = new System.Drawing.Point(141, 80);
             this.textBoxMeshSizeLevel.Name = "textBoxMeshSizeLevel";
-            this.textBoxMeshSizeLevel.Size = new System.Drawing.Size(83, 21);
+            this.textBoxMeshSizeLevel.Size = new System.Drawing.Size(103, 21);
             this.textBoxMeshSizeLevel.TabIndex = 4;
+            this.textBoxMeshSizeLevel.Text = "2";
             this.textBoxMeshSizeLevel.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
             // 
             // label5
             // 
             this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(128, 57);
+            this.label5.Location = new System.Drawing.Point(128, 108);
             this.label5.Name = "label5";
             this.label5.Size = new System.Drawing.Size(172, 12);
             this.label5.TabIndex = 3;
             this.label5.Text = "( = Mesh Size / Model Size )";
             // 
+            // label6
+            // 
+            this.label6.AutoSize = true;
+            this.label6.Location = new System.Drawing.Point(24, 41);
+            this.label6.Name = "label6";
+            this.label6.Size = new System.Drawing.Size(69, 12);
+            this.label6.TabIndex = 3;
+            this.label6.Text = "Language :";
+            // 
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(24, 32);
+            this.label2.Location = new System.Drawing.Point(24, 83);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(108, 12);
             this.label2.TabIndex = 3;
@@ -191,7 +217,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(482, 253);
+            this.ClientSize = new System.Drawing.Size(482, 290);
             this.Controls.Add(this.groupBox1);
             this.Controls.Add(this.groupBoxSetting);
             this.Controls.Add(this.buttonSettingOK);
@@ -224,5 +250,7 @@
         private System.Windows.Forms.TextBox textBoxMeshSizeLevel;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.Label label5;
+        private System.Windows.Forms.ComboBox comboBoxLanguage;
+        private System.Windows.Forms.Label label6;
     }
 }

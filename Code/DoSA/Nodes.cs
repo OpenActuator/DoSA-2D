@@ -39,7 +39,7 @@ namespace Nodes
         private string m_nodeName;
 
         ///  \t\t\t 갯수가 많을수록 해당 카테고리가 상측으로 올라간다.
-        [DisplayNameAttribute("Node Name"), CategoryAttribute("\t\t\tCommon Fields"), DescriptionAttribute("Part 나 Experiment 이름")]
+        [DisplayNameAttribute("Node Name"), CategoryAttribute("\t\t\tCommon Fields"), DescriptionAttribute("Part or Experiment name")]
         public string NodeName
         {
             get { return m_nodeName; }
@@ -382,7 +382,7 @@ namespace Nodes
                     if (null != face)
                         nodeParts.Face.drawFace(femm, nodeParts.MovingPart);
                     else
-                        CNotice.printTrace("초기화 되지 않은 Face 를 DrawDesign 을 하려하고 있다.");
+                        CNotice.printTraceID("YATT1");
                 }
             }
 
@@ -562,13 +562,13 @@ namespace Nodes
 
             if (isIntersectedAllLines() == true)
             {
-                CNotice.noticeWarning("Design 의 파트간의 라인 교차가 발생 했습니다.");
+                CNotice.noticeWarningID("LCBP");
                 bError = true;
             }
 
             if (isContactedMovingParts() == true)
             {
-                CNotice.noticeWarning("Design 의 구동 파트와 고정 파트간의 접촉이 발생 했습니다.");
+                CNotice.noticeWarningID("IHOT");
                 bError = true;
             }
 

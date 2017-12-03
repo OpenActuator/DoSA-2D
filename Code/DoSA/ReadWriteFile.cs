@@ -14,6 +14,8 @@ using System.Diagnostics;
 
 // 함수 이름 읽어내기
 using System.Reflection;
+using System.Resources;
+using System.Windows.Forms;
 
 namespace gtLibrary
 {
@@ -32,7 +34,9 @@ namespace gtLibrary
             {
                 if (true == m_manageFile.isExistFile(strFileFullName) && bOberwrite == false)
                 {
-                    CNotice.printTrace("이미 존재하는 " + strFileFullName + " 에 쓰기를 시도하고 있습니다.");
+                    ResourceManager resManager = ResourceManager.CreateFileBasedResourceManager("LanguageResource", Application.StartupPath, null);
+
+                    CNotice.printTrace(resManager.GetString("TIAA6") + strFileFullName + resManager.GetString("_TAE"));
                     return false;
                 }
 
@@ -105,14 +109,14 @@ namespace gtLibrary
             // 오류 방지
             if (writeStream == null)
             {
-                CNotice.printTrace("Stream Writer 가 null 입니다.");
+                CNotice.printTraceID("TSWI");
                 return;
             }
 
             // 오류 방지
             if (strData == null)
             {
-                CNotice.printTrace("Object Data 가 null 입니다.");
+                CNotice.printTraceID("TODI");
                 return;
             }
 
@@ -141,7 +145,9 @@ namespace gtLibrary
             {
                 if (false == m_manageFile.isExistFile(strTargetFileFullName))
                 {
-                    CNotice.printTrace("존재하지 않는 " + strTargetFileFullName + " 읽으려고 하고 있습니다.");
+                    ResourceManager resManager = ResourceManager.CreateFileBasedResourceManager("LanguageResource", Application.StartupPath, null);
+
+                    CNotice.printTrace(resManager.GetString("TIAA5") + strTargetFileFullName + resManager.GetString("_TDNE"));
                     return false;
                 }
 
@@ -176,7 +182,9 @@ namespace gtLibrary
             {
                 if (false == m_manageFile.isExistFile(strCSVFileFullName))
                 {
-                    CNotice.printTrace("존재하지 않는 " + strCSVFileFullName + " 읽으려고 하고 있습니다.");
+                    ResourceManager resManager = ResourceManager.CreateFileBasedResourceManager("LanguageResource", Application.StartupPath, null);
+
+                    CNotice.printTrace(resManager.GetString("TIAA5") + strCSVFileFullName + resManager.GetString("_TDNE"));
                     return false;
                 }
 
@@ -194,7 +202,7 @@ namespace gtLibrary
 
                         if (arraySeperatedLine.Length <= iColumeIndex)
                         {
-                            CNotice.printTrace("CSV 파일의 Colume Index 가 데이터 Index 범위를 벗어났습니다.");
+                            CNotice.printTraceID("TCII");
                             return false;
                         }
 
@@ -222,7 +230,9 @@ namespace gtLibrary
             {
                 if (false == m_manageFile.isExistFile(strTargetFileFullName))
                 {
-                    CNotice.printTrace("존재하지 않는 " + strTargetFileFullName + " 읽으려고 하고 있습니다.");
+                    ResourceManager resManager = ResourceManager.CreateFileBasedResourceManager("LanguageResource", Application.StartupPath, null);
+                    
+                    CNotice.printTrace(resManager.GetString("TIAA5") + strTargetFileFullName + resManager.GetString("_TDNE"));
                     return "";
                 }
 

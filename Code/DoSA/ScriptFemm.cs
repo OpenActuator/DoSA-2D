@@ -98,7 +98,7 @@ namespace Scripts
 
             if (processList.Length > 1)
             {
-                CNotice.noticeWarning("DoSA 실행 중에 FEMM 프로그램은 하나만 실행되어야 합니다.");
+                CNotice.noticeWarningID("OOFP");
                 return false;
             }
 
@@ -120,7 +120,7 @@ namespace Scripts
                
             if (processList.Length > 1)
             {
-                CNotice.noticeWarning("DoSA 실행 중에 FEMM 프로그램은 하나만 실행되어야 합니다.");
+                CNotice.noticeWarningID("OOFP");
                 return;
             }
 
@@ -139,7 +139,7 @@ namespace Scripts
 
             if (processList.Length > 1)
             {
-                CNotice.noticeWarning("DoSA 실행 중에 FEMM 프로그램은 하나만 실행되어야 합니다.");
+                CNotice.noticeWarningID("OOFP");
                 return;
             }
 
@@ -1080,7 +1080,7 @@ namespace Scripts
 
             if (manageFile.isExistFile(strExperimentFullName) == false)
             {
-                CNotice.printTrace("FEMM 파일이 없습니다.");
+                CNotice.printTraceID("NFFF");
                 return false;
             }
             else
@@ -1121,7 +1121,7 @@ namespace Scripts
                         {
                             if(strArray.Length != 9)
                             {
-                                CNotice.printTrace("BlockLabels 라인을 읽을때 문제가 발생했습니다.");
+                                CNotice.printTraceID("TWAP2");
                                 return false;
                             }
 

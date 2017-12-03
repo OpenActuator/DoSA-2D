@@ -45,7 +45,7 @@ namespace DoSA
                 // 빈칸 확인으로 null 비교를 사용하지 말라. (.Length == 0 나 "" 를 사용하라)
                 if (textBoxName.Text.Length == 0)
                 {
-                    CNotice.noticeWarning("이름을 입력하세요.");
+                    CNotice.noticeWarningID("PEAN");
                     return false;
                 }
 
@@ -68,7 +68,7 @@ namespace DoSA
                         if (strOldTempName == strNewTempName)
                         {
                             // 기존 디자인이 이미 존재할 때 삭제하고 새롭게 시작할지를 물어 온다
-                            DialogResult ret = CNotice.noticeWarningOKCancel("동일한 디자인이 작업디렉토리에 이미 존재 합니다.\n기존 디자인을 삭제 하시겠습니까?");
+                            DialogResult ret = CNotice.noticeWarningOKCancelID("TSDA", "W");
 
                             if (ret == DialogResult.OK)
                             {
@@ -88,13 +88,13 @@ namespace DoSA
 
                     if (formMain == null)
                     {
-                        CNotice.printTrace("부모 창인 Main Form 을 얻어오지 못했다.");
+                        CNotice.printTraceID("CNGM");
                         return false;
                     }
 
                     if (true == formMain.m_design.isExistNode(textBoxName.Text))
                     {
-                        CNotice.noticeWarning("이미 존재하는 Experiment 입니다.");
+                        CNotice.noticeWarningID("IIAE");
                         return false;
                     }
                 }

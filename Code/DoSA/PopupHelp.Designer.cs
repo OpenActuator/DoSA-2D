@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(PopupHelp));
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.buttonSolenoidGuide = new System.Windows.Forms.Button();
             this.buttonVCMGuide = new System.Windows.Forms.Button();
@@ -41,64 +42,46 @@
             this.groupBox1.Controls.Add(this.buttonSolenoidGuide);
             this.groupBox1.Controls.Add(this.buttonVCMGuide);
             this.groupBox1.Controls.Add(this.buttonDoSAUserGuide);
-            this.groupBox1.Location = new System.Drawing.Point(12, 12);
+            resources.ApplyResources(this.groupBox1, "groupBox1");
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(363, 164);
-            this.groupBox1.TabIndex = 0;
             this.groupBox1.TabStop = false;
-            this.groupBox1.Text = "Help Lists";
             // 
             // buttonSolenoidGuide
             // 
-            this.buttonSolenoidGuide.Location = new System.Drawing.Point(57, 116);
+            resources.ApplyResources(this.buttonSolenoidGuide, "buttonSolenoidGuide");
             this.buttonSolenoidGuide.Name = "buttonSolenoidGuide";
-            this.buttonSolenoidGuide.Size = new System.Drawing.Size(250, 31);
-            this.buttonSolenoidGuide.TabIndex = 3;
-            this.buttonSolenoidGuide.Text = "Solenoid 예제 따라하기";
             this.buttonSolenoidGuide.UseVisualStyleBackColor = true;
             this.buttonSolenoidGuide.Click += new System.EventHandler(this.buttonSolenoidGuide_Click);
             // 
             // buttonVCMGuide
             // 
-            this.buttonVCMGuide.Location = new System.Drawing.Point(57, 70);
+            resources.ApplyResources(this.buttonVCMGuide, "buttonVCMGuide");
             this.buttonVCMGuide.Name = "buttonVCMGuide";
-            this.buttonVCMGuide.Size = new System.Drawing.Size(250, 31);
-            this.buttonVCMGuide.TabIndex = 2;
-            this.buttonVCMGuide.Text = "VCM 예제 따라하기";
             this.buttonVCMGuide.UseVisualStyleBackColor = true;
             this.buttonVCMGuide.Click += new System.EventHandler(this.buttonVCMGuide_Click);
             // 
             // buttonDoSAUserGuide
             // 
-            this.buttonDoSAUserGuide.Location = new System.Drawing.Point(57, 24);
+            resources.ApplyResources(this.buttonDoSAUserGuide, "buttonDoSAUserGuide");
             this.buttonDoSAUserGuide.Name = "buttonDoSAUserGuide";
-            this.buttonDoSAUserGuide.Size = new System.Drawing.Size(250, 31);
-            this.buttonDoSAUserGuide.TabIndex = 1;
-            this.buttonDoSAUserGuide.Text = "DoSA 사용 설명서";
             this.buttonDoSAUserGuide.UseVisualStyleBackColor = true;
             this.buttonDoSAUserGuide.Click += new System.EventHandler(this.buttonDoSAUserGuide_Click);
             // 
             // buttonHelpClose
             // 
-            this.buttonHelpClose.Location = new System.Drawing.Point(261, 197);
+            resources.ApplyResources(this.buttonHelpClose, "buttonHelpClose");
             this.buttonHelpClose.Name = "buttonHelpClose";
-            this.buttonHelpClose.Size = new System.Drawing.Size(114, 36);
-            this.buttonHelpClose.TabIndex = 13;
-            this.buttonHelpClose.Text = "Close";
             this.buttonHelpClose.UseVisualStyleBackColor = true;
             this.buttonHelpClose.Click += new System.EventHandler(this.buttonHelpClose_Click);
             // 
             // PopupHelp
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 12F);
+            resources.ApplyResources(this, "$this");
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(384, 245);
             this.Controls.Add(this.buttonHelpClose);
             this.Controls.Add(this.groupBox1);
             this.Name = "PopupHelp";
             this.ShowIcon = false;
-            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
-            this.Text = "Help";
             this.groupBox1.ResumeLayout(false);
             this.ResumeLayout(false);
 

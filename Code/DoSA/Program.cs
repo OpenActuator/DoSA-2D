@@ -6,8 +6,18 @@ using System.Windows.Forms;
 
 using gtLibrary;
 
+// 다국어 언어 지원
+using System.Globalization;
+using System.Threading;
+
 namespace DoSA
 {
+    public enum EMLanguage
+    {
+        Korean,
+        English        
+    };
+
     static class Program
     {
         /// <summary>
@@ -25,7 +35,7 @@ namespace DoSA
         }
     }
 
-    public static class CSettingData
+    public class CSettingData
     {
         static CManageFile m_manageFile = new CManageFile();
 
@@ -34,10 +44,30 @@ namespace DoSA
         public static string m_strFemmExeFileFullName { get; set; }
 
         public static double m_dMeshLevelPercent { get; set; }
+        public static EMLanguage m_emLanguage { get; set; }
 
 		// 내부 사용변수
 		// - 프로그램이 실행될때 초기화하여 내부에서 사용한다.
 		public static string m_strProgramDirName { get; set; }
+
+        public static void updataLanguge()
+        {
+            if (m_emLanguage == EMLanguage.English)
+            {
+                CultureInfo ctInfo = new CultureInfo("en-US");
+
+                Thread.CurrentThread.CurrentCulture = ctInfo;
+                Thread.CurrentThread.CurrentUICulture = ctInfo;
+            }
+            else if (m_emLanguage == EMLanguage.Korean)
+            {
+                CultureInfo ctInfo = new CultureInfo("ko-KR");
+
+                Thread.CurrentThread.CurrentCulture = ctInfo;
+                Thread.CurrentThread.CurrentUICulture = ctInfo;
+            }
+
+        }
 
         public static bool isDataOK(bool bOpenNoticeDialog = true)
         {
@@ -47,9 +77,9 @@ namespace DoSA
             if (bCheck == false)
             {
                 if (bOpenNoticeDialog == true)
-                    CNotice.noticeWarning("FEMM 실행파일이 존재하지 않습니다.");
+                    CNotice.noticeWarningID("TEFD");
                 else
-                    CNotice.printTrace("FEMM 실행파일이 존재하지 않습니다.");
+                    CNotice.printTraceID("TEFD");
 
                 return false;
             }
@@ -59,9 +89,9 @@ namespace DoSA
             if (bCheck == false)
             {
                 if (bOpenNoticeDialog == true)
-                    CNotice.noticeWarning("기본 작업 디렉토리가 존재하지 않습니다.");
+                    CNotice.noticeWarningID("TDWD");
                 else
-                    CNotice.printTrace("기본 작업 디렉토리가 존재하지 않습니다.");
+                    CNotice.printTraceID("TDWD");
 
                 return false;
             }
@@ -71,9 +101,9 @@ namespace DoSA
             if (bCheck == false)
             {
                 if (bOpenNoticeDialog == true)
-                    CNotice.noticeWarning("프로그램 실행 디렉토리에 문제가 있습니다.");
+                    CNotice.noticeWarningID("TIAP2");
                 else
-                    CNotice.printTrace("프로그램 실행 디렉토리에 문제가 있습니다.");
+                    CNotice.printTraceID("TIAP2");
 
                 return false;
             }
@@ -81,9 +111,9 @@ namespace DoSA
             if(m_dMeshLevelPercent <= 0.05f)
             {
                 if (bOpenNoticeDialog == true)
-                    CNotice.noticeWarning("메쉬 크기 레벨은 0.05% 보다 큰 값이어야 합니다.");
+                    CNotice.noticeWarningID("TMSL");
                 else
-                    CNotice.printTrace("메쉬 크기 레벨은 0.05% 보다 큰 값이어야 합니다.");
+                    CNotice.printTraceID("TMSL");
 
                 return false;
             }
@@ -98,14 +128,16 @@ namespace DoSA
         // 저장 변수들
         public string m_strWorkingDirName { get; set; }
         public string m_strFemmExeFileFullName { get; set; }
+        
         public double m_dMeshLevelPercent { get; set; }
-
+        public EMLanguage m_emLanguage { get; set; }
 
         public void copyCloneToSettingData()
         {
             CSettingData.m_strWorkingDirName = m_strWorkingDirName;
             CSettingData.m_strFemmExeFileFullName = m_strFemmExeFileFullName;
             CSettingData.m_dMeshLevelPercent = m_dMeshLevelPercent;
+            CSettingData.m_emLanguage = m_emLanguage;
         }
 
         public void copySettingDataToClone()
@@ -113,6 +145,7 @@ namespace DoSA
             m_strWorkingDirName = CSettingData.m_strWorkingDirName;
             m_strFemmExeFileFullName = CSettingData.m_strFemmExeFileFullName;
             m_dMeshLevelPercent = CSettingData.m_dMeshLevelPercent;
-        }
+            m_emLanguage = CSettingData.m_emLanguage;
+        }        
     }
 }

@@ -27,6 +27,7 @@ using Scripts;
 using Shapes;
 using gtLibrary;
 using Microsoft.Win32;
+using System.Resources;
 
 namespace DoSA
 {
@@ -46,6 +47,7 @@ namespace DoSA
 
         public CScriptFEMM m_femm;
 
+        public ResourceManager m_resManager = null;
 
         #endregion
 
@@ -65,6 +67,8 @@ namespace DoSA
             loadMaterial();
 
             m_femm = null;
+
+            m_resManager = ResourceManager.CreateFileBasedResourceManager("LanguageResource", Application.StartupPath, null);
         }
 
         private void initializeProgram()
@@ -76,7 +80,7 @@ namespace DoSA
 
                 if (retFreamework == false)
                 {
-                    DialogResult result = CNotice.noticeWarningOKCancel("DoSA 은 Net Framework V4.5 이상의 설치가 필요합니다.\n다운로드 페이지로 이동하겠습니까?");
+                    DialogResult result = CNotice.noticeWarningOKCancelID("DRIO1", "W");
                     
                     if(result == DialogResult.OK )
                         openWebsite(@"https://www.microsoft.com/ko-kr/download/details.aspx?id=30653");
@@ -109,10 +113,7 @@ namespace DoSA
 
                 if (false == m_manageFile.isExistFile(strSettingFileFullName))
                 {
-                    CNotice.noticeWarning("설정 파일을 찾을 수 없습니다.\n환경 설정 후에 프로그램이 실행 됩니다.");
-
-                    /// ini 파일이 없는 최초 실행인 경우는 1 % 로 초기화 한다.
-                    frmSetting.setMeshLevelPercent(1.0f);
+                    CNotice.noticeWarning("환경설정 파일을 찾을 수 없습니다.\n환경설정 후에 프로그램이 실행 됩니다.\n\nThe configuration file can not be found.\nThe program can run after finishing configuration.");
 
                     // 파일자체가 없기 때문에 다이얼로그의 데이터 설정없이 바로 호출한다.
                     if (DialogResult.OK == frmSetting.ShowDialog())
@@ -121,7 +122,7 @@ namespace DoSA
                     }
                     else
                     {
-                        CNotice.noticeWarning("초기 설정의 취소하시면 프로그램이 종료 됩니다.");
+                        CNotice.noticeWarning("초기 설정을 취소하시면 프로그램이 종료 됩니다.\n\nIf you cancel this initial setting, the program will be closed.");
 
                         System.Windows.Forms.Application.ExitThread();
                         Environment.Exit(0);
@@ -133,7 +134,8 @@ namespace DoSA
 
                     if (CSettingData.isDataOK(false) == false)
                     {
-                        CNotice.noticeWarning("환경설정에 문제가 있습니다. \n환경 설정 후에 프로그램이 실행 됩니다.");
+                        //CNotice.noticeWarningID("TIAP7");
+                        CNotice.noticeWarning("환경 설정에 문제가 있습니다.\n환경 설정 후에 프로그램이 실행 됩니다.\n\nThere is a problem with your settings.\nThe program will run after finishing configuration.");
 
                         if (DialogResult.OK == frmSetting.ShowDialog())
                         {
@@ -141,7 +143,7 @@ namespace DoSA
                         }
                         else
                         {
-                            CNotice.noticeWarning("초기 설정의 취소하시면 프로그램이 종료 됩니다.");
+                            CNotice.noticeWarning("초기 설정을 취소하시면 프로그램이 종료 됩니다.\n\nIf you cancel this initial setting, the program will be closed.");
 
                             System.Windows.Forms.Application.ExitThread();
                             Environment.Exit(0);
@@ -153,13 +155,16 @@ namespace DoSA
                     m_manageFile.setCurrentDirectory(CSettingData.m_strWorkingDirName);
                 }
 
+                /// 언어를 설정한다.
+                CSettingData.updataLanguge();
+
                 /// FEMM 버전을 확인한다.
                 /// 
                 bool retFEMM = checkVersionOfFEMM();
 
                 if (retFEMM == false)
                 {
-                    DialogResult result = CNotice.noticeWarningOKCancel("DoSA 는 FEMM V4.2(24Sep2017) 이후 버전의 설치가 필요합니다.\n다운로드 페이지로 이동하겠습니까?");
+                    DialogResult result = CNotice.noticeWarningOKCancelID("DRIO", "W");
 
                     if (result == DialogResult.OK)
                         openWebsite(@"http://www.femm.info/wiki/NewBuild");
@@ -167,7 +172,7 @@ namespace DoSA
                     System.Windows.Forms.Application.ExitThread();
                     Environment.Exit(0);
                 }
-
+                
             }
             catch (Exception ex)
             {
@@ -300,7 +305,7 @@ namespace DoSA
         {
             if (m_design.m_bChanged == true)
             {
-                if (DialogResult.OK == CNotice.noticeWarningOKCancel("기존 디자인을 저장 하시겠습니까?"))
+                if (DialogResult.OK == CNotice.noticeWarningOKCancelID("DYWT", "W"))
                 {
                     saveDesignFile();
                 }
@@ -326,7 +331,7 @@ namespace DoSA
             // - .Length == 0 나 "" 를 사용하라
             if (strDesignName.Length == 0)
             {
-                CNotice.printTrace("디자인명 없이 디자인 생성작업이 진행되고 있습니다.");
+                CNotice.printTraceID("DNIN");
                 return;
             }
 
@@ -354,7 +359,7 @@ namespace DoSA
             // 제목줄에 디자인명을 표시한다
             this.Text = "Design Toolkit of Solenoid & Actuator - " + m_design.m_strDesignName;
 
-            CNotice.printUserMessage(m_design.m_strDesignName + " 디자인이 생성 되었습니다.");    
+            CNotice.printUserMessage(m_design.m_strDesignName + m_resManager.GetString("_DHBC1"));    
 
         }
 
@@ -362,7 +367,7 @@ namespace DoSA
         {
             if (m_design.m_bChanged == true)
             {
-                if (DialogResult.OK == CNotice.noticeWarningOKCancel("기존 디자인을 저장 하시겠습니까?"))
+                if (DialogResult.OK == CNotice.noticeWarningOKCancelID("DYWT", "W"))
                 {
                     saveDesignFile();
                 }
@@ -419,14 +424,14 @@ namespace DoSA
             // 제목줄에 디자인명을 표시한다
             this.Text = "Design Toolkit of Solenoid & Actuator - " + m_design.m_strDesignName;
 
-            CNotice.printUserMessage(m_design.m_strDesignName + " 디자인이 오픈 되었습니다.");    
+            CNotice.printUserMessage(m_design.m_strDesignName + m_resManager.GetString("_DHBO"));    
         }
 
         private void ribbonOrbMenuItemClose_Click(object sender, EventArgs e)
         {
             if (m_design.m_bChanged == true)
             {
-                if (DialogResult.OK == CNotice.noticeWarningOKCancel("디자인을 저장 하시겠습니까?"))
+                if (DialogResult.OK == CNotice.noticeWarningOKCancelID("DYWT1", "W"))
                 {
                     saveDesignFile();
                 }
@@ -435,7 +440,7 @@ namespace DoSA
             // 저장을 하고 나면 초기화 한다.
             m_design.m_bChanged = false;
 
-            CNotice.printUserMessage(m_design.m_strDesignName + " 디자인이 닫혔습니다.");
+            CNotice.printUserMessage(m_design.m_strDesignName + m_resManager.GetString("_DHBC"));
 
             // 기존 디자인 데이터를 모두 삭제한다.
             closeDesign();
@@ -450,15 +455,15 @@ namespace DoSA
         {
             if (m_design.m_strDesignName.Length == 0)
             {
-                CNotice.noticeWarning("저장을 실행할 작업 디자인이 없습니다.\n작업을 취소 합니다.");
+                CNotice.noticeWarningID("TIND2");
                 return;
             }
 
             if (true == saveDesignFile())
             {
-                CNotice.noticeInfomation(m_design.m_strDesignName + " 디자인의 저장이 완료 되었습니다.", "저장 알림");
+                CNotice.noticeInfomation(m_design.m_strDesignName + m_resManager.GetString("_DSHB1"), m_resManager.GetString("SN"));
 
-                CNotice.printUserMessage(m_design.m_strDesignName + " 디자인의 저장이 완료 되었습니다.");
+                CNotice.printUserMessage(m_design.m_strDesignName + m_resManager.GetString("_DSHB"));
             }
         }
 
@@ -475,7 +480,7 @@ namespace DoSA
             // 디자인이 없는 경우는 DesignName 없기 때문에 이름으로 작업디자인이 있는지를 판단한다.
             if (strOrgDesignName.Length == 0)
             {
-                CNotice.noticeWarning("다른 이름으로 저장을 실행할 작업 디자인이 없습니다.\n작업을 취소 합니다.");
+                CNotice.noticeWarningID("TIND1");
                 return;
             }
 
@@ -509,7 +514,7 @@ namespace DoSA
                         // 디자인 이름이 아니라 디자인 이름을 포함한 경로로 존재여부를 판단한다.
                         if (directoryName == strSaveAsDesignDirName)
                         {
-                            CNotice.noticeWarning("해당 디렉토리에 이미 존재하는 디자인 명을 선택하였습니다. \n실행을 취소 합니다.");
+                            CNotice.noticeWarningID("YHCA");
                             return;
                         }
                     }
@@ -546,9 +551,9 @@ namespace DoSA
                     // 제목줄에 디자인명을 변경한다
                     this.Text = "Design Toolkit of Solenoid & Actuator - " + m_design.m_strDesignName;
 
-                    CNotice.noticeInfomation(m_design.m_strDesignName + " 디자인으로 저장 되었습니다.", "다른 이름 저장 알림");
+                    CNotice.noticeInfomation(m_design.m_strDesignName + m_resManager.GetString("_DHBS1"), m_resManager.GetString("SAN"));
 
-                    CNotice.printUserMessage(m_design.m_strDesignName + " 디자인으로 다른이름 저장 되었습니다.");
+                    CNotice.printUserMessage(m_design.m_strDesignName + m_resManager.GetString("_DHBS"));
                 }
                 catch (Exception ex)
                 {
@@ -562,7 +567,7 @@ namespace DoSA
         {
             if (m_design.m_bChanged == true)
             {
-                if (DialogResult.OK == CNotice.noticeWarningOKCancel("디자인을 저장 하시겠습니까?"))
+                if (DialogResult.OK == CNotice.noticeWarningOKCancelID("DYWT", "W"))
                 {
                     saveDesignFile();
                 }
@@ -605,8 +610,15 @@ namespace DoSA
         {
             PopupSetting frmSetting = new PopupSetting();
 
+            frmSetting.uploadSettingData();
+
             if (DialogResult.OK == frmSetting.ShowDialog())
+            {
                 frmSetting.saveSettingToFile();
+
+                // 언어를 수정과 동시에 반영한다.
+                CSettingData.updataLanguge();
+            }
         }
 
         private void ribbonButtonHelp_Click(object sender, EventArgs e)
@@ -644,7 +656,7 @@ namespace DoSA
 
             if (m_manageFile.isExistDirectory(strExperimentDirName) == true)
             {
-                DialogResult ret = CNotice.noticeWarningOKCancel("이전 시험결과가 존재합니다.\n이전 결과를 삭제하고 진행 하시겠습니까?", "신규시험 진행");
+                DialogResult ret = CNotice.noticeWarningOKCancelID("TIAP", "NE");
 
                 if (ret == DialogResult.Cancel)
                     return;
@@ -749,14 +761,14 @@ namespace DoSA
             buttonLoadCurrentResult.Enabled = true;
 
             if (diffTime.Hours > 0)
-                CNotice.printUserMessage(strExperimentName + " 시험이 완료 되었습니다. ( 소요시간 : " +
-                                            diffTime.Hours.ToString() + " 시 " +
-                                            diffTime.Minutes.ToString() + " 분 " +
-                                            diffTime.Seconds.ToString() + " 초 )");
+                CNotice.printUserMessage(strExperimentName + m_resManager.GetString("_THBC") +
+                                            diffTime.Hours.ToString() + m_resManager.GetString("H") +
+                                            diffTime.Minutes.ToString() + m_resManager.GetString("M") +
+                                            diffTime.Seconds.ToString() + m_resManager.GetString("S"));
             else
-                CNotice.printUserMessage(strExperimentName + " 시험이 완료 되었습니다. ( 소요시간 : " +
-                                            diffTime.Minutes.ToString() + " 분 " +
-                                            diffTime.Seconds.ToString() + " 초 )");
+                CNotice.printUserMessage(strExperimentName + m_resManager.GetString("_THBC") +
+                                            diffTime.Minutes.ToString() + m_resManager.GetString("M") +
+                                            diffTime.Seconds.ToString() + m_resManager.GetString("S"));
 
             /// DoSA 를 활성화하여 창을 최상위에 위치시킨다.
             this.Activate();
@@ -865,7 +877,7 @@ namespace DoSA
 
             if (m_manageFile.isExistDirectory(strExperimentDirName) == true)
             {
-                DialogResult ret = CNotice.noticeWarningOKCancel("이전 시험결과가 존재합니다.\n이전 결과를 삭제하고 진행 하시겠습니까?", "신규시험 진행");
+                DialogResult ret = CNotice.noticeWarningOKCancelID("TIAP", "NE");
 
                 if (ret == DialogResult.Cancel)
                     return;
@@ -948,14 +960,14 @@ namespace DoSA
             buttonLoadForceResult.Enabled = true;
 
             if (diffTime.Hours > 0)
-                CNotice.printUserMessage(strExperimentName + " 시험이 완료 되었습니다. ( 소요시간 : " +
-                                            diffTime.Hours.ToString() + " 시 " +
-                                            diffTime.Minutes.ToString() + " 분 " +
-                                            diffTime.Seconds.ToString() + " 초 )");
+                CNotice.printUserMessage(strExperimentName + m_resManager.GetString("_THBC") +
+                                            diffTime.Hours.ToString() + m_resManager.GetString("H") +
+                                            diffTime.Minutes.ToString() + m_resManager.GetString("M") +
+                                            diffTime.Seconds.ToString() + m_resManager.GetString("S"));
             else
-                CNotice.printUserMessage(strExperimentName + " 시험이 완료 되었습니다. ( 소요시간 : " +
-                                            diffTime.Minutes.ToString() + " 분 " +
-                                            diffTime.Seconds.ToString() + " 초 )");
+                CNotice.printUserMessage(strExperimentName + m_resManager.GetString("_THBC") +
+                                            diffTime.Minutes.ToString() + m_resManager.GetString("M") +
+                                            diffTime.Seconds.ToString() + m_resManager.GetString("S"));
 
             /// DoSA 를 활성화하여 창을 최상위에 위치시킨다.
             this.Activate();
@@ -987,7 +999,7 @@ namespace DoSA
 
             if (m_manageFile.isExistDirectory(strExperimentDirName) == true)
             {
-                DialogResult ret = CNotice.noticeWarningOKCancel("이전 시험결과가 존재합니다.\n이전 결과를 삭제하고 진행 하시겠습니까?", "신규시험 진행");
+                DialogResult ret = CNotice.noticeWarningOKCancelID("TIAP", "NE");
 
                 if (ret == DialogResult.Cancel)
                     return;
@@ -1038,7 +1050,7 @@ namespace DoSA
             {
                 if( dInitialStroke >= 0 )
                 {
-                    CNotice.printTrace("최소, 최대변위에 발생할 수 없는 경우가 발생했다.");
+                    CNotice.printTraceID("SPIO");
                     return;
                 }
                 else
@@ -1103,15 +1115,19 @@ namespace DoSA
             // Result 버튼이 동작하게 한다.
             buttonLoadStrokeResult.Enabled = true;
 
-            if(diffTime.Hours > 0)
-                CNotice.printUserMessage(   strExperimentName + " 시험이 완료 되었습니다. ( 소요시간 : " +
-                                            diffTime.Hours.ToString() + " 시 " +
-                                            diffTime.Minutes.ToString() + " 분 " +
-                                            diffTime.Seconds.ToString() + " 초 )");
+            if (diffTime.Hours > 0)
+            {
+                CNotice.printUserMessage(strExperimentName + m_resManager.GetString("_THBC") +
+                                            diffTime.Hours.ToString() + m_resManager.GetString("H") +
+                                            diffTime.Minutes.ToString() + m_resManager.GetString("M") +
+                                            diffTime.Seconds.ToString() + m_resManager.GetString("S"));
+            }
             else
-                CNotice.printUserMessage(   strExperimentName + " 시험이 완료 되었습니다. ( 소요시간 : " +
-                                            diffTime.Minutes.ToString() + " 분 " +
-                                            diffTime.Seconds.ToString() + " 초 )");
+            {
+                CNotice.printUserMessage(strExperimentName + m_resManager.GetString("_THBC") +
+                                            diffTime.Minutes.ToString() + m_resManager.GetString("M") +
+                                            diffTime.Seconds.ToString() + m_resManager.GetString("S"));
+            }
 
             /// DoSA 를 활성화하여 창을 최상위에 위치시킨다.
             this.Activate();
@@ -1139,7 +1155,7 @@ namespace DoSA
             // 이름이 지정된 Design 만 저장을 확인한다.
             if (m_design.m_bChanged == true)
             {
-                if (DialogResult.OK == CNotice.noticeWarningOKCancel("디자인을 저장 하시겠습니까?"))
+                if (DialogResult.OK == CNotice.noticeWarningOKCancelID("DYWT1", "W"))
                 {
                     saveDesignFile();
                 }
@@ -1171,7 +1187,7 @@ namespace DoSA
 
             if (strVersionDate.Length < 9)
             {
-                CNotice.printTrace("FEMM 버전에 문제가 발생했습니다.");
+                CNotice.printTraceID("TWAP4");
                 return false;
             }
 
@@ -1265,7 +1281,7 @@ namespace DoSA
         {
             if (m_femm == null)
             {
-                CNotice.printTrace("실행한 적이 없는 FEMM 을 reopen 하려고 하고 있습니다.");
+                CNotice.printTraceID("YATT8");
             }
             // FEMM.exe 가 실행되어 열려 있는 경우는 내용만 삭제하고 크기만 변경한다.
             // FEMM.exe 가 실행되었지만 열려 있지 않은 경우라면 (사용자가 강제로 닫은 경우) 는 종료하고 다시 생성한다.
@@ -1338,13 +1354,13 @@ namespace DoSA
 
             if (bCheck == false)
             {
-                CNotice.noticeWarning("자기력 시험을 위해서는 하나 이상의 동작부가 설정되어야 합니다.");
+                CNotice.noticeWarningID("ALOM");
                 return false;
             }
 
             if (m_design.isDesignShapeOK() == false)
             {
-                CNotice.printTrace("자기력 시험 전의 형상 검사에서 오류가 발생했습니다.");
+                CNotice.printTraceID("AEOI");
                 return false;
             }
 
@@ -1357,13 +1373,13 @@ namespace DoSA
 
             if (strokeExperiment.InitialStroke >= strokeExperiment.FinalStroke)
             {
-                CNotice.noticeWarning("최종변위가 초기변위보다 커야 합니다.");
+                CNotice.noticeWarningID("TFSM");
                 return false;
             }
 
             if (strokeExperiment.StepCount <= 0)
             {
-                CNotice.noticeWarning("변위 스텝은 영보다 커야 합니다.");
+                CNotice.noticeWarningID("TSSM");
                 return false;
             }
 
@@ -1379,21 +1395,21 @@ namespace DoSA
 
             if (bCheck == false)
             {
-                CNotice.noticeWarning("자기력 시험을 위해서는 하나 이상의 동작부가 설정되어야 합니다.");
+                CNotice.noticeWarningID("ALOM");
                 return false;
             }
 
             // 구동부를 초기 변위로 이동 후에 형상 검사를 한다.
             if (m_design.isDesignShapeOK(strokeExperiment.InitialStroke) == false)
             {
-                CNotice.noticeWarning("변위-자기력 시험 전의 초기변위 형상검사에서 오류가 발생했습니다.");
+                CNotice.noticeWarningID("AEOT1");
                 return false;
             }
 
             // 구동부를 최대 변위로 이동 후에 형상 검사를 한다.
             if (m_design.isDesignShapeOK(strokeExperiment.FinalStroke) == false)
             {
-                CNotice.noticeWarning("변위-자기력 시험 전의 최대변위 형상검사에서 오류가 발생했습니다.");
+                CNotice.noticeWarningID("AEOT2");
                 return false;
             }
 
@@ -1404,19 +1420,19 @@ namespace DoSA
         {
             if (currentExperiment.InitialCurrent >= currentExperiment.FinalCurrent)
             {
-                CNotice.noticeWarning("최종전류가 초기전류보다 커야 합니다.");
+                CNotice.noticeWarningID("TFCM");
                 return false;
             }
 
             if (currentExperiment.StepCount <= 0)
             {
-                CNotice.noticeWarning("전류 스텝은 영보다 커야 합니다.");
+                CNotice.noticeWarningID("TCSS");
                 return false;
             }
 
             if (m_design.isDesignShapeOK() == false)
             {
-                CNotice.printTrace("전류-자기력 시험 전의 형상 검사에서 오류가 발생했습니다.");
+                CNotice.printTraceID("AEOT");
                 return false;
             }
 
@@ -1452,7 +1468,7 @@ namespace DoSA
             }
             else
             {
-                CNotice.noticeWarning("자기력 가상시험 결과가 존재 하지 않습니다.");
+                CNotice.noticeWarningID("TROA1");
                 return;
             }
 
@@ -1471,7 +1487,7 @@ namespace DoSA
             }
             else
             {
-                CNotice.noticeWarning("자속밀도 패턴이 존재 하지 않습니다.");
+                CNotice.noticeWarningID("TINR");
                 return;
             }
         }
@@ -1494,7 +1510,7 @@ namespace DoSA
 
                 if (false == m_manageFile.isExistFile(strStrokeFileFullName))
                 {
-                    CNotice.noticeWarning("변위-자기력 시험결과가 존재 하지 않습니다.");
+                    CNotice.noticeWarningID("TROA");
                     return;
                 }
 
@@ -1508,7 +1524,7 @@ namespace DoSA
 
                 if (listDataX.Count != listDataY.Count)
                 {
-                    CNotice.printTrace("CSV 파일의 각열의 행수가 일치하지 않습니다.");
+                    CNotice.printTraceID("TNOR");
                     return;
                 }
 
@@ -1530,7 +1546,7 @@ namespace DoSA
             catch (Exception ex)
             {
                 CNotice.printTrace(ex.Message);
-                CNotice.printTrace("변위해석 결과의 차트에서 예외가 발생했습니다.");
+                CNotice.printTraceID("AEOI");
                 return;
             }
         }
@@ -1553,7 +1569,7 @@ namespace DoSA
 
                 if (false == m_manageFile.isExistFile(strCurrentFileFullName))
                 {
-                    CNotice.noticeWarning("변위-자기력 시험결과가 존재 하지 않습니다.");
+                    CNotice.noticeWarningID("TROA2");
                     return;
                 }
 
@@ -1567,7 +1583,7 @@ namespace DoSA
 
                 if (listDataX.Count != listDataY.Count)
                 {
-                    CNotice.printTrace("CSV 파일의 각열의 행수가 일치하지 않습니다.");
+                    CNotice.printTraceID("TNOR");
                     return;
                 }
 
@@ -1590,7 +1606,7 @@ namespace DoSA
             catch (Exception ex)
             {
                 CNotice.printTrace(ex.Message);
-                CNotice.printTrace("변위해석 결과의 차트에서 예외가 발생했습니다.");
+                CNotice.printTraceID("AEOI");
                 return;
             }
         }
@@ -1603,7 +1619,7 @@ namespace DoSA
         {
             if (m_design.m_strDesignName.Length == 0)
             {
-                CNotice.printTrace("생성되지 않는 디자인을 저장하려고 합니다.");
+                CNotice.printTraceID("YATT9");
                 return false;
             }
 
@@ -1824,7 +1840,7 @@ namespace DoSA
 
                     if (node == null)
                     {
-                        CNotice.printTrace("트리명의 노드가 m_design 에 존재하지 않습니다.");
+                        CNotice.printTraceID("TDNI");
                         return;
                     }
 
@@ -1836,7 +1852,7 @@ namespace DoSA
 
                         if (m_manageFile.isExistDirectory(strExperimentDirName) == true)
                         {
-                            DialogResult ret = CNotice.noticeWarningOKCancel("결과가 존재하는 가상시험입니다.\n삭제를 진행 하시겠습니까?");
+                            DialogResult ret = CNotice.noticeWarningOKCancelID("TTHR", "W");
 
                             if (ret == DialogResult.Cancel)
                                 return;
@@ -1875,7 +1891,7 @@ namespace DoSA
 
                 if (node == null)
                 {
-                    CNotice.printTrace("트리명의 노드가 m_design 에 존재하지 않습니다.");
+                    CNotice.printTraceID("TDNI");
                     return;
                 }
 
@@ -1903,7 +1919,7 @@ namespace DoSA
 
             if (m_design.m_strDesignName.Length == 0)
             {
-                CNotice.noticeWarning("노드를 추가할 작업 디자인이 없습니다.\n작업을 취소 합니다.");
+                CNotice.noticeWarningID("TIND");
                 return null;
             }
 
@@ -1970,7 +1986,7 @@ namespace DoSA
                         break;    
 
                     default:
-                        CNotice.printTrace("엉뚱한 파트종류가 접근 되었다.");
+                        CNotice.printTraceID("TWKO");
                         return null;
                 }
 
@@ -1983,14 +1999,14 @@ namespace DoSA
                     /// 형상에 맞추어 코일 설계 사양정보를 초기화 한다.
                     if(emKind == EMKind.COIL)
                         ((CCoil)retNode).initialShapeDesignValue();
-                    
-                    CNotice.printUserMessage(strName + " 파트가 생성 되었습니다.");
+
+                    CNotice.printUserMessage(strName + m_resManager.GetString("_PHBC"));
                 }                    
                 else
                 {
-                    CNotice.noticeWarning("형상이 정상적으로 생성되지 못하였습니다.");
+                    CNotice.noticeWarningID("TGWN");
 
-                    CNotice.printTrace("형상이 정상적으로 생성되지 못했다.");
+                    CNotice.printTraceID("TGWN");
 
                     return null;
                 }
@@ -2014,7 +2030,7 @@ namespace DoSA
                         break;
 
                     default:
-                        CNotice.printTrace("종류에 없는 Node 를 생성창을 띄울려고 있다.");
+                        CNotice.printTraceID("YATT4");
                         return null;
                 }
 
@@ -2060,11 +2076,11 @@ namespace DoSA
                         break;
 
                     default:
-                        CNotice.printTrace("엉뚱한 파트종류가 접근 되었다.");
+                        CNotice.printTraceID("TWKO");
                         return null;
                 }
 
-                CNotice.printUserMessage(strName + " 시험이 생성 되었습니다.");
+                CNotice.printUserMessage(strName + m_resManager.GetString("_THBC1"));
             }                
 
             // 수정 되었음을 기록한다.
@@ -2080,7 +2096,7 @@ namespace DoSA
             }
             else
             {
-                CNotice.noticeWarning("이미 사용하고 있는 이름입니다.");
+                CNotice.noticeWarningID("TNIA");
                 return null;
             }
 
@@ -2431,7 +2447,7 @@ namespace DoSA
                     /// 기존에 존재하는 이름으로 변경했는지의 판단은 Node 이름을 겹치는 것으로 확인해야 한다.
                     if (true == m_design.duplicateNodeName())
                     {
-                        CNotice.noticeWarning("이미 사용하고 있는 이름입니다.");
+                        CNotice.noticeWarningID("TNIA");
 
                         /// PropertyGrid 에 Node 를 올릴 때 저장해둔 Node 이름으로 복원한다.
                         node.NodeName = m_strBackupNodeName;
@@ -2604,13 +2620,13 @@ namespace DoSA
                 {
                     if (listH.Count == 0)
                     {
-                        CNotice.printTrace("선택한 연자성재료의 데이터가 존재하지 않습니다.");
+                        CNotice.printTraceID("TDFT");
                         return;
                     }
 
                     if (listH.Count != listB.Count)
                     {
-                        CNotice.printTrace("BH 데이터의 XY 값 크기가 일치하지 않습니다.");
+                        CNotice.printTraceID("TSOT");
                         return;
                     }
 
@@ -2636,7 +2652,7 @@ namespace DoSA
 
             if (false == m_manageFile.isExistFile(strFileFullName))
             {
-                CNotice.printTrace("재질 파일이 존재하지 않습니다.");
+                CNotice.printTraceID("TMFD");
                 return false;
             }
 
@@ -2694,7 +2710,7 @@ namespace DoSA
             catch (Exception ex)
             {
                 CNotice.printTrace(ex.Message);
-                CNotice.printTrace("Maxwell 재질파일 로딩에 예외가 발생했습니다.");
+                CNotice.printTraceID("AETT");
                 return false;
             }
 
@@ -2741,7 +2757,7 @@ namespace DoSA
                         }
                         else
                         {
-                            CNotice.printTrace("Imformation 이미지를 읽어드릴 수 없습니다.");
+                            CNotice.printTraceID("TIII");
                             return;
                         }
 
@@ -2772,7 +2788,7 @@ namespace DoSA
                         }
                         else
                         {
-                            CNotice.printTrace("Imformation 이미지를 읽어드릴 수 없습니다.");
+                            CNotice.printTraceID("TIII");
                             return;
                         }
 
@@ -2820,7 +2836,7 @@ namespace DoSA
 
                 if (dMinX >= dMaxX || dMinY >= dMaxY)
                 {
-                    CNotice.printTrace("Chart 축 크기설정에 최소값이 오히려 최대값보다 크게 설정되었습니다.");
+                    CNotice.printTraceID("TMVI");
                     return;
                 }
 
@@ -2849,7 +2865,7 @@ namespace DoSA
             catch (Exception ex)
             {
                 CNotice.printTrace(ex.Message);
-                CNotice.printTrace("XY Chart 출력에서 예외가 발생했습니다.");
+                CNotice.printTraceID("AEOI1");
                 return;
             }
         }
@@ -2891,7 +2907,7 @@ namespace DoSA
                 // Part 별로 다른 형상을 기본값으로 PopupShape 객체를 생성한다.
                 if (nodeParts.Face == null)
                 {
-                    CNotice.printTrace("Face 가 초기화 되지 않은 Parts 가 생성되어 있다.");
+                    CNotice.printTraceID("APWT");
                     return;
                 }
 
@@ -2922,9 +2938,9 @@ namespace DoSA
                     }
                     else
                     {
-                        CNotice.noticeWarning("형상이 정상적으로 생성되지 못하였습니다.");
+                        CNotice.noticeWarningID("TGWN");
 
-                        CNotice.printTrace("형상이 정상적으로 생성되지 못했다.");
+                        CNotice.printTraceID("TGWN");
                     }
 
                 }
@@ -2938,14 +2954,14 @@ namespace DoSA
             catch (Exception ex)
             {
                 CNotice.printTrace(ex.Message);
-                CNotice.printTrace("형상 생성과정에서 예외가 발생했습니다.");
+                CNotice.printTraceID("AEOD");
                 return;
             }
 
             // 수정 되었음을 기록한다.
             m_design.m_bChanged = true;
 
-            CNotice.printUserMessage(nodeParts.NodeName + " 파트가 수정 되었습니다.");
+            CNotice.printUserMessage(nodeParts.NodeName + m_resManager.GetString("_PHBM"));
 
             /// 수정된 코일형상을 프로퍼티에 표시한다.
             propertyGridMain.Refresh();

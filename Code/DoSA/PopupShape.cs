@@ -62,7 +62,7 @@ namespace Shapes
                         break;
 
                     default:
-                        CNotice.printTrace("형상입력 Form 의 Face Type 오류가 발생했다.");
+                        CNotice.printTraceID("AFTE");
                         break;
                 }
             }
@@ -127,7 +127,7 @@ namespace Shapes
                     break;
 
                 default:
-                    CNotice.printTrace("형상 생성에서 파트종류가 잘못 호출 되었다.");
+                    CNotice.printTraceID("TPTI");
                     return;
             }
           
@@ -169,13 +169,13 @@ namespace Shapes
                         break;
 
                     default:
-                        CNotice.printTrace("형상 생성에서 파트종류가 잘못 호출 되었다.");
+                        CNotice.printTraceID("TPTI");
                         return;
                 }
             
                 if (face == null)
                 {
-                    CNotice.printTrace("null CFace 로 PopupShape 생성자를 호출했다.");
+                    CNotice.printTraceID("CTPS1");
                     return;
                 }
 
@@ -184,7 +184,7 @@ namespace Shapes
 
                 if (face.getPointCount() < MIN_POLYGON_CONTROL_COUNT)
                 {
-                    CNotice.printTrace("CPoint 가 4개 미만인 CFace 로 PopupShape 생성자를 호출했다.");
+                    CNotice.printTraceID("CTPS");
                     return;
                 }
 
@@ -233,7 +233,7 @@ namespace Shapes
                 }
                 else
                 {
-                    CNotice.printTrace("사용하지 않는 Face Type 를 사용했다.");
+                    CNotice.printTraceID("UAWF");
                     return;
                 }
 
@@ -321,7 +321,7 @@ namespace Shapes
                         if (this.panelPointControl.Controls.Count == RECTANGLE_CONTROL_COUNT)
                         {
                             e.Cancel = true;
-                            CNotice.noticeWarning("Rectangle 일때는 최소한 2개의 좌표가 필요합니다.");
+                            CNotice.noticeWarningID("RRAL");
                             return;
                         }
                     }
@@ -330,7 +330,7 @@ namespace Shapes
                         if (this.panelPointControl.Controls.Count <= MIN_POLYGON_CONTROL_COUNT)
                         {
                             e.Cancel = true;
-                            CNotice.noticeWarning("Polygon 일때는 최소한 4개의 좌표가 필요합니다.");
+                            CNotice.noticeWarningID("PRAL");
                             return;
                         }
                     }
@@ -421,7 +421,7 @@ namespace Shapes
 
             if (this.m_faceType != EMFaceType.POLYGON)
             {
-                CNotice.printTrace("Rectangle 에서 Add 라인 버튼이 클릭 되었다.");
+                CNotice.printTraceID("TBOA");
                 return;
             }
 
@@ -444,7 +444,7 @@ namespace Shapes
             /// 
             if (textBoxPartName.Text.Length == 0)
             {
-                CNotice.noticeWarning("파트 이름을 입력해 주십시요");
+                CNotice.noticeWarningID("PEAP");
                 return false;
             }
 
@@ -452,13 +452,13 @@ namespace Shapes
             {               
                 if (ListPointControl[i].StrCoordX.Trim().Length == 0)
                 {
-                    CNotice.noticeWarning("좌표값을 입력해 주십시요");
+                    CNotice.noticeWarningID("PETC");
                     return false;
                 }
 
                 if (ListPointControl[i].StrCoordY.Trim().Length == 0)
                 {
-                    CNotice.noticeWarning("좌표값을 입력해 주십시요");
+                    CNotice.noticeWarningID("PETC");
                     return false;
                 }
             }
@@ -477,7 +477,7 @@ namespace Shapes
 
                     if(strX1 == strX2 && strY1 == strY2)
                     {
-                        CNotice.noticeWarning("동안한 좌표의 두점이 존재합니다.");
+                        CNotice.noticeWarningID("TATP");
                         return false;
                     }
                 }
@@ -497,13 +497,13 @@ namespace Shapes
 
                 if (formMain == null)
                 {
-                    CNotice.printTrace("부모 창인 Main Form 을 얻어오지 못했다.");
+                    CNotice.printTraceID("CNGM");
                     return false;
                 }
 
                 if (true == formMain.m_design.isExistNode(textBoxPartName.Text))
                 {
-                    CNotice.noticeWarning("이미 존재하는 Part 입니다.");
+                    CNotice.noticeWarningID("TPAE");
                     return false;
                 }
             }
@@ -523,13 +523,13 @@ namespace Shapes
 
             if (face == null)
             {
-                CNotice.noticeWarning("형상 생성에 문제가 발생 하였습니다.");
+                CNotice.noticeWarningID("TWAP1");
                 return;
             }
 
             if (false == face.isShapeOK())
             {
-                CNotice.printTrace("Face 형상에 문제가 발생했다.");
+                CNotice.printTraceID("TWAP3");
                 return;
             }
             
@@ -540,7 +540,7 @@ namespace Shapes
 
             if (formMain == null)
             {
-                CNotice.printTrace("부모 창인 Main Form 을 얻어오지 못했다.");
+                CNotice.printTraceID("CNGM");
                 return;
             }
 
@@ -562,7 +562,7 @@ namespace Shapes
                 {
                     if (ListPointControl.Count != 2)
                     {
-                        CNotice.printTrace("사각형 형상 입력의 좌표점이 두개가 아닙니다.");
+                        CNotice.printTraceID("TATP1");
                         return null;
                     }
 
@@ -579,7 +579,7 @@ namespace Shapes
                 {
                     if (ListPointControl.Count < 4)
                     {
-                        CNotice.printTrace("다각형 형상의 좌표점이 4개 이하 입니다.");
+                        CNotice.printTraceID("TANM");
                         return null;
                     }
 
@@ -638,7 +638,7 @@ namespace Shapes
 
                 if (formMain == null)
                 {
-                    CNotice.printTrace("부모 창인 Main Form 을 얻어오지 못했다.");
+                    CNotice.printTraceID("CNGM");
                     return;
                 }
                     
@@ -648,13 +648,13 @@ namespace Shapes
 
                 if (face == null)
                 {
-                    CNotice.noticeWarning("형상 생성에 문제가 발생 하였습니다.");
+                    CNotice.noticeWarningID("TWAP1");
                     return;
                 }
 
                 if (false == face.isShapeOK())
                 {
-                    CNotice.printTrace("Face 형상에 문제가 발생했다.");
+                    CNotice.printTraceID("TWAP3");
                     return ;
                 }
                     
@@ -711,7 +711,7 @@ namespace Shapes
 
                 if (formMain == null)
                 {
-                    CNotice.printTrace("부모 창인 Main Form 을 얻어오지 못했다.");
+                    CNotice.printTraceID("CNGM");
                     return;
                 }
 
@@ -796,7 +796,7 @@ namespace Shapes
                     }
                     else
                     {
-                        CNotice.printTrace("형상이 정상적으로 생성 되지 못했다.");
+                        CNotice.printTraceID("TSWN");
                     }
                 }
                 // 모든 데이터가 아직 입력되지 않은 상태는 입력중인 데이터만으로 그림을 그린다.
@@ -833,7 +833,7 @@ namespace Shapes
                             {
                                 if(this.FaceType == EMFaceType.RECTANGLE)
                                 {
-                                    CNotice.printTrace("들어오지 말아야할 위치로 접근이 발생했다.");
+                                    CNotice.printTraceID("ATTW");
                                 }
                                 /// 다각형만 적용된다.
                                 /// 만약 사각형의 경우 i = 1 까지 모두 채워지면 모두 입력된 상태로 if 문의 위에처 처리되기 때문이다.
@@ -887,7 +887,7 @@ namespace Shapes
 
             if (formMain == null)
             {
-                CNotice.printTrace("부모 창인 Main Form 을 얻어오지 못했다.");
+                CNotice.printTraceID("CNGM");
                 return;
             }
 

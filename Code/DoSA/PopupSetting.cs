@@ -21,9 +21,6 @@ namespace DoSA
         public PopupSetting()
         {
             InitializeComponent();
-
-            // Setting Form 으로 올린다.
-            uploadSettingData();
         }
 
         private void buttonSettingOK_Click(object sender, EventArgs e)
@@ -44,18 +41,18 @@ namespace DoSA
 
         private void downloadSettingData()
         {
-            CSettingData.m_strWorkingDirName = textBoxWorkingDirectory.Text;
-            CSettingData.m_strFemmExeFileFullName = textBoxFemmPath.Text;
+            try
+            {
+                CSettingData.m_strWorkingDirName = textBoxWorkingDirectory.Text;
+                CSettingData.m_strFemmExeFileFullName = textBoxFemmPath.Text;
 
-            CSettingData.m_dMeshLevelPercent = Double.Parse(textBoxMeshSizeLevel.Text);
-        }
-
-        private void uploadSettingData()
-        {
-            textBoxWorkingDirectory.Text = CSettingData.m_strWorkingDirName;
-            textBoxFemmPath.Text = CSettingData.m_strFemmExeFileFullName;
-
-            textBoxMeshSizeLevel.Text = CSettingData.m_dMeshLevelPercent.ToString();
+                CSettingData.m_dMeshLevelPercent = Double.Parse(textBoxMeshSizeLevel.Text);
+                CSettingData.m_emLanguage = (EMLanguage)Enum.Parse(typeof(EMLanguage), comboBoxLanguage.Text);
+            }
+            catch (Exception ex)
+            {
+                CNotice.printTrace(ex.Message);
+            }
         }
 
         private void buttonSettingCancel_Click(object sender, EventArgs e)
@@ -92,9 +89,20 @@ namespace DoSA
                 this.textBoxFemmPath.Text = openFileDialog.FileName;
         }
 
-        public void setMeshLevelPercent(double dMeshLevelPercent)
+        public void uploadSettingData()
         {
-            textBoxMeshSizeLevel.Text = dMeshLevelPercent.ToString();
+            try
+            {
+                textBoxWorkingDirectory.Text = CSettingData.m_strWorkingDirName;
+                textBoxFemmPath.Text = CSettingData.m_strFemmExeFileFullName;
+
+                textBoxMeshSizeLevel.Text = CSettingData.m_dMeshLevelPercent.ToString();
+                comboBoxLanguage.Text = CSettingData.m_emLanguage.ToString();
+            }
+            catch (Exception ex)
+            {
+                CNotice.printTrace(ex.Message);
+            }
         }
 
         public bool saveSettingToFile()
@@ -128,7 +136,7 @@ namespace DoSA
             // CSettingData.ProgramDirectory 가 초기화 되어 있어야 한다.
             if (m_manageFile.isExistFile(strSettingFileFullName) == false)
             {
-                CNotice.noticeWarning("환경 설정파일이 존재하지 않습니다.");
+                CNotice.noticeWarningID("TCFD");
                 return false;
             }
 
@@ -143,14 +151,11 @@ namespace DoSA
                 settingDataClone.copyCloneToSettingData();
 
                 reader.Close();
-
-                // Setting Data 객체에 담은 정보를 Form 으로 올린다.
-                uploadSettingData();
             }
             catch (Exception ex)
             {
                 CNotice.printTrace(ex.Message);
-                CNotice.printTrace("환경변수를 읽을 때 예외가 발생했습니다.");
+                CNotice.printTraceID("AEOW");
             }
             
             return true;

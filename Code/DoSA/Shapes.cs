@@ -116,7 +116,7 @@ namespace Shapes
             {
                 if (m_listRelativePoint.Count < MIN_POLYGON_LINE_COUNT)
                 {
-                    CNotice.printTrace("Face 의 좌표점이 4개 보다 작은 상태에서 Line List 를 얻으려 하고 있다.");
+                    CNotice.printTraceID("WRAL");
                     return null;
                 }
 
@@ -190,7 +190,7 @@ namespace Shapes
             {
                 if((point.m_dX + m_basePoint.m_dX) < 0)
                 {
-                    CNotice.noticeWarning("음의 X 좌표값을 사용했습니다. \n축대칭 해석모델은 1과 4 사분면의 형상만 가능합니다.");
+                    CNotice.noticeWarningID("YUNX");
                     return false;
                 }   
             }
@@ -206,7 +206,7 @@ namespace Shapes
 
             if (AbsoluteLineList == null)
             {
-                CNotice.noticeWarning("파트의 Edge Line 생성에 문제가 발생 하였습니다.");
+                CNotice.noticeWarningID("TWAP");
                 return false;
             }
                 
@@ -223,13 +223,13 @@ namespace Shapes
                 {
                     if (true == m_shapeTools.isIntersected(listAbsoluteLine[i], listAbsoluteLine[j]))
                     {
-                        CNotice.noticeWarning("파트 형상라인 간의 교차가 발생 하였습니다.");
+                        CNotice.noticeWarningID("AIPB");
                         return false;
                     }
 
                     if (true == m_shapeTools.isOverlaped(listAbsoluteLine[i], listAbsoluteLine[j]))
                     {
-                        CNotice.noticeWarning("파트 형상라인 간의 겹침이 발생 하였습니다.");
+                        CNotice.noticeWarningID("AOPB");
                         return false;
                     }
                 }
@@ -240,7 +240,7 @@ namespace Shapes
             ///----------------------------------------- 
             if (m_shapeTools.calcArea(this) == 0)
             {
-                CNotice.noticeWarning("생성하려는 파트 형상의 면적이 없습니다.");
+                CNotice.noticeWarningID("TINA");
                 return false;
             }
 
@@ -315,7 +315,7 @@ namespace Shapes
 
             if (m_listRelativePoint.Count < MIN_POINT_COUNT)
             {
-                CNotice.printTrace("4 개보다 작은점을 가진 Face 의 형상을 그리려고 하고 있다.");
+                CNotice.printTraceID("YATT2");
                 return false;
             }
 
@@ -368,7 +368,7 @@ namespace Shapes
         {
             if (listPoint.Count < MIN_POINT_COUNT)
             {
-                CNotice.printTrace("4개 미만의 좌표점으로 다각형을 만들려고 하고 있습니다.");
+                CNotice.printTraceID("YATT");
                 return false;
             }
 
@@ -1071,7 +1071,7 @@ namespace Shapes
                 /// 
                 /// 따라서 findInsidePoint() 에서 내부점을 찾지 못할 때는
                 /// 중심의 좌표값을 넘기지 않고 null 을 리턴하여 Block Point 재질 설정 동작을 막는다.
-                CNotice.noticeWarning("특정 부품의 재질 설정 좌표점을 계산하지 못하였습니다.\n부품들의 형상을 확인 요청 드립니다.");
+                CNotice.noticeWarningID("FTCT");
                 return null;
             }
         }

@@ -139,6 +139,12 @@
     <EmbeddedResource Include="PopupAboutBox.resx">
       <DependentUpon>PopupAboutBox.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="PopupHelp.en-US.resx">
+      <DependentUpon>PopupHelp.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="PopupHelp.ko-KR.resx">
+      <DependentUpon>PopupHelp.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="PopupHelp.resx">
       <DependentUpon>PopupHelp.cs</DependentUpon>
     </EmbeddedResource>

@@ -10,6 +10,8 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 
 using gtLibrary;
+using System.Globalization;
+using System.Threading;
 
 namespace DoSA
 {
@@ -29,11 +31,19 @@ namespace DoSA
 
         private void buttonDoSAUserGuide_Click(object sender, EventArgs e)
         {
-            string strHelpFileFullName = Path.Combine(CSettingData.m_strProgramDirName, "Help", "DoSA_User_Guide.pdf");
+            string strHelpFileFullName;
+            CultureInfo ctInfo = Thread.CurrentThread.CurrentCulture;
+
+            if (ctInfo.Name == "en-US")
+                strHelpFileFullName = Path.Combine(CSettingData.m_strProgramDirName, "Help", "DoSA_User_Guide_ENG.pdf");
+            else if (ctInfo.Name == "ko-KR")
+                strHelpFileFullName = Path.Combine(CSettingData.m_strProgramDirName, "Help", "DoSA_User_Guide_KOR.pdf");
+            else
+                return;
 
             if (m_manageFile.isExistFile(strHelpFileFullName) == false)
             {
-                CNotice.noticeWarning("도움말 파일이 존재하지 않습니다.\nDoSA 디렉토리 > Help > DoSA_User_Guide.pdf 를 확인하세요.");
+                CNotice.noticeWarningID("HFDN");
                 return;
             }
 
@@ -42,11 +52,19 @@ namespace DoSA
 
         private void buttonVCMGuide_Click(object sender, EventArgs e)
         {
-            string strHelpFileFullName = Path.Combine(CSettingData.m_strProgramDirName, "Help", "VCM_Sample_Guide.pdf");
+            string strHelpFileFullName;
+            CultureInfo ctInfo = Thread.CurrentThread.CurrentCulture;
+
+            if (ctInfo.Name == "en-US")
+                strHelpFileFullName = Path.Combine(CSettingData.m_strProgramDirName, "Help", "VCM_Sample_ENG.pdf");
+            else if (ctInfo.Name == "ko-KR")
+                strHelpFileFullName = Path.Combine(CSettingData.m_strProgramDirName, "Help", "VCM_Sample_KOR.pdf");
+            else
+                return;
 
             if (m_manageFile.isExistFile(strHelpFileFullName) == false)
             {
-                CNotice.noticeWarning("도움말 파일이 존재하지 않습니다.\nDoSA 디렉토리 > Help > VCM_Sample_Guide.pdf 를 확인하세요.");
+                CNotice.noticeWarningID("HFDN2");
                 return;
             }
 
@@ -55,11 +73,19 @@ namespace DoSA
 
         private void buttonSolenoidGuide_Click(object sender, EventArgs e)
         {
-            string strHelpFileFullName = Path.Combine(CSettingData.m_strProgramDirName, "Help", "Solenoid_Sample_Guide.pdf");
+            string strHelpFileFullName;
+            CultureInfo ctInfo = Thread.CurrentThread.CurrentCulture;
+
+            if (ctInfo.Name == "en-US")
+                strHelpFileFullName = Path.Combine(CSettingData.m_strProgramDirName, "Help", "Solenoid_Sample_ENG.pdf");
+            else if (ctInfo.Name == "ko-KR")
+                strHelpFileFullName = Path.Combine(CSettingData.m_strProgramDirName, "Help", "Solenoid_Sample_KOR.pdf");
+            else
+                return;
 
             if (m_manageFile.isExistFile(strHelpFileFullName) == false)
             {
-                CNotice.noticeWarning("도움말 파일이 존재하지 않습니다.\nDoSA 디렉토리 > Help > Solenoid_Sample_Guide.pdf 를 확인하세요.");
+                CNotice.noticeWarningID("HFDN1");
                 return;
             }
 
