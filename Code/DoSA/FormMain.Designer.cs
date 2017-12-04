@@ -66,6 +66,9 @@
             this.propertyGridMain = new System.Windows.Forms.PropertyGrid();
             this.splitterHorizontal = new System.Windows.Forms.Splitter();
             this.splitContainerRight = new System.Windows.Forms.SplitContainer();
+            this.panelEmpty = new System.Windows.Forms.Panel();
+            this.messageListView = new gtLibrary.MessageListView();
+            this.columnHeaderMessage = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.panelStroke = new System.Windows.Forms.Panel();
             this.labelProgressStroke = new System.Windows.Forms.Label();
             this.progressBarStroke = new System.Windows.Forms.ProgressBar();
@@ -73,8 +76,6 @@
             this.buttonLoadStrokeResult = new System.Windows.Forms.Button();
             this.pictureBoxStroke = new System.Windows.Forms.PictureBox();
             this.buttonExperimentStroke = new System.Windows.Forms.Button();
-            this.messageListView = new gtLibrary.MessageListView();
-            this.columnHeaderMessage = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.panelCurrent = new System.Windows.Forms.Panel();
             this.labelProgressCurrent = new System.Windows.Forms.Label();
             this.progressBarCurrent = new System.Windows.Forms.ProgressBar();
@@ -103,7 +104,6 @@
             this.buttonCoilShape = new System.Windows.Forms.Button();
             this.pictureBoxCoil = new System.Windows.Forms.PictureBox();
             this.buttonDesignCoil = new System.Windows.Forms.Button();
-            this.panelEmpty = new System.Windows.Forms.Panel();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainerLeft)).BeginInit();
             this.splitContainerLeft.Panel1.SuspendLayout();
             this.splitContainerLeft.Panel2.SuspendLayout();
@@ -436,6 +436,32 @@
             this.splitContainerRight.SplitterDistance = 558;
             this.splitContainerRight.TabIndex = 3;
             // 
+            // panelEmpty
+            // 
+            this.panelEmpty.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.panelEmpty.Location = new System.Drawing.Point(0, 0);
+            this.panelEmpty.Name = "panelEmpty";
+            this.panelEmpty.Size = new System.Drawing.Size(742, 554);
+            this.panelEmpty.TabIndex = 0;
+            // 
+            // messageListView
+            // 
+            this.messageListView.BackColor = System.Drawing.Color.Ivory;
+            this.messageListView.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
+            this.columnHeaderMessage});
+            this.messageListView.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.messageListView.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.None;
+            this.messageListView.Location = new System.Drawing.Point(0, 0);
+            this.messageListView.Name = "messageListView";
+            this.messageListView.Size = new System.Drawing.Size(742, 178);
+            this.messageListView.TabIndex = 1;
+            this.messageListView.UseCompatibleStateImageBehavior = false;
+            this.messageListView.View = System.Windows.Forms.View.Details;
+            // 
+            // columnHeaderMessage
+            // 
+            this.columnHeaderMessage.Width = 732;
+            // 
             // panelStroke
             // 
             this.panelStroke.Controls.Add(this.labelProgressStroke);
@@ -507,24 +533,6 @@
             this.buttonExperimentStroke.Text = "Stroke Test";
             this.buttonExperimentStroke.UseVisualStyleBackColor = true;
             this.buttonExperimentStroke.Click += new System.EventHandler(this.buttonExperimentStroke_Click);
-            // 
-            // messageListView
-            // 
-            this.messageListView.BackColor = System.Drawing.Color.Ivory;
-            this.messageListView.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
-            this.columnHeaderMessage});
-            this.messageListView.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.messageListView.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.None;
-            this.messageListView.Location = new System.Drawing.Point(0, 0);
-            this.messageListView.Name = "messageListView";
-            this.messageListView.Size = new System.Drawing.Size(742, 178);
-            this.messageListView.TabIndex = 1;
-            this.messageListView.UseCompatibleStateImageBehavior = false;
-            this.messageListView.View = System.Windows.Forms.View.Details;
-            // 
-            // columnHeaderMessage
-            // 
-            this.columnHeaderMessage.Width = 732;
             // 
             // panelCurrent
             // 
@@ -815,14 +823,6 @@
             this.buttonDesignCoil.UseVisualStyleBackColor = true;
             this.buttonDesignCoil.Click += new System.EventHandler(this.buttonDesignCoil_Click);
             // 
-            // panelEmpty
-            // 
-            this.panelEmpty.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.panelEmpty.Location = new System.Drawing.Point(0, 0);
-            this.panelEmpty.Name = "panelEmpty";
-            this.panelEmpty.Size = new System.Drawing.Size(742, 554);
-            this.panelEmpty.TabIndex = 0;
-            // 
             // FormMain
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 12F);
@@ -835,7 +835,7 @@
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "FormMain";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-            this.Text = "Design toolkit of Solenoid & Actuator";
+            this.Text = "Designer of Solenoid & Actuator";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.FormMain_FormClosing);
             this.Move += new System.EventHandler(this.FormMain_Move);
             this.splitContainerLeft.Panel1.ResumeLayout(false);

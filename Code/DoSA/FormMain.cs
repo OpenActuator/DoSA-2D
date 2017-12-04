@@ -388,7 +388,7 @@ namespace DoSA
             openFEMM();
 
             // 제목줄에 디자인명을 표시한다
-            this.Text = "Design Toolkit of Solenoid & Actuator - " + m_design.m_strDesignName;
+            this.Text = "Designer of Solenoid & Actuator - " + m_design.m_strDesignName;
 
             CNotice.printUserMessage(m_design.m_strDesignName + m_resManager.GetString("_DHBC1"));    
 
@@ -453,7 +453,7 @@ namespace DoSA
             openFEMM();
 
             // 제목줄에 디자인명을 표시한다
-            this.Text = "Design Toolkit of Solenoid & Actuator - " + m_design.m_strDesignName;
+            this.Text = "Designer of Solenoid & Actuator - " + m_design.m_strDesignName;
 
             CNotice.printUserMessage(m_design.m_strDesignName + m_resManager.GetString("_DHBO"));    
         }
@@ -477,7 +477,7 @@ namespace DoSA
             closeDesign();
 
             // 제목줄에 디자인명을 삭제한다
-            this.Text = "Design Toolkit of Solenoid & Actuator";
+            this.Text = "Designer of Solenoid & Actuator";
 
             quitFEMM();
         }
@@ -580,7 +580,7 @@ namespace DoSA
                     propertyGridMain.SelectedObject = null;
 
                     // 제목줄에 디자인명을 변경한다
-                    this.Text = "Design Toolkit of Solenoid & Actuator - " + m_design.m_strDesignName;
+                    this.Text = "Designer of Solenoid & Actuator - " + m_design.m_strDesignName;
 
                     CNotice.noticeInfomation(m_design.m_strDesignName + m_resManager.GetString("_DHBS1"), m_resManager.GetString("SAN"));
 
