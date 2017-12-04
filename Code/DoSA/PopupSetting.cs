@@ -89,6 +89,15 @@ namespace DoSA
                 this.textBoxFemmPath.Text = openFileDialog.FileName;
         }
 
+        /// <summary>
+        /// 초기설정때 가급적 현 기본언어로 설정을 맞추어 준다.
+        /// </summary>
+        /// <param name="currentLanguage"></param>
+        public void setInitLanguage(EMLanguage currentLanguage)
+        {
+            comboBoxLanguage.Text = currentLanguage.ToString();
+        }
+
         public void uploadSettingData()
         {
             try

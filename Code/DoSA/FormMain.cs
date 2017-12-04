@@ -28,6 +28,7 @@ using Shapes;
 using gtLibrary;
 using Microsoft.Win32;
 using System.Resources;
+using System.Globalization;
 
 namespace DoSA
 {
@@ -106,14 +107,45 @@ namespace DoSA
                 // 내부함수인 printLogEvent() 의 함수포인트를 사용해서 이벤트 함수를 설정한다
                 CNotice.Notice += printLogEvent;
 
+                
+                /// 환경파일 작업
+                ///
                 string strSettingFileFullName = Path.Combine(CSettingData.m_strProgramDirName, "setting.ini");
-
+                
                 PopupSetting frmSetting = new PopupSetting();
                 frmSetting.StartPosition = FormStartPosition.CenterParent;
 
                 if (false == m_manageFile.isExistFile(strSettingFileFullName))
-                {
-                    CNotice.noticeWarning("환경설정 파일을 찾을 수 없습니다.\n환경설정 후에 프로그램이 실행 됩니다.\n\nThe configuration file can not be found.\nThe program can run after finishing configuration.");
+                {   
+                    /// 초기환경 설정이 경우
+                    /// 
+                    /// 환경설정 관련 확인 작업에 사용하는 문자열의 언어를 처리하기 위해 
+                    /// 현재의 언어 정보을 읽어드려서 한국어가 아니면 모두 영어로 처리한다.
+                    /// 그리고 환경설정창 콤보 박스에도 반영을 한다.
+                    CultureInfo ctInfo = Thread.CurrentThread.CurrentCulture;
+
+                    /// 한국어가 아니라면 모두 영어로 처리하라.
+                    if (ctInfo.Name.Contains("ko") != true)
+                    {
+                        ctInfo = new CultureInfo("en-US");
+
+                        Thread.CurrentThread.CurrentCulture = ctInfo;
+                        Thread.CurrentThread.CurrentUICulture = ctInfo;
+
+                        frmSetting.setInitLanguage(EMLanguage.English);
+                    }
+                    else
+                    {
+                        ctInfo = new CultureInfo("ko-KR");
+
+                        Thread.CurrentThread.CurrentCulture = ctInfo;
+                        Thread.CurrentThread.CurrentUICulture = ctInfo;
+
+                        frmSetting.setInitLanguage(EMLanguage.Korean);
+                    }
+
+                    // 언어 설정 후에 출력해야 한다.
+                    CNotice.noticeWarningID("TCFC");
 
                     // 파일자체가 없기 때문에 다이얼로그의 데이터 설정없이 바로 호출한다.
                     if (DialogResult.OK == frmSetting.ShowDialog())
@@ -122,7 +154,7 @@ namespace DoSA
                     }
                     else
                     {
-                        CNotice.noticeWarning("초기 설정을 취소하시면 프로그램이 종료 됩니다.\n\nIf you cancel this initial setting, the program will be closed.");
+                        CNotice.noticeWarningID("IYCT");
 
                         System.Windows.Forms.Application.ExitThread();
                         Environment.Exit(0);
@@ -134,8 +166,7 @@ namespace DoSA
 
                     if (CSettingData.isDataOK(false) == false)
                     {
-                        //CNotice.noticeWarningID("TIAP7");
-                        CNotice.noticeWarning("환경 설정에 문제가 있습니다.\n환경 설정 후에 프로그램이 실행 됩니다.\n\nThere is a problem with your settings.\nThe program will run after finishing configuration.");
+                        CNotice.noticeWarningID("TIAP7");
 
                         if (DialogResult.OK == frmSetting.ShowDialog())
                         {
@@ -143,7 +174,7 @@ namespace DoSA
                         }
                         else
                         {
-                            CNotice.noticeWarning("초기 설정을 취소하시면 프로그램이 종료 됩니다.\n\nIf you cancel this initial setting, the program will be closed.");
+                            CNotice.noticeWarningID("IYCT");
 
                             System.Windows.Forms.Application.ExitThread();
                             Environment.Exit(0);
