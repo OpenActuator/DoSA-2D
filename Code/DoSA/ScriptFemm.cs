@@ -284,7 +284,6 @@ namespace Scripts
 
             try
             {
-                /// If numcontours is -1 all parameters are ignored and default values are used.
                 strCommand = "mi_hidegrid()";
                 sendCommand(strCommand);
             }
@@ -1176,6 +1175,22 @@ namespace Scripts
             {
                 /// nodes, segments, arcsegments, blocks, group
                 strCommand = "open(" + strExperimentFullName + ")";
+                sendCommand(strCommand);
+            }
+            catch (Exception ex)
+            {
+                CNotice.printTrace(ex.Message);
+                return;
+            }
+        }
+
+        internal void restoreMainWindow()
+        {
+            string strCommand;
+
+            try
+            {
+                strCommand = "main_restore()";
                 sendCommand(strCommand);
             }
             catch (Exception ex)

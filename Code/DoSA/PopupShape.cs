@@ -674,15 +674,15 @@ namespace Shapes
                     }
                 }
 
-                /// 2. 작업중인 Face 형상 그리기
-                face.drawFace(femm);
-                   
                 // FEMM 을 최상위로 올린다.
                 CProgramFEMM.showFEMM();
-
+                
                 // 혹시 FEMM 의 화면이 닫힌 경우 FEMM 의 화면을 복원합니다.
                 formMain.reopenFEMM();
-    
+
+                /// 2. 작업중인 Face 형상 그리기
+                face.drawFace(femm);    
+
             }
             catch (Exception ex)
             {
@@ -891,9 +891,13 @@ namespace Shapes
                 return;
             }
 
-            formMain.m_femm.zoomFit();
-
+            // FEMM 을 최상위로 올린다.
             CProgramFEMM.showFEMM();
+
+            // 혹시 FEMM 의 화면이 닫힌 경우 FEMM 의 화면을 복원합니다.
+            formMain.reopenFEMM();
+
+            formMain.m_femm.zoomFit();
         }
 
         private void textBoxBaseY_KeyUp(object sender, KeyEventArgs e)

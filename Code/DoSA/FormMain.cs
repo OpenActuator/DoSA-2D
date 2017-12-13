@@ -1334,7 +1334,7 @@ namespace DoSA
 
             /// Minimized 가 되어 있으면 FEMM 프로그램 크기동작이 먹지 않는다.
             /// 먼저 실행이 되어야 한다.
-            CProgramFEMM.showFEMM();
+            m_femm.restoreMainWindow();
 
             /// 좌측에 FEMM 공간을 확보하기 위해서 DoSA 의 위치를 지정한다
             this.Left = 600;

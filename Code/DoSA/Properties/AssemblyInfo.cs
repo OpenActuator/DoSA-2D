@@ -39,7 +39,7 @@ Nuvola 1.0 (KDE 3.x icon set) (nuvola)
   license link: http://creativecommons.org/licenses/LGPL/2.1/")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("Contributor : openactuator.org (zgitae@gmail.com)")]
-[assembly: AssemblyProduct("DoSA (Design Toolkit of Solenoid & Actuator)")]
+[assembly: AssemblyProduct("DoSA (Designer of Solenoid & Actuator)")]
 [assembly: AssemblyCopyright("License : GNU General Public License v3.0")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
@@ -62,5 +62,5 @@ Nuvola 1.0 (KDE 3.x icon set) (nuvola)
 // You can specify all the values or you can default the Build and Revision Numbers 
 // by using the '*' as shown below:
 // [assembly: AssemblyVersion("1.0.*")]
-[assembly: AssemblyVersion("0.9.6.2")]
+[assembly: AssemblyVersion("0.9.6.3")]
 [assembly: AssemblyFileVersion("1.0.0.0")]
