@@ -28,10 +28,17 @@ namespace DoSA
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-         
-            Application.Run(new FormMain());
 
-            // args.Length, args[0]
+            FormMain formMain = null;
+
+            if (args.Length == 1)
+                formMain = new FormMain(args[0]);
+            else if (args.Length == 2)
+                formMain = new FormMain(args[0], args[1]);
+            else
+                formMain = new FormMain();
+
+            Application.Run(formMain);
         }
     }
 

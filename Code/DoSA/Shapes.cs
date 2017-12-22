@@ -780,6 +780,9 @@ namespace Shapes
                 return EMNumberKind.ODD;
         }
 
+        /// <summary>
+        /// 선 위에 다른 점이 올라가 있는 지를 검사한다.
+        /// </summary>
         public bool isPerchedOnLine(CLine line, CPoint point)
         {
             double dL_P1_X = line.m_startPoint.m_dX;
@@ -851,6 +854,7 @@ namespace Shapes
 
         /// <summary>
         /// 두 라인의 교차를 확인한다.
+        /// 단, 한 선의 점이 다른 선위에 올라가거나, 다른 선의 점과 겹치는 것은 고려하지 않는다. 
         /// </summary>
         public bool isIntersected(CLine firstLine, CLine secondLine)
         {
@@ -882,10 +886,12 @@ namespace Shapes
 
         /// <summary>
         /// 두 라인의 겹침을 확인한다.
+        /// 
+        /// 두선이 같은 직선위에 있는지를 판단하여 겹침을 검사한다.
+        /// 단, 같은 직선위에 있더라도 떨어져 있는 직선일 수 있기 때문에 양점의 X 좌표를 비교해서 겹치는 구간이 있는지 판단한다.        /// 
         /// </summary>
         public bool isOverlaped(CLine firstLine, CLine secondLine)
         {
-
             double dFL_P1_X = firstLine.m_startPoint.m_dX;
             double dFL_P1_Y = firstLine.m_startPoint.m_dY;
 
@@ -928,7 +934,7 @@ namespace Shapes
         /// <summary>
         /// 두 라인의 접촉을 확인한다.
         /// 
-        /// 하나의 선에 다른 선의 양 절점이 올라탔는지를 확인해서 접촉을 판단한다.
+        /// 하나의 선에 다른 선의 두점 중 한점이라도 올라탔는지를 확인해서 접촉을 판단한다.
         /// </summary>
         public bool isContacted(CLine firstLine, CLine secondLine)
         {
@@ -1006,6 +1012,9 @@ namespace Shapes
             int nRightIntersection = 0;
             int nLeftIntersection = 0;
 
+            int nRightPerchedPoint = 0;
+            int nLeftPerchedPoint = 0;
+
             // 자리수 정리
             minX = round(minX);
             maxX = round(maxX);
@@ -1019,13 +1028,13 @@ namespace Shapes
             /// create a right check line
             rightLine.m_startPoint.m_dX = centerX;
             rightLine.m_startPoint.m_dY = baseY;
-            rightLine.m_endPoint.m_dX = 1e300;
+            rightLine.m_endPoint.m_dX = maxX + 10.0f;    // 오른 검색선의 끝을 maxX 보다 10 크게 한다.
             rightLine.m_endPoint.m_dY = baseY;
 
             /// create a left check line
             leftLine.m_startPoint.m_dX = centerX;
             leftLine.m_startPoint.m_dY = baseY;
-            leftLine.m_endPoint.m_dX = -1e300;
+            leftLine.m_endPoint.m_dX = minX - 10.0f;    // 오른 검색선의 끝을 minX 보다 10 작게 한다.
             leftLine.m_endPoint.m_dY = baseY;
 
             /// 매번 생성하는 Property 이기 때문에 
@@ -1033,6 +1042,7 @@ namespace Shapes
             List<CLine> listAbsoluteLine = new List<CLine>();
             listAbsoluteLine = face.AbsoluteLineList;
 
+            /// Face 의 선과 검색선의 교차점을 찾는다.
             foreach (CLine line in listAbsoluteLine)
             {
                 if (true == isIntersected(line, rightLine))
@@ -1041,6 +1051,43 @@ namespace Shapes
                 if (true == isIntersected(line, leftLine))
                     nLeftIntersection++;
             }
+
+            /// 교차를 검사할때 Face 선의 양점은 고려하지 않는다.
+            /// 따라서 검색선에 Face 선의 점을 지나치는 경우는 교차점이 인식되지 못한다.
+            /// 라인의 양점이 검색선에 올가가는지도 추가로 검색한다.
+            /// 
+            foreach (CLine line in listAbsoluteLine)
+            {
+                // 만약 시작과 끝이 같이 올라간 경우라면 검색선에 Face 선이 올라간 경우로 검색에서 제외한다.
+                // 라인의 한점만 올라간 경우를 Perched Point 로 사용한다.
+                if (true == isPerchedOnLine(rightLine, line.m_startPoint) && true == isPerchedOnLine(rightLine, line.m_endPoint))
+                {
+                    nRightPerchedPoint += 0;
+                }
+                else if(true == isPerchedOnLine(rightLine, line.m_startPoint))
+                        nRightPerchedPoint++;
+                else if(true == isPerchedOnLine(rightLine, line.m_endPoint))
+                        nRightPerchedPoint++;
+
+                if (true == isPerchedOnLine(leftLine, line.m_startPoint) && true == isPerchedOnLine(leftLine, line.m_endPoint))
+                {
+                    nLeftPerchedPoint += 0;
+                }
+                else if (true == isPerchedOnLine(leftLine, line.m_startPoint))
+                    nLeftPerchedPoint++;
+                else if (true == isPerchedOnLine(leftLine, line.m_endPoint))
+                    nLeftPerchedPoint++;
+
+            }
+            
+            if((nRightPerchedPoint % 2 != 0) || (nLeftPerchedPoint % 2 != 0))
+                CNotice.printTrace("findInsidePoint 에서 PerchedPoint 값이 홀수가 되었습니다.");
+
+            /// 점이 올라가는 경우 두점이 같이 올라가기 때문에 한번 교차에 두번 카운팅이 된다. 
+            /// 따라서 1/2 로 처리한다.
+            /// 
+            nRightIntersection += (int)(nRightPerchedPoint / 2.0f);
+            nLeftIntersection += (int)(nLeftPerchedPoint / 2.0f);
 
             CPoint point = new CPoint();
 

@@ -173,6 +173,9 @@ namespace Shapes
             ((PopupShape)this.Parent.Parent).drawTemporaryFace(null,true);
         }
 
+        /// <summary>
+        /// Enter Key 가 아니라 진입을 의미한다.
+        /// </summary>
         private void textBoxY_Enter(object sender, EventArgs e)
         {
             // 점만 선택하고, 다시그리지 않는다.
@@ -194,7 +197,10 @@ namespace Shapes
             // 점 선택을 하지않고, 다시 그린다.
             ((PopupShape)this.Parent.Parent).drawTemporaryFace(null, true);
         }
-                
+
+        /// <summary>
+        /// Enter Key 가 아니라 진입을 의미한다.
+        /// </summary>
         private void textBoxX_Enter(object sender, EventArgs e)
         {
             // 점만 선택하고, 다시그리지 않는다.

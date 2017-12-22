@@ -905,13 +905,15 @@ namespace Shapes
             /// Enter 에서만 동작한다.
             if (e.KeyCode == Keys.Enter)
             {
-                drawTemporaryFace(null);
+                // 다시 그린다.
+                drawTemporaryFace(null, true);
             }
         }
 
         private void textBoxBaseY_Leave(object sender, EventArgs e)
         {
-            drawTemporaryFace(null);
+            // 다시 그린다.
+            drawTemporaryFace(null, true);
         }
 
         private void textBoxBaseX_KeyUp(object sender, KeyEventArgs e)
@@ -919,13 +921,15 @@ namespace Shapes
             /// Enter 에서만 동작한다.
             if (e.KeyCode == Keys.Enter)
             {
-                drawTemporaryFace(null);
+                // 다시 그린다.
+                drawTemporaryFace(null, true);
             }
         }
 
         private void textBoxBaseX_Leave(object sender, EventArgs e)
         {
-            drawTemporaryFace(null);
+            // 다시 그린다.
+            drawTemporaryFace(null, true);
         }
     
         private void textBoxBaseY_KeyPress(object sender, KeyPressEventArgs e)

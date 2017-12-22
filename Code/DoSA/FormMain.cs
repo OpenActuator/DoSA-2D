@@ -44,18 +44,21 @@ namespace DoSA
 
         private string m_strBackupNodeName = string.Empty;
 
+        private string m_strCommandLineDesignFullName = string.Empty;
+        private string m_strCommandLineDataFullName = string.Empty;
+
         public CDesign m_design = new CDesign();
 
         public CScriptFEMM m_femm;
 
-        public ResourceManager m_resManager = null;
+        public ResourceManager m_resManager = null;        
 
         #endregion
 
 
         #region----------------------- 프로그램 초기화 --------------------------
 
-        public FormMain()
+        public FormMain(string strDSAFileFullName = null, string strDataFileFullName = null)
         {
             InitializeComponent();
 
@@ -70,6 +73,19 @@ namespace DoSA
             m_femm = null;
 
             m_resManager = ResourceManager.CreateFileBasedResourceManager("LanguageResource", Application.StartupPath, null);
+
+            /// 파라메터 처리 저장
+            /// 
+            /// Command Parameter 0 : 일반 실행
+            /// Command Parameter 1 : 지정 디자인만 오픈
+            /// Command Parameter 2 : 지정 디장인을 열고, 입력데이터 파일로 작업을 함
+            /// 
+            if (strDSAFileFullName != null)
+            {
+                m_strCommandLineDesignFullName = strDSAFileFullName;
+                if(strDataFileFullName != null)
+                    m_strCommandLineDataFullName = strDataFileFullName;
+            }                
         }
 
         private void initializeProgram()
@@ -2999,5 +3015,48 @@ namespace DoSA
         }
         
         #endregion
+
+
+        private void FormMain_Shown(object sender, EventArgs e)
+        {
+            // 커멘드 파라메터로 디자인 파일명이 넘어오지 않은 경우는 바로 리턴한다.
+            if (m_strCommandLineDesignFullName == string.Empty)
+                return;
+            
+            if (false == m_manageFile.isExistFile(m_strCommandLineDesignFullName))
+            {
+                CNotice.noticeWarning("커멘드라인으로 입력한 디자인 파일이 존재하지 않습니다.");
+                return;
+            }
+
+            loadDesignFile(m_strCommandLineDesignFullName);
+
+            // 디자인 파일이 생성될 때의 디자인 작업 디렉토리는 프로그램 기본 디렉토리 강제 설정하고 있다.
+            // 만약 디렉토리를 옮긴 디자인 디렉토리를 오픈 할 경우라면 
+            // 이전 다지인 작업 디렉토리를 그대로 사용하면 디렉토리 문제가 발생하여 실행이 불가능하게 된다.
+            // 이를 해결하기 위해
+            // 작업파일을 Open 할 때는 파일을 오픈하는 위치로 작업파일의 디렉토리를 다시 설정하고 있다.
+            m_design.m_strDesignDirName = Path.GetDirectoryName(m_strCommandLineDesignFullName);
+
+            // 프로젝트가 시작 했음을 표시하기 위해서 TreeView 에 기본 가지를 추가한다.
+            TreeNode treeNode = new TreeNode("Parts", (int)EMKind.PARTS, (int)EMKind.PARTS);
+            treeViewMain.Nodes.Add(treeNode);
+
+            treeNode = new TreeNode("Experiments", (int)EMKind.EXPERIMENTS, (int)EMKind.EXPERIMENTS);
+            treeViewMain.Nodes.Add(treeNode);
+
+            foreach (CNode node in m_design.NodeList)
+            {
+                this.addTreeNode(node.NodeName, node.m_kindKey);
+            }
+
+            openFEMM();
+
+            // 제목줄에 디자인명을 표시한다
+            this.Text = "Designer of Solenoid & Actuator - " + m_design.m_strDesignName;
+
+            CNotice.printUserMessage(m_design.m_strDesignName + m_resManager.GetString("_DHBO"));
+        }
+        
     }
 }

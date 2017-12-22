@@ -5,7 +5,7 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("About")]
+[assembly: AssemblyTitle("DoSA")]
 [assembly: AssemblyDescription(@"This application is an open source software for actuator design.
 
 This application uses open source software below.
@@ -62,5 +62,5 @@ Nuvola 1.0 (KDE 3.x icon set) (nuvola)
 // You can specify all the values or you can default the Build and Revision Numbers 
 // by using the '*' as shown below:
 // [assembly: AssemblyVersion("1.0.*")]
-[assembly: AssemblyVersion("0.9.6.3")]
+[assembly: AssemblyVersion("0.9.6.5")]
 [assembly: AssemblyFileVersion("1.0.0.0")]
