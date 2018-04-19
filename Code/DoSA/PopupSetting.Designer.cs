@@ -183,7 +183,7 @@
             this.textBoxMeshSizeLevel.Name = "textBoxMeshSizeLevel";
             this.textBoxMeshSizeLevel.Size = new System.Drawing.Size(103, 21);
             this.textBoxMeshSizeLevel.TabIndex = 4;
-            this.textBoxMeshSizeLevel.Text = "2";
+            this.textBoxMeshSizeLevel.Text = "1";
             this.textBoxMeshSizeLevel.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
             // 
             // label5
