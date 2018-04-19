@@ -64,15 +64,28 @@ namespace DoSA
 
             // 기존에 동작을 하고 있는 FEMM 이 있으면 오류가 발생한다.
             killProcessOfFEMM();
-            
+
+            m_resManager = ResourceManager.CreateFileBasedResourceManager("LanguageResource", Application.StartupPath, null);
+
+            // 리소스 파일의 유무를 확인하기 위해 m_resManager 의 동작시험을 한다.
+            try
+            {
+                m_resManager.GetString("E");
+            }
+            catch 
+            {
+                MessageBox.Show("There are no Language resource files.", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+
+                System.Windows.Forms.Application.ExitThread();
+                Environment.Exit(0);            
+            }
+
             initializeProgram();
             
             // FEMM 에서 지원되는 재질을 Loading 한다.
             loadMaterial();
 
             m_femm = null;
-
-            m_resManager = ResourceManager.CreateFileBasedResourceManager("LanguageResource", Application.StartupPath, null);
 
             /// 파라메터 처리 저장
             /// 
@@ -223,7 +236,15 @@ namespace DoSA
             }
             catch (Exception ex)
             {
+                if(true == ex.ToString().Contains("LanguageResource"))
+                {
+                    MessageBox.Show("There are no Language resource files.", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                }
+
                 CNotice.printTrace(ex.Message);
+
+                System.Windows.Forms.Application.ExitThread();
+                Environment.Exit(0);
             }
         }
 
@@ -2679,6 +2700,11 @@ namespace DoSA
 
                     drawXYChart(chartBHCurve, listH, listB, "H [A/m]", "B [T]", 0.0f, 30000.0f, 0.0f, 2.5f);
                 }
+                else
+                {
+                    CNotice.noticeWarning("There is no FEMM.smat file.\nPlease check Material directory.");
+                }
+
             }
 
         }
@@ -2804,7 +2830,7 @@ namespace DoSA
                         }
                         else
                         {
-                            CNotice.printTraceID("TIII");
+                            CNotice.noticeWarningID("TIII");
                             return;
                         }
 
@@ -2835,7 +2861,7 @@ namespace DoSA
                         }
                         else
                         {
-                            CNotice.printTraceID("TIII");
+                            CNotice.noticeWarningID("TIII");
                             return;
                         }
 

@@ -33,13 +33,22 @@ namespace gtLibrary
         {
             if (Notice != null)
             {
-                ResourceManager resManager = ResourceManager.CreateFileBasedResourceManager("LanguageResource", Application.StartupPath, null);
-                string strMSG = resManager.GetString(strID);
+                try
+                {
+                    ResourceManager resManager = ResourceManager.CreateFileBasedResourceManager("LanguageResource", Application.StartupPath, null);
+                    string strMSG = resManager.GetString(strID);
 
-                string fileName = Path.GetFileName(sourceFilePath);
-                strMSG = fileName + ", " + lineNumber + ", " + functionName + " : " + strMSG;
+                    string fileName = Path.GetFileName(sourceFilePath);
+                    strMSG = fileName + ", " + lineNumber + ", " + functionName + " : " + strMSG;
 
-                Notice(EMOutputTarget.TRACE, strMSG);
+                    Notice(EMOutputTarget.TRACE, strMSG);
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("There are no Language resource files.", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+
+                    CNotice.printTrace(ex.Message);
+                }
             }
         }
 
@@ -57,17 +66,6 @@ namespace gtLibrary
             }
         }
 
-        //public static void printUserMessageID(string strID)
-        //{
-        //    if (Notice != null)
-        //    {
-        //        ResourceManager resManager = ResourceManager.CreateFileBasedResourceManager("LanguageResource", Application.StartupPath, null);
-        //        string strMSG = resManager.GetString(strID);
-
-        //        Notice(EMOutputTarget.MESSAGE_VIEW, strMSG);
-        //    }
-        //}
-
         public static void printUserMessage(string strMSG)
         {
             if (Notice != null)
@@ -76,18 +74,6 @@ namespace gtLibrary
             }
         }
 
-        //public static void noticeInfomationID(string strID, string strTitleID)
-        //{
-        //    ResourceManager resManager = ResourceManager.CreateFileBasedResourceManager("LanguageResource", Application.StartupPath, null);
-        //    string strTitle = resManager.GetString(strTitleID);
-        //    string strMSG = resManager.GetString(strID);
-
-            // DataSet 에 \n 이 들어가서 \\n 이 되기 때문에 다시 복원해야 개행이 된다.
-            //strMSG = strMSG.Replace("\\n", "\n");
-
-        //    MessageBox.Show(strMSG, strTitle, MessageBoxButtons.OK, MessageBoxIcon.Information);
-        //}
-
         public static void noticeInfomation(string strMSG, string strTitle)
         {
             MessageBox.Show(strMSG, strTitle, MessageBoxButtons.OK, MessageBoxIcon.Information);
@@ -95,54 +81,80 @@ namespace gtLibrary
 
         public static void noticeWarningID(string strID)
         {
-            ResourceManager resManager = ResourceManager.CreateFileBasedResourceManager("LanguageResource", Application.StartupPath, null);
-            string strTitle = resManager.GetString("W");
-            string strMSG = resManager.GetString(strID);
+            try
+            {
+                ResourceManager resManager = ResourceManager.CreateFileBasedResourceManager("LanguageResource", Application.StartupPath, null);
+                string strTitle = resManager.GetString("W");
+                string strMSG = resManager.GetString(strID);
 
-            // DataSet 에 \n 이 들어가서 \\n 이 되기 때문에 다시 복원해야 개행이 된다.
-            strMSG = strMSG.Replace("\\n", "\n");
+                // DataSet 에 \n 이 들어가서 \\n 이 되기 때문에 다시 복원해야 개행이 된다.
+                strMSG = strMSG.Replace("\\n", "\n");
 
-            MessageBox.Show(strMSG, strTitle, MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                MessageBox.Show(strMSG, strTitle, MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("There are no Language resource files.", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                
+                CNotice.printTrace(ex.Message);
+            }
         }
 
         public static void noticeWarning(string strMSG)
         {
-            ResourceManager resManager = ResourceManager.CreateFileBasedResourceManager("LanguageResource", Application.StartupPath, null);
-            string strTitle = resManager.GetString("W");
+            try
+            {
+                ResourceManager resManager = ResourceManager.CreateFileBasedResourceManager("LanguageResource", Application.StartupPath, null);
+                string strTitle = resManager.GetString("W");
 
-            MessageBox.Show(strMSG, strTitle, MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                MessageBox.Show(strMSG, strTitle, MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("There are no Language resource files.", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                
+                CNotice.printTrace(ex.Message);
+            }
         }
-
-        //public static void noticeErrorID(string strID)
-        //{
-        //    ResourceManager resManager = ResourceManager.CreateFileBasedResourceManager("LanguageResource", Application.StartupPath, null);
-        //    string strTitle = resManager.GetString("E");
-        //    string strMSG = resManager.GetString(strID);
-
-            // DataSet 에 \n 이 들어가서 \\n 이 되기 때문에 다시 복원해야 개행이 된다.
-            //strMSG = strMSG.Replace("\\n", "\n");
-        
-        //    MessageBox.Show(strMSG, strTitle, MessageBoxButtons.OK, MessageBoxIcon.Error);
-        //}
 
         public static void noticeError(string strMSG)
         {
-            ResourceManager resManager = ResourceManager.CreateFileBasedResourceManager("LanguageResource", Application.StartupPath, null);
-            string strTitle = resManager.GetString("E");
+            try
+            {
+                ResourceManager resManager = ResourceManager.CreateFileBasedResourceManager("LanguageResource", Application.StartupPath, null);
+                string strTitle = resManager.GetString("E");
 
-            MessageBox.Show(strMSG, strTitle, MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show(strMSG, strTitle, MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("There are no Language resource files.", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                
+                CNotice.printTrace(ex.Message);
+            }
         }
 
         public static DialogResult noticeWarningOKCancelID(string strID, string strTitleID)
         {
-            ResourceManager resManager = ResourceManager.CreateFileBasedResourceManager("LanguageResource", Application.StartupPath, null);
-            string strTitle = resManager.GetString(strTitleID);
-            string strMSG = resManager.GetString(strID);
+            try
+            {
+                ResourceManager resManager = ResourceManager.CreateFileBasedResourceManager("LanguageResource", Application.StartupPath, null);
+                string strTitle = resManager.GetString(strTitleID);
+                string strMSG = resManager.GetString(strID);
             
-            // DataSet 에 \n 이 들어가서 \\n 이 되기 때문에 다시 복원해야 개행이 된다.
-            strMSG = strMSG.Replace("\\n", "\n");
+                // DataSet 에 \n 이 들어가서 \\n 이 되기 때문에 다시 복원해야 개행이 된다.
+                strMSG = strMSG.Replace("\\n", "\n");
 
-            return MessageBox.Show(strMSG, strTitle, MessageBoxButtons.OKCancel, MessageBoxIcon.Warning);
+                return MessageBox.Show(strMSG, strTitle, MessageBoxButtons.OKCancel, MessageBoxIcon.Warning);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("There are no Language resource files.", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                
+                CNotice.printTrace(ex.Message);
+
+                return DialogResult.Cancel;
+            }
         }
 
         public static DialogResult noticeWarningOKCancel(string strMSG, string strTitle)
@@ -152,14 +164,25 @@ namespace gtLibrary
 
         public static DialogResult noticeWarningYesNoCancelID(string strID, string strTitleID)
         {
-            ResourceManager resManager = ResourceManager.CreateFileBasedResourceManager("LanguageResource", Application.StartupPath, null);
-            string strTitle = resManager.GetString(strTitleID);
-            string strMSG = resManager.GetString(strID);
-            
-            // DataSet 에 \n 이 들어가서 \\n 이 되기 때문에 다시 복원해야 개행이 된다.
-            strMSG = strMSG.Replace("\\n", "\n");
+            try
+            {
+                ResourceManager resManager = ResourceManager.CreateFileBasedResourceManager("LanguageResource", Application.StartupPath, null);
+                string strTitle = resManager.GetString(strTitleID);
+                string strMSG = resManager.GetString(strID);
 
-            return MessageBox.Show(strMSG, strTitle, MessageBoxButtons.YesNoCancel, MessageBoxIcon.Warning);
+                // DataSet 에 \n 이 들어가서 \\n 이 되기 때문에 다시 복원해야 개행이 된다.
+                strMSG = strMSG.Replace("\\n", "\n");
+
+                return MessageBox.Show(strMSG, strTitle, MessageBoxButtons.YesNoCancel, MessageBoxIcon.Warning);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("There are no Language resource files.", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+
+                CNotice.printTrace(ex.Message);
+
+                return DialogResult.Cancel;
+            }
         }
 
         public static DialogResult noticeWarningYesNoCancel(string strMSG, string strTitle)
