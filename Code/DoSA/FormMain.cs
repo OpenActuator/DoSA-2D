@@ -72,7 +72,7 @@ namespace DoSA
             {
                 m_resManager.GetString("E");
             }
-            catch 
+            catch (Exception ex)
             {
                 MessageBox.Show("There are no Language resource files.", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
 
@@ -236,15 +236,7 @@ namespace DoSA
             }
             catch (Exception ex)
             {
-                if(true == ex.ToString().Contains("LanguageResource"))
-                {
-                    MessageBox.Show("There are no Language resource files.", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                }
-
                 CNotice.printTrace(ex.Message);
-
-                System.Windows.Forms.Application.ExitThread();
-                Environment.Exit(0);
             }
         }
 
