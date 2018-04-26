@@ -227,7 +227,7 @@ namespace DoSA
                     DialogResult result = CNotice.noticeWarningOKCancelID("DRIO", "W");
 
                     if (result == DialogResult.OK)
-                        openWebsite(@"http://www.femm.info/download");
+                        openWebsite(@"http://www.femm.info/wiki/download");
 
                     System.Windows.Forms.Application.ExitThread();
                     Environment.Exit(0);
