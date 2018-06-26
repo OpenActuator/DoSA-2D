@@ -31,19 +31,19 @@
             this.groupBoxSetting = new System.Windows.Forms.GroupBox();
             this.textBoxFemmPath = new System.Windows.Forms.TextBox();
             this.buttonSelectFemmPath = new System.Windows.Forms.Button();
-            this.label3 = new System.Windows.Forms.Label();
+            this.labelFEMMPath = new System.Windows.Forms.Label();
             this.textBoxWorkingDirectory = new System.Windows.Forms.TextBox();
             this.buttonSelectWorkingDirectory = new System.Windows.Forms.Button();
-            this.label1 = new System.Windows.Forms.Label();
+            this.labelWorkingDirectory = new System.Windows.Forms.Label();
             this.buttonSettingOK = new System.Windows.Forms.Button();
             this.buttonSettingCancel = new System.Windows.Forms.Button();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.comboBoxLanguage = new System.Windows.Forms.ComboBox();
-            this.label4 = new System.Windows.Forms.Label();
+            this.labelPercent = new System.Windows.Forms.Label();
             this.textBoxMeshSizeLevel = new System.Windows.Forms.TextBox();
-            this.label5 = new System.Windows.Forms.Label();
-            this.label6 = new System.Windows.Forms.Label();
-            this.label2 = new System.Windows.Forms.Label();
+            this.labelMeshSize = new System.Windows.Forms.Label();
+            this.labelLanguage = new System.Windows.Forms.Label();
+            this.labelMeshSizeLevel = new System.Windows.Forms.Label();
             this.groupBoxSetting.SuspendLayout();
             this.groupBox1.SuspendLayout();
             this.SuspendLayout();
@@ -52,10 +52,10 @@
             // 
             this.groupBoxSetting.Controls.Add(this.textBoxFemmPath);
             this.groupBoxSetting.Controls.Add(this.buttonSelectFemmPath);
-            this.groupBoxSetting.Controls.Add(this.label3);
+            this.groupBoxSetting.Controls.Add(this.labelFEMMPath);
             this.groupBoxSetting.Controls.Add(this.textBoxWorkingDirectory);
             this.groupBoxSetting.Controls.Add(this.buttonSelectWorkingDirectory);
-            this.groupBoxSetting.Controls.Add(this.label1);
+            this.groupBoxSetting.Controls.Add(this.labelWorkingDirectory);
             this.groupBoxSetting.Location = new System.Drawing.Point(12, 12);
             this.groupBoxSetting.Name = "groupBoxSetting";
             this.groupBoxSetting.Size = new System.Drawing.Size(455, 105);
@@ -82,15 +82,15 @@
             this.buttonSelectFemmPath.UseVisualStyleBackColor = true;
             this.buttonSelectFemmPath.Click += new System.EventHandler(this.buttonSelectFemmPath_Click);
             // 
-            // label3
+            // labelFEMMPath
             // 
-            this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(24, 70);
-            this.label3.Margin = new System.Windows.Forms.Padding(3, 15, 3, 0);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(104, 12);
-            this.label3.TabIndex = 6;
-            this.label3.Text = "FEMM.exe Path :";
+            this.labelFEMMPath.AutoSize = true;
+            this.labelFEMMPath.Location = new System.Drawing.Point(24, 70);
+            this.labelFEMMPath.Margin = new System.Windows.Forms.Padding(3, 15, 3, 0);
+            this.labelFEMMPath.Name = "labelFEMMPath";
+            this.labelFEMMPath.Size = new System.Drawing.Size(104, 12);
+            this.labelFEMMPath.TabIndex = 6;
+            this.labelFEMMPath.Text = "FEMM.exe Path :";
             // 
             // textBoxWorkingDirectory
             // 
@@ -111,14 +111,14 @@
             this.buttonSelectWorkingDirectory.UseVisualStyleBackColor = true;
             this.buttonSelectWorkingDirectory.Click += new System.EventHandler(this.buttonSelectWorkingDirectory_Click);
             // 
-            // label1
+            // labelWorkingDirectory
             // 
-            this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(24, 33);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(111, 12);
-            this.label1.TabIndex = 2;
-            this.label1.Text = "Working Directory :";
+            this.labelWorkingDirectory.AutoSize = true;
+            this.labelWorkingDirectory.Location = new System.Drawing.Point(24, 33);
+            this.labelWorkingDirectory.Name = "labelWorkingDirectory";
+            this.labelWorkingDirectory.Size = new System.Drawing.Size(111, 12);
+            this.labelWorkingDirectory.TabIndex = 2;
+            this.labelWorkingDirectory.Text = "Working Directory :";
             // 
             // buttonSettingOK
             // 
@@ -143,11 +143,11 @@
             // groupBox1
             // 
             this.groupBox1.Controls.Add(this.comboBoxLanguage);
-            this.groupBox1.Controls.Add(this.label4);
+            this.groupBox1.Controls.Add(this.labelPercent);
             this.groupBox1.Controls.Add(this.textBoxMeshSizeLevel);
-            this.groupBox1.Controls.Add(this.label5);
-            this.groupBox1.Controls.Add(this.label6);
-            this.groupBox1.Controls.Add(this.label2);
+            this.groupBox1.Controls.Add(this.labelMeshSize);
+            this.groupBox1.Controls.Add(this.labelLanguage);
+            this.groupBox1.Controls.Add(this.labelMeshSizeLevel);
             this.groupBox1.Location = new System.Drawing.Point(12, 123);
             this.groupBox1.Name = "groupBox1";
             this.groupBox1.Size = new System.Drawing.Size(307, 153);
@@ -167,14 +167,14 @@
             this.comboBoxLanguage.TabIndex = 6;
             this.comboBoxLanguage.Text = "Korean";
             // 
-            // label4
+            // labelPercent
             // 
-            this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(250, 83);
-            this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(15, 12);
-            this.label4.TabIndex = 5;
-            this.label4.Text = "%";
+            this.labelPercent.AutoSize = true;
+            this.labelPercent.Location = new System.Drawing.Point(250, 83);
+            this.labelPercent.Name = "labelPercent";
+            this.labelPercent.Size = new System.Drawing.Size(15, 12);
+            this.labelPercent.TabIndex = 5;
+            this.labelPercent.Text = "%";
             // 
             // textBoxMeshSizeLevel
             // 
@@ -186,32 +186,32 @@
             this.textBoxMeshSizeLevel.Text = "1";
             this.textBoxMeshSizeLevel.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
             // 
-            // label5
+            // labelMeshSize
             // 
-            this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(128, 108);
-            this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(172, 12);
-            this.label5.TabIndex = 3;
-            this.label5.Text = "( = Mesh Size / Model Size )";
+            this.labelMeshSize.AutoSize = true;
+            this.labelMeshSize.Location = new System.Drawing.Point(128, 108);
+            this.labelMeshSize.Name = "labelMeshSize";
+            this.labelMeshSize.Size = new System.Drawing.Size(172, 12);
+            this.labelMeshSize.TabIndex = 3;
+            this.labelMeshSize.Text = "( = Mesh Size / Model Size )";
             // 
-            // label6
+            // labelLanguage
             // 
-            this.label6.AutoSize = true;
-            this.label6.Location = new System.Drawing.Point(24, 41);
-            this.label6.Name = "label6";
-            this.label6.Size = new System.Drawing.Size(69, 12);
-            this.label6.TabIndex = 3;
-            this.label6.Text = "Language :";
+            this.labelLanguage.AutoSize = true;
+            this.labelLanguage.Location = new System.Drawing.Point(24, 41);
+            this.labelLanguage.Name = "labelLanguage";
+            this.labelLanguage.Size = new System.Drawing.Size(69, 12);
+            this.labelLanguage.TabIndex = 3;
+            this.labelLanguage.Text = "Language :";
             // 
-            // label2
+            // labelMeshSizeLevel
             // 
-            this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(24, 83);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(108, 12);
-            this.label2.TabIndex = 3;
-            this.label2.Text = "Mesh Size Level :";
+            this.labelMeshSizeLevel.AutoSize = true;
+            this.labelMeshSizeLevel.Location = new System.Drawing.Point(24, 83);
+            this.labelMeshSizeLevel.Name = "labelMeshSizeLevel";
+            this.labelMeshSizeLevel.Size = new System.Drawing.Size(108, 12);
+            this.labelMeshSizeLevel.TabIndex = 3;
+            this.labelMeshSizeLevel.Text = "Mesh Size Level :";
             // 
             // PopupSetting
             // 
@@ -239,18 +239,18 @@
         private System.Windows.Forms.GroupBox groupBoxSetting;
         private System.Windows.Forms.TextBox textBoxFemmPath;
         private System.Windows.Forms.Button buttonSelectFemmPath;
-        private System.Windows.Forms.Label label3;
+        private System.Windows.Forms.Label labelFEMMPath;
         private System.Windows.Forms.TextBox textBoxWorkingDirectory;
         private System.Windows.Forms.Button buttonSelectWorkingDirectory;
-        private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.Label labelWorkingDirectory;
         private System.Windows.Forms.Button buttonSettingOK;
         private System.Windows.Forms.Button buttonSettingCancel;
         private System.Windows.Forms.GroupBox groupBox1;
-        private System.Windows.Forms.Label label4;
+        private System.Windows.Forms.Label labelPercent;
         private System.Windows.Forms.TextBox textBoxMeshSizeLevel;
-        private System.Windows.Forms.Label label2;
-        private System.Windows.Forms.Label label5;
+        private System.Windows.Forms.Label labelMeshSizeLevel;
+        private System.Windows.Forms.Label labelMeshSize;
         private System.Windows.Forms.ComboBox comboBoxLanguage;
-        private System.Windows.Forms.Label label6;
+        private System.Windows.Forms.Label labelLanguage;
     }
 }

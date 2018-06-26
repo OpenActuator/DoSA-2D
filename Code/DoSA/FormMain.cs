@@ -67,12 +67,39 @@ namespace DoSA
 
             m_resManager = ResourceManager.CreateFileBasedResourceManager("LanguageResource", Application.StartupPath, null);
 
-            // 리소스 파일의 유무를 확인하기 위해 m_resManager 의 동작시험을 한다.
-            try
+            ///------------------------------------------------------------------------
+            /// 언어설정 전 처리
+            /// 
+            /// 언어설정 전에 환경설정 파일 없음에 대한 알림 메시지의 언어를 결정하고 있다.
+            /// 여기에서 현재의 언어 정보을 읽어드려서 한국어가 아니면 모두 영어로 처리한다.
+            /// 그리고 열리는 환경설정 창 콤보 박스에도 반영을 한다.
+            /// 정상적인 언어 설정은 CSettingData.updataLanguge() 에서 이루어진다.
+            CultureInfo ctInfo = Thread.CurrentThread.CurrentCulture;
+
+            /// 한국어가 아니라면 모두 영어로 처리하라.
+            if (ctInfo.Name.Contains("ko") != true)
             {
-                m_resManager.GetString("E");
+                ctInfo = new CultureInfo("en-US");
+
+                Thread.CurrentThread.CurrentCulture = ctInfo;
+                Thread.CurrentThread.CurrentUICulture = ctInfo;
             }
-            catch (Exception ex)
+            else
+            {
+                ctInfo = new CultureInfo("ko-KR");
+
+                Thread.CurrentThread.CurrentCulture = ctInfo;
+                Thread.CurrentThread.CurrentUICulture = ctInfo;
+            }
+            ///------------------------------------------------------------------------
+
+
+            /// 리소스 파일을 확인하다.
+            bool retEnglish, retKorean;
+            retEnglish = m_manageFile.isExistFile(Path.Combine(Application.StartupPath, "LanguageResource.en-US.resources"));
+            retKorean = m_manageFile.isExistFile(Path.Combine(Application.StartupPath, "LanguageResource.ko-KR.resources"));
+
+            if(retEnglish == false || retKorean == false)
             {
                 MessageBox.Show("There are no Language resource files.", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
 
@@ -145,33 +172,21 @@ namespace DoSA
                 frmSetting.StartPosition = FormStartPosition.CenterParent;
 
                 if (false == m_manageFile.isExistFile(strSettingFileFullName))
-                {   
-                    /// 초기환경 설정이 경우
-                    /// 
-                    /// 환경설정 관련 확인 작업에 사용하는 문자열의 언어를 처리하기 위해 
-                    /// 현재의 언어 정보을 읽어드려서 한국어가 아니면 모두 영어로 처리한다.
-                    /// 그리고 환경설정창 콤보 박스에도 반영을 한다.
+                {
+                    ///------------------------------------------------------------------------
+                    /// 환경설정 창안의 언어를 현재의 언어로 지정한다.
                     CultureInfo ctInfo = Thread.CurrentThread.CurrentCulture;
 
                     /// 한국어가 아니라면 모두 영어로 처리하라.
                     if (ctInfo.Name.Contains("ko") != true)
                     {
-                        ctInfo = new CultureInfo("en-US");
-
-                        Thread.CurrentThread.CurrentCulture = ctInfo;
-                        Thread.CurrentThread.CurrentUICulture = ctInfo;
-
                         frmSetting.setInitLanguage(EMLanguage.English);
                     }
                     else
                     {
-                        ctInfo = new CultureInfo("ko-KR");
-
-                        Thread.CurrentThread.CurrentCulture = ctInfo;
-                        Thread.CurrentThread.CurrentUICulture = ctInfo;
-
                         frmSetting.setInitLanguage(EMLanguage.Korean);
                     }
+                    ///------------------------------------------------------------------------
 
                     // 언어 설정 후에 출력해야 한다.
                     CNotice.noticeWarningID("TCFC");
