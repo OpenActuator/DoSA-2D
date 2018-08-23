@@ -570,13 +570,10 @@ namespace Shapes
                     ex = listAbsolutePoint[i + 1].m_dX;
                     ey = listAbsolutePoint[i + 1].m_dY;
 
-                    /// 좌변 라인 (축대칭 지점으로 경계조건이 필요 없음)
-                    if(i == 0)
-                        femm.drawLine(sx, sy, ex, ey);
-                    else
-                        femm.drawBoundaryLine(sx, sy, ex, ey);
+                    femm.drawBoundaryLine(sx, sy, ex, ey);
                 }
-                // 마지막 선은 끝점과 첫점을 있는다
+                /// 마지막 선은 끝점과 첫점을 있는다
+                /// 마지막 선은 좌변 라인으로 경계조건이 필요 없다.
                 else
                 {
                     sx = listAbsolutePoint[i].m_dX;
@@ -584,7 +581,7 @@ namespace Shapes
                     ex = listAbsolutePoint[0].m_dX;
                     ey = listAbsolutePoint[0].m_dY;
 
-                    femm.drawBoundaryLine(sx, sy, ex, ey);
+                    femm.drawLine(sx, sy, ex, ey);
                 }
             }
         }
