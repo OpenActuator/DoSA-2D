@@ -338,7 +338,7 @@ namespace DoSA
                 //------------------------------------------------
                 // 코일 동선 재료
                 //------------------------------------------------
-                CPropertyItemList.coilWireList.Add("Aluminum");
+                CPropertyItemList.coilWireList.Add("Aluminum, 1100");
                 CPropertyItemList.coilWireList.Add("Copper");
 
                 #endregion
