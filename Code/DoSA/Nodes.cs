@@ -399,7 +399,15 @@ namespace Nodes
                 switch (node.m_kindKey)
                 {
                     case EMKind.COIL:
-                        double dCurrent = dVolt / ((CCoil)node).Resistance;
+                        double dCurrent;
+                        double dResistance = getSerialResistance();
+
+                        // 전류 계산
+                        if (dResistance != 0.0f)
+                            dCurrent = dVolt / dResistance;
+                        else
+                            dCurrent = 0.0f;
+
                         ((CCoil)node).setBlockPropCurrent(femm, dCurrent, dMeshSize);
                         break;
 
@@ -415,6 +423,19 @@ namespace Nodes
                         break;
                 }
             }
+        }
+
+        public double getSerialResistance()
+        {
+            double Resistance = 0;
+
+            foreach (CNode node in m_listNode)
+            {
+                if (node.m_kindKey == EMKind.COIL)
+                    Resistance = Resistance + ((CCoil)node).Resistance;
+            }
+
+            return Resistance;
         }
 
         public void changeCurrent(CScriptFEMM femm, double dCurrent)
