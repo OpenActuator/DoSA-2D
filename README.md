@@ -1,6 +1,6 @@
 # DoSA (Ver 0.9.6)
 
-This program is an open source program for design of Solenoid &amp; Actuator
+This program is an open source program for Solenoid &amp; Actuator design
 
 Youtube Video : https://youtu.be/AMPY6ZBbO9Y
 <br><br>
