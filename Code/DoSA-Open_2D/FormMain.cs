@@ -699,6 +699,21 @@ namespace DoSA
         private void ribbonButtonHelp_Click(object sender, EventArgs e)
         {
             PopupHelp frmHelp = new PopupHelp();
+            frmHelp.StartPosition = FormStartPosition.CenterParent;
+
+            ///------------------------------------------------------------------------
+            /// 환경설정 창안의 언어를 현재의 언어로 지정한다.
+            CultureInfo ctInfo = Thread.CurrentThread.CurrentCulture;
+
+            /// 한국어가 아니라면 모두 영어로 처리하라.
+            if (ctInfo.Name.Contains("ko") != true)
+            {
+                frmHelp.setInitLanguage(EMLanguage.English);
+            }
+            else
+            {
+                frmHelp.setInitLanguage(EMLanguage.Korean);
+            }
 
             frmHelp.ShowDialog();
         }
