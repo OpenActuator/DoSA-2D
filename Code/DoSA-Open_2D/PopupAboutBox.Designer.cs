@@ -32,10 +32,12 @@
             this.labelCopyright = new System.Windows.Forms.Label();
             this.labelVersion = new System.Windows.Forms.Label();
             this.tableLayoutPanel = new System.Windows.Forms.TableLayoutPanel();
+            this.textBoxOpenLicense = new System.Windows.Forms.TextBox();
             this.labelProductName = new System.Windows.Forms.Label();
-            this.buttonOpenActuator = new System.Windows.Forms.Button();
+            this.buttonQnA = new System.Windows.Forms.Button();
             this.button1 = new System.Windows.Forms.Button();
             this.buttonLicense = new System.Windows.Forms.Button();
+            this.buttonDonation = new System.Windows.Forms.Button();
             this.tableLayoutPanel.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -45,72 +47,91 @@
             this.textBoxDescription.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.tableLayoutPanel.SetColumnSpan(this.textBoxDescription, 2);
             this.textBoxDescription.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.textBoxDescription.Location = new System.Drawing.Point(7, 90);
+            this.textBoxDescription.Font = new System.Drawing.Font("Malgun Gothic", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(129)));
+            this.textBoxDescription.Location = new System.Drawing.Point(7, 63);
             this.textBoxDescription.Margin = new System.Windows.Forms.Padding(7, 3, 3, 3);
             this.textBoxDescription.Multiline = true;
             this.textBoxDescription.Name = "textBoxDescription";
             this.textBoxDescription.ReadOnly = true;
             this.textBoxDescription.ScrollBars = System.Windows.Forms.ScrollBars.Both;
-            this.textBoxDescription.Size = new System.Drawing.Size(456, 220);
+            this.textBoxDescription.Size = new System.Drawing.Size(479, 180);
             this.textBoxDescription.TabIndex = 23;
             this.textBoxDescription.TabStop = false;
             // 
             // labelContributor
             // 
             this.labelContributor.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.labelContributor.Location = new System.Drawing.Point(7, 67);
+            this.labelContributor.Location = new System.Drawing.Point(7, 40);
             this.labelContributor.Margin = new System.Windows.Forms.Padding(7, 0, 3, 0);
             this.labelContributor.MaximumSize = new System.Drawing.Size(0, 16);
             this.labelContributor.Name = "labelContributor";
-            this.labelContributor.Size = new System.Drawing.Size(456, 16);
+            this.labelContributor.Size = new System.Drawing.Size(479, 16);
             this.labelContributor.TabIndex = 22;
-            this.labelContributor.Text = "Contributor : OpenActuator.Org";
-            this.labelContributor.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.labelContributor.Text = "Contributor";
+            this.labelContributor.TextAlign = System.Drawing.ContentAlignment.BottomLeft;
             // 
             // labelCopyright
             // 
             this.labelCopyright.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.labelCopyright.Location = new System.Drawing.Point(7, 47);
+            this.labelCopyright.Location = new System.Drawing.Point(7, 246);
             this.labelCopyright.Margin = new System.Windows.Forms.Padding(7, 0, 3, 0);
             this.labelCopyright.MaximumSize = new System.Drawing.Size(0, 16);
             this.labelCopyright.Name = "labelCopyright";
-            this.labelCopyright.Size = new System.Drawing.Size(456, 16);
+            this.labelCopyright.Size = new System.Drawing.Size(479, 16);
             this.labelCopyright.TabIndex = 21;
-            this.labelCopyright.Text = "License : GPLv3 (GNU General Public License v3.0)";
-            this.labelCopyright.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.labelCopyright.Text = "License";
+            this.labelCopyright.TextAlign = System.Drawing.ContentAlignment.BottomLeft;
             // 
             // labelVersion
             // 
             this.labelVersion.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.labelVersion.Location = new System.Drawing.Point(7, 27);
+            this.labelVersion.Location = new System.Drawing.Point(7, 20);
             this.labelVersion.Margin = new System.Windows.Forms.Padding(7, 0, 3, 0);
             this.labelVersion.MaximumSize = new System.Drawing.Size(0, 16);
             this.labelVersion.Name = "labelVersion";
-            this.labelVersion.Size = new System.Drawing.Size(456, 16);
+            this.labelVersion.Size = new System.Drawing.Size(479, 16);
             this.labelVersion.TabIndex = 0;
-            this.labelVersion.Text = "Version (1.0.0)";
-            this.labelVersion.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.labelVersion.Text = "Version";
+            this.labelVersion.TextAlign = System.Drawing.ContentAlignment.BottomLeft;
             // 
             // tableLayoutPanel
             // 
             this.tableLayoutPanel.ColumnCount = 1;
             this.tableLayoutPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
+            this.tableLayoutPanel.Controls.Add(this.textBoxOpenLicense, 0, 5);
             this.tableLayoutPanel.Controls.Add(this.labelProductName, 0, 0);
             this.tableLayoutPanel.Controls.Add(this.labelVersion, 0, 1);
-            this.tableLayoutPanel.Controls.Add(this.labelCopyright, 0, 2);
-            this.tableLayoutPanel.Controls.Add(this.labelContributor, 0, 3);
-            this.tableLayoutPanel.Controls.Add(this.textBoxDescription, 0, 4);
+            this.tableLayoutPanel.Controls.Add(this.labelCopyright, 0, 4);
+            this.tableLayoutPanel.Controls.Add(this.labelContributor, 0, 2);
+            this.tableLayoutPanel.Controls.Add(this.textBoxDescription, 0, 3);
             this.tableLayoutPanel.Dock = System.Windows.Forms.DockStyle.Top;
             this.tableLayoutPanel.Location = new System.Drawing.Point(10, 8);
             this.tableLayoutPanel.Name = "tableLayoutPanel";
-            this.tableLayoutPanel.RowCount = 5;
-            this.tableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 8.810693F));
-            this.tableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 6.707283F));
-            this.tableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 6.707283F));
-            this.tableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 6.707283F));
-            this.tableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 71.06745F));
-            this.tableLayoutPanel.Size = new System.Drawing.Size(466, 313);
+            this.tableLayoutPanel.RowCount = 6;
+            this.tableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
+            this.tableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
+            this.tableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
+            this.tableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle());
+            this.tableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
+            this.tableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle());
+            this.tableLayoutPanel.Size = new System.Drawing.Size(489, 420);
             this.tableLayoutPanel.TabIndex = 0;
+            // 
+            // textBoxOpenLicense
+            // 
+            this.textBoxOpenLicense.BackColor = System.Drawing.Color.White;
+            this.textBoxOpenLicense.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.tableLayoutPanel.SetColumnSpan(this.textBoxOpenLicense, 2);
+            this.textBoxOpenLicense.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.textBoxOpenLicense.Location = new System.Drawing.Point(7, 269);
+            this.textBoxOpenLicense.Margin = new System.Windows.Forms.Padding(7, 3, 3, 3);
+            this.textBoxOpenLicense.Multiline = true;
+            this.textBoxOpenLicense.Name = "textBoxOpenLicense";
+            this.textBoxOpenLicense.ReadOnly = true;
+            this.textBoxOpenLicense.ScrollBars = System.Windows.Forms.ScrollBars.Both;
+            this.textBoxOpenLicense.Size = new System.Drawing.Size(479, 148);
+            this.textBoxOpenLicense.TabIndex = 24;
+            this.textBoxOpenLicense.TabStop = false;
             // 
             // labelProductName
             // 
@@ -120,51 +141,64 @@
             this.labelProductName.Margin = new System.Windows.Forms.Padding(7, 0, 3, 0);
             this.labelProductName.MaximumSize = new System.Drawing.Size(0, 16);
             this.labelProductName.Name = "labelProductName";
-            this.labelProductName.Size = new System.Drawing.Size(456, 16);
+            this.labelProductName.Size = new System.Drawing.Size(479, 16);
             this.labelProductName.TabIndex = 19;
-            this.labelProductName.Text = "DoSA-Open_2D (Designer of Solenoid and Actuator)";
-            this.labelProductName.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.labelProductName.Text = "Product Name";
+            this.labelProductName.TextAlign = System.Drawing.ContentAlignment.BottomLeft;
             // 
-            // buttonOpenActuator
+            // buttonQnA
             // 
-            this.buttonOpenActuator.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.buttonOpenActuator.Location = new System.Drawing.Point(10, 334);
-            this.buttonOpenActuator.Name = "buttonOpenActuator";
-            this.buttonOpenActuator.Size = new System.Drawing.Size(140, 35);
-            this.buttonOpenActuator.TabIndex = 1;
-            this.buttonOpenActuator.Text = "OpenActuator.org";
-            this.buttonOpenActuator.UseVisualStyleBackColor = true;
-            this.buttonOpenActuator.Click += new System.EventHandler(this.buttonHompage_Click);
+            this.buttonQnA.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.buttonQnA.Location = new System.Drawing.Point(116, 446);
+            this.buttonQnA.Name = "buttonQnA";
+            this.buttonQnA.Size = new System.Drawing.Size(100, 35);
+            this.buttonQnA.TabIndex = 1;
+            this.buttonQnA.Text = "QnA Board";
+            this.buttonQnA.UseVisualStyleBackColor = true;
+            this.buttonQnA.Click += new System.EventHandler(this.buttonQnA_Click);
             // 
             // button1
             // 
             this.button1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.button1.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.button1.Location = new System.Drawing.Point(356, 334);
+            this.button1.Location = new System.Drawing.Point(389, 446);
             this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(120, 35);
+            this.button1.Size = new System.Drawing.Size(110, 35);
             this.button1.TabIndex = 0;
             this.button1.Text = "&OK";
             // 
             // buttonLicense
             // 
             this.buttonLicense.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.buttonLicense.Location = new System.Drawing.Point(156, 334);
+            this.buttonLicense.Location = new System.Drawing.Point(222, 446);
             this.buttonLicense.Name = "buttonLicense";
-            this.buttonLicense.Size = new System.Drawing.Size(140, 35);
+            this.buttonLicense.Size = new System.Drawing.Size(100, 35);
             this.buttonLicense.TabIndex = 2;
             this.buttonLicense.Text = "License";
             this.buttonLicense.UseVisualStyleBackColor = true;
             this.buttonLicense.Click += new System.EventHandler(this.buttonLicense_Click);
             // 
+            // buttonDonation
+            // 
+            this.buttonDonation.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.buttonDonation.Font = new System.Drawing.Font("Gulim", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(129)));
+            this.buttonDonation.Location = new System.Drawing.Point(10, 446);
+            this.buttonDonation.Name = "buttonDonation";
+            this.buttonDonation.Size = new System.Drawing.Size(100, 35);
+            this.buttonDonation.TabIndex = 3;
+            this.buttonDonation.Text = "Donation";
+            this.buttonDonation.UseVisualStyleBackColor = true;
+            this.buttonDonation.Click += new System.EventHandler(this.buttonDonation_Click);
+            // 
             // PopupAboutBox
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(486, 380);
+            this.ClientSize = new System.Drawing.Size(509, 492);
+            this.Controls.Add(this.buttonDonation);
             this.Controls.Add(this.buttonLicense);
             this.Controls.Add(this.button1);
-            this.Controls.Add(this.buttonOpenActuator);
+            this.Controls.Add(this.buttonQnA);
             this.Controls.Add(this.tableLayoutPanel);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
             this.MaximizeBox = false;
@@ -189,9 +223,11 @@
         private System.Windows.Forms.Label labelVersion;
         private System.Windows.Forms.TableLayoutPanel tableLayoutPanel;
         private System.Windows.Forms.Label labelProductName;
-        private System.Windows.Forms.Button buttonOpenActuator;
+        private System.Windows.Forms.Button buttonQnA;
         private System.Windows.Forms.Button button1;
         private System.Windows.Forms.Button buttonLicense;
+        private System.Windows.Forms.TextBox textBoxOpenLicense;
+        private System.Windows.Forms.Button buttonDonation;
 
 
     }

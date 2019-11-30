@@ -2,7 +2,7 @@
   - Help
   - Images
   - Materials
-  - Sample
+  - SAmple
 
 2. 필요 파일들
   - DoSA.exe

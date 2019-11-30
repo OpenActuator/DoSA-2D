@@ -68,29 +68,21 @@ namespace DoSA
             m_resManager = ResourceManager.CreateFileBasedResourceManager("LanguageResource", Application.StartupPath, null);
 
             ///------------------------------------------------------------------------
-            /// 언어설정 전 처리
+            /// 환경설정전 언어의 초기 설정
             /// 
-            /// 언어설정 전에 환경설정 파일 없음에 대한 알림 메시지의 언어를 결정하고 있다.
-            /// 여기에서 현재의 언어 정보을 읽어드려서 한국어가 아니면 모두 영어로 처리한다.
-            /// 그리고 열리는 환경설정 창 콤보 박스에도 반영을 한다.
-            /// 정상적인 언어 설정은 CSettingData.updataLanguge() 에서 이루어진다.
+            /// 환경설정의 언어 설정값을 읽어드리기 전에 혹시 언어를 사용하는 경우를 대비하여
+            /// 환경설정의 언어 설정과 상관없이 무조건 시스템언어를 읽어서 프로그램 언어를 설정해 둔다.
+            /// 
+            /// 환경설정값으로 언어 설정은 이후에 바로 이어지는 CSettingData.updataLanguge() 에서 이루어진다.
             CultureInfo ctInfo = Thread.CurrentThread.CurrentCulture;
 
             /// 한국어가 아니라면 모두 영어로 처리하라.
-            if (ctInfo.Name.Contains("ko") != true)
-            {
-                ctInfo = new CultureInfo("en-US");
-
-                Thread.CurrentThread.CurrentCulture = ctInfo;
-                Thread.CurrentThread.CurrentUICulture = ctInfo;
-            }
+            if (ctInfo.Name.Contains("ko") == true)
+                CSettingData.m_emLanguage = EMLanguage.Korean;
             else
-            {
-                ctInfo = new CultureInfo("ko-KR");
+                CSettingData.m_emLanguage = EMLanguage.English;
 
-                Thread.CurrentThread.CurrentCulture = ctInfo;
-                Thread.CurrentThread.CurrentUICulture = ctInfo;
-            }
+            CSettingData.updataLanguge();
             ///------------------------------------------------------------------------
 
 
@@ -173,21 +165,6 @@ namespace DoSA
 
                 if (false == m_manageFile.isExistFile(strSettingFileFullName))
                 {
-                    ///------------------------------------------------------------------------
-                    /// 환경설정 창안의 언어를 현재의 언어로 지정한다.
-                    CultureInfo ctInfo = Thread.CurrentThread.CurrentCulture;
-
-                    /// 한국어가 아니라면 모두 영어로 처리하라.
-                    if (ctInfo.Name.Contains("ko") != true)
-                    {
-                        frmSetting.setInitLanguage(EMLanguage.English);
-                    }
-                    else
-                    {
-                        frmSetting.setInitLanguage(EMLanguage.Korean);
-                    }
-                    ///------------------------------------------------------------------------
-
                     // 언어 설정 후에 출력해야 한다.
                     CNotice.noticeWarningID("TCFC");
 
@@ -230,7 +207,7 @@ namespace DoSA
                     m_manageFile.setCurrentDirectory(CSettingData.m_strWorkingDirName);
                 }
 
-                /// 언어를 설정한다.
+                /// 파일에서 읽어오든 신규파일에서 생성을 하든 Setting 파일안의 프로그램 언어를 설정한다.
                 CSettingData.updataLanguge();
 
                 /// FEMM 버전을 확인한다.
@@ -700,20 +677,6 @@ namespace DoSA
         {
             PopupHelp frmHelp = new PopupHelp();
             frmHelp.StartPosition = FormStartPosition.CenterParent;
-
-            ///------------------------------------------------------------------------
-            /// 환경설정 창안의 언어를 현재의 언어로 지정한다.
-            CultureInfo ctInfo = Thread.CurrentThread.CurrentCulture;
-
-            /// 한국어가 아니라면 모두 영어로 처리하라.
-            if (ctInfo.Name.Contains("ko") != true)
-            {
-                frmHelp.setInitLanguage(EMLanguage.English);
-            }
-            else
-            {
-                frmHelp.setInitLanguage(EMLanguage.Korean);
-            }
 
             frmHelp.ShowDialog();
         }
