@@ -40,10 +40,10 @@
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.comboBoxLanguage = new System.Windows.Forms.ComboBox();
             this.labelPercent = new System.Windows.Forms.Label();
-            this.textBoxMeshSizeLevel = new System.Windows.Forms.TextBox();
+            this.textBoxMeshSizePercent = new System.Windows.Forms.TextBox();
             this.labelMeshSize = new System.Windows.Forms.Label();
             this.labelLanguage = new System.Windows.Forms.Label();
-            this.labelMeshSizeLevel = new System.Windows.Forms.Label();
+            this.labelMeshSizePercent = new System.Windows.Forms.Label();
             this.groupBoxSetting.SuspendLayout();
             this.groupBox1.SuspendLayout();
             this.SuspendLayout();
@@ -58,7 +58,7 @@
             this.groupBoxSetting.Controls.Add(this.labelWorkingDirectory);
             this.groupBoxSetting.Location = new System.Drawing.Point(12, 12);
             this.groupBoxSetting.Name = "groupBoxSetting";
-            this.groupBoxSetting.Size = new System.Drawing.Size(455, 105);
+            this.groupBoxSetting.Size = new System.Drawing.Size(491, 105);
             this.groupBoxSetting.TabIndex = 10;
             this.groupBoxSetting.TabStop = false;
             this.groupBoxSetting.Text = "Directories";
@@ -68,12 +68,12 @@
             this.textBoxFemmPath.BackColor = System.Drawing.SystemColors.Window;
             this.textBoxFemmPath.Location = new System.Drawing.Point(141, 69);
             this.textBoxFemmPath.Name = "textBoxFemmPath";
-            this.textBoxFemmPath.Size = new System.Drawing.Size(272, 21);
+            this.textBoxFemmPath.Size = new System.Drawing.Size(296, 21);
             this.textBoxFemmPath.TabIndex = 16;
             // 
             // buttonSelectFemmPath
             // 
-            this.buttonSelectFemmPath.Location = new System.Drawing.Point(419, 67);
+            this.buttonSelectFemmPath.Location = new System.Drawing.Point(443, 67);
             this.buttonSelectFemmPath.Name = "buttonSelectFemmPath";
             this.buttonSelectFemmPath.Size = new System.Drawing.Size(27, 23);
             this.buttonSelectFemmPath.TabIndex = 17;
@@ -97,12 +97,12 @@
             this.textBoxWorkingDirectory.BackColor = System.Drawing.SystemColors.Window;
             this.textBoxWorkingDirectory.Location = new System.Drawing.Point(141, 28);
             this.textBoxWorkingDirectory.Name = "textBoxWorkingDirectory";
-            this.textBoxWorkingDirectory.Size = new System.Drawing.Size(272, 21);
+            this.textBoxWorkingDirectory.Size = new System.Drawing.Size(296, 21);
             this.textBoxWorkingDirectory.TabIndex = 3;
             // 
             // buttonSelectWorkingDirectory
             // 
-            this.buttonSelectWorkingDirectory.Location = new System.Drawing.Point(419, 28);
+            this.buttonSelectWorkingDirectory.Location = new System.Drawing.Point(443, 28);
             this.buttonSelectWorkingDirectory.Name = "buttonSelectWorkingDirectory";
             this.buttonSelectWorkingDirectory.Size = new System.Drawing.Size(27, 23);
             this.buttonSelectWorkingDirectory.TabIndex = 4;
@@ -122,7 +122,7 @@
             // 
             // buttonSettingOK
             // 
-            this.buttonSettingOK.Location = new System.Drawing.Point(353, 198);
+            this.buttonSettingOK.Location = new System.Drawing.Point(389, 200);
             this.buttonSettingOK.Name = "buttonSettingOK";
             this.buttonSettingOK.Size = new System.Drawing.Size(114, 36);
             this.buttonSettingOK.TabIndex = 12;
@@ -132,7 +132,7 @@
             // 
             // buttonSettingCancel
             // 
-            this.buttonSettingCancel.Location = new System.Drawing.Point(353, 240);
+            this.buttonSettingCancel.Location = new System.Drawing.Point(389, 242);
             this.buttonSettingCancel.Name = "buttonSettingCancel";
             this.buttonSettingCancel.Size = new System.Drawing.Size(114, 36);
             this.buttonSettingCancel.TabIndex = 11;
@@ -144,13 +144,13 @@
             // 
             this.groupBox1.Controls.Add(this.comboBoxLanguage);
             this.groupBox1.Controls.Add(this.labelPercent);
-            this.groupBox1.Controls.Add(this.textBoxMeshSizeLevel);
+            this.groupBox1.Controls.Add(this.textBoxMeshSizePercent);
             this.groupBox1.Controls.Add(this.labelMeshSize);
             this.groupBox1.Controls.Add(this.labelLanguage);
-            this.groupBox1.Controls.Add(this.labelMeshSizeLevel);
+            this.groupBox1.Controls.Add(this.labelMeshSizePercent);
             this.groupBox1.Location = new System.Drawing.Point(12, 123);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(307, 153);
+            this.groupBox1.Size = new System.Drawing.Size(333, 153);
             this.groupBox1.TabIndex = 13;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "ETC";
@@ -161,7 +161,7 @@
             this.comboBoxLanguage.Items.AddRange(new object[] {
             "Korean",
             "English"});
-            this.comboBoxLanguage.Location = new System.Drawing.Point(141, 38);
+            this.comboBoxLanguage.Location = new System.Drawing.Point(159, 38);
             this.comboBoxLanguage.Name = "comboBoxLanguage";
             this.comboBoxLanguage.Size = new System.Drawing.Size(103, 20);
             this.comboBoxLanguage.TabIndex = 6;
@@ -170,26 +170,26 @@
             // labelPercent
             // 
             this.labelPercent.AutoSize = true;
-            this.labelPercent.Location = new System.Drawing.Point(250, 83);
+            this.labelPercent.Location = new System.Drawing.Point(272, 83);
             this.labelPercent.Name = "labelPercent";
             this.labelPercent.Size = new System.Drawing.Size(15, 12);
             this.labelPercent.TabIndex = 5;
             this.labelPercent.Text = "%";
             // 
-            // textBoxMeshSizeLevel
+            // textBoxMeshSizePercent
             // 
-            this.textBoxMeshSizeLevel.BackColor = System.Drawing.SystemColors.Window;
-            this.textBoxMeshSizeLevel.Location = new System.Drawing.Point(141, 80);
-            this.textBoxMeshSizeLevel.Name = "textBoxMeshSizeLevel";
-            this.textBoxMeshSizeLevel.Size = new System.Drawing.Size(103, 21);
-            this.textBoxMeshSizeLevel.TabIndex = 4;
-            this.textBoxMeshSizeLevel.Text = "1";
-            this.textBoxMeshSizeLevel.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
+            this.textBoxMeshSizePercent.BackColor = System.Drawing.SystemColors.Window;
+            this.textBoxMeshSizePercent.Location = new System.Drawing.Point(159, 80);
+            this.textBoxMeshSizePercent.Name = "textBoxMeshSizePercent";
+            this.textBoxMeshSizePercent.Size = new System.Drawing.Size(103, 21);
+            this.textBoxMeshSizePercent.TabIndex = 4;
+            this.textBoxMeshSizePercent.Text = "1";
+            this.textBoxMeshSizePercent.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
             // 
             // labelMeshSize
             // 
             this.labelMeshSize.AutoSize = true;
-            this.labelMeshSize.Location = new System.Drawing.Point(128, 108);
+            this.labelMeshSize.Location = new System.Drawing.Point(146, 108);
             this.labelMeshSize.Name = "labelMeshSize";
             this.labelMeshSize.Size = new System.Drawing.Size(172, 12);
             this.labelMeshSize.TabIndex = 3;
@@ -204,20 +204,20 @@
             this.labelLanguage.TabIndex = 3;
             this.labelLanguage.Text = "Language :";
             // 
-            // labelMeshSizeLevel
+            // labelMeshSizePercent
             // 
-            this.labelMeshSizeLevel.AutoSize = true;
-            this.labelMeshSizeLevel.Location = new System.Drawing.Point(24, 83);
-            this.labelMeshSizeLevel.Name = "labelMeshSizeLevel";
-            this.labelMeshSizeLevel.Size = new System.Drawing.Size(108, 12);
-            this.labelMeshSizeLevel.TabIndex = 3;
-            this.labelMeshSizeLevel.Text = "Mesh Size Level :";
+            this.labelMeshSizePercent.AutoSize = true;
+            this.labelMeshSizePercent.Location = new System.Drawing.Point(24, 83);
+            this.labelMeshSizePercent.Name = "labelMeshSizePercent";
+            this.labelMeshSizePercent.Size = new System.Drawing.Size(121, 12);
+            this.labelMeshSizePercent.TabIndex = 3;
+            this.labelMeshSizePercent.Text = "Mesh Size Percent :";
             // 
             // PopupSetting
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(482, 290);
+            this.ClientSize = new System.Drawing.Size(515, 290);
             this.Controls.Add(this.groupBox1);
             this.Controls.Add(this.groupBoxSetting);
             this.Controls.Add(this.buttonSettingOK);
@@ -247,8 +247,8 @@
         private System.Windows.Forms.Button buttonSettingCancel;
         private System.Windows.Forms.GroupBox groupBox1;
         private System.Windows.Forms.Label labelPercent;
-        private System.Windows.Forms.TextBox textBoxMeshSizeLevel;
-        private System.Windows.Forms.Label labelMeshSizeLevel;
+        private System.Windows.Forms.TextBox textBoxMeshSizePercent;
+        private System.Windows.Forms.Label labelMeshSizePercent;
         private System.Windows.Forms.Label labelMeshSize;
         private System.Windows.Forms.ComboBox comboBoxLanguage;
         private System.Windows.Forms.Label labelLanguage;

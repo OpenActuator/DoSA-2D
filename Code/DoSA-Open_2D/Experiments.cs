@@ -21,25 +21,34 @@ namespace Experiments
     //------------------------------------------------------------------------------------------
     public class CExperiment : CNode
     {
+
+        [DisplayNameAttribute("Mesh Size [%]"), CategoryAttribute("Condition Fields"), DescriptionAttribute("Mesh Size / Shape Length * 100")]
+        public double MeshSizePercent { get; set; }
+
+        public CExperiment()
+        {
+            // MeshSizePercent 와 이전 파일버전 인 경우는 아래의 값으로 초기화된다.
+            MeshSizePercent = 1;
+        }
+    }
+
+    public class CForceExperiment : CExperiment
+    {
         private double m_dCurrent;
 
-        [DisplayNameAttribute("Voltage [V]"), CategoryAttribute("\t\tInput Fields"), DescriptionAttribute("Input Voltage")]
+        [DisplayNameAttribute("Voltage [V]"), CategoryAttribute("\t\tCurrent Fields"), DescriptionAttribute("Input Voltage")]
         public double Voltage { get; set; }
 
-        [DisplayNameAttribute("Max. Current [A]"), CategoryAttribute("\t\tInput Fields"), DescriptionAttribute("Maximum Input Current")]
+        [DisplayNameAttribute("Max. Current [A]"), CategoryAttribute("\t\tCurrent Fields"), DescriptionAttribute("Maximum Input Current")]
         [ReadOnly(true)]
-        public double Current 
+        public double Current
         {
             // 소수점 5째 자리 까지만 출력한다.
             get { return Math.Round(m_dCurrent, 5); }
             set { m_dCurrent = value; }
         }
 
-    }
-
-    public class CForceExperiment : CExperiment
-    {
-        [DisplayNameAttribute("Moving Displacement [mm]"), CategoryAttribute("Stroke Fields"), DescriptionAttribute("Moving Displacement")]
+        [DisplayNameAttribute("Moving Stroke [mm]"), CategoryAttribute("\tStroke Fields"), DescriptionAttribute("Moving Displacement")]
         public double MovingStroke { get; set; }
 
         public CForceExperiment()
@@ -59,12 +68,14 @@ namespace Experiments
 
                 // CNode
                 writeFile.writeDataLine(writeStream, "NodeName", NodeName, 3);
+                writeFile.writeDataLine(writeStream, "KindKey", m_kindKey, 3);
 
                 // CExperiment
-                writeFile.writeDataLine(writeStream, "Voltage", Voltage, 3);
-                writeFile.writeDataLine(writeStream, "Current", Current, 3);
+                writeFile.writeDataLine(writeStream, "MeshSizePercent", MeshSizePercent, 3);
 
                 // CForceExperiment
+                writeFile.writeDataLine(writeStream, "Voltage", Voltage, 3);
+                writeFile.writeDataLine(writeStream, "Current", Current, 3);
                 writeFile.writeDataLine(writeStream, "MovingStroke", MovingStroke, 3);
 
                 writeFile.writeEndLine(writeStream, "ForceExperiment", 2);
@@ -111,15 +122,24 @@ namespace Experiments
                             NodeName = arrayString[1];
                             break;
 
-                        // CExperiment
-                        case "Voltage":
-                            Voltage = Convert.ToDouble(arrayString[1]);
+                        case "KindKey":
+                            m_kindKey = (EMKind)Enum.Parse(typeof(EMKind), arrayString[1]);
                             break;
-                        case "Current":
-                            Current = Convert.ToDouble(arrayString[1]);
+
+                        // CExperiment
+                        case "MeshSizePercent":
+                            MeshSizePercent = Convert.ToDouble(arrayString[1]);
                             break;
 
                         // CForceExperiment
+                        case "Voltage":
+                            Voltage = Convert.ToDouble(arrayString[1]);
+                            break;
+
+                        case "Current":
+                            Current = Convert.ToDouble(arrayString[1]);
+                            break;
+                        
                         case "MovingStroke":
                             MovingStroke = Convert.ToDouble(arrayString[1]);
                             break;
@@ -142,13 +162,27 @@ namespace Experiments
     public class CStrokeExperiment : CExperiment
     {
 
-        [DisplayNameAttribute("Initial Displacement [mm]"), CategoryAttribute("Stroke Fields"), DescriptionAttribute("Initial Displacement")]
+        private double m_dCurrent;
+
+        [DisplayNameAttribute("Voltage [V]"), CategoryAttribute("\t\tCurrent Fields"), DescriptionAttribute("Input Voltage")]
+        public double Voltage { get; set; }
+
+        [DisplayNameAttribute("Max. Current [A]"), CategoryAttribute("\t\tCurrent Fields"), DescriptionAttribute("Maximum Input Current")]
+        [ReadOnly(true)]
+        public double Current
+        {
+            // 소수점 5째 자리 까지만 출력한다.
+            get { return Math.Round(m_dCurrent, 5); }
+            set { m_dCurrent = value; }
+        }
+
+        [DisplayNameAttribute("Initial Stroke [mm]"), CategoryAttribute("\tStroke Fields"), DescriptionAttribute("Initial Displacement")]
         public double InitialStroke { get; set; }
 
-        [DisplayNameAttribute("Final Displacement [mm]"), CategoryAttribute("Stroke Fields"), DescriptionAttribute("Final Displacement")]
+        [DisplayNameAttribute("Final Stroke [mm]"), CategoryAttribute("\tStroke Fields"), DescriptionAttribute("Final Displacement")]
         public double FinalStroke { get; set; }
 
-        [DisplayNameAttribute("Step Count"), CategoryAttribute("Stroke Fields"), DescriptionAttribute("Step Count")]
+        [DisplayNameAttribute("Step Count"), CategoryAttribute("\tStroke Fields"), DescriptionAttribute("Step Count")]
         public int StepCount { get; set; }
 
         public CStrokeExperiment()
@@ -168,12 +202,14 @@ namespace Experiments
 
                 // CNode
                 writeFile.writeDataLine(writeStream, "NodeName", NodeName, 3);
+                writeFile.writeDataLine(writeStream, "KindKey", m_kindKey, 3);
 
                 // CExperiment
-                writeFile.writeDataLine(writeStream, "Voltage", Voltage, 3);
-                writeFile.writeDataLine(writeStream, "Current", Current, 3);
+                writeFile.writeDataLine(writeStream, "MeshSizePercent", MeshSizePercent, 3);
 
                 // CStrokeExperiment
+                writeFile.writeDataLine(writeStream, "Voltage", Voltage, 3);
+                writeFile.writeDataLine(writeStream, "Current", Current, 3);
                 writeFile.writeDataLine(writeStream, "InitialStroke", InitialStroke, 3);
                 writeFile.writeDataLine(writeStream, "FinalStroke", FinalStroke, 3);
                 writeFile.writeDataLine(writeStream, "StepCount", StepCount, 3);
@@ -222,21 +258,32 @@ namespace Experiments
                             NodeName = arrayString[1];
                             break;
 
+                        case "KindKey":
+                            m_kindKey = (EMKind)Enum.Parse(typeof(EMKind), arrayString[1]);
+                            break;
+
                         // CExperiment
+                        case "MeshSizePercent":
+                            MeshSizePercent = Convert.ToDouble(arrayString[1]);
+                            break;
+
+                        // CStrokeExperiment
                         case "Voltage":
                             Voltage = Convert.ToDouble(arrayString[1]);
                             break;
+
                         case "Current":
                             Current = Convert.ToDouble(arrayString[1]);
                             break;
 
-                        // CStrokeExperiment
                         case "InitialStroke":
                             InitialStroke = Convert.ToDouble(arrayString[1]);
                             break;
+
                         case "FinalStroke":
                             FinalStroke = Convert.ToDouble(arrayString[1]);
                             break;
+
                         case "StepCount":
                             StepCount = Convert.ToInt16(arrayString[1]);
                             break;
@@ -259,31 +306,18 @@ namespace Experiments
 
     public class CCurrentExperiment : CExperiment
     {
-        /// <summary>
-        ///  CCurrentExperiment 에서는 상위 CExperiment 의 Voltage와 Current 를 사용하지 않고 있다.
-        ///  따라서 프로퍼티에서 숨기기 위해서 재선언을 하고 Brawsable 을 False 로 했는데,
-        ///  상속된 변수를 숨김에 문제가 발생한다는 CS0108 경고가 발생해서 new 한정자를 추가해 새로운 변수임을 알려서 문제를 해결하였다
-        ///  단, praviate 선언을 하면 숨기기가 되지 않는다.
-        /// </summary>
-        /// ----------------------------------------------
-        [BrowsableAttribute(false)]
-        public new double Voltage { get; set; }
-        [BrowsableAttribute(false)]
-        public new double Current { get; set; }
-        //-------------------------------------------------
 
-
-        [DisplayNameAttribute("Moving Displacement [mm]"), CategoryAttribute("Stroke Fields"), DescriptionAttribute("Moving Displacement")]
-        public double MovingStroke { get; set; }
-
-        [DisplayNameAttribute("Initial Current [A]"), CategoryAttribute("Current Fields"), DescriptionAttribute("Initial Current")]
+        [DisplayNameAttribute("Initial Current [A]"), CategoryAttribute("\t\tCurrent Fields"), DescriptionAttribute("Initial Current")]
         public double InitialCurrent { get; set; }
 
-        [DisplayNameAttribute("Final Current [A]"), CategoryAttribute("Current Fields"), DescriptionAttribute("Final Current")]
+        [DisplayNameAttribute("Final Current [A]"), CategoryAttribute("\t\tCurrent Fields"), DescriptionAttribute("Final Current")]
         public double FinalCurrent { get; set; }
 
-        [DisplayNameAttribute("Step Count"), CategoryAttribute("Current Fields"), DescriptionAttribute("Step Count")]
+        [DisplayNameAttribute("Step Count"), CategoryAttribute("\t\tCurrent Fields"), DescriptionAttribute("Step Count")]
         public int StepCount { get; set; }
+
+        [DisplayNameAttribute("Moving Stroke [mm]"), CategoryAttribute("\tStroke Fields"), DescriptionAttribute("Moving Displacement")]
+        public double MovingStroke { get; set; }
 
         public CCurrentExperiment()
         {
@@ -302,15 +336,16 @@ namespace Experiments
 
                 // CNode
                 writeFile.writeDataLine(writeStream, "NodeName", NodeName, 3);
+                writeFile.writeDataLine(writeStream, "KindKey", m_kindKey, 3);
+
+                // CExperiment
+                writeFile.writeDataLine(writeStream, "MeshSizePercent", MeshSizePercent, 3);
 
                 // CCurrentExperiment
                 writeFile.writeDataLine(writeStream, "InitialCurrent", InitialCurrent, 3);
                 writeFile.writeDataLine(writeStream, "FinalCurrent", FinalCurrent, 3);
                 writeFile.writeDataLine(writeStream, "StepCount", StepCount, 3);
-
-                // CCurrentExperiment
                 writeFile.writeDataLine(writeStream, "MovingStroke", MovingStroke, 3);
-
 
                 writeFile.writeEndLine(writeStream, "CurrentExperiment", 2);
             }
@@ -355,22 +390,33 @@ namespace Experiments
                         case "NodeName":
                             NodeName = arrayString[1];
                             break;
+                            
+                        case "KindKey":
+                            m_kindKey = (EMKind)Enum.Parse(typeof(EMKind), arrayString[1]);
+                            break;
 
-                        // CStrokeExperiment
+                        // CExperiment
+                        case "MeshSizePercent":
+                            MeshSizePercent = Convert.ToDouble(arrayString[1]);
+                            break;
+
+                        // CCurrentExperiment
                         case "InitialCurrent":
                             InitialCurrent = Convert.ToDouble(arrayString[1]);
                             break;
+
                         case "FinalCurrent":
                             FinalCurrent = Convert.ToDouble(arrayString[1]);
                             break;
+
                         case "StepCount":
                             StepCount = Convert.ToInt16(arrayString[1]);
                             break;
-                        // CForceExperiment
+
                         case "MovingStroke":
                             MovingStroke = Convert.ToDouble(arrayString[1]);
                             break;
-
+                        
                         default:
                             break;
                     }

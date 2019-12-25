@@ -46,7 +46,7 @@ namespace DoSA
                 CSettingData.m_strWorkingDirName = textBoxWorkingDirectory.Text;
                 CSettingData.m_strFemmExeFileFullName = textBoxFemmPath.Text;
 
-                CSettingData.m_dMeshLevelPercent = Double.Parse(textBoxMeshSizeLevel.Text);
+                CSettingData.m_dMeshLevelPercent = Double.Parse(textBoxMeshSizePercent.Text);
                 CSettingData.m_emLanguage = (EMLanguage)Enum.Parse(typeof(EMLanguage), comboBoxLanguage.Text);
             }
             catch (Exception ex)
@@ -105,7 +105,7 @@ namespace DoSA
                 textBoxWorkingDirectory.Text = CSettingData.m_strWorkingDirName;
                 textBoxFemmPath.Text = CSettingData.m_strFemmExeFileFullName;
 
-                textBoxMeshSizeLevel.Text = CSettingData.m_dMeshLevelPercent.ToString();
+                textBoxMeshSizePercent.Text = CSettingData.m_dMeshLevelPercent.ToString();
                 comboBoxLanguage.Text = CSettingData.m_emLanguage.ToString();
             }
             catch (Exception ex)

@@ -875,7 +875,7 @@ namespace DoSA
             m_design.drawDesign(m_femm);
 
             /// 전류, 전압을 영으로 설정해서 기본모델을 만든다.
-            m_design.setBlockPropeties(m_femm, 0);
+            m_design.setBlockPropeties(m_femm, 0, currentExperiment.MeshSizePercent);
 
             double minX, maxX, minY, maxY;
             minX = maxX = minY = maxY = 0;
@@ -887,12 +887,12 @@ namespace DoSA
             /// Stroke 가 음이면 Minus 만 경계영역을 만들 때 반영한다.
             if (currentExperiment.MovingStroke >= 0)
             {
-                m_design.setBoundary(m_femm, currentExperiment.MovingStroke, 0);
+                m_design.setBoundary(m_femm, currentExperiment.MeshSizePercent, currentExperiment.MovingStroke, 0);
                 maxY = maxY + currentExperiment.MovingStroke;
             }
             else
             {
-                m_design.setBoundary(m_femm, 0, currentExperiment.MovingStroke);
+                m_design.setBoundary(m_femm, currentExperiment.MeshSizePercent, 0, currentExperiment.MovingStroke);
                 minY = minY + currentExperiment.MovingStroke;
             }
 
@@ -925,7 +925,7 @@ namespace DoSA
             {
                 dCurrent = dInitialCurrent + dStepIncrease * i;
 
-                m_design.changeCurrent(m_femm, dCurrent);
+                m_design.changeCurrent(m_femm, dCurrent, currentExperiment.MeshSizePercent);
 
                 progressBarCurrent.PerformStep();
                 labelProgressCurrent.Text = "Current Step : " + i.ToString() + " / " + nStepCount.ToString();
@@ -1098,7 +1098,7 @@ namespace DoSA
 
             m_design.drawDesign(m_femm);
 
-            m_design.setBlockPropeties(m_femm, forceExperiment.Voltage);
+            m_design.setBlockPropeties(m_femm, forceExperiment.Voltage, forceExperiment.MeshSizePercent);
             
             double minX, maxX, minY, maxY;
             minX = maxX = minY = maxY = 0;
@@ -1110,12 +1110,12 @@ namespace DoSA
             /// Stroke 가 음이면 Minus 만 경계영역을 만들 때 반영한다.
             if (forceExperiment.MovingStroke >= 0)
             {
-                m_design.setBoundary(m_femm, forceExperiment.MovingStroke, 0);
+                m_design.setBoundary(m_femm, forceExperiment.MeshSizePercent, forceExperiment.MovingStroke, 0);
                 maxY = maxY + forceExperiment.MovingStroke;
             }
             else
             {
-                m_design.setBoundary(m_femm, 0, forceExperiment.MovingStroke);
+                m_design.setBoundary(m_femm, forceExperiment.MeshSizePercent, 0, forceExperiment.MovingStroke);
                 minY = minY + forceExperiment.MovingStroke;
             }
 
@@ -1217,7 +1217,7 @@ namespace DoSA
 
             m_design.drawDesign(m_femm);
 
-            m_design.setBlockPropeties(m_femm, strokeExperiment.Voltage);
+            m_design.setBlockPropeties(m_femm, strokeExperiment.Voltage, strokeExperiment.MeshSizePercent);
 
             double minX, maxX, minY, maxY;
             minX = maxX = minY = maxY = 0;
@@ -1230,12 +1230,12 @@ namespace DoSA
             {
                 if( dInitialStroke >= 0 )
                 {
-                    m_design.setBoundary(m_femm, dFinalStroke, 0);
+                    m_design.setBoundary(m_femm, strokeExperiment.MeshSizePercent, dFinalStroke, 0);
                     maxY = maxY + dFinalStroke;
                 }
                 else
                 {
-                    m_design.setBoundary(m_femm, dFinalStroke, dInitialStroke);
+                    m_design.setBoundary(m_femm, strokeExperiment.MeshSizePercent, dFinalStroke, dInitialStroke);
                     maxY = maxY + dFinalStroke;
                     minY = minY + dInitialStroke;
                 }                    
@@ -1249,7 +1249,7 @@ namespace DoSA
                 }
                 else
                 {
-                    m_design.setBoundary(m_femm, 0, dInitialStroke);
+                    m_design.setBoundary(m_femm, strokeExperiment.MeshSizePercent, 0, dInitialStroke);
                     minY = minY + dInitialStroke;
                 }                    
             }
@@ -2298,6 +2298,9 @@ namespace DoSA
                         forceExperiment.NodeName = strName;
                         forceExperiment.m_kindKey = emKind;
 
+                        // 생성될 때 환경설정의 조건으로 초기화한다.
+                        forceExperiment.MeshSizePercent = CSettingData.m_dMeshLevelPercent;
+
                         bRet = m_design.addNode(forceExperiment);
                         break;
 
@@ -2306,6 +2309,9 @@ namespace DoSA
                         strokeExperiment.NodeName = strName;
                         strokeExperiment.m_kindKey = emKind;
 
+                        // 생성될 때 환경설정의 조건으로 초기화한다.
+                        strokeExperiment.MeshSizePercent = CSettingData.m_dMeshLevelPercent;
+
                         bRet = m_design.addNode(strokeExperiment);
                         break;
 
@@ -2313,6 +2319,9 @@ namespace DoSA
                         CCurrentExperiment currentExperiment = new CCurrentExperiment();
                         currentExperiment.NodeName = strName;
                         currentExperiment.m_kindKey = emKind;
+
+                        // 생성될 때 환경설정의 조건으로 초기화한다.
+                        currentExperiment.MeshSizePercent = CSettingData.m_dMeshLevelPercent;
 
                         bRet = m_design.addNode(currentExperiment);
                         break;
@@ -2372,6 +2381,26 @@ namespace DoSA
             treeViewMain.SelectedNode = treeNode;
         }
 
+        //-------------------------------------------------------------------
+        // propertyGridMain.Refresh() 와 충돌이 발생하여 사용을 포기한다.
+        //-------------------------------------------------------------------
+        // PropertyGrid Column 의 폭을 변경한다.
+        //public static void setLabelColumnWidth(PropertyGrid grid, int width)
+        //{
+        //    if (grid == null)
+        //        throw new ArgumentNullException("grid");
+
+        //    // get the grid view
+        //    Control view = (Control)grid.GetType().GetField("gridView", BindingFlags.Instance | BindingFlags.NonPublic).GetValue(grid);
+
+        //    // set label width
+        //    FieldInfo fi = view.GetType().GetField("labelWidth", BindingFlags.Instance | BindingFlags.NonPublic);
+        //    fi.SetValue(view, width);
+
+        //    // refresh
+        //    view.Invalidate();
+        //}
+
         // 선택한 노드를 Information Window 와 Property View 에 보여준다
         private void showNode(string nodeName)
         {
@@ -2385,6 +2414,9 @@ namespace DoSA
                 {
                     // 프로퍼티창을 변경한다.
                     propertyGridMain.SelectedObject = node;
+
+                    // 프로퍼티창의 첫번째 Column 의 폭을 변경한다. (사용 포기함)
+                    //setLabelColumnWidth(propertyGridMain, 160);
 
                     /// 프로퍼티창에서 이름을 변경할 때 기존에 이미 있는 이름을 선택하는 경우
                     /// 복구를 위해 저장해 둔다.
@@ -3210,9 +3242,6 @@ namespace DoSA
         }
         
         #endregion
-
-
-
         
     }
 }

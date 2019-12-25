@@ -50,6 +50,7 @@ namespace DoSA
         public static string m_strWorkingDirName { get; set; }
         public static string m_strFemmExeFileFullName { get; set; }
 
+        // m_dMeshLevelPercent 이름을 변경하지말라. 다시 환경설정을 해야한다.
         public static double m_dMeshLevelPercent { get; set; }
         public static EMLanguage m_emLanguage { get; set; }
 
@@ -135,7 +136,8 @@ namespace DoSA
         // 저장 변수들
         public string m_strWorkingDirName { get; set; }
         public string m_strFemmExeFileFullName { get; set; }
-        
+
+        // m_dMeshLevelPercent 이름을 변경하지말라. 다시 환경설정을 해야한다.
         public double m_dMeshLevelPercent { get; set; }
         public EMLanguage m_emLanguage { get; set; }
 

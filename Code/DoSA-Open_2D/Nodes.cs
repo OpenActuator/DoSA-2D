@@ -389,10 +389,14 @@ namespace Nodes
             femm.zoomFit();
         }
 
-        public void setBlockPropeties(CScriptFEMM femm, double dVolt)
+        public void setBlockPropeties(CScriptFEMM femm, double dVolt, double dMeshSizePercent)
         {
+            // MeshSizePercent 에 문제가 있으면 1% 로 초기화 한다.
+            if (dMeshSizePercent <= 0)
+                dMeshSizePercent = 1;
+
             // Mesh Size 는 길이단위이기 때문에 면적을 루트 취한 값과 곱하고 있다.
-            double dMeshSize = Math.Sqrt(this.calcShapeModelArea()) * CSettingData.m_dMeshLevelPercent / 100.0f;
+            double dMeshSize = Math.Sqrt(this.calcShapeModelArea()) * dMeshSizePercent / 100.0f;
 
             foreach (CNode node in NodeList)
             {
@@ -438,10 +442,14 @@ namespace Nodes
             return Resistance;
         }
 
-        public void changeCurrent(CScriptFEMM femm, double dCurrent)
+        public void changeCurrent(CScriptFEMM femm, double dCurrent, double dMeshSizePercent)
         {
+            // MeshSizePercent 에 문제가 있으면 1% 로 초기화 한다.
+            if (dMeshSizePercent <= 0)
+                dMeshSizePercent = 1;
+
             // Mesh Size 는 길이단위이기 때문에 면적을 루트 취한 값과 곱하고 있다.
-            double dMeshSize = Math.Sqrt(this.calcShapeModelArea()) * CSettingData.m_dMeshLevelPercent / 100.0f;
+            double dMeshSize = Math.Sqrt(this.calcShapeModelArea()) * dMeshSizePercent / 100.0f;
 
             foreach (CNode node in NodeList)
             {
@@ -487,12 +495,11 @@ namespace Nodes
                         listMaterial.Add(strMaterial);
                         femm.getMaterial(nodeParts.getMaterial());
                     }
-
                 }
             }
         }
 
-        public void setBoundary(CScriptFEMM femm, double dPlusMovingStroke = 0, double dMinusMovingStroke = 0)
+        public void setBoundary(CScriptFEMM femm, double dMeshSizePercent, double dPlusMovingStroke, double dMinusMovingStroke)
         {
             const int iPaddingPercent = 200;
 
@@ -505,8 +512,12 @@ namespace Nodes
             double lengthX = Math.Abs(maxX - minX);
             double lengthY = Math.Abs(maxY - minY);
 
+            // MeshSizePercent 에 문제가 있으면 1% 로 초기화 한다.
+            if (dMeshSizePercent <= 0)
+                dMeshSizePercent = 1;
+
             // Mesh Size 는 길이단위이기 때문에 면적을 루트 취한 값과 곱하고 있다.
-            double dMeshSize = Math.Sqrt(this.calcShapeModelArea()) * CSettingData.m_dMeshLevelPercent / 100.0f;
+            double dMeshSize = Math.Sqrt(this.calcShapeModelArea()) * dMeshSizePercent / 100.0f;
 
             double padLengthX = lengthX * iPaddingPercent / 100.0f;
             double padLengthY = lengthY * iPaddingPercent / 100.0f;
