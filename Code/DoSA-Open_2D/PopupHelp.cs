@@ -26,13 +26,13 @@ namespace DoSA
 
             if (CSettingData.m_emLanguage == EMLanguage.Korean)
             {
-                buttonDoSAUserGuide.Text = "DoSA 사용 설명서";
+                buttonUserGuide.Text = "사용 설명서";
                 buttonVCMGuide.Text = "VCM 예제 따라하기";
                 buttonSolenoidGuide.Text = "Solenoid 예제 따라하기";
             }
             else
             {
-                buttonDoSAUserGuide.Text = "DoSA User Manual";
+                buttonUserGuide.Text = "User Manual";
                 buttonVCMGuide.Text = "VCM Example";
                 buttonSolenoidGuide.Text = "Solenoid Example";
             }
@@ -49,9 +49,9 @@ namespace DoSA
             CultureInfo ctInfo = Thread.CurrentThread.CurrentCulture;
 
             if (ctInfo.Name == "en-US")
-                strHelpFileFullName = Path.Combine(CSettingData.m_strProgramDirName, "Help", "DoSA_User_Guide_ENG.pdf");
+                strHelpFileFullName = Path.Combine(CSettingData.m_strProgramDirName, "Help", "User_Guide_ENG.pdf");
             else if (ctInfo.Name == "ko-KR")
-                strHelpFileFullName = Path.Combine(CSettingData.m_strProgramDirName, "Help", "DoSA_User_Guide_KOR.pdf");
+                strHelpFileFullName = Path.Combine(CSettingData.m_strProgramDirName, "Help", "User_Guide_KOR.pdf");
             else
                 return;
 

@@ -28,21 +28,21 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.buttonDoSAUserGuide = new System.Windows.Forms.Button();
+            this.buttonUserGuide = new System.Windows.Forms.Button();
             this.buttonVCMGuide = new System.Windows.Forms.Button();
             this.buttonSolenoidGuide = new System.Windows.Forms.Button();
             this.buttonHelpClose = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
-            // buttonDoSAUserGuide
+            // buttonUserGuide
             // 
-            this.buttonDoSAUserGuide.Location = new System.Drawing.Point(40, 32);
-            this.buttonDoSAUserGuide.Name = "buttonDoSAUserGuide";
-            this.buttonDoSAUserGuide.Size = new System.Drawing.Size(233, 30);
-            this.buttonDoSAUserGuide.TabIndex = 0;
-            this.buttonDoSAUserGuide.Text = "DoSA User Manual";
-            this.buttonDoSAUserGuide.UseVisualStyleBackColor = true;
-            this.buttonDoSAUserGuide.Click += new System.EventHandler(this.buttonDoSAUserGuide_Click);
+            this.buttonUserGuide.Location = new System.Drawing.Point(40, 32);
+            this.buttonUserGuide.Name = "buttonUserGuide";
+            this.buttonUserGuide.Size = new System.Drawing.Size(233, 30);
+            this.buttonUserGuide.TabIndex = 0;
+            this.buttonUserGuide.Text = "User Manual";
+            this.buttonUserGuide.UseVisualStyleBackColor = true;
+            this.buttonUserGuide.Click += new System.EventHandler(this.buttonDoSAUserGuide_Click);
             // 
             // buttonVCMGuide
             // 
@@ -82,7 +82,7 @@
             this.Controls.Add(this.buttonHelpClose);
             this.Controls.Add(this.buttonSolenoidGuide);
             this.Controls.Add(this.buttonVCMGuide);
-            this.Controls.Add(this.buttonDoSAUserGuide);
+            this.Controls.Add(this.buttonUserGuide);
             this.Name = "PopupHelp";
             this.Text = "Help";
             this.ResumeLayout(false);
@@ -91,7 +91,7 @@
 
         #endregion
 
-        private System.Windows.Forms.Button buttonDoSAUserGuide;
+        private System.Windows.Forms.Button buttonUserGuide;
         private System.Windows.Forms.Button buttonVCMGuide;
         private System.Windows.Forms.Button buttonSolenoidGuide;
         private System.Windows.Forms.Button buttonHelpClose;

@@ -109,6 +109,12 @@
     <Compile Include="PopupHelp.Designer.cs">
       <DependentUpon>PopupHelp.cs</DependentUpon>
     </Compile>
+    <Compile Include="PopupNewVersion.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="PopupNewVersion.designer.cs">
+      <DependentUpon>PopupNewVersion.cs</DependentUpon>
+    </Compile>
     <Compile Include="PopupShape.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -148,6 +154,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="PopupHelp.resx">
       <DependentUpon>PopupHelp.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="PopupNewVersion.resx">
+      <DependentUpon>PopupNewVersion.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="PopupShape.resx">
       <DependentUpon>PopupShape.cs</DependentUpon>
