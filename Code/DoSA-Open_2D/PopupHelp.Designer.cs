@@ -28,41 +28,13 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.buttonUserGuide = new System.Windows.Forms.Button();
-            this.buttonVCMGuide = new System.Windows.Forms.Button();
-            this.buttonSolenoidGuide = new System.Windows.Forms.Button();
             this.buttonHelpClose = new System.Windows.Forms.Button();
+            this.groupBoxHelp = new System.Windows.Forms.GroupBox();
+            this.buttonSolenoidGuide = new System.Windows.Forms.Button();
+            this.buttonVCMGuide = new System.Windows.Forms.Button();
+            this.buttonUserGuide = new System.Windows.Forms.Button();
+            this.groupBoxHelp.SuspendLayout();
             this.SuspendLayout();
-            // 
-            // buttonUserGuide
-            // 
-            this.buttonUserGuide.Location = new System.Drawing.Point(40, 32);
-            this.buttonUserGuide.Name = "buttonUserGuide";
-            this.buttonUserGuide.Size = new System.Drawing.Size(233, 30);
-            this.buttonUserGuide.TabIndex = 0;
-            this.buttonUserGuide.Text = "User Manual";
-            this.buttonUserGuide.UseVisualStyleBackColor = true;
-            this.buttonUserGuide.Click += new System.EventHandler(this.buttonDoSAUserGuide_Click);
-            // 
-            // buttonVCMGuide
-            // 
-            this.buttonVCMGuide.Location = new System.Drawing.Point(40, 78);
-            this.buttonVCMGuide.Name = "buttonVCMGuide";
-            this.buttonVCMGuide.Size = new System.Drawing.Size(233, 30);
-            this.buttonVCMGuide.TabIndex = 1;
-            this.buttonVCMGuide.Text = "VCM Example";
-            this.buttonVCMGuide.UseVisualStyleBackColor = true;
-            this.buttonVCMGuide.Click += new System.EventHandler(this.buttonVCMGuide_Click);
-            // 
-            // buttonSolenoidGuide
-            // 
-            this.buttonSolenoidGuide.Location = new System.Drawing.Point(40, 124);
-            this.buttonSolenoidGuide.Name = "buttonSolenoidGuide";
-            this.buttonSolenoidGuide.Size = new System.Drawing.Size(233, 30);
-            this.buttonSolenoidGuide.TabIndex = 2;
-            this.buttonSolenoidGuide.Text = "Solenoid Example";
-            this.buttonSolenoidGuide.UseVisualStyleBackColor = true;
-            this.buttonSolenoidGuide.Click += new System.EventHandler(this.buttonSolenoidGuide_Click);
             // 
             // buttonHelpClose
             // 
@@ -74,26 +46,65 @@
             this.buttonHelpClose.UseVisualStyleBackColor = true;
             this.buttonHelpClose.Click += new System.EventHandler(this.buttonHelpClose_Click);
             // 
+            // groupBoxHelp
+            // 
+            this.groupBoxHelp.Controls.Add(this.buttonSolenoidGuide);
+            this.groupBoxHelp.Controls.Add(this.buttonVCMGuide);
+            this.groupBoxHelp.Controls.Add(this.buttonUserGuide);
+            this.groupBoxHelp.Location = new System.Drawing.Point(12, 12);
+            this.groupBoxHelp.Name = "groupBoxHelp";
+            this.groupBoxHelp.Size = new System.Drawing.Size(285, 172);
+            this.groupBoxHelp.TabIndex = 4;
+            this.groupBoxHelp.TabStop = false;
+            this.groupBoxHelp.Text = "Help";
+            // 
+            // buttonSolenoidGuide
+            // 
+            this.buttonSolenoidGuide.Location = new System.Drawing.Point(26, 119);
+            this.buttonSolenoidGuide.Name = "buttonSolenoidGuide";
+            this.buttonSolenoidGuide.Size = new System.Drawing.Size(233, 30);
+            this.buttonSolenoidGuide.TabIndex = 5;
+            this.buttonSolenoidGuide.Text = "Solenoid Example";
+            this.buttonSolenoidGuide.UseVisualStyleBackColor = true;
+            // 
+            // buttonVCMGuide
+            // 
+            this.buttonVCMGuide.Location = new System.Drawing.Point(26, 73);
+            this.buttonVCMGuide.Name = "buttonVCMGuide";
+            this.buttonVCMGuide.Size = new System.Drawing.Size(233, 30);
+            this.buttonVCMGuide.TabIndex = 4;
+            this.buttonVCMGuide.Text = "VCM Example";
+            this.buttonVCMGuide.UseVisualStyleBackColor = true;
+            // 
+            // buttonUserGuide
+            // 
+            this.buttonUserGuide.Location = new System.Drawing.Point(26, 27);
+            this.buttonUserGuide.Name = "buttonUserGuide";
+            this.buttonUserGuide.Size = new System.Drawing.Size(233, 30);
+            this.buttonUserGuide.TabIndex = 3;
+            this.buttonUserGuide.Text = "User Manual";
+            this.buttonUserGuide.UseVisualStyleBackColor = true;
+            // 
             // PopupHelp
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(309, 233);
+            this.Controls.Add(this.groupBoxHelp);
             this.Controls.Add(this.buttonHelpClose);
-            this.Controls.Add(this.buttonSolenoidGuide);
-            this.Controls.Add(this.buttonVCMGuide);
-            this.Controls.Add(this.buttonUserGuide);
             this.Name = "PopupHelp";
             this.Text = "Help";
+            this.groupBoxHelp.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }
 
         #endregion
 
-        private System.Windows.Forms.Button buttonUserGuide;
-        private System.Windows.Forms.Button buttonVCMGuide;
-        private System.Windows.Forms.Button buttonSolenoidGuide;
         private System.Windows.Forms.Button buttonHelpClose;
+        private System.Windows.Forms.GroupBox groupBoxHelp;
+        private System.Windows.Forms.Button buttonSolenoidGuide;
+        private System.Windows.Forms.Button buttonVCMGuide;
+        private System.Windows.Forms.Button buttonUserGuide;
     }
 }

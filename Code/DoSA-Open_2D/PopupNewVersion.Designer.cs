@@ -34,7 +34,7 @@
             this.buttonStopNotice = new System.Windows.Forms.Button();
             this.buttonOpenWebSite = new System.Windows.Forms.Button();
             this.labelNewVersionDisplay = new System.Windows.Forms.Label();
-            this.labelNewVerstion = new System.Windows.Forms.Label();
+            this.labelNewVersion = new System.Windows.Forms.Label();
             this.buttonClose = new System.Windows.Forms.Button();
             this.groupBoxNotice.SuspendLayout();
             this.SuspendLayout();
@@ -46,7 +46,7 @@
             this.groupBoxNotice.Controls.Add(this.buttonStopNotice);
             this.groupBoxNotice.Controls.Add(this.buttonOpenWebSite);
             this.groupBoxNotice.Controls.Add(this.labelNewVersionDisplay);
-            this.groupBoxNotice.Controls.Add(this.labelNewVerstion);
+            this.groupBoxNotice.Controls.Add(this.labelNewVersion);
             this.groupBoxNotice.Location = new System.Drawing.Point(12, 12);
             this.groupBoxNotice.Name = "groupBoxNotice";
             this.groupBoxNotice.Size = new System.Drawing.Size(319, 216);
@@ -70,7 +70,7 @@
             this.labelProductVersion.Name = "labelProductVersion";
             this.labelProductVersion.Size = new System.Drawing.Size(214, 12);
             this.labelProductVersion.TabIndex = 5;
-            this.labelProductVersion.Text = "- Your DoSA-Open_3D Version : Ver.";
+            this.labelProductVersion.Text = "- Your DoSA-Open_2D Version : Ver.";
             // 
             // buttonStopNotice
             // 
@@ -101,14 +101,14 @@
             this.labelNewVersionDisplay.TabIndex = 1;
             this.labelNewVersionDisplay.Text = "0.1.0.0";
             // 
-            // labelNewVerstion
+            // labelNewVersion
             // 
-            this.labelNewVerstion.AutoSize = true;
-            this.labelNewVerstion.Location = new System.Drawing.Point(26, 28);
-            this.labelNewVerstion.Name = "labelNewVerstion";
-            this.labelNewVerstion.Size = new System.Drawing.Size(214, 12);
-            this.labelNewVerstion.TabIndex = 1;
-            this.labelNewVerstion.Text = "- New DoSA-Open_3D Version : Ver.";
+            this.labelNewVersion.AutoSize = true;
+            this.labelNewVersion.Location = new System.Drawing.Point(26, 28);
+            this.labelNewVersion.Name = "labelNewVersion";
+            this.labelNewVersion.Size = new System.Drawing.Size(214, 12);
+            this.labelNewVersion.TabIndex = 1;
+            this.labelNewVersion.Text = "- New DoSA-Open_2D Version : Ver.";
             // 
             // buttonClose
             // 
@@ -140,7 +140,7 @@
         private System.Windows.Forms.GroupBox groupBoxNotice;
         private System.Windows.Forms.Button buttonStopNotice;
         private System.Windows.Forms.Button buttonOpenWebSite;
-        private System.Windows.Forms.Label labelNewVerstion;
+        private System.Windows.Forms.Label labelNewVersion;
         private System.Windows.Forms.Button buttonClose;
         private System.Windows.Forms.Label labelProductVersionDisplay;
         private System.Windows.Forms.Label labelProductVersion;
