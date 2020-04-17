@@ -66,6 +66,7 @@
             this.buttonSolenoidGuide.TabIndex = 5;
             this.buttonSolenoidGuide.Text = "Solenoid Example";
             this.buttonSolenoidGuide.UseVisualStyleBackColor = true;
+            this.buttonSolenoidGuide.Click += new System.EventHandler(this.buttonSolenoidGuide_Click);
             // 
             // buttonVCMGuide
             // 
@@ -75,6 +76,7 @@
             this.buttonVCMGuide.TabIndex = 4;
             this.buttonVCMGuide.Text = "VCM Example";
             this.buttonVCMGuide.UseVisualStyleBackColor = true;
+            this.buttonVCMGuide.Click += new System.EventHandler(this.buttonVCMGuide_Click);
             // 
             // buttonUserGuide
             // 
@@ -84,6 +86,7 @@
             this.buttonUserGuide.TabIndex = 3;
             this.buttonUserGuide.Text = "User Manual";
             this.buttonUserGuide.UseVisualStyleBackColor = true;
+            this.buttonUserGuide.Click += new System.EventHandler(this.buttonDoSAUserGuide_Click);
             // 
             // PopupHelp
             // 
