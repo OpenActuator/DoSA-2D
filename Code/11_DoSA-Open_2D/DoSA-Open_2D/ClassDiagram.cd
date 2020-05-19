@@ -1,0 +1,102 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Class Name="Experiments.CExperiment">
+    <Position X="3.25" Y="3.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AgAAAAAAAAAAAAAAgACAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Experiments.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Experiments.CForceExperiment">
+    <Position X="3" Y="6.25" Width="1.75" />
+    <TypeIdentifier>
+      <HashCode>AgAAAAAAAAAAAAAAAAAAAAAAADAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Experiments.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Experiments.CStrokeExperiment">
+    <Position X="0.5" Y="6.25" Width="1.75" />
+    <TypeIdentifier>
+      <HashCode>AgAAAAAAAQAAAAAAAAAAAIIAACAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Experiments.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Experiments.CCurrentExperiment">
+    <Position X="5.5" Y="6.25" Width="1.75" />
+    <TypeIdentifier>
+      <HashCode>AgAAAAAAAAAAAAAAgAiAAAIAADAAAAAAAAAAAAAAAEA=</HashCode>
+      <FileName>Experiments.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Nodes.CNode">
+    <Position X="7" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AgAAAAAAAAAAAAACAAAAAAAAACACAAAAAAAAAAAAAAE=</HashCode>
+      <FileName>Nodes.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Nodes.CDesign">
+    <Position X="15.75" Y="0.5" Width="2" />
+    <TypeIdentifier>
+      <HashCode>QYFAAEAEiGAYAAAAAAcIAAAIgCEAABEBAAgAAAAAAAA=</HashCode>
+      <FileName>Nodes.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Parts.CParts">
+    <Position X="10.5" Y="3.75" Width="2" />
+    <TypeIdentifier>
+      <HashCode>QCAAAAAAAAAAAAAAAAAABAAAAAAAAAAAQAAAQAAAEAA=</HashCode>
+      <FileName>Parts.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Parts.CCoil">
+    <Position X="8" Y="7.25" Width="2" />
+    <TypeIdentifier>
+      <HashCode>AkAEQAAABoAEAAACAAAAIAAIEiAAJABUAEAAABANAAA=</HashCode>
+      <FileName>Parts.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Parts.CMagnet">
+    <Position X="10.75" Y="7.25" Width="1.75" />
+    <TypeIdentifier>
+      <HashCode>AkAAAAAAAAAAAAAAAAAAAAAAACAAAAAAASAAAAAAAAA=</HashCode>
+      <FileName>Parts.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Parts.CSteel">
+    <Position X="13.25" Y="7.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AkAAAAAAAAAAAAAAAAAAAAAAACAAAAAAACAAAAAAAAA=</HashCode>
+      <FileName>Parts.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Scripts.CScriptFEMM">
+    <Position X="25" Y="0.5" Width="2" />
+    <TypeIdentifier>
+      <HashCode>YBAgAAwAAAAAABACAEEBAAACEEAQQAAgAKAAgKkQBCA=</HashCode>
+      <FileName>ScriptFemm.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Shapes.CFace">
+    <Position X="18" Y="0.5" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>gAAAABAgAACsAAQAAAAAAAAAACCAgADIgAAMQACQCCE=</HashCode>
+      <FileName>Shapes.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Shapes.CLine">
+    <Position X="20.5" Y="0.5" Width="2" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAABAAAAAAAAAAAAAAAAAAAEAAAAAAAAAAAA=</HashCode>
+      <FileName>Shapes.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Shapes.CPoint">
+    <Position X="22.75" Y="0.5" Width="2" />
+    <TypeIdentifier>
+      <HashCode>AAAIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAGAAAAAgAAA=</HashCode>
+      <FileName>Shapes.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Font Name="Malgun Gothic" Size="9" />
+</ClassDiagram>
