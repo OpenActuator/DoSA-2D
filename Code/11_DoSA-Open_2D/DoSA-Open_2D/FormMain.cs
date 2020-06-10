@@ -222,9 +222,9 @@ namespace DoSA
                         string target;
 
                         if (CSettingData.m_emLanguage == EMLanguage.Korean)
-                            target = "http://solenoid.or.kr/index_dosa_kor.html";
+                            target = "http://solenoid.or.kr/index_dosa_open_2d_kor.html";
                         else
-                            target = "http://solenoid.or.kr/index_dosa_eng.html";
+                            target = "http://solenoid.or.kr/index_dosa_open_2d_eng.html";
 
                         try
                         {
@@ -1760,8 +1760,8 @@ namespace DoSA
 
                 CReadFile readFile = new CReadFile();
 
-                readFile.readCSVRowData(strStrokeFileFullName, ref listDataX, 0, 0);
-                readFile.readCSVRowData(strStrokeFileFullName, ref listDataY, 1, 0);
+                readFile.readCSVColumnData2(strStrokeFileFullName, ref listDataX, 1);
+                readFile.readCSVColumnData2(strStrokeFileFullName, ref listDataY, 2);
 
                 if (listDataX.Count != listDataY.Count)
                 {
@@ -1819,8 +1819,8 @@ namespace DoSA
 
                 CReadFile readFile = new CReadFile();
 
-                readFile.readCSVRowData(strCurrentFileFullName, ref listDataX, 0, 0);
-                readFile.readCSVRowData(strCurrentFileFullName, ref listDataY, 1, 0);
+                readFile.readCSVColumnData2(strCurrentFileFullName, ref listDataX, 1);
+                readFile.readCSVColumnData2(strCurrentFileFullName, ref listDataY, 2);
 
                 if (listDataX.Count != listDataY.Count)
                 {

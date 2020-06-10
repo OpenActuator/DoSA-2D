@@ -586,14 +586,128 @@ namespace gtLibrary
         /// 특정 행의 구분자로 나누어지는 데이터들을 얻어온다
         /// </summary>
         /// <param name="strCSVFileFullName"></param>
-        /// <param name="listColumnData"></param>
-        /// <param name="iLineNumber"></param>
+        /// <param name="listLowData">행의 여러 데이터를 담는 리스트</param>
+        /// <param name="iLowNumber">행의 번호 (1부터 ~ , 인덱스 아님)</param>
         /// <returns></returns>
-        public bool readCSVColumnData(string strCSVFileFullName, ref List<double> listColumnData, int iLineNumber)
+        public bool readCSVRowData2(string strCSVFileFullName, ref List<double> listLowData, int iLowNumber)
         {
             string[] arrayAllLine;
   
             int nLineCount = 0;
+
+            if(iLowNumber < 1)
+            {
+                CNotice.printTrace("Low Number have to be greater than 1.");
+                return false;
+            }
+
+            // 이전에 사용하던 List 데이터를 우선 삭제한다.
+            listLowData.Clear();
+
+            try
+            {
+                if (false == m_manageFile.isExistFile(strCSVFileFullName))
+                {
+                    ResourceManager resManager = ResourceManager.CreateFileBasedResourceManager("LanguageResource", Application.StartupPath, null);
+
+                    CNotice.printTrace(resManager.GetString("TIAA5") + strCSVFileFullName + resManager.GetString("_TDNE"));
+                    return false;
+                }
+
+                arrayAllLine = File.ReadAllLines(strCSVFileFullName);
+
+                // string Array 를 List 에 담는다.
+                foreach (string strLine in arrayAllLine)
+                {
+                    nLineCount++;
+
+                    //특정 행을 제외한다. 주로 상단 제목줄을 제외할 때 사용한다.
+                    if (nLineCount == iLowNumber)
+                        CParsing.getDataInAllLine(strLine, ref listLowData, ',');
+                }
+            }
+            catch (Exception ex)
+            {
+                CNotice.printTrace(ex.Message);
+                return false;
+            }
+
+            return true;
+        }
+
+        /// <summary>
+        /// 특정 행의 구분자로 나누어지는 문자열들을 얻어온다
+        /// </summary>
+        /// <param name="strCSVFileFullName"></param>
+        /// <param name="listLowString">행의 여러 문자열을 담는 리스트</param>
+        /// <param name="iLowNumber">행의 번호 (1부터 ~ , 인덱스 아님)</param>
+        /// <returns></returns>
+        public bool readCSVRowString2(string strCSVFileFullName, ref List<string> listLowString, int iLowNumber)
+        {
+            string[] arrayAllLine;
+
+            int nLineCount = 0;
+
+            if (iLowNumber < 1)
+            {
+                CNotice.printTrace("Low Number have to be greater than 1.");
+                return false;
+            }
+
+            // 이전에 사용하던 List 데이터를 우선 삭제한다.
+            listLowString.Clear();
+
+            try
+            {
+                if (false == m_manageFile.isExistFile(strCSVFileFullName))
+                {
+                    ResourceManager resManager = ResourceManager.CreateFileBasedResourceManager("LanguageResource", Application.StartupPath, null);
+
+                    CNotice.printTrace(resManager.GetString("TIAA5") + strCSVFileFullName + resManager.GetString("_TDNE"));
+                    return false;
+                }
+
+                arrayAllLine = File.ReadAllLines(strCSVFileFullName);
+
+                // string Array 를 List 에 담는다.
+                foreach (string strLine in arrayAllLine)
+                {
+                    nLineCount++;
+
+                    //특정 행을 제외한다. 주로 상단 제목줄을 제외할 때 사용한다.
+                    if (nLineCount == iLowNumber)
+                        CParsing.getStringInAllLine(strLine, ref listLowString, ',');
+                }
+            }
+            catch (Exception ex)
+            {
+                CNotice.printTrace(ex.Message);
+                return false;
+            }
+
+            return true;
+        }
+
+        /// <summary>
+        /// ',' 로 구분되는 CSV 파일에서 특정 열(Row) 의 데이터 들을 List 에 담아서 리턴한다. 
+        /// </summary>
+        /// <param name="strCSVFileFullName"></param>
+        /// <param name="listColumnData">열의 여러 데이터를 담는 리스트</param>
+        /// <param name="iColumnNumber">열의 번호 (1부터 ~ , 인덱스 아님)</param>
+        /// <param name="iExceptionRowNumber">특정 행 제외 (1부터 ~ , 인덱스 아님, 주로 상단 제목줄을 제외할 때 사용함).</param>
+        /// <returns></returns>
+        public bool readCSVColumnData2(string strCSVFileFullName, ref List<double> listColumnData, int iColumnNumber, int iExceptionRowNumber = -1)
+        {
+            string[] arrayAllLine;
+            string[] arraySeperatedLine;
+
+            int nLineCount = 0;
+
+            if (iColumnNumber < 1)
+            {
+                CNotice.printTrace("Column Number have to be greater than 1.");
+                return false;
+            }
 
             // 이전에 사용하던 List 데이터를 우선 삭제한다.
             listColumnData.Clear();
@@ -616,8 +730,24 @@ namespace gtLibrary
                     nLineCount++;
 
                     //특정 행을 제외한다. 주로 상단 제목줄을 제외할 때 사용한다.
-                    if (nLineCount == iLineNumber)
-                        CParsing.getDataInAllLine(strLine, ref listColumnData, ',');
+                    if (nLineCount != iExceptionRowNumber)
+                    {
+                        arraySeperatedLine = strLine.Split(',');
+
+                        // iColumnNumber 가 인덱스가 아니고 번호이기 때문에 <= 를 사용하지 않는다.
+                        if (arraySeperatedLine.Length < iColumnNumber)
+                        {
+                            //==========================================================
+                            // 추후 Resource 파일을 수정하라. (index -> number)
+                            //==========================================================
+                            CNotice.printTrace("Column Number is greater than column data size.");
+                            //CNotice.printTraceID("TCII");
+                            return false;
+                        }
+
+                        // iColumnNumber 가 인덱스가 아니고 번호이기 때문에 -1 을 사용한다.
+                        listColumnData.Add(Convert.ToDouble(arraySeperatedLine[iColumnNumber - 1]));
+                    }
                 }
             }
             catch (Exception ex)
@@ -630,17 +760,25 @@ namespace gtLibrary
         }
 
         /// <summary>
-        /// 특정 행의 구분자로 나누어지는 문자열들을 얻어온다
+        /// ',' 로 구분되는 CSV 파일에서 특정 열(Row) 의 문자열 들을 List 에 담아서 리턴한다. 
         /// </summary>
-        /// <param name="strCSVFileFullName"></param>
-        /// <param name="listColumnString"></param>
-        /// <param name="iLineNumber"></param>
+        /// <param name="strCSVFileFullName">파일명</param>
+        /// <param name="listColumnString">열의 여러 문자열을 담는 리스트</param>
+        /// <param name="iColumnNumber">열의 번호 (1부터 ~ , 인덱스 아님)</param>
+        /// <param name="iExceptionRowNumber">특정 행 제외 (1부터 ~ , 인덱스 아님, 주로 상단 제목줄을 제외할 때 사용함).</param>
         /// <returns></returns>
-        public bool readCSVColumnString(string strCSVFileFullName, ref List<string> listColumnString, int iLineNumber)
+        public bool readCSVColumnString2(string strCSVFileFullName, ref List<string> listColumnString, int iColumnNumber, int iExceptionRowNumber = -1)
         {
             string[] arrayAllLine;
+            string[] arraySeperatedLine;
 
             int nLineCount = 0;
+
+            if (iColumnNumber < 1)
+            {
+                CNotice.printTrace("Column Number have to be greater than 1.");
+                return false;
+            }
 
             // 이전에 사용하던 List 데이터를 우선 삭제한다.
             listColumnString.Clear();
@@ -663,125 +801,23 @@ namespace gtLibrary
                     nLineCount++;
 
                     //특정 행을 제외한다. 주로 상단 제목줄을 제외할 때 사용한다.
-                    if (nLineCount == iLineNumber)
-                        CParsing.getStringInAllLine(strLine, ref listColumnString, ',');
-                }
-            }
-            catch (Exception ex)
-            {
-                CNotice.printTrace(ex.Message);
-                return false;
-            }
-
-            return true;
-        }
-
-        /// <summary>
-        /// ',' 로 구분되는 CSV 파일에서 특정 열(Row) 의 데이터 들을 List 에 담아서 리턴한다. 
-        /// </summary>
-        /// <param name="strCSVFileFullName"></param>
-        /// <param name="iColumeIndex"></param>
-        /// <param name="listRowData"></param>
-        /// <param name="iExceptionRowNumber">특정 행을 제외한다. 주로 상단 제목줄을 제외할 때 사용한다.</param>
-        /// <returns></returns>
-        public bool readCSVRowData(string strCSVFileFullName, ref List<double> listRowData, int iColumeIndex, int iExceptionRowNumber = -1)
-        {
-            string[] arrayAllLine;
-            string[] arraySeperatedLine;
-
-            int nLineCount = 0;
-
-            // 이전에 사용하던 List 데이터를 우선 삭제한다.
-            listRowData.Clear();
-
-            try
-            {
-                if (false == m_manageFile.isExistFile(strCSVFileFullName))
-                {
-                    ResourceManager resManager = ResourceManager.CreateFileBasedResourceManager("LanguageResource", Application.StartupPath, null);
-
-                    CNotice.printTrace(resManager.GetString("TIAA5") + strCSVFileFullName + resManager.GetString("_TDNE"));
-                    return false;
-                }
-
-                arrayAllLine = File.ReadAllLines(strCSVFileFullName);
-
-                // string Array 를 List 에 담는다.
-                foreach (string strLine in arrayAllLine)
-                {
-                    nLineCount++;
-
-                    //특정 행을 제외한다. 주로 상단 제목줄을 제외할 때 사용한다.
                     if (nLineCount != iExceptionRowNumber)
                     {
                         arraySeperatedLine = strLine.Split(',');
 
-                        if (arraySeperatedLine.Length <= iColumeIndex)
+                        // iColumnNumber 가 인덱스가 아니고 번호이기 때문에 <= 를 사용하지 않는다.
+                        if (arraySeperatedLine.Length < iColumnNumber)
                         {
-                            CNotice.printTraceID("TCII");
+                            //==========================================================
+                            // 추후 Resource 파일을 수정하라. (index -> number)
+                            //==========================================================
+                            CNotice.printTrace("Column Number is greater than column data size.");
+                            //CNotice.printTraceID("TCII");
                             return false;
                         }
 
-                        listRowData.Add(Convert.ToDouble(arraySeperatedLine[iColumeIndex - 1]));
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                CNotice.printTrace(ex.Message);
-                return false;
-            }
-
-            return true;
-        }
-
-        /// <summary>
-        /// ',' 로 구분되는 CSV 파일에서 특정 열(Row) 의 문자열 들을 List 에 담아서 리턴한다. 
-        /// </summary>
-        /// <param name="strCSVFileFullName">파일명</param>
-        /// <param name="listRowString">특정 Column만 담을 문자열 List</param>
-        /// <param name="iColumeIndex">Column 번호</param>
-        /// <param name="iExceptionRowCount">제외할 Row (특히, 제목줄)</param>
-        /// <returns></returns>
-        public bool readCSVRowString(string strCSVFileFullName, ref List<string> listRowString, int iColumeIndex, int iExceptionRowNumber = -1)
-        {
-            string[] arrayAllLine;
-            string[] arraySeperatedLine;
-
-            int nLineCount = 0;
-
-            // 이전에 사용하던 List 데이터를 우선 삭제한다.
-            listRowString.Clear();
-
-            try
-            {
-                if (false == m_manageFile.isExistFile(strCSVFileFullName))
-                {
-                    ResourceManager resManager = ResourceManager.CreateFileBasedResourceManager("LanguageResource", Application.StartupPath, null);
-
-                    CNotice.printTrace(resManager.GetString("TIAA5") + strCSVFileFullName + resManager.GetString("_TDNE"));
-                    return false;
-                }
-
-                arrayAllLine = File.ReadAllLines(strCSVFileFullName);
-
-                // string Array 를 List 에 담는다.
-                foreach (string strLine in arrayAllLine)
-                {
-                    nLineCount++;
-
-                    //특정 행을 제외한다. 주로 상단 제목줄을 제외할 때 사용한다.
-                    if (nLineCount != iExceptionRowNumber)
-                    {
-                        arraySeperatedLine = strLine.Split(',');
-
-                        if (arraySeperatedLine.Length < iColumeIndex)
-                        {
-                            CNotice.printTrace("CSV 파일의 지정한 Colume 번호가 데이터 Column 크기보다 큽니다.");
-                            return false;
-                        }
-
-                        listRowString.Add(arraySeperatedLine[iColumeIndex - 1]);
+                        // iColumnNumber 가 인덱스가 아니고 번호이기 때문에 -1 을 사용한다.
+                        listColumnString.Add(arraySeperatedLine[iColumnNumber - 1]);
                     }
                 }
             }

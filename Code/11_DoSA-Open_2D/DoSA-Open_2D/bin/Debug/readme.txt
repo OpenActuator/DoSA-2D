@@ -2,6 +2,9 @@ DoSA-Open_2D
 Gi-Tae Kweon
 zgitae@gmail.com
 
+2020-05-19 Ver(0.9.11.0)
+ - Bug Fix : DoSA can't load the stroke and current test results.
+
 2020-05-19 Ver(0.9.10.0)
  - Remove the administrator permission
 
