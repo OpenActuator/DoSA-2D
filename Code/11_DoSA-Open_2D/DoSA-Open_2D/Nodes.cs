@@ -465,35 +465,46 @@ namespace Nodes
             }
         }
 
-        public void getMaterial(CScriptFEMM femm)
+        /// <summary>
+        /// 해석 모델안으로 사용하는 재질들을 추가한다.
+        /// </summary>
+        /// <param name="femm"></param>
+        public void addMaterials(CScriptFEMM femm)
         {
-            List<string> listMaterial = new List<string>();
+            // 겹치는 재질을 제외하기 위해 사용한다.
+            List<string> listTempMaterial = new List<string>();
+
             string strMaterial = "Air";
-            CParts nodeParts = null;
 
             bool bCheck;
 
-            femm.getMaterial(strMaterial);
-            listMaterial.Add(strMaterial);
+            // Air 는 무조건 사용하기 때문에 여기서 우선적으로 추가해 둔다.
+            femm.addMaterial(strMaterial);
+            listTempMaterial.Add(strMaterial);
 
             foreach (CNode node in NodeList)
             {
                 bCheck = false;
                 if (node.GetType().BaseType.Name == "CParts")
                 {
-                    nodeParts = (CParts)node;
-                    strMaterial = nodeParts.getMaterial();
+                    strMaterial = ((CParts)node).getMaterial();
 
                     /// 현 파트의 재료가 기존에 저장된 Material 과 겹치는지를 확인한다.
-                    foreach (string strTemp in listMaterial)
+                    foreach (string strTemp in listTempMaterial)
                         if (strTemp == strMaterial)
                             bCheck = true;
 
                     // 겹치지 않는 재료만 추가한다.
                     if (bCheck == false)
                     {
-                        listMaterial.Add(strMaterial);
-                        femm.getMaterial(nodeParts.getMaterial());
+                        femm.addMaterial(strMaterial);
+                        listTempMaterial.Add(strMaterial);
+
+                        // 발생해서는 안되는 상황이 발생하는 경우
+                        if(strMaterial == "")
+                        {
+                            CNotice.printTrace("재질이 설정되지 않는 파트가 존재해 해석 오류가 발생한다.");
+                        }
                     }
                 }
             }

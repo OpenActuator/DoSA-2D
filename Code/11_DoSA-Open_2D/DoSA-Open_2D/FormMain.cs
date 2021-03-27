@@ -68,7 +68,7 @@ namespace DoSA
             CSettingData.m_strProgramDirName = System.Windows.Forms.Application.StartupPath;
 
             // 기존에 동작을 하고 있는 FEMM 이 있으면 오류가 발생한다.
-            killProcessOfFEMM();
+            CProgramFEMM.killProcessOfFEMMs();
 
             m_resManager = ResourceManager.CreateFileBasedResourceManager("LanguageResource", Application.StartupPath, null);
 
@@ -122,11 +122,13 @@ namespace DoSA
                 m_strCommandLineDesignFullName = strDSAFileFullName;
                 if(strDataFileFullName != null)
                     m_strCommandLineDataFullName = strDataFileFullName;
-            }                
+            }
+
         }
 
 
-        private void checkVersion()
+
+        private void checkDoSAVersion()
         {
             try
             {
@@ -266,7 +268,7 @@ namespace DoSA
             try
             {
                 // 설치버전을 확인 한다.
-                checkVersion();
+                checkDoSAVersion();
 
                 /// Net Framework V4.51 이전버전이 설치 되었는지를 확인한다.
                 bool retFreamework = checkFramework451();
@@ -332,7 +334,7 @@ namespace DoSA
                 {
                     frmSetting.loadSettingFromFile();
 
-                    if (CSettingData.isDataOK(false) == false)
+                    if (CSettingData.isSettingDataOK(false) == false)
                     {
                         CNotice.noticeWarningID("TIAP7");
 
@@ -359,9 +361,10 @@ namespace DoSA
 
                 /// FEMM 버전을 확인한다.
                 /// 
-                bool retFEMM = checkVersionOfFEMM();
+                int yearOfFEMM = CProgramFEMM.getYearFEMM();
 
-                if (retFEMM == false)
+                // 2017 년 이전 버전이면 설치를 유도한다.
+                if (yearOfFEMM < 2017)
                 {
                     DialogResult result = CNotice.noticeWarningOKCancelID("DRIO", "W");
 
@@ -400,72 +403,175 @@ namespace DoSA
         #endregion
 
         #region--------------------- 재질 초기화 ---------------------------
-        
+
+        //-------------------------------------------------------------------------------------------
+        // 재질 관련 
+        //
+        // - DoSA-Open_2D 은 사용자 재질을 지원하지 않고 FEMM 내장 재질만 사용한다.
+        //   따라서 FEMM 내장 재질의 이름으로 해석모델 자동생성에서 재질을 설정하기 때문에 DoSA-Open_2D 에서 사용하는 재질명과 FEMM 내장 재질의 이름을 같아야 한다. 
+        //   (FEMM Ver 21Apr2019 에서 재질명이 변경되면서 문제가 발생하였음)
+        //
+        // - DoSA-Open_2D 에서 내장하고 있는 DoSA.dmat 파일은 해석모델을 생성할 때 재질을 생성하는 목적이 아니라
+        //   단지, S/W 안에서 BH 곡선을 표시하기 위한 파일이다.
+        //   loadMaterial() 안에서 추가되는 연자성체의 재질이 DoSA.dmat 에 존재하지 않는다면 연자성체의 BH 곡선이 표시되지 않는다.
+        //
+        // - loadMaterial() 에서 S/W 에서 사용가능한 모든 재질의 명칭을 읽어드린다.
+        //   항상, FEMM 의 내장 재질명과 명칭을 같게 유지해야 한다.
+        //-------------------------------------------------------------------------------------------
         private void loadMaterial()
         {
             List<string> listMaterialName = new List<string>();
 
             try
             {
+                if(CProgramFEMM.getYearFEMM() >= 2019)
+                {
+                    //------------------------------------------------
+                    // 자기회로 Maxwell 내장 연자성 재료
+                    //------------------------------------------------
+                    // 내장 연자성재료를 추가할 때는 BH 곡선의 내장 연자성재료 설정도 같이 변경해 주어야 한다
+                    CMaterialListInFEMM.steelList.Add("Pure Iron");
 
-                #region //--------------------- 기본 재료 추가하기 -------------------------
+                    CMaterialListInFEMM.steelList.Add("1006 Steel");
+                    CMaterialListInFEMM.steelList.Add("1010 Steel");
+                    CMaterialListInFEMM.steelList.Add("1018 Steel");
+                    CMaterialListInFEMM.steelList.Add("1020 Steel");
+                    CMaterialListInFEMM.steelList.Add("1117 Steel");
 
-                //------------------------------------------------
-                // 자기회로 Maxwell 내장 연자성 재료
-                //------------------------------------------------
-                // 내장 연자성재료를 추가할 때는 BH 곡선의 내장 연자성재료 설정도 같이 변경해 주어야 한다
-                CPropertyItemList.steelList.Add("Pure Iron");
+                    CMaterialListInFEMM.steelList.Add("416 Stainless Steel");
+                    CMaterialListInFEMM.steelList.Add("430 Stainless Steel");
+                    CMaterialListInFEMM.steelList.Add("455 Stainless Steel");
+
+                    CMaterialListInFEMM.steelList.Add("M-19 Steel");
+                    CMaterialListInFEMM.steelList.Add("M-27 Steel");
+                    CMaterialListInFEMM.steelList.Add("M-36 Steel");
+                    CMaterialListInFEMM.steelList.Add("M-43 Steel");
+                    CMaterialListInFEMM.steelList.Add("M-45 Steel");
+
+                    // 자기회로 Maxwell 내장 비자성 재료
+                    // 내장 비자성재료를 추가할 때도 BH 곡선의 내장 비자성재료 설정도 같이 변경해 주어야 한다
+                    CMaterialListInFEMM.steelList.Add("Aluminum, 1100");
+                    CMaterialListInFEMM.steelList.Add("Copper");
+                    CMaterialListInFEMM.steelList.Add("316 Stainless Steel");
+                    CMaterialListInFEMM.steelList.Add("304 Stainless Steel");
+
+                    // 해당 Steel 을 사용하지 않은 경우를 대비해 재질 Air 를 인가할 수 있도록 한다.
+                    CMaterialListInFEMM.steelList.Add("Air");
+
+                    //------------------------------------------------
+                    // 자기회로 내장 영구자석
+                    //------------------------------------------------
+                    CMaterialListInFEMM.magnetList.Add("N30");
+                    CMaterialListInFEMM.magnetList.Add("N33");
+                    CMaterialListInFEMM.magnetList.Add("N35");
+                    CMaterialListInFEMM.magnetList.Add("N38");
+                    CMaterialListInFEMM.magnetList.Add("N40");
+                    CMaterialListInFEMM.magnetList.Add("N42");
+                    CMaterialListInFEMM.magnetList.Add("N45");
+                    CMaterialListInFEMM.magnetList.Add("N48");
+                    CMaterialListInFEMM.magnetList.Add("N50");
+                    CMaterialListInFEMM.magnetList.Add("N52");
+                    CMaterialListInFEMM.magnetList.Add("N55");
+
+                    CMaterialListInFEMM.magnetList.Add("BN1");
+                    CMaterialListInFEMM.magnetList.Add("BN2");
+                    CMaterialListInFEMM.magnetList.Add("BN3");
+                    CMaterialListInFEMM.magnetList.Add("BN4");
+                    CMaterialListInFEMM.magnetList.Add("BN5");
+                    CMaterialListInFEMM.magnetList.Add("BN6");
+                    CMaterialListInFEMM.magnetList.Add("BN7");
+                    CMaterialListInFEMM.magnetList.Add("BN8");
+                    CMaterialListInFEMM.magnetList.Add("BN9");
+                    CMaterialListInFEMM.magnetList.Add("BN10");
+
+                    CMaterialListInFEMM.magnetList.Add("SmCo24");
+                    CMaterialListInFEMM.magnetList.Add("SmCo26");
+                    CMaterialListInFEMM.magnetList.Add("SmCo28");
+                    CMaterialListInFEMM.magnetList.Add("SmCo30");
+                    CMaterialListInFEMM.magnetList.Add("SmCo32");
+
+                    CMaterialListInFEMM.magnetList.Add("Cast Alnico 2 (LNG12))");
+                    CMaterialListInFEMM.magnetList.Add("Cast Alnico 3 (LNG10)");
+                    CMaterialListInFEMM.magnetList.Add("Cast Alnico 5 (LNG40)");
+                    CMaterialListInFEMM.magnetList.Add("Cast Alnico 6 (LNGT28)");
+                    CMaterialListInFEMM.magnetList.Add("Cast Alnico 8 (LNGT38)");
+                    CMaterialListInFEMM.magnetList.Add("Cast Alnico 9 (LNGT72)");
+                    
+                    CMaterialListInFEMM.magnetList.Add("Sintered Alnico 2 (FLNG12)");
+                    CMaterialListInFEMM.magnetList.Add("Sintered Alnico 5 (FLNG34)");
+                    CMaterialListInFEMM.magnetList.Add("Sintered Alnico 8 (FLNGT38)");
+
+                    CMaterialListInFEMM.magnetList.Add("Ceramic 1");
+                    CMaterialListInFEMM.magnetList.Add("Ceramic 5");
+                    CMaterialListInFEMM.magnetList.Add("Ceramic 8");
+
+                    // 해당 Steel 을 사용하지 않은 경우를 대비해 재질 Air 를 인가할 수 있도록 한다.
+                    CMaterialListInFEMM.magnetList.Add("Air");
+
+                    //------------------------------------------------
+                    // 코일 동선 재료
+                    //------------------------------------------------
+                    CMaterialListInFEMM.coilWireList.Add("Aluminum");
+                    CMaterialListInFEMM.coilWireList.Add("Copper");
+                }
+                else
+                {
+                    //------------------------------------------------
+                    // 자기회로 Maxwell 내장 연자성 재료
+                    //------------------------------------------------
+                    // 내장 연자성재료를 추가할 때는 BH 곡선의 내장 연자성재료 설정도 같이 변경해 주어야 한다
+                    CMaterialListInFEMM.steelList.Add("Pure Iron");
                 
-                CPropertyItemList.steelList.Add("1006 Steel");
-                CPropertyItemList.steelList.Add("1010 Steel");
-                CPropertyItemList.steelList.Add("1018 Steel");
-                CPropertyItemList.steelList.Add("1020 Steel");
-                CPropertyItemList.steelList.Add("1117 Steel");
+                    CMaterialListInFEMM.steelList.Add("1006 Steel");
+                    CMaterialListInFEMM.steelList.Add("1010 Steel");
+                    CMaterialListInFEMM.steelList.Add("1018 Steel");
+                    CMaterialListInFEMM.steelList.Add("1020 Steel");
+                    CMaterialListInFEMM.steelList.Add("1117 Steel");
 
-                CPropertyItemList.steelList.Add("416 Stainless Steel");
-                CPropertyItemList.steelList.Add("430 Stainless Steel");
-                CPropertyItemList.steelList.Add("455 Stainless Steel");
+                    CMaterialListInFEMM.steelList.Add("416 Stainless Steel");
+                    CMaterialListInFEMM.steelList.Add("430 Stainless Steel");
+                    CMaterialListInFEMM.steelList.Add("455 Stainless Steel");
 
-                // 자기회로 Maxwell 내장 비자성 재료
-                // 내장 비자성재료를 추가할 때도 BH 곡선의 내장 비자성재료 설정도 같이 변경해 주어야 한다
-                CPropertyItemList.steelList.Add("Aluminum, 1100");
-                CPropertyItemList.steelList.Add("Copper");
-                CPropertyItemList.steelList.Add("316 Stainless Steel");
-                CPropertyItemList.steelList.Add("304 Stainless Steel");
+                    // 자기회로 Maxwell 내장 비자성 재료
+                    // 내장 비자성재료를 추가할 때도 BH 곡선의 내장 비자성재료 설정도 같이 변경해 주어야 한다
+                    CMaterialListInFEMM.steelList.Add("Aluminum, 1100");
+                    CMaterialListInFEMM.steelList.Add("Copper");
+                    CMaterialListInFEMM.steelList.Add("316 Stainless Steel");
+                    CMaterialListInFEMM.steelList.Add("304 Stainless Steel");
 
-                // 해당 Steel 을 사용하지 않은 경우를 대비해 재질 Air 를 인가할 수 있도록 한다.
-                CPropertyItemList.steelList.Add("Air");
+                    // 해당 Steel 을 사용하지 않은 경우를 대비해 재질 Air 를 인가할 수 있도록 한다.
+                    CMaterialListInFEMM.steelList.Add("Air");
 
-                //------------------------------------------------
-                // 자기회로 내장 영구자석
-                //------------------------------------------------
-                CPropertyItemList.magnetList.Add("NdFeB 32 MGOe");
-                CPropertyItemList.magnetList.Add("NdFeB 37 MGOe");
-                CPropertyItemList.magnetList.Add("NdFeB 40 MGOe");
-                CPropertyItemList.magnetList.Add("NdFeB 52 MGOe");
-                CPropertyItemList.magnetList.Add("NdFeB 10 MGOe (Bonded)");
+                    //------------------------------------------------
+                    // 자기회로 내장 영구자석
+                    //------------------------------------------------
+                    CMaterialListInFEMM.magnetList.Add("NdFeB 32 MGOe");
+                    CMaterialListInFEMM.magnetList.Add("NdFeB 37 MGOe");
+                    CMaterialListInFEMM.magnetList.Add("NdFeB 40 MGOe");
+                    CMaterialListInFEMM.magnetList.Add("NdFeB 52 MGOe");
+                    CMaterialListInFEMM.magnetList.Add("NdFeB 10 MGOe (Bonded)");
                 
-                CPropertyItemList.magnetList.Add("SmCo 20 MGOe");
-                CPropertyItemList.magnetList.Add("SmCo 24 MGOe");
-                CPropertyItemList.magnetList.Add("SmCo 27 MGOe");                
+                    CMaterialListInFEMM.magnetList.Add("SmCo 20 MGOe");
+                    CMaterialListInFEMM.magnetList.Add("SmCo 24 MGOe");
+                    CMaterialListInFEMM.magnetList.Add("SmCo 27 MGOe");                
                 
-                CPropertyItemList.magnetList.Add("Alnico 5");
-                CPropertyItemList.magnetList.Add("Alnico 6");
-                CPropertyItemList.magnetList.Add("Alnico 8");
+                    CMaterialListInFEMM.magnetList.Add("Alnico 5");
+                    CMaterialListInFEMM.magnetList.Add("Alnico 6");
+                    CMaterialListInFEMM.magnetList.Add("Alnico 8");
 
-                CPropertyItemList.magnetList.Add("Ceramic 5");
-                CPropertyItemList.magnetList.Add("Ceramic 8");
+                    CMaterialListInFEMM.magnetList.Add("Ceramic 5");
+                    CMaterialListInFEMM.magnetList.Add("Ceramic 8");
 
-                // 해당 Steel 을 사용하지 않은 경우를 대비해 재질 Air 를 인가할 수 있도록 한다.
-                CPropertyItemList.magnetList.Add("Air");
+                    // 해당 Steel 을 사용하지 않은 경우를 대비해 재질 Air 를 인가할 수 있도록 한다.
+                    CMaterialListInFEMM.magnetList.Add("Air");
 
-                //------------------------------------------------
-                // 코일 동선 재료
-                //------------------------------------------------
-                CPropertyItemList.coilWireList.Add("Aluminum, 1100");
-                CPropertyItemList.coilWireList.Add("Copper");
+                    //------------------------------------------------
+                    // 코일 동선 재료
+                    //------------------------------------------------
+                    CMaterialListInFEMM.coilWireList.Add("Aluminum");
+                    CMaterialListInFEMM.coilWireList.Add("Copper");
+                }
 
-                #endregion
             }
             catch (Exception ex)
             {
@@ -876,7 +982,7 @@ namespace DoSA
             // 혹시 FEMM 의 화면이 닫힌 경우 FEMM 의 화면을 복원합니다.
             reopenFEMM();
 
-            m_design.getMaterial(m_femm);
+            m_design.addMaterials(m_femm);
 
             m_design.drawDesign(m_femm);
 
@@ -1099,8 +1205,8 @@ namespace DoSA
 
             // 이미지 캡쳐 때문에 해석중에 FEMM 의 넓이를 일시적으로 넓힌다
             resizeFEMM(1040);
-           
-            m_design.getMaterial(m_femm);
+
+            m_design.addMaterials(m_femm);
 
             m_design.drawDesign(m_femm);
 
@@ -1219,7 +1325,7 @@ namespace DoSA
             // 혹시 FEMM 의 화면이 닫힌 경우 FEMM 의 화면을 복원합니다.
             reopenFEMM();
 
-            m_design.getMaterial(m_femm);
+            m_design.addMaterials(m_femm);
 
             m_design.drawDesign(m_femm);
 
@@ -1407,67 +1513,9 @@ namespace DoSA
 
 
         #region----------------------- FEMM 제어관련 기능함수 ------------------------
-
-        private bool checkVersionOfFEMM()
-        {
-            // FEMM 설치 메인 디렉토리를 얻어낸다.
-            string strFEMMDirName = Path.GetDirectoryName(CSettingData.m_strFemmExeFileFullName);
-            strFEMMDirName = strFEMMDirName.Remove(strFEMMDirName.IndexOf("bin"));
-
-            // readme.txt 의 첫 줄을 읽어낸다.
-            string strReadmeFileFullName = Path.Combine(strFEMMDirName, "readme.txt");
-
-            CReadFile readFile = new CReadFile();
-            string strVersionFEMM = readFile.getLine(strReadmeFileFullName, 1);         // 내용 : FEMM 4.2 12Jan2016
-
-            // readme.txt 에서 FEMM 4.2 버전의 Build 날짜를 읽어낸다.
-            char[] separators = { ' ' };
-            string[] strArray;
-            strArray = strVersionFEMM.Split(separators, StringSplitOptions.None);
-            string strVersionDate = strArray[2];                                        // 내용 : 12Jan2016
-
-            if (strVersionDate.Length < 9)
-            {
-                CNotice.printTraceID("TWAP4");
-                return false;
-            }
-
-            DateTime currentDataTime = new DateTime();
-            DateTime limitDataTime = new DateTime();
-
-            limitDataTime = Convert.ToDateTime("24Sep2017");
-            currentDataTime = Convert.ToDateTime(strVersionDate);
-
-            // 24Sep2017 보다 이전 버전이면 에러를 발생시킨다.
-            if (currentDataTime < limitDataTime)
-                return false;
-            else
-                return true;
-        }
-        
-        private void killProcessOfFEMM()
-        {
-            int nCount = 0;
-            Process[] processList = null;
-
-            do
-            {
-                processList = Process.GetProcessesByName("femm");
-
-                if (processList.Length > 0)
-                    processList[0].Kill();
-
-                Thread.Sleep(50);
-
-                // 무한 루프를 방지한다.
-                if (nCount > 100)
-                    return;
-
-                nCount++;
-
-            } while (processList.Length > 0);
-        }
-       
+        // m_femm 의 스크립트를 사용하여 제어하는 함수들은 CProgramFEMM 에 추가하지 못해서 FormMain 에 두고 있다.
+        // FEMM 자체적으로 처리가 가능한 함수라면 CProgramFEMM 에 추가하라.
+     
         private void redrawPartsInFEMM()
         {
             m_femm.deleteAll();
@@ -1579,21 +1627,77 @@ namespace DoSA
 
         #region----------------------- 가상시험 관련 -------------------------------
 
-        private bool isForceExperimentOK(CForceExperiment forceExperiment)
+
+        private bool checkMaterials()
+        {
+            bool bCheck = true;
+            string strMaterial = string.Empty;
+
+            try
+            {
+                foreach (CNode node in m_design.NodeList)
+                {
+                    if (node.GetType().Name == "CCoil")
+                    {
+                        strMaterial = ((CParts)node).getMaterial();
+
+                        if (CMaterialListInFEMM.isCoilWIreInList(strMaterial) == false)
+                            bCheck = false;
+                    }
+                    else if (node.GetType().Name == "CMagnet")
+                    {
+                        strMaterial = ((CParts)node).getMaterial();
+
+                        if (CMaterialListInFEMM.isMagnetlInList(strMaterial) == false)
+                            bCheck = false;
+                    }
+                    else if (node.GetType().Name == "CSteel")
+                    {
+                        strMaterial = ((CParts)node).getMaterial();
+
+                        if (CMaterialListInFEMM.isSteelInList(strMaterial) == false)
+                            bCheck = false;
+                    }
+                }
+
+                return bCheck;
+            }
+            catch (Exception ex)
+            {
+                CNotice.printTrace(ex.Message);
+                return false;
+            }
+        }
+
+        private bool checkMovingParts()
         {
             bool bCheck = false;
 
-            foreach (CNode node in m_design.NodeList)
+            try
             {
-                // 자기회로 재료만 지정
-                if (node.GetType().BaseType.Name == "CParts")
+                foreach (CNode node in m_design.NodeList)
                 {
-                    if (((CParts)node).MovingPart == EMMoving.MOVING)
-                        bCheck = true;
+                    // Parts 만 확인한다.
+                    if (node.GetType().BaseType.Name == "CParts")
+                    {
+                        if (((CParts)node).MovingPart == EMMoving.MOVING)
+                            bCheck = true;
+                    }
                 }
-            }
 
-            if (bCheck == false)
+                return bCheck;
+            }
+            catch (Exception ex)
+            {
+                CNotice.printTrace(ex.Message);
+                return false;
+            }
+        }
+
+        private bool isForceExperimentOK(CForceExperiment forceExperiment)
+        {
+
+            if (checkMovingParts() == false)
             {
                 CNotice.noticeWarningID("ALOM");
                 return false;
@@ -1602,6 +1706,16 @@ namespace DoSA
             if (m_design.isDesignShapeOK() == false)
             {
                 CNotice.printTraceID("AEOI");
+                return false;
+            }
+
+            if (checkMaterials() == false)
+            {
+                if(CSettingData.m_emLanguage == EMLanguage.Korean)
+                    CNotice.noticeWarning("재질이 설정되지 않는 Part 가 존재합니다.\nPart 들의 재질명을 확인하세요.");
+                else
+                    CNotice.noticeWarning("There are parts with no material set.\nCheck the material names of the parts.");
+                
                 return false;
             }
 
@@ -1624,17 +1738,7 @@ namespace DoSA
                 return false;
             }
 
-            foreach (CNode node in m_design.NodeList)
-            {
-                // 자기회로 재료만 지정
-                if (node.GetType().BaseType.Name == "CParts")
-                {
-                    if (((CParts)node).MovingPart == EMMoving.MOVING)
-                        bCheck = true;
-                }
-            }
-
-            if (bCheck == false)
+            if (checkMovingParts() == false)
             {
                 CNotice.noticeWarningID("ALOM");
                 return false;
@@ -1651,6 +1755,16 @@ namespace DoSA
             if (m_design.isDesignShapeOK(strokeExperiment.FinalStroke) == false)
             {
                 CNotice.noticeWarningID("AEOT2");
+                return false;
+            }
+
+            if (checkMaterials() == false)
+            {
+                if (CSettingData.m_emLanguage == EMLanguage.Korean)
+                    CNotice.noticeWarning("재질이 설정되지 않는 Part 가 존재합니다.\nPart 들의 재질명을 확인하세요.");
+                else
+                    CNotice.noticeWarning("There are parts with no material set.\nCheck the material names of the parts.");
+
                 return false;
             }
 
@@ -1677,6 +1791,22 @@ namespace DoSA
                 return false;
             }
 
+            if (checkMovingParts() == false)
+            {
+                CNotice.noticeWarningID("ALOM");
+                return false;
+            }
+
+            if (checkMaterials() == false)
+            {
+                if (CSettingData.m_emLanguage == EMLanguage.Korean)
+                    CNotice.noticeWarning("재질이 설정되지 않는 Part 가 존재합니다.\nPart 들의 재질명을 확인하세요.");
+                else
+                    CNotice.noticeWarning("There are parts with no material set.\nCheck the material names of the parts.");
+
+                return false;
+            }
+
             return true;
         }
 
@@ -1698,37 +1828,47 @@ namespace DoSA
             double dForce;
             CReadFile readfile = new CReadFile();
 
-            bCheck = m_manageFile.isExistFile(strForceFileFullName);
-
-            if (bCheck == true)
+            try
             {
-                strReturn = readfile.pickoutString(strForceFileFullName, "force:", 7, 21);
-                dForce = Double.Parse(strReturn);
 
-                textBoxForce.Text = dForce.ToString();
+                bCheck = m_manageFile.isExistFile(strForceFileFullName);
+
+                if (bCheck == true)
+                {
+                    strReturn = readfile.pickoutString(strForceFileFullName, "force:", 7, 21);
+                    dForce = Double.Parse(strReturn);
+
+                    textBoxForce.Text = dForce.ToString();
+                }
+                else
+                {
+                    CNotice.noticeWarningID("TROA1");
+                    return;
+                }
+
+                bCheck = m_manageFile.isExistFile(densityImageFileFullName);
+
+                if (bCheck == true)
+                {
+                    // 파일을 잡고 있지 않기 위해서 임시 이미지를 사용하고 Dispose 한다.
+                    Image tmpImage = Image.FromFile(densityImageFileFullName);
+
+                    pictureBoxForce.Image = new Bitmap(tmpImage);
+                    pictureBoxForce.SizeMode = PictureBoxSizeMode.StretchImage;
+
+                    // 이미지이 연결을 끊어서 사용 가능하게 한다.
+                    tmpImage.Dispose();
+                }
+                else
+                {
+                    CNotice.noticeWarningID("TINR");
+                    return;
+                }
+
             }
-            else
+            catch (Exception ex)
             {
-                CNotice.noticeWarningID("TROA1");
-                return;
-            }
-
-            bCheck = m_manageFile.isExistFile(densityImageFileFullName);
-
-            if (bCheck == true)
-            {
-                // 파일을 잡고 있지 않기 위해서 임시 이미지를 사용하고 Dispose 한다.
-                Image tmpImage = Image.FromFile(densityImageFileFullName);
-
-                pictureBoxForce.Image = new Bitmap(tmpImage);
-                pictureBoxForce.SizeMode = PictureBoxSizeMode.StretchImage;
-
-                // 이미지이 연결을 끊어서 사용 가능하게 한다.
-                tmpImage.Dispose();
-            }
-            else
-            {
-                CNotice.noticeWarningID("TINR");
+                CNotice.printTrace(ex.Message);
                 return;
             }
         }
@@ -2856,7 +2996,9 @@ namespace DoSA
 
         #region----------------------- Information Window 관련 -----------------------
 
-        //steel 그래프를 생성한다
+        // DoSA.dmat 는 
+        // 해석모델을 제작할 때 연자성체 재질을 생성하는 목적이 아니라 S/W 안에서 BH Graph 출력하는 용으로 사용하고 있다.
+        // 따라서 자성 재질은 FEMM 의 재질명을 의존하고 있다.
         private void drawBHCurve(String strMaterialName)
         {
             List<double> listH = new List<double>();
@@ -2891,29 +3033,18 @@ namespace DoSA
             {
                 string strMaterialFileFullName = Path.Combine(strProgramMaterialDirName, "DoSA.dmat");
 
-                if (true == getMaterialBHData(strMaterialFileFullName, strMaterialName, ref listH, ref listB))
+                getMaterialBHData(strMaterialFileFullName, strMaterialName, ref listH, ref listB);
+
+                if (listH.Count != listB.Count)
                 {
-                    if (listH.Count == 0)
-                    {
-                        CNotice.printTraceID("TDFT");
-                        return;
-                    }
-
-                    if (listH.Count != listB.Count)
-                    {
-                        CNotice.printTraceID("TSOT");
-                        return;
-                    }
-
-                    drawXYChart(chartBHCurve, listH, listB, "H [A/m]", "B [T]", 0.0f, 30000.0f, 0.0f, 2.5f);
+                    CNotice.printTraceID("TSOT");
+                    return;
                 }
-                else
-                {
-                    CNotice.noticeWarning("There is no DoSA.dmat file.\nPlease check Material directory.");
-                }
-
+                
+                // getMaterialBHData() 에서 오류가 발생할 경우 별도의 처리를 하지 않고,
+                // 비어 있는 listH과 listB 를 출력하여 Graph 화면의 데이터를 지움으로써 사용자에게 오류를 알려 주고 있다.
+                drawXYChart(chartBHCurve, listH, listB, "H [A/m]", "B [T]", 0.0f, 30000.0f, 0.0f, 2.5f);
             }
-
         }
 
         //Marerial 데이터를 읽어온다
@@ -2925,6 +3056,7 @@ namespace DoSA
             string strLine, strName, strData, strTemp;
             int iIndex;
             bool bBHDataGathering = false;
+            bool bFoundMaterial = false;
 
             // 이전에 사용하던 List 데이터를 우선 삭제한다.
             listH.Clear();
@@ -2939,6 +3071,7 @@ namespace DoSA
             try
             {
                 readFile.getAllLines(strFileFullName, ref listString);
+
 
                 for (int i = 0; i < listString.Count; i++)
                 {
@@ -2960,7 +3093,10 @@ namespace DoSA
 
                         // BH 곡선 수집을 시작한다.
                         if (strTemp == strMeterialName)
+                        {
                             bBHDataGathering = true;
+                            bFoundMaterial = true;
+                        }
                     }
 
                     // BH 곡선 수집을 종료한다.
@@ -2985,6 +3121,12 @@ namespace DoSA
                         // 아래의 X, Y, $end 3 line 은 그냥 점프 한다.
                         i = i + 3;
                     }
+                }
+
+                if(bFoundMaterial == false)
+                {
+                    CNotice.printTraceID("TDFT");
+                    return false;
                 }
             }
             catch (Exception ex)

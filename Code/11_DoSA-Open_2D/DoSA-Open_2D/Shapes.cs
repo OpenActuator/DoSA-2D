@@ -954,11 +954,8 @@ namespace Shapes
         
         /// <summary>
         /// Face 의 면적을 계산한다.
-        /// 단, 다각형의 면적 계산은 정확하지 않다. (개선 필요함)
-        ///
+        /// 
         /// 면적계산을 상대좌표를 상관이 없기 때문에 사용한다.
-        /// </summary>
-        /// <returns>Face 면적</returns>
         public double calcArea(CFace face)
         {
             double dArea = 0;
@@ -975,23 +972,30 @@ namespace Shapes
                 face.getMinMaxY(ref minY, ref maxY);
 
                 /// 가로, 세로 곱
-                return (maxX - minX) * (maxY - minY);
+                dArea = Math.Abs((maxX - minX) * (maxY - minY));
             }
-            /// Polygon 의 다각형 면적 계산은 단순한 형상에서만 가능하고 오차가 있는 것으로 판단된다.
-            /// 추후 : 검증하라.
+            // 다각형 면적계산 알고리즘 : https://mathworld.wolfram.com/PolygonArea.html
             else
             {
-                /// The last vertex is the 'previous' one to the first
+                // 가장 마지막 항 (xn*y1 과 yn*x1) 을 첫번째로 우선처리하기 위한 설정한다.
+                //
+                // - 계산 순서는 점이 3개라면 자료의 수식 순서와 달리 아래와 같이 마지막항이 가장 앞으로 위치한다.
+                //   x3y1 + x1y2 + x2y3
+                //   y3x1 + y1x2 + y2x3
                 int j = face.RelativePointList.Count - 1;
 
                 for (int i = 0; i < face.RelativePointList.Count; i++)
                 {
-                    dArea += (face.RelativePointList[j].m_dX + face.RelativePointList[i].m_dX) * (face.RelativePointList[j].m_dY - face.RelativePointList[i].m_dY);
-
+                    dArea += (face.RelativePointList[j].m_dX * face.RelativePointList[i].m_dY) - (face.RelativePointList[j].m_dY * face.RelativePointList[i].m_dX);
+ 
                     j = i;  /// j is previous vertex to i
                 }
-                return Math.Abs(dArea / 2.0f);
+
+                dArea = Math.Abs(dArea / 2.0f);
             }
+
+            return dArea;
+
         }
 
         /// <summary>

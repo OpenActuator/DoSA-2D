@@ -76,7 +76,7 @@ namespace Parts
         {
             return m_strMaterial;
         }
-
+        
         protected CParts()
         {
             // 초기값은 고정된 것으로 가정함
@@ -186,6 +186,7 @@ namespace Parts
 
             return true;
         }
+
     }
 
     [DefaultPropertyAttribute("Turns")]
@@ -637,7 +638,17 @@ namespace Parts
 
                         // CCoil
                         case "Material":
-                            Material = arrayString[1];
+                            if (CMaterialListInFEMM.isCoilWIreInList(arrayString[1]) == true)
+                            {
+                                m_strMaterial = arrayString[1];
+                            }
+                            else
+                            {
+                                // 현재의 버전에서 사용할 수 없는 재질이 존재한다면 공백으로 처리하고
+                                // 동작 중에 공백을 사용해서 재질이 초기화 되지 않음을 확인한다.
+                                m_strMaterial = "";
+                            }                            
+
                             break;
                         case "CurrentDirection":
                             CurrentDirection = (EMCurrentDirection)Enum.Parse(typeof(EMCurrentDirection), arrayString[1]);
@@ -646,7 +657,7 @@ namespace Parts
                             Turns = Convert.ToInt16(arrayString[1]);
                             break;
                         case "Resistance":
-                            Resistance = Convert.ToDouble(arrayString[1]);
+                            m_dResistance = Convert.ToDouble(arrayString[1]);
                             break;
                         case "Layers":
                             Layers = Convert.ToInt16(arrayString[1]);
@@ -670,7 +681,7 @@ namespace Parts
                             CopperDiameter = Convert.ToDouble(arrayString[1]);
                             break;
                         case "WireDiameter":
-                            WireDiameter = Convert.ToDouble(arrayString[1]);
+                            m_dWireDiameter = Convert.ToDouble(arrayString[1]);
                             break;
                         case "Temperature":
                             Temperature = Convert.ToDouble(arrayString[1]);
@@ -743,7 +754,7 @@ namespace Parts
         public CMagnet()
         {
             m_kindKey = EMKind.MAGNET;
-            Material = "NdFeB 40 MGOe";
+            Material = "N45";
         }
 
         // 파일스트림 객체에 코일 정보를 기록한다.
@@ -852,7 +863,26 @@ namespace Parts
 
                         // CMagnet
                         case "Material":
-                            Material = arrayString[1];
+
+                            if (CMaterialListInFEMM.isMagnetlInList(arrayString[1]) == true)
+                            {
+                                m_strMaterial = arrayString[1];
+                            }
+                            else
+                            {
+                                // 현재의 버전에서 사용할 수 없는 재질이 존재한다면 공백으로 처리하고
+                                // 동작 중에 공백을 사용해서 재질이 초기화 되지 않음을 확인한다.
+                                m_strMaterial = "";
+                            }                            
+
+                            // FEMM (21Apr2019)에서 NdFeB 40 MGOe 빠져 있어서 호환이 되지 않아 강제로 N40 으로 변경한다.
+                            // 추후에 FEMM 에 NdFeB 40 MGOe 가 Legacy 로 추가되면 아래의 코드를 삭제하라.
+                            if (CProgramFEMM.getYearFEMM() >= 2019)
+                            {
+                                if (m_strMaterial == "NdFeB 40 MGOe")
+                                    m_strMaterial = "N40";
+                            }
+
                             break;
 
                         case "MagnetDirection":
@@ -1040,7 +1070,16 @@ namespace Parts
 
                         // CSteel
                         case "Material":
-                            Material = arrayString[1];
+                            if (CMaterialListInFEMM.isSteelInList(arrayString[1]) == true)
+                            {
+                                m_strMaterial = arrayString[1];
+                            }
+                            else
+                            {
+                                // 현재의 버전에서 사용할 수 없는 재질이 존재한다면 공백으로 처리하고
+                                // 동작 중에 공백을 사용해서 재질이 초기화 되지 않음을 확인한다.
+                                m_strMaterial = "";
+                            }     
                             break;                       
 
                         default:
@@ -1079,14 +1118,26 @@ namespace Parts
     }
 
 
-    //----------------------------------------------------------------------------
-    // Property 안의 Magnet Part 재질의 콤포 박스를 위한 Class
-    //----------------------------------------------------------------------------
-    internal class CPropertyItemList
+    internal class CMaterialListInFEMM
     {
         internal static List<string> steelList = new List<string>();
         internal static List<string> magnetList = new List<string>();
         internal static List<string> coilWireList = new List<string>();
+
+        public static bool isSteelInList(string strMaterial)
+        {
+            return steelList.Contains(strMaterial);
+        }
+
+        public static bool isMagnetlInList(string strMaterial)
+        {
+            return magnetList.Contains(strMaterial);
+        }
+
+        public static bool isCoilWIreInList(string strMaterial)
+        {
+            return coilWireList.Contains(strMaterial);
+        }
     }
 
     internal class CSteelPropertyConverter : StringConverter
@@ -1105,7 +1156,7 @@ namespace Parts
 
         public override StandardValuesCollection GetStandardValues(ITypeDescriptorContext context)
         {
-            return new StandardValuesCollection(CPropertyItemList.steelList);
+            return new StandardValuesCollection(CMaterialListInFEMM.steelList);
         }
     }
 
@@ -1125,7 +1176,7 @@ namespace Parts
 
         public override StandardValuesCollection GetStandardValues(ITypeDescriptorContext context)
         {
-            return new StandardValuesCollection(CPropertyItemList.magnetList);
+            return new StandardValuesCollection(CMaterialListInFEMM.magnetList);
         }
     }
 
@@ -1145,7 +1196,7 @@ namespace Parts
 
         public override StandardValuesCollection GetStandardValues(ITypeDescriptorContext context)
         {
-            return new StandardValuesCollection(CPropertyItemList.coilWireList);
+            return new StandardValuesCollection(CMaterialListInFEMM.coilWireList);
         }
     }
 

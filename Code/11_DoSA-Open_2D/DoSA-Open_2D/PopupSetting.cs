@@ -30,7 +30,7 @@ namespace DoSA
             // CSettingData 으로 내린다.
             downloadSettingData();
 
-            bCheck = CSettingData.isDataOK();
+            bCheck = CSettingData.isSettingDataOK();
 
             if (bCheck == true)
             {

@@ -46,9 +46,22 @@ namespace DoSA
     {
         static CManageFile m_manageFile = new CManageFile();
 
-        // 저장 변수들
         public static string m_strWorkingDirName { get; set; }
+
+        //----------------------------------------------------------------------------------------
+        // FEMM 의 실행은 아래의 파일명을 사용하지 않고 
+        // CProgramFEMM.loadProcessOfFEMM() 에서 메모리에 떠 있는 ActiveFEMMClass() 를 사용하여 실행한다.
+        // 따라서 m_strFemmExeFileFullName 는 FEMM 실행에는 필요가 없다.
+        //
+        // 하지만 ActiveFEMMClass() 의 m_FEMM 은 버전 확인과 설치여부 확인을 할 수 없어서
+        // 사용자가 설치한 FEMM 을 m_strFemmExeFileFullName 로 직접 설정하게 하여 설치여부 및 버전을 확인하고 있다.
+        //
+        // 문제는 사용자가 두개의 FEMM 을 설치하고 
+        // 사용자가 m_strFemmExeFileFullName 을 바꾸면서 다른 버전의 FEMM 을 사용하고 싶어하는 경우는
+        // 사용자의 선택과 상관 없이 최종 설치 FEMM 이 동작하는 문제가 남아 있다.
+        //----------------------------------------------------------------------------------------
         public static string m_strFemmExeFileFullName { get; set; }
+
 
         // m_dMeshLevelPercent 이름을 변경하지말라. 다시 환경설정을 해야한다.
         public static double m_dMeshLevelPercent { get; set; }
@@ -77,7 +90,7 @@ namespace DoSA
 
         }
 
-        public static bool isDataOK(bool bOpenNoticeDialog = true)
+        public static bool isSettingDataOK(bool bOpenNoticeDialog = true)
         {
             bool bCheck = false;
 

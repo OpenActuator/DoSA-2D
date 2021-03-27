@@ -14,6 +14,7 @@ using Nodes;
 using Parts;
 using gtLibrary;
 using System.IO;
+using DoSA;
 
 namespace Scripts
 {
@@ -56,21 +57,86 @@ namespace Scripts
 
         #endregion APIs
         
-        private static bool checkFEMM()
+        public static int getYearFEMM()
         {
-            Process[] processList = Process.GetProcessesByName("femm");
+            if (CSettingData.m_strFemmExeFileFullName == string.Empty)
+                return 2019;
 
-            if (processList.Length < 1)
+            FileInfo femmInfo = new FileInfo(CSettingData.m_strFemmExeFileFullName);
+
+            return femmInfo.LastWriteTime.Year;
+        }
+
+        public static bool checkPreviousFEMM()
+        {
+            try
+            {
+                // FEMM 설치 메인 디렉토리를 얻어낸다.
+                string strFEMMDirName = Path.GetDirectoryName(CSettingData.m_strFemmExeFileFullName);
+                strFEMMDirName = strFEMMDirName.Remove(strFEMMDirName.IndexOf("bin"));
+
+                // readme.txt 의 첫 줄을 읽어낸다.
+                string strReadmeFileFullName = Path.Combine(strFEMMDirName, "readme.txt");
+
+                CReadFile readFile = new CReadFile();
+                string strVersionFEMM = readFile.getLine(strReadmeFileFullName, 1);         // 내용 : FEMM 4.2 12Jan2016
+
+                // readme.txt 에서 FEMM 4.2 버전의 Build 날짜를 읽어낸다.
+                char[] separators = { ' ' };
+                string[] strArray;
+                strArray = strVersionFEMM.Split(separators, StringSplitOptions.None);
+                string strVersionDate = strArray[2];                                        // 내용 : 12Jan2016
+
+                if (strVersionDate.Length < 9)
+                {
+                    CNotice.printTraceID("TWAP4");
+                    return false;
+                }
+
+                DateTime currentDataTime = new DateTime();
+                DateTime limitDataTime = new DateTime();
+
+                limitDataTime = Convert.ToDateTime("24Sep2017");
+                currentDataTime = Convert.ToDateTime(strVersionDate);
+
+                // 24Sep2017 보다 이전 버전이면 true 를 리턴한다.
+                if (currentDataTime < limitDataTime)
+                    return true;
+                else
+                    return false;
+
+            }
+            catch (Exception ex)
+            {
+                CNotice.printTrace(ex.Message);
                 return false;
+            }
+        }
 
-            return true;
+        private static bool checkFEMMInMemory()
+        {
+            try
+            {
+                Process[] processList = Process.GetProcessesByName("femm");
+
+                if (processList.Length < 1)
+                    return false;
+
+                return true;
+            }
+            catch (Exception ex)
+            {
+                CNotice.printTrace(ex.Message);
+                return false;
+            }
         }
 
         public static IActiveFEMM myFEMM
         {
+
             get
-            {   
-                if (checkFEMM() != true)
+            {
+                if (checkFEMMInMemory() != true)
                 {
                     m_FEMM = new ActiveFEMMClass();
                 }
@@ -84,104 +150,152 @@ namespace Scripts
             }
         }
 
-        public static void loadProcessOfFEMM()
+        public static bool loadProcessOfFEMM()
         {
-            if (checkFEMM() != true)
+            try
             {
-                m_FEMM = new ActiveFEMMClass();
+                if (checkFEMMInMemory() != true)
+                {
+                    m_FEMM = new ActiveFEMMClass();
+
+                    if (m_FEMM == null)
+                        return false;
+                    else
+                        return true;
+                }
+
+                return true;
+            }
+            catch (Exception ex)
+            {
+                CNotice.printTrace(ex.Message);
+                return false;
             }
         }
 
         public static bool isOpenedWindow()
         {
-            Process[] processList = Process.GetProcessesByName("femm");
-
-            if (processList.Length > 1)
+            try
             {
-                CNotice.noticeWarningID("OOFP");
+                Process[] processList = Process.GetProcessesByName("femm");
+
+                if (processList.Length > 1)
+                {
+                    CNotice.noticeWarningID("OOFP");
+                    return false;
+                }
+
+                if (processList.Length != 1)
+                    return false;
+
+                Process femmProcess = processList[0];
+
+                // Window 닫혀 있으면 Main Window Handle 값이 null 이다.
+                if (femmProcess.MainWindowTitle != "")
+                    return true;
+                else
+                    return false;
+            }
+            catch (Exception ex)
+            {
+                CNotice.printTrace(ex.Message);
                 return false;
             }
-
-            if (processList.Length != 1)
-                return false;
-
-            Process femmProcess = processList[0];
-
-            // Window 닫혀 있으면 Main Window Handle 값이 null 이다.
-            if (femmProcess.MainWindowTitle != "")
-                return true;
-            else
-                return false;
         }
 
         public static void moveFEMM(int iPosX, int iPosY, int iSizeX = 500, int iSizeY = 900)
         {
-            Process[] processList = Process.GetProcessesByName("femm");
-               
-            if (processList.Length > 1)
+            try
             {
-                CNotice.noticeWarningID("OOFP");
+                Process[] processList = Process.GetProcessesByName("femm");
+               
+                if (processList.Length > 1)
+                {
+                    CNotice.noticeWarningID("OOFP");
+                    return;
+                }
+
+                if (processList.Length != 1)
+                    return;
+
+                Process femmProcess = processList[0];
+
+                Thread.Sleep(100);
+                MoveWindow(femmProcess.MainWindowHandle, iPosX, iPosY, iSizeX, iSizeY, true);
+            }
+            catch (Exception ex)
+            {
+                CNotice.printTrace(ex.Message);
                 return;
             }
-
-            if (processList.Length != 1)
-                return;
-
-            Process femmProcess = processList[0];
-
-            Thread.Sleep(100);
-            MoveWindow(femmProcess.MainWindowHandle, iPosX, iPosY, iSizeX, iSizeY, true);
         }
 
         public static void showFEMM()
         {
-            Process[] processList = Process.GetProcessesByName("femm");
-
-            if (processList.Length > 1)
+            try
             {
-                CNotice.noticeWarningID("OOFP");
+                Process[] processList = Process.GetProcessesByName("femm");
+
+                if (processList.Length > 1)
+                {
+                    CNotice.noticeWarningID("OOFP");
+                    return;
+                }
+
+                if (processList.Length != 1)
+                    return;
+
+                Process femmProcess = processList[0];
+
+                Thread.Sleep(100);
+
+                // 윈도우가 최소화 되어 있다면 활성화 시킨다
+                ShowWindowAsync(femmProcess.MainWindowHandle, SW_SHOWNORMAL);
+
+                // 윈도우에 포커스를 줘서 최상위로 만든다
+                SetForegroundWindow(femmProcess.MainWindowHandle);
+            }
+            catch (Exception ex)
+            {
+                CNotice.printTrace(ex.Message);
                 return;
             }
-
-            if (processList.Length != 1)
-                return;
-
-            Process femmProcess = processList[0];
-
-            Thread.Sleep(100);
-
-            // 윈도우가 최소화 되어 있다면 활성화 시킨다
-            ShowWindowAsync(femmProcess.MainWindowHandle, SW_SHOWNORMAL);
-
-            // 윈도우에 포커스를 줘서 최상위로 만든다
-            SetForegroundWindow(femmProcess.MainWindowHandle);
         }
 
         public static void killProcessOfFEMMs()
         {
             int nCount = 0;
 
-            Process[] processList = null;
-
-            // 실행되어 있는 모든 FEMM 을 종료시킨다.
-            do
+            try
             {
-                processList = Process.GetProcessesByName("femm");
 
-                if (processList.Length > 0)
-                    processList[0].Kill();
+                Process[] processList = null;
 
-                Thread.Sleep(50);
+                // 실행되어 있는 모든 FEMM 을 종료시킨다.
+                do
+                {
+                    processList = Process.GetProcessesByName("femm");
 
-                // 무한 루프를 방지한다.
-                if (nCount > 100)
-                    return;
+                    if (processList.Length > 0)
+                        processList[0].Kill();
 
-                nCount++;
+                    Thread.Sleep(50);
 
-            } while (processList.Length > 0);
+                    // 무한 루프를 방지한다.
+                    if (nCount > 100)
+                        return;
 
-            myFEMM = null;
+                    nCount++;
+
+                } while (processList.Length > 0);
+
+                myFEMM = null;
+            }
+            catch (Exception ex)
+            {
+                CNotice.printTrace(ex.Message);
+                return;
+            }
         }
 
     }
@@ -210,16 +324,26 @@ namespace Scripts
 
         private string sendCommand(string strCommand)
         {
-            // ProgramFEMM 은 Static Class 라서 생성없이 바로 사용한다
-            string strReturn = CProgramFEMM.myFEMM.call2femm(strCommand);
+            try
+            {
+                // ProgramFEMM 은 Static Class 라서 생성없이 바로 사용한다
+                string strReturn = CProgramFEMM.myFEMM.call2femm(strCommand);
 
-            if (strReturn.Contains("error")) 
-            { 
-                CNotice.printTrace(strReturn);
-                return "error"; 
+                if (strReturn.Contains("error"))
+                {
+                    CNotice.printTrace(strCommand);
+                    CNotice.printTrace(strReturn);
+                    return "error";
+                }
+
+                return strReturn;
+            }
+            catch (Exception ex)
+            {
+                CNotice.printTrace(ex.Message);
+                return "error";
             }
 
-            return strReturn;
         }
 
         public CScriptFEMM()
@@ -595,7 +719,7 @@ namespace Scripts
 
         }
 
-        public void getMaterial(string strMaterial)
+        public void addMaterial(string strMaterial)
         {
             string strCommand;
 
