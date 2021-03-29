@@ -864,16 +864,7 @@ namespace Parts
                         // CMagnet
                         case "Material":
 
-                            if (CMaterialListInFEMM.isMagnetlInList(arrayString[1]) == true)
-                            {
-                                m_strMaterial = arrayString[1];
-                            }
-                            else
-                            {
-                                // 현재의 버전에서 사용할 수 없는 재질이 존재한다면 공백으로 처리하고
-                                // 동작 중에 공백을 사용해서 재질이 초기화 되지 않음을 확인한다.
-                                m_strMaterial = "";
-                            }                            
+                            m_strMaterial = arrayString[1];
 
                             // FEMM (21Apr2019)에서 NdFeB 40 MGOe 빠져 있어서 호환이 되지 않아 강제로 N40 으로 변경한다.
                             // 추후에 FEMM 에 NdFeB 40 MGOe 가 Legacy 로 추가되면 아래의 코드를 삭제하라.
@@ -881,6 +872,13 @@ namespace Parts
                             {
                                 if (m_strMaterial == "NdFeB 40 MGOe")
                                     m_strMaterial = "N40";
+                            }
+
+                            if (CMaterialListInFEMM.isMagnetlInList(m_strMaterial) == false)
+                            {
+                                // 현재의 버전에서 사용할 수 없는 재질이 존재한다면 공백으로 처리하고
+                                // 동작 중에 공백을 사용해서 재질이 초기화 되지 않음을 확인한다.
+                                m_strMaterial = "";
                             }
 
                             break;

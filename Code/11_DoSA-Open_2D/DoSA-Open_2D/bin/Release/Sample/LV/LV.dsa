@@ -77,7 +77,7 @@ $begin "DoSA_Project"
 			NodeName=magnet
 			KindKey=MAGNET
 			MovingParts=FIXED
-			Material=NdFeB 40 MGOe
+			Material=N40
 			MagnetDirection=UP
 			$begin "Shape"
 				BasePointX=0

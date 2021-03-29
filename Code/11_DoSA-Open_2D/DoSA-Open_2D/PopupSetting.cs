@@ -167,6 +167,11 @@ namespace DoSA
                 settingDataClone.copyCloneToSettingData();
 
                 reader.Close();
+
+                // 혹시 데이터의 오류는 발생하더라도 하나만 오류가 발생한다.
+                // 따라서 다른 항목까지 다시 설정하지 않도록 오류가 있는 데이터라도 파일에서 읽어드림과 동시에 창에 입력해 둔다.
+                uploadSettingData();
+
             }
             catch (Exception ex)
             {
