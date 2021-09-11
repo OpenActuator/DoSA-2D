@@ -1,4 +1,4 @@
-# DoSA-Open_2D (Ver 0.9.11.2)
+# DoSA-Open_2D (Ver 0.9.12.0)
 
 This program is an open source software for Solenoid &amp; Actuator design
 
