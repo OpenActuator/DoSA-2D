@@ -46,7 +46,9 @@ namespace DoSA
     {
         static CManageFile m_manageFile = new CManageFile();
 
-        public static string m_strWorkingDirName { get; set; }
+        public static string m_strBaseWorkingDirPath { get; set; }
+
+        public static string m_strCurrentWorkingDirPath { get; set; }
 
         //----------------------------------------------------------------------------------------
         // FEMM 의 실행은 아래의 파일명을 사용하지 않고 
@@ -61,7 +63,6 @@ namespace DoSA
         // 사용자의 선택과 상관 없이 최종 설치 FEMM 이 동작하는 문제가 남아 있다.
         //----------------------------------------------------------------------------------------
         public static string m_strFemmExeFileFullName { get; set; }
-
 
         // m_dMeshLevelPercent 이름을 변경하지말라. 다시 환경설정을 해야한다.
         public static double m_dMeshLevelPercent { get; set; }
@@ -105,7 +106,7 @@ namespace DoSA
                 return false;
             }
 
-            bCheck = m_manageFile.isExistDirectory(m_strWorkingDirName);
+            bCheck = m_manageFile.isExistDirectory(m_strBaseWorkingDirPath);
 
             if (bCheck == false)
             {
@@ -156,7 +157,7 @@ namespace DoSA
 
         public void copyCloneToSettingData()
         {
-            CSettingData.m_strWorkingDirName = m_strWorkingDirName;
+            CSettingData.m_strBaseWorkingDirPath = m_strWorkingDirName;
             CSettingData.m_strFemmExeFileFullName = m_strFemmExeFileFullName;
             CSettingData.m_dMeshLevelPercent = m_dMeshLevelPercent;
             CSettingData.m_emLanguage = m_emLanguage;
@@ -164,7 +165,7 @@ namespace DoSA
 
         public void copySettingDataToClone()
         {
-            m_strWorkingDirName = CSettingData.m_strWorkingDirName;
+            m_strWorkingDirName = CSettingData.m_strBaseWorkingDirPath;
             m_strFemmExeFileFullName = CSettingData.m_strFemmExeFileFullName;
             m_dMeshLevelPercent = CSettingData.m_dMeshLevelPercent;
             m_emLanguage = CSettingData.m_emLanguage;

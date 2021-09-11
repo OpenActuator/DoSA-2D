@@ -2,6 +2,9 @@ DoSA-Open_2D
 Gi-Tae Kweon
 zgitae@gmail.com
 
+2021-09-11 Ver(0.9.12.0)
+ - Change the working directory if user opens a design file that located other directory
+
 2021-03-27 Ver(0.9.11.2)
  - Change the FEMM Version from (25Feb2018) to (21Apr2019)
 

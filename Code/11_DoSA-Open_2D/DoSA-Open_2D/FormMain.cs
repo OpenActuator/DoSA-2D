@@ -105,7 +105,12 @@ namespace DoSA
             }
 
             initializeProgram();
-            
+
+            // 환경설정의 기본 작업디렉토리의 해당 프로그램의 디렉토리로 일단 설정한다.
+            // 환경설정을 읽어온 후 에 초기화 해야 한다.
+            // 주의사항 : initializeProgram() 뒤에 호출 해야 한다.
+            CSettingData.m_strCurrentWorkingDirPath = CSettingData.m_strBaseWorkingDirPath;
+
             // FEMM 에서 지원되는 재질을 Loading 한다.
             loadMaterial();
 
@@ -353,7 +358,7 @@ namespace DoSA
 
                     // WorkingDirectory 을 읽어온 후에 
                     // 작업의 편의를 위해 디렉토리를 WorkingDirectory 로 변경한다.
-                    m_manageFile.setCurrentDirectory(CSettingData.m_strWorkingDirName);
+                    m_manageFile.setCurrentDirectory(CSettingData.m_strBaseWorkingDirPath);
                 }
 
                 /// 파일에서 읽어오든 신규파일에서 생성을 하든 Setting 파일안의 프로그램 언어를 설정한다.
@@ -643,9 +648,9 @@ namespace DoSA
             // 생성을 할 때는 기본 작업 디렉토리를 사용해서 Actuator 작업파일의 절대 경로를 지정하고,
             // 작업파일을 Open 할 때는 파일을 오픈하는 위치에서 작업 디렉토리를 얻어내어 다시 설정한다.
             // 왜냐하면, 만약 작업 디렉토리를 수정하는 경우 기존의 작업파일을 열 수 없기 때문이다.
-            string strDesignDirName = Path.Combine(CSettingData.m_strWorkingDirName, strDesignName);
+            string strDesignDirName = Path.Combine(CSettingData.m_strCurrentWorkingDirPath, strDesignName);
 
-            m_design.m_strDesignDirName = strDesignDirName;
+            m_design.m_strDesignDirPath = strDesignDirName;
             m_design.m_strDesignName = strDesignName;
             
             // 프로젝트가 시작 했음을 표시하기 위해서 TreeView 에 기본 가지를 추가한다.
@@ -683,7 +688,7 @@ namespace DoSA
             // 파일 열기창 설정
             openFileDialog.Title = "Open a Design File";
             // 디자인 파일을 열 때 디렉토리는 프로그램 작업 디렉토리로 하고 있다.
-            openFileDialog.InitialDirectory = CSettingData.m_strWorkingDirName;
+            openFileDialog.InitialDirectory = CSettingData.m_strCurrentWorkingDirPath;
             openFileDialog.FileName = null;
             openFileDialog.Filter = "Toolkit Files (*.dsa)|*.dsa|All files (*.*)|*.*";
             openFileDialog.FilterIndex = 1;
@@ -705,7 +710,10 @@ namespace DoSA
                 // 이전 다지인 작업 디렉토리를 그대로 사용하면 디렉토리 문제가 발생하여 실행이 불가능하게 된다.
                 // 이를 해결하기 위해
                 // 작업파일을 Open 할 때는 파일을 오픈하는 위치로 작업파일의 디렉토리를 다시 설정하고 있다.
-                m_design.m_strDesignDirName = Path.GetDirectoryName(strActuatorDesignFileFullName);
+                m_design.m_strDesignDirPath = Path.GetDirectoryName(strActuatorDesignFileFullName);
+
+                // Design 디렉토리에서 Design 명을 제거한 디렉토리를 작업디렉토리로 설정한다.
+                CSettingData.m_strCurrentWorkingDirPath = Path.GetDirectoryName(m_design.m_strDesignDirPath);
 
                 // 프로젝트가 시작 했음을 표시하기 위해서 TreeView 에 기본 가지를 추가한다.
                 TreeNode treeNode = new TreeNode("Parts", (int)EMKind.PARTS, (int)EMKind.PARTS);
@@ -780,7 +788,7 @@ namespace DoSA
             CWriteFile writeFile = new CWriteFile();
 
             string strOrgDesignName = this.m_design.m_strDesignName;
-            strOrgDesignDirName = this.m_design.m_strDesignDirName;
+            strOrgDesignDirName = this.m_design.m_strDesignDirPath;
 
             // 디자인이 없는 경우는 DesignName 없기 때문에 이름으로 작업디자인이 있는지를 판단한다.
             if (strOrgDesignName.Length == 0)
@@ -792,7 +800,7 @@ namespace DoSA
             SaveFileDialog saveFileDialog = new SaveFileDialog();
 
             saveFileDialog.Title = "Write a New Design Name";
-            saveFileDialog.InitialDirectory = CSettingData.m_strWorkingDirName;
+            saveFileDialog.InitialDirectory = CSettingData.m_strCurrentWorkingDirPath;
             saveFileDialog.FileName = strOrgDesignName + "_Modify";
 
             DialogResult result = saveFileDialog.ShowDialog();
@@ -840,7 +848,7 @@ namespace DoSA
 
 
                     // 현 모델을 SaveAs 모델명으로 변경한다.
-                    m_design.m_strDesignDirName = strSaveAsDesignDirName;
+                    m_design.m_strDesignDirPath = strSaveAsDesignDirName;
                     m_design.m_strDesignName = strSaveAsDesignName;
 
                     // 수정모델을 읽어드린 후에 바로 저장한다.
@@ -951,7 +959,7 @@ namespace DoSA
 
             // 현재 표시되고 있는 PropertyGird 창에서 Experiment 이름을 찾아 낸다
             string strExperimentName = currentExperiment.NodeName;
-            string strExperimentDirName = Path.Combine(m_design.m_strDesignDirName, strExperimentName);
+            string strExperimentDirName = Path.Combine(m_design.m_strDesignDirPath, strExperimentName);
 
             string strExperimentFullName = Path.Combine(strExperimentDirName, strExperimentName + ".fem");
             string strStrokeFileFullName = Path.Combine(strExperimentDirName, strExperimentName + ".csv");
@@ -1171,7 +1179,7 @@ namespace DoSA
             // 현재 시험의 이름을 m_nodeList 에서 찾지 않고
             // 현재 표시되고 있는 PropertyGird 창에서 Experiment 이름을 찾아 낸다
             string strExperimentName = forceExperiment.NodeName;
-            string strExperimentDirName = Path.Combine(m_design.m_strDesignDirName, strExperimentName);
+            string strExperimentDirName = Path.Combine(m_design.m_strDesignDirPath, strExperimentName);
 
             string strExperimentFullName = Path.Combine(strExperimentDirName, strExperimentName + ".fem");
             string strForceFileFullName = Path.Combine(strExperimentDirName, strExperimentName + ".txt");
@@ -1294,7 +1302,7 @@ namespace DoSA
 
             // 현재 표시되고 있는 PropertyGird 창에서 Experiment 이름을 찾아 낸다
             string strExperimentName = strokeExperiment.NodeName;
-            string strExperimentDirName = Path.Combine(m_design.m_strDesignDirName, strExperimentName);
+            string strExperimentDirName = Path.Combine(m_design.m_strDesignDirPath, strExperimentName);
 
             string strExperimentFullName = Path.Combine(strExperimentDirName, strExperimentName + ".fem");
             string strStrokeFileFullName = Path.Combine(strExperimentDirName, strExperimentName + ".csv");
@@ -1487,7 +1495,7 @@ namespace DoSA
             // 이전 다지인 작업 디렉토리를 그대로 사용하면 디렉토리 문제가 발생하여 실행이 불가능하게 된다.
             // 이를 해결하기 위해
             // 작업파일을 Open 할 때는 파일을 오픈하는 위치로 작업파일의 디렉토리를 다시 설정하고 있다.
-            m_design.m_strDesignDirName = Path.GetDirectoryName(m_strCommandLineDesignFullName);
+            m_design.m_strDesignDirPath = Path.GetDirectoryName(m_strCommandLineDesignFullName);
 
             // 프로젝트가 시작 했음을 표시하기 위해서 TreeView 에 기본 가지를 추가한다.
             TreeNode treeNode = new TreeNode("Parts", (int)EMKind.PARTS, (int)EMKind.PARTS);
@@ -1724,8 +1732,6 @@ namespace DoSA
 
         private bool isStrokeExperimentOK(CStrokeExperiment strokeExperiment)
         {
-            bool bCheck = false;
-
             if (strokeExperiment.InitialStroke >= strokeExperiment.FinalStroke)
             {
                 CNotice.noticeWarningID("TFSM");
@@ -1817,7 +1823,7 @@ namespace DoSA
             // 현재 시험의 이름을 m_nodeList 에서 찾지 않고
             // 현재 표시되고 있는 PropertyGird 창에서 Experiment 이름을 찾아 낸다
             string strExperimentName = ((CForceExperiment)propertyGridMain.SelectedObject).NodeName;
-            string strExperimentDirName = Path.Combine(m_design.m_strDesignDirName, strExperimentName);
+            string strExperimentDirName = Path.Combine(m_design.m_strDesignDirPath, strExperimentName);
 
             string densityImageFileFullName = Path.Combine(strExperimentDirName, strExperimentName + ".bmp");
             string strForceFileFullName = Path.Combine(strExperimentDirName, strExperimentName + ".txt");
@@ -1885,7 +1891,7 @@ namespace DoSA
 
                 //// 현재 표시되고 있는 PropertyGird 창에서 Experiment 이름을 찾아 낸다
                 string strExperimentName = strokeExperiment.NodeName;
-                string strExperimentDirName = Path.Combine(m_design.m_strDesignDirName, strExperimentName);
+                string strExperimentDirName = Path.Combine(m_design.m_strDesignDirPath, strExperimentName);
 
                 string strStrokeFileFullName = Path.Combine(strExperimentDirName, strExperimentName + ".csv");
 
@@ -1944,7 +1950,7 @@ namespace DoSA
 
                 //// 현재 표시되고 있는 PropertyGird 창에서 Experiment 이름을 찾아 낸다
                 string strExperimentName = currentExperiment.NodeName;
-                string strExperimentDirName = Path.Combine(m_design.m_strDesignDirName, strExperimentName);
+                string strExperimentDirName = Path.Combine(m_design.m_strDesignDirPath, strExperimentName);
 
                 string strCurrentFileFullName = Path.Combine(strExperimentDirName, strExperimentName + ".csv");
 
@@ -2004,41 +2010,49 @@ namespace DoSA
                 return false;
             }
 
-            /// New 에서 생성할 때 바로 디렉토리를 생성하면 만약, 프로젝트를 저장하지 않으면 디렉토리만 남는다.
-            /// 따라서 저장할 때 없으면 디렉토리를 생성하는 것으로 바꾸었다.
-            string strDesignDirName = Path.Combine(CSettingData.m_strWorkingDirName, m_design.m_strDesignName);
-
-            if (false == m_manageFile.isExistDirectory(strDesignDirName))
+            try
             {
-                // 다지인 디렉토리를 생성한다.
-                m_manageFile.createDirectory(strDesignDirName);
+                /// New 에서 생성할 때 바로 디렉토리를 생성하면 만약, 프로젝트를 저장하지 않으면 디렉토리만 남는다.
+                /// 따라서 저장할 때 없으면 디렉토리를 생성하는 것으로 바꾸었다.
+                string strDesignDirPath = m_design.m_strDesignDirPath;
+
+                if (false == m_manageFile.isExistDirectory(strDesignDirPath))
+                {
+                    // 다지인 디렉토리를 생성한다.
+                    m_manageFile.createDirectory(strDesignDirPath);
+                }
+
+                string strActuatorDesignFileFullName = Path.Combine(strDesignDirPath, m_design.m_strDesignName + ".dsa");
+
+                StreamWriter writeStream = new StreamWriter(strActuatorDesignFileFullName);
+                CWriteFile writeFile = new CWriteFile();
+
+                // Project 정보를 기록한다.
+                writeFile.writeBeginLine(writeStream, "DoSA_Project", 0);
+
+                writeFile.writeDataLine(writeStream, "Writed", DateTime.Now, 1);
+                writeFile.writeDataLine(writeStream, "DoSA_Version", Assembly.GetExecutingAssembly().GetName().Version, 1);
+                writeFile.writeDataLine(writeStream, "File_Version", FileVersionInfo.GetVersionInfo(Assembly.GetExecutingAssembly().Location).FileVersion, 1);
+
+                m_design.writeObject(writeStream);
+
+                writeFile.writeEndLine(writeStream, "DoSA_Project", 0);
+
+
+                // 사용자 정보를 기록한다.
+                //writeFile.writeBeginLine(writeStream, "Check", 0);
+                //writeFile.writeEndLine(writeStream, "Check", 0);
+
+                writeStream.Close();
+
+                // 저장을 하고 나면 초기화 한다.
+                m_design.m_bChanged = false;
+
             }
-
-            string strActuatorDesignFileFullName = Path.Combine(m_design.m_strDesignDirName, m_design.m_strDesignName + ".dsa");
-
-            StreamWriter writeStream = new StreamWriter(strActuatorDesignFileFullName);
-            CWriteFile writeFile = new CWriteFile();
-
-            // Project 정보를 기록한다.
-            writeFile.writeBeginLine(writeStream, "DoSA_Project", 0);
-
-            writeFile.writeDataLine(writeStream, "Writed", DateTime.Now, 1);
-            writeFile.writeDataLine(writeStream, "DoSA_Version", Assembly.GetExecutingAssembly().GetName().Version, 1);
-            writeFile.writeDataLine(writeStream, "File_Version", FileVersionInfo.GetVersionInfo(Assembly.GetExecutingAssembly().Location).FileVersion, 1);
-
-            m_design.writeObject(writeStream);
-
-            writeFile.writeEndLine(writeStream, "DoSA_Project", 0);
-
-
-            // 사용자 정보를 기록한다.
-            //writeFile.writeBeginLine(writeStream, "Check", 0);
-            //writeFile.writeEndLine(writeStream, "Check", 0);
-
-            writeStream.Close();
-
-            // 저장을 하고 나면 초기화 한다.
-            m_design.m_bChanged = false;
+            catch (Exception ex)
+            {
+                CNotice.printTrace(ex.Message);
+            }
 
             return true;
         }
@@ -2231,7 +2245,7 @@ namespace DoSA
                 // 해석 결과 디렉토리가 있는 경우는 해석결과를 삭제할지를 물어보고 같이 삭제한다.
                 if (node.GetType().BaseType.Name == "CExperiment")
                 {
-                    string strExperimentDirName = Path.Combine(m_design.m_strDesignDirName, node.NodeName);
+                    string strExperimentDirName = Path.Combine(m_design.m_strDesignDirPath, node.NodeName);
 
                     if (m_manageFile.isExistDirectory(strExperimentDirName) == true)
                     {
@@ -2574,7 +2588,7 @@ namespace DoSA
 
                     splitContainerRight.Panel1.Controls.Clear();
 
-                    strExperimentDirName = Path.Combine(m_design.m_strDesignDirName, node.NodeName);
+                    strExperimentDirName = Path.Combine(m_design.m_strDesignDirPath, node.NodeName);
 
                     if (m_femm != null)
                     {
