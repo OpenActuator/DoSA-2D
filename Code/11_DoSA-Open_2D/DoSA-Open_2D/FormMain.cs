@@ -63,12 +63,8 @@ namespace DoSA
         {
             InitializeComponent();
 
-
             // 여러곳에서 CSettingData 을 사용하기 때문에 가장 먼저 실시한다.
             CSettingData.m_strProgramDirName = System.Windows.Forms.Application.StartupPath;
-
-            // 기존에 동작을 하고 있는 FEMM 이 있으면 오류가 발생한다.
-            CProgramFEMM.killProcessOfFEMMs();
 
             m_resManager = ResourceManager.CreateFileBasedResourceManager("LanguageResource", Application.StartupPath, null);
 
@@ -116,6 +112,9 @@ namespace DoSA
                 System.Windows.Forms.Application.ExitThread();
                 Environment.Exit(0);
             }
+
+            // 기존에 동작을 하고 있는 FEMM 이 있으면 오류가 발생한다.
+            CProgramFEMM.killProcessOfFEMMs();
 
             initializeProgram();
 
@@ -1014,20 +1013,10 @@ namespace DoSA
             minX = maxX = minY = maxY = 0;
 
             m_design.getModelMinMaxX(ref minX, ref maxX);
-            m_design.getModelMinMaxY(ref minY, ref maxY);
+            // 이동한 상태에서 해석이 진행됨으로 이동량을 Plus 와 Minus 에 모두 사용한다.
+            m_design.getModelMinMaxY(ref minY, ref maxY, currentExperiment.MovingStroke, currentExperiment.MovingStroke);
 
-            /// Stroke 가 양이면 Plus 만 경계영역을 만들 때 반영하고
-            /// Stroke 가 음이면 Minus 만 경계영역을 만들 때 반영한다.
-            if (currentExperiment.MovingStroke >= 0)
-            {
-                m_design.setBoundary(m_femm, currentExperiment.MeshSizePercent, currentExperiment.MovingStroke, 0);
-                maxY = maxY + currentExperiment.MovingStroke;
-            }
-            else
-            {
-                m_design.setBoundary(m_femm, currentExperiment.MeshSizePercent, 0, currentExperiment.MovingStroke);
-                minY = minY + currentExperiment.MovingStroke;
-            }
+            m_design.setBoundary(m_femm, currentExperiment.MeshSizePercent, minX, maxX, minY, maxY);
 
             m_femm.saveAs(strExperimentFullName);
 
@@ -1237,20 +1226,10 @@ namespace DoSA
             minX = maxX = minY = maxY = 0;
 
             m_design.getModelMinMaxX(ref minX, ref maxX);
-            m_design.getModelMinMaxY(ref minY, ref maxY);
+            // 이동한 상태에서 해석이 진행됨으로 이동량을 Plus 와 Minus 에 모두 사용한다.
+            m_design.getModelMinMaxY(ref minY, ref maxY, forceExperiment.MovingStroke, forceExperiment.MovingStroke);
 
-            /// Stroke 가 양이면 Plus 만 경계영역을 만들 때 반영하고
-            /// Stroke 가 음이면 Minus 만 경계영역을 만들 때 반영한다.
-            if (forceExperiment.MovingStroke >= 0)
-            {
-                m_design.setBoundary(m_femm, forceExperiment.MeshSizePercent, forceExperiment.MovingStroke, 0);
-                maxY = maxY + forceExperiment.MovingStroke;
-            }
-            else
-            {
-                m_design.setBoundary(m_femm, forceExperiment.MeshSizePercent, 0, forceExperiment.MovingStroke);
-                minY = minY + forceExperiment.MovingStroke;
-            }
+            m_design.setBoundary(m_femm, forceExperiment.MeshSizePercent, minX, maxX, minY, maxY);
 
             /// 저장 전에 이동량을 반영한다.
             m_femm.moveMovingParts(forceExperiment.MovingStroke);
@@ -1356,36 +1335,10 @@ namespace DoSA
             minX = maxX = minY = maxY = 0;
 
             m_design.getModelMinMaxX(ref minX, ref maxX);
-            m_design.getModelMinMaxY(ref minY, ref maxY);
+            // 이동으로 고려해야 함으로 초기변위와 최대변위를 모두 넘긴다.
+            m_design.getModelMinMaxY(ref minY, ref maxY, dFinalStroke, dInitialStroke);
 
-            /// 최소, 최대변위의 부호에 따라 해석영역의 크기를 다르게 제작한다.
-            if( dFinalStroke >= 0 )
-            {
-                if( dInitialStroke >= 0 )
-                {
-                    m_design.setBoundary(m_femm, strokeExperiment.MeshSizePercent, dFinalStroke, 0);
-                    maxY = maxY + dFinalStroke;
-                }
-                else
-                {
-                    m_design.setBoundary(m_femm, strokeExperiment.MeshSizePercent, dFinalStroke, dInitialStroke);
-                    maxY = maxY + dFinalStroke;
-                    minY = minY + dInitialStroke;
-                }                    
-            }
-            else
-            {
-                if( dInitialStroke >= 0 )
-                {
-                    CNotice.printTraceID("SPIO");
-                    return;
-                }
-                else
-                {
-                    m_design.setBoundary(m_femm, strokeExperiment.MeshSizePercent, 0, dInitialStroke);
-                    minY = minY + dInitialStroke;
-                }                    
-            }
+            m_design.setBoundary(m_femm, strokeExperiment.MeshSizePercent, minX, maxX, minY, maxY);
 
             m_femm.saveAs(strExperimentFullName);
 

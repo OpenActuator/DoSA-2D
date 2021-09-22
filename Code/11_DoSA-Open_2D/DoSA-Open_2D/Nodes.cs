@@ -246,7 +246,7 @@ namespace Nodes
             return dSumArea;
         }
 
-        public bool getModelMinMaxY(ref double dMinY, ref double dMaxY)
+        public bool getModelMinMaxY(ref double dMinY, ref double dMaxY, double dPlusMovingStroke, double dMinusMovingStroke)
         {
             /// 비교 값을 초기화 한다.
             /// Max 는 아주 작은 값, Min 는 아주 큰 값으로 설정한다.
@@ -266,8 +266,17 @@ namespace Nodes
                     if (false == ((CParts)node).Face.getMinMaxY(ref tempMinY, ref tempMaxY))
                         return false;
 
-                    if (tempMinY < minY) minY = tempMinY;
-                    if (tempMaxY > maxY) maxY = tempMaxY;
+                    // Moving Part 인 경우는 Stroke 까지 고려해서 MinY 와 MaxY 를 구한다.
+                    if (((CParts)node).MovingPart == EMMoving.MOVING)
+                    {
+                        if (tempMinY + dMinusMovingStroke < minY) minY = tempMinY + dMinusMovingStroke;
+                        if (tempMaxY + dPlusMovingStroke > maxY) maxY = tempMaxY + dPlusMovingStroke;
+                    }
+                    else
+                    {
+                        if (tempMinY < minY) minY = tempMinY;
+                        if (tempMaxY > maxY) maxY = tempMaxY;
+                    }
                 }
             }
 
@@ -510,15 +519,9 @@ namespace Nodes
             }
         }
 
-        public void setBoundary(CScriptFEMM femm, double dMeshSizePercent, double dPlusMovingStroke, double dMinusMovingStroke)
+        public void setBoundary(CScriptFEMM femm, double dMeshSizePercent, double minX, double maxX, double minY, double maxY)
         {
             const int iPaddingPercent = 200;
-
-            double minX, minY, maxX, maxY;
-            minX = minY = maxX = maxY = 0;
-
-            this.getModelMinMaxX(ref minX, ref maxX);
-            this.getModelMinMaxY(ref minY, ref maxY);
 
             double lengthX = Math.Abs(maxX - minX);
             double lengthY = Math.Abs(maxY - minY);
@@ -542,8 +545,10 @@ namespace Nodes
             /// 외부 Region 을 생성 및 경계조건을 부여한다.
             /// - X min 값 : 0
             /// - Mesh : AutoMesh
-            face.setOutsideBoundary(femm, 0, maxY + padLength + dPlusMovingStroke,
-                                maxX + padLength, minY - padLength + dMinusMovingStroke, 0);
+            //face.setOutsideBoundary(femm, 0, maxY + padLength + dPlusMovingStroke,
+            //                    maxX + padLength, minY - padLength + dMinusMovingStroke, 0);
+            face.setOutsideBoundary(femm, 0, maxY + padLength,
+                                maxX + padLength, minY - padLength, 0);
 
             /// 내부 Region 은 경계조건과 상관없이 메쉬만를 위해 추가하였다.
             /// 내부 Region 의 메쉬 크기는 기본 메쉬의 3배로 설정한다.
@@ -552,8 +557,10 @@ namespace Nodes
             /// 내부 Region 을 생성한다.
             /// - X min 값 : 0
             /// - Mesh : 지정메쉬 * 3.0f
-            face.setInsideRegion(   femm, 0, maxY + padLengthY / dRatioRegion + dPlusMovingStroke,
-                                maxX + padLengthX / dRatioRegion, minY - padLengthY / dRatioRegion + dMinusMovingStroke, dMeshSize * 3.0f);
+            //face.setInsideRegion(femm, 0, maxY + padLengthY / dRatioRegion + dPlusMovingStroke,
+            //                    maxX + padLengthX / dRatioRegion, minY - padLengthY / dRatioRegion + dMinusMovingStroke, dMeshSize * 3.0f);
+            face.setInsideRegion(femm, 0, maxY + padLengthY / dRatioRegion,
+                                maxX + padLengthX / dRatioRegion, minY - padLengthY / dRatioRegion, dMeshSize * 3.0f);
         }
 
         /// <summary>
