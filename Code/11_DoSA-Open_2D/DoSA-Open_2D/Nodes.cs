@@ -545,8 +545,6 @@ namespace Nodes
             /// 외부 Region 을 생성 및 경계조건을 부여한다.
             /// - X min 값 : 0
             /// - Mesh : AutoMesh
-            //face.setOutsideBoundary(femm, 0, maxY + padLength + dPlusMovingStroke,
-            //                    maxX + padLength, minY - padLength + dMinusMovingStroke, 0);
             face.setOutsideBoundary(femm, 0, maxY + padLength,
                                 maxX + padLength, minY - padLength, 0);
 
@@ -557,10 +555,8 @@ namespace Nodes
             /// 내부 Region 을 생성한다.
             /// - X min 값 : 0
             /// - Mesh : 지정메쉬 * 3.0f
-            //face.setInsideRegion(femm, 0, maxY + padLengthY / dRatioRegion + dPlusMovingStroke,
-            //                    maxX + padLengthX / dRatioRegion, minY - padLengthY / dRatioRegion + dMinusMovingStroke, dMeshSize * 3.0f);
-            face.setInsideRegion(femm, 0, maxY + padLengthY / dRatioRegion,
-                                maxX + padLengthX / dRatioRegion, minY - padLengthY / dRatioRegion, dMeshSize * 3.0f);
+            face.setInsideRegion(femm, 0, maxY + padLength / dRatioRegion,
+                                maxX + padLength / dRatioRegion, minY - padLength / dRatioRegion, dMeshSize * 3.0f);
         }
 
         /// <summary>
