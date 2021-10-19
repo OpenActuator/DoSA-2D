@@ -84,8 +84,8 @@ namespace Shapes
                 for (int i=0; i < m_listRelativePoint.Count; i++ )
                 {
                     point = new CPoint();
-                    point.m_dX = shapeTools.round(m_listRelativePoint[i].m_dX + m_basePoint.m_dX);
-                    point.m_dY = shapeTools.round(m_listRelativePoint[i].m_dY + m_basePoint.m_dY);
+                    point.m_dX = shapeTools.roundDigitOfShape(m_listRelativePoint[i].m_dX + m_basePoint.m_dX);
+                    point.m_dY = shapeTools.roundDigitOfShape(m_listRelativePoint[i].m_dY + m_basePoint.m_dY);
                     point.m_emDirectionArc = m_listRelativePoint[i].m_emDirectionArc;
                     point.m_emLineKind = m_listRelativePoint[i].m_emLineKind;
 
@@ -130,8 +130,8 @@ namespace Shapes
                     // 기준 점인 Base Point 의 좌표와 상대좌표인 PointList 를 더해서
                     // 절대좌표값을 계산한 후에 형상을 그리기 위한 LineList 를 만든다
                     startPoint = new CPoint();
-                    startPoint.m_dX = shapeTools.round(m_listRelativePoint[i].m_dX + m_basePoint.m_dX);
-                    startPoint.m_dY = shapeTools.round(m_listRelativePoint[i].m_dY + m_basePoint.m_dY);
+                    startPoint.m_dX = shapeTools.roundDigitOfShape(m_listRelativePoint[i].m_dX + m_basePoint.m_dX);
+                    startPoint.m_dY = shapeTools.roundDigitOfShape(m_listRelativePoint[i].m_dY + m_basePoint.m_dY);
                     startPoint.m_emDirectionArc = m_listRelativePoint[i].m_emDirectionArc;
                     startPoint.m_emLineKind = m_listRelativePoint[i].m_emLineKind;
 
@@ -141,8 +141,8 @@ namespace Shapes
                         // 기준 점인 Base Point 의 좌표와 상대좌표인 PointList 를 더해서
                         // 절대좌표값을 계산한 후에 형상을 그리기 위한 LineList 를 만든다
                         endPoint = new CPoint();
-                        endPoint.m_dX = shapeTools.round(m_listRelativePoint[i + 1].m_dX + m_basePoint.m_dX);
-                        endPoint.m_dY = shapeTools.round(m_listRelativePoint[i + 1].m_dY + m_basePoint.m_dY);
+                        endPoint.m_dX = shapeTools.roundDigitOfShape(m_listRelativePoint[i + 1].m_dX + m_basePoint.m_dX);
+                        endPoint.m_dY = shapeTools.roundDigitOfShape(m_listRelativePoint[i + 1].m_dY + m_basePoint.m_dY);
                         endPoint.m_emDirectionArc = m_listRelativePoint[i + 1].m_emDirectionArc;
                         endPoint.m_emLineKind = m_listRelativePoint[i + 1].m_emLineKind;
                     }
@@ -150,8 +150,8 @@ namespace Shapes
                     else
                     {
                         endPoint = new CPoint();
-                        endPoint.m_dX = shapeTools.round(m_listRelativePoint[0].m_dX + m_basePoint.m_dX);
-                        endPoint.m_dY = shapeTools.round(m_listRelativePoint[0].m_dY + m_basePoint.m_dY);
+                        endPoint.m_dX = shapeTools.roundDigitOfShape(m_listRelativePoint[0].m_dX + m_basePoint.m_dX);
+                        endPoint.m_dY = shapeTools.roundDigitOfShape(m_listRelativePoint[0].m_dY + m_basePoint.m_dY);
                         endPoint.m_emDirectionArc = m_listRelativePoint[0].m_emDirectionArc;
                         endPoint.m_emLineKind = m_listRelativePoint[0].m_emLineKind;
                     }
@@ -420,13 +420,16 @@ namespace Shapes
                 getMinMaxX(ref minX, ref maxX);
                 getMinMaxY(ref minY, ref maxY);
 
-                blockPoint = m_shapeTools.findInsidePoint(this, minX, maxX, (minY + maxY) / 2.0f);
+                CPoint retBlockPoint = m_shapeTools.findInsidePoint(this, minX, maxX, minY, maxY);
 
-                /// 기준 높이 Base Y 에 Face 의 절점이 위치하면,
-                /// 내부점을 찾지 못해서 null 이 넘어오면 Base Y 값을 변경하여 다시 한번 시도해 본다.
-                /// 만약, 두번째의 시도에도 null 이 넘어오면 Block Point 의 재질을 입력하지 않도록 null 을 그대로 리턴한다.
-                if(blockPoint == null)
-                    blockPoint = m_shapeTools.findInsidePoint(this, minX, maxX, (minY + maxY) / 2.0f + (minY - maxY) /10.0f);
+                if (retBlockPoint != null)
+                    blockPoint = retBlockPoint;
+                else
+                {
+                    // 예외 처리를 한다.
+                    blockPoint.m_dX = 0;
+                    blockPoint.m_dY = 0;
+                }
             }
 
             return blockPoint;
@@ -547,8 +550,9 @@ namespace Shapes
             CPoint blockPoint = new CPoint();
 
             // 좌상단 구석에 block point 좌표를 얻어낸다.
-            blockPoint.m_dX = maxX - width / 100.0f;
-            blockPoint.m_dY = maxY - height / 100.0f;
+            // Region 은 무조건 직사각형이기 때문에 촤상단 점의 근접점이 내부점이 될 수 있다.
+            blockPoint.m_dX = maxX - width / 1000.0f;
+            blockPoint.m_dY = maxY - height / 1000.0f;
 
             femm.setRegionBlockProp(blockPoint, dMeshSize);
 
@@ -607,8 +611,10 @@ namespace Shapes
             CPoint blockPoint = new CPoint();
 
             // 좌상단 구석에 block point 좌표를 얻어낸다.
-            blockPoint.m_dX = maxX - width / 100.0f;
-            blockPoint.m_dY = maxY - height / 100.0f;
+            //
+            // Region 은 무조건 직사각형이기 때문에 촤상단 점의 근접점이 내부점이 될 수 있다.
+            blockPoint.m_dX = maxX - width / 1000.0f;
+            blockPoint.m_dY = maxY - height / 1000.0f;
 
             femm.setRegionBlockProp(blockPoint, dMeshSize);
 
@@ -759,7 +765,7 @@ namespace Shapes
         // 특정 이하의 자리수를 반올림한 다음 비교한다.
         private bool isEqual(double a, double b)
         {
-            return Math.Equals(round(a), round(b));
+            return Math.Equals(roundDigitOfShape(a), roundDigitOfShape(b));
         }        
         /// <summary>
         /// 짝수인지 홀수인지 아니면 영인지를 판단한다.
@@ -805,7 +811,7 @@ namespace Shapes
                 /// 점의 X 좌표가 직선의 X 좌표와 일치하면 라인 위의 점이다.
                 if (isEqual(dL_P1_X, dP_X))
                 {
-                    if (round(dBigY) >= round(dP_Y) && round(dSmallY) <= round(dP_Y))
+                    if (roundDigitOfShape(dBigY) >= roundDigitOfShape(dP_Y) && roundDigitOfShape(dSmallY) <= roundDigitOfShape(dP_Y))
                         return true;
                 }
             }
@@ -815,7 +821,7 @@ namespace Shapes
                 /// 점의 Y 좌표가 직선의 Y 좌표와 일치하면 라인 위의 점이다.
                 if (isEqual(dL_P1_Y, dP_Y))
                 {
-                    if (round(dBigX) >= round(dP_X) && round(dSmallX) <= round(dP_X))
+                    if (roundDigitOfShape(dBigX) >= roundDigitOfShape(dP_X) && roundDigitOfShape(dSmallX) <= roundDigitOfShape(dP_X))
                         return true;
                 }
             }
@@ -832,7 +838,7 @@ namespace Shapes
                 if (isEqual(dP_Calc_Y, dP_Y))
                 {
                     /// 직선의 방정식 위에 있는 점 중에서 실제 라인 위에 있는 점인지를 판단한다.
-                    if ((round(dBigX) >= round(dP_X) && round(dSmallX) <= round(dP_X)) && (round(dBigY) >= round(dP_Y) && round(dSmallY) <= round(dP_Y)))
+                    if ((roundDigitOfShape(dBigX) >= roundDigitOfShape(dP_X) && roundDigitOfShape(dSmallX) <= roundDigitOfShape(dP_X)) && (roundDigitOfShape(dBigY) >= roundDigitOfShape(dP_Y) && roundDigitOfShape(dSmallY) <= roundDigitOfShape(dP_Y)))
                         return true;
                 }
             }
@@ -840,7 +846,7 @@ namespace Shapes
             return false;
         }
 
-        public double round(double a)
+        public double roundDigitOfShape(double a)
         {
             // 기본 좌표 단위는 mm 이다. 
             // 따라서 0.000001 mm (즉, nm) 까지만 사용하고 반올림을 처리한다.
@@ -855,17 +861,17 @@ namespace Shapes
         /// </summary>
         public bool isIntersected(CLine firstLine, CLine secondLine)
         {
-            double dFL_P1_X = round(firstLine.m_startPoint.m_dX);
-            double dFL_P1_Y = round(firstLine.m_startPoint.m_dY);
+            double dFL_P1_X = roundDigitOfShape(firstLine.m_startPoint.m_dX);
+            double dFL_P1_Y = roundDigitOfShape(firstLine.m_startPoint.m_dY);
 
-            double dFL_P2_X = round(firstLine.m_endPoint.m_dX);
-            double dFL_P2_Y = round(firstLine.m_endPoint.m_dY);
+            double dFL_P2_X = roundDigitOfShape(firstLine.m_endPoint.m_dX);
+            double dFL_P2_Y = roundDigitOfShape(firstLine.m_endPoint.m_dY);
 
-            double dSL_P1_X = round(secondLine.m_startPoint.m_dX);
-            double dSL_P1_Y = round(secondLine.m_startPoint.m_dY);
+            double dSL_P1_X = roundDigitOfShape(secondLine.m_startPoint.m_dX);
+            double dSL_P1_Y = roundDigitOfShape(secondLine.m_startPoint.m_dY);
 
-            double dSL_P2_X = round(secondLine.m_endPoint.m_dX);
-            double dSL_P2_Y = round(secondLine.m_endPoint.m_dY);
+            double dSL_P2_X = roundDigitOfShape(secondLine.m_endPoint.m_dX);
+            double dSL_P2_Y = roundDigitOfShape(secondLine.m_endPoint.m_dY);
 
             /// 알고리즘 2 번
             /// 
@@ -919,7 +925,7 @@ namespace Shapes
                 // 하나의 직선 방정식 위에 두개의 라인이 존재하더라도 두 라인이 떨어져 있을 수 있다.
                 // 하나의 직선 방정식 위에 존재하면서 두개의 라인이 겹치는지를 아래의 조건을 판단하고 있다.
                 // ( 방법은 두번째 라인의 두점의 X 값이 첫번째 라인의 X 값들 사이에 있는지로 검사하고 있다.)
-                if (round(dBigX) >= round(dSL_P1_X) && round(dSmallX) <= round(dSL_P1_X) || round(dBigX) >= round(dSL_P2_X) && round(dSmallX) <= round(dSL_P2_X))
+                if (roundDigitOfShape(dBigX) >= roundDigitOfShape(dSL_P1_X) && roundDigitOfShape(dSmallX) <= roundDigitOfShape(dSL_P1_X) || roundDigitOfShape(dBigX) >= roundDigitOfShape(dSL_P2_X) && roundDigitOfShape(dSmallX) <= roundDigitOfShape(dSL_P2_X))
                     return true;
                 else
                     return false;
@@ -1008,91 +1014,100 @@ namespace Shapes
         /// <param name="maxX">내부점을 찾는 구간의 X 점 최대값</param>
         /// <param name="baseY">내부 좌표값을 찾은 Y 위치 </param>
         /// <returns></returns>
-        public CPoint findInsidePoint(CFace face, double minX, double maxX, double baseY)
+        public CPoint findInsidePoint(CFace face, double minX, double maxX, double minY, double maxY)
         {
             int nRightIntersection = 0;
             int nLeftIntersection = 0;
 
-            int nRightPerchedPoint = 0;
-            int nLeftPerchedPoint = 0;
+            int nRightPerchedPointOnCheckLine = 0;
+            int nLeftPerchedPointOnCheckLine = 0;
 
-            // 자리수 정리
-            minX = round(minX);
-            maxX = round(maxX);
-            baseY = round(baseY);
+            int nPerchedCenterPointOnFaceLine = 0;
 
+            CLine rightCheckLine = new CLine();
+            CLine leftCheckLine = new CLine();
+
+            CPoint centerPoint = new CPoint();
+
+            double baseY = (minY + maxY) / 2.0f;
             double centerX = (minX + maxX) / 2.0f;
 
-            CLine rightLine = new CLine();
-            CLine leftLine = new CLine();
+            //// 너무 작은 소수점 이하는 정리한다.
+            minX = roundDigitOfShape(minX);
+            maxX = roundDigitOfShape(maxX);
+            baseY = roundDigitOfShape(baseY);
+
+            // 중심점을 만든다.
+            centerPoint.m_dX = centerX;
+            centerPoint.m_dY = baseY;
 
             /// create a right check line
-            rightLine.m_startPoint.m_dX = centerX;
-            rightLine.m_startPoint.m_dY = baseY;
-            rightLine.m_endPoint.m_dX = maxX + 10.0f;    // 오른 검색선의 끝을 maxX 보다 10 크게 한다.
-            rightLine.m_endPoint.m_dY = baseY;
+            rightCheckLine.m_startPoint.m_dX = centerX;
+            rightCheckLine.m_startPoint.m_dY = baseY;
+            rightCheckLine.m_endPoint.m_dX = maxX + 10.0f;    // 오른 검색선의 끝을 maxX 보다 10 크게 한다.
+            rightCheckLine.m_endPoint.m_dY = baseY;
 
             /// create a left check line
-            leftLine.m_startPoint.m_dX = centerX;
-            leftLine.m_startPoint.m_dY = baseY;
-            leftLine.m_endPoint.m_dX = minX - 10.0f;    // 오른 검색선의 끝을 minX 보다 10 작게 한다.
-            leftLine.m_endPoint.m_dY = baseY;
+            leftCheckLine.m_startPoint.m_dX = centerX;
+            leftCheckLine.m_startPoint.m_dY = baseY;
+            leftCheckLine.m_endPoint.m_dX = minX - 10.0f;    // 오른 검색선의 끝을 minX 보다 10 작게 한다.
+            leftCheckLine.m_endPoint.m_dY = baseY;
 
             /// 매번 생성하는 Property 이기 때문에 
             /// LineList 는 새로운 List에  담는 동작 한번만 호출하고, 사용은 새로운 List 를 사용한다.
             List<CLine> listAbsoluteLine = new List<CLine>();
             listAbsoluteLine = face.AbsoluteLineList;
-
-            /// Face 의 선과 검색선의 교차점을 찾는다.
+            
             foreach (CLine line in listAbsoluteLine)
             {
-                if (true == isIntersected(line, rightLine))
+                /// Face 선들과 검색 선의 교차 횟수 확인
+                if (true == isIntersected(line, rightCheckLine))
                     nRightIntersection++;
 
-                if (true == isIntersected(line, leftLine))
+                if (true == isIntersected(line, leftCheckLine))
                     nLeftIntersection++;
+
+                /// Face 선의 양점이 검색 선 위에 올라가 있는지 확인
+                if (true == isPerchedOnLine(rightCheckLine, line.m_startPoint))
+                    nRightPerchedPointOnCheckLine++;
+
+                if (true == isPerchedOnLine(rightCheckLine, line.m_endPoint))
+                    nRightPerchedPointOnCheckLine++;
+
+                if (true == isPerchedOnLine(leftCheckLine, line.m_startPoint))
+                    nLeftPerchedPointOnCheckLine++;
+
+                if (true == isPerchedOnLine(leftCheckLine, line.m_endPoint))
+                    nLeftPerchedPointOnCheckLine++;
+
+                /// Face 선위에 중심점이 올라가 있는지 확인
+                if (true == isPerchedOnLine(line, centerPoint))
+                    nPerchedCenterPointOnFaceLine++;
             }
 
-            /// 교차를 검사할때 Face 선의 양점은 고려하지 않는다.
-            /// 따라서 검색선에 Face 선의 점을 지나치는 경우는 교차점이 인식되지 못한다.
-            /// 라인의 양점이 검색선에 올가가는지도 추가로 검색한다.
-            /// 
-            foreach (CLine line in listAbsoluteLine)
-            {
-                // 만약 시작과 끝이 같이 올라간 경우라면 검색선에 Face 선이 올라간 경우로 검색에서 제외한다.
-                // 라인의 한점만 올라간 경우를 Perched Point 로 사용한다.
-                if (true == isPerchedOnLine(rightLine, line.m_startPoint) && true == isPerchedOnLine(rightLine, line.m_endPoint))
-                {
-                    nRightPerchedPoint += 0;
-                }
-                else if(true == isPerchedOnLine(rightLine, line.m_startPoint))
-                        nRightPerchedPoint++;
-                else if(true == isPerchedOnLine(rightLine, line.m_endPoint))
-                        nRightPerchedPoint++;
 
-                if (true == isPerchedOnLine(leftLine, line.m_startPoint) && true == isPerchedOnLine(leftLine, line.m_endPoint))
-                {
-                    nLeftPerchedPoint += 0;
-                }
-                else if (true == isPerchedOnLine(leftLine, line.m_startPoint))
-                    nLeftPerchedPoint++;
-                else if (true == isPerchedOnLine(leftLine, line.m_endPoint))
-                    nLeftPerchedPoint++;
-
-            }
-            
-            if((nRightPerchedPoint % 2 != 0) || (nLeftPerchedPoint % 2 != 0))
-                CNotice.printTrace("findInsidePoint 에서 PerchedPoint 값이 홀수가 되었습니다.");
-
-            /// 점이 올라가는 경우 두점이 같이 올라가기 때문에 한번 교차에 두번 카운팅이 된다. 
-            /// 따라서 1/2 로 처리한다.
-            /// 
-            nRightIntersection += (int)(nRightPerchedPoint / 2.0f);
-            nLeftIntersection += (int)(nLeftPerchedPoint / 2.0f);
-
+            //-------------------------------------------------------------------
+            // 내부점 판단
+            //
+            // 내부점을 만족하면 Point 를 리턴하고,
+            // 만족하지 못하면 측정 면적을 수정하고 재귀호출을 통해 Point 를 찾아낸다.
+            //------------------------------------------------------------------
+            //
             CPoint point = new CPoint();
 
-            /// 양측이 홀수이면 Inside Point 이다.
+            // Center 점이 Face Line 위에 올라가 있으면 우측 1/2 사각형에서 내부점을 찾는다.
+            if (nPerchedCenterPointOnFaceLine > 0)
+            {
+                return findInsidePoint(face, centerX, maxX, minY, maxY);
+            }
+
+            // Face Line 의 양점이 우측 검색 라인에 올라가는 경우는 상측 1/2 사각형에서 내부점을 찾는다.
+            if (nRightPerchedPointOnCheckLine > 0 || nLeftPerchedPointOnCheckLine > 0)
+            {
+                return findInsidePoint(face, minX, maxX, baseY, maxY);
+            }
+
+            // 양측이 홀수이면 Inside Point 이다.
             if (EMNumberKind.ODD == getNumberKind(nRightIntersection) && EMNumberKind.ODD == getNumberKind(nLeftIntersection))
             {
                 point.m_dX = centerX;
@@ -1103,12 +1118,12 @@ namespace Shapes
             /// 왼쪽이 짝수이면 X 값의 최소값과 중심값 사이의 중점을 다시 확인한다.
             else if (EMNumberKind.EVEN == getNumberKind(nLeftIntersection))
             {
-                return findInsidePoint(face, minX, centerX, baseY);
+                return findInsidePoint(face, minX, centerX, minY, maxY);
             }
             /// 오른쪽이 짝수이면 X 값의 중심값과 최대값 사이의 중점을 다시 확인한다.
             else if (EMNumberKind.EVEN == getNumberKind(nRightIntersection))
             {
-                return findInsidePoint(face, centerX, maxX, baseY);
+                return findInsidePoint(face, centerX, maxX, minY, maxY);
             }
             else
             {

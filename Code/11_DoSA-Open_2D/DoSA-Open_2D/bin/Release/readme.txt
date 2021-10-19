@@ -2,6 +2,9 @@ DoSA-Open_2D
 Gi-Tae Kweon
 zgitae@gmail.com
 
+2021-10-19 Ver(0.9.13.0)
+ - Bug Fix : Error finding block points in steel 
+
 2021-09-11 Ver(0.9.12.0)
  - Change the working directory if user opens a design file that located other directory
 

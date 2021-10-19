@@ -2594,6 +2594,8 @@ namespace DoSA
 
                         case EMKind.FORCE_EXPERIMENT:
 
+                            CForceExperiment forceExperiment = (CForceExperiment)node;
+
                             string strFieldImageFullName = Path.Combine(strExperimentDirName, node.NodeName + ".txt");
 
                             // 해석결과가 존재하지 않으면 Result 와 Report 버튼을 비활성화 한다.
@@ -2611,6 +2613,9 @@ namespace DoSA
                             // 초기이미지가 없어서 이미지를 비우고 있다.
                             loadDefaultImage(EMKind.FORCE_EXPERIMENT);
                             textBoxForce.Text = "0.0";
+
+                            // 트리로 선택할 때도 가상실험 내부 전류를 재계산한다.
+                            setCurrentInExperiment(node);
 
                             break;
 
@@ -2631,8 +2636,13 @@ namespace DoSA
                             }
 
                             splitContainerRight.Panel1.Controls.Add(this.panelStroke);
+                            
                             // 해석결과로 Panel 이미지가 변경된 경우를 대비해서 초기이미지로 복원한다.                        
                             loadDefaultImage(EMKind.STROKE_EXPERIMENT);
+
+                            // 트리로 선택할 때도 가상실험 내부 전류를 재계산한다.
+                            setCurrentInExperiment(node);
+
                             break;
 
                         case EMKind.CURRENT_EXPERIMENT:
@@ -2890,50 +2900,21 @@ namespace DoSA
 
                     case EMKind.FORCE_EXPERIMENT:
 
-                        CForceExperiment forceExperiment = (CForceExperiment)node;
-
                         if (e.ChangedItem.Label == "Voltage [V]")
                         {
-                            // 총 저항은 합산이 필요함으로 0.0f 로 초기화 한다.
-                            double total_resistance = 0.0f;
-
-                            // 총 저항
-                            foreach (CNode nodeTemp in m_design.NodeList)
-                                if (nodeTemp.m_kindKey == EMKind.COIL)
-                                {
-                                    total_resistance += ((CCoil)nodeTemp).Resistance;
-                                }
-
-                            // 전류
-                            if (total_resistance != 0.0f)
-                                forceExperiment.Current = (forceExperiment.Voltage / total_resistance);
-                            else
-                                forceExperiment.Current = 0.0f;
+                            setCurrentInExperiment(node);
                         }
+
                         break;
 
                     case EMKind.STROKE_EXPERIMENT:
 
-                        CStrokeExperiment strokeExperiment = (CStrokeExperiment)node;
 
                         if (e.ChangedItem.Label == "Voltage [V]")
                         {
-                            // 총 저항은 합산이 필요함으로 0.0f 로 초기화 한다.
-                            double total_resistance = 0.0f;
-
-                            // 총 저항
-                            foreach (CNode nodeTemp in m_design.NodeList)
-                                if (nodeTemp.m_kindKey == EMKind.COIL)
-                                {
-                                    total_resistance += ((CCoil)nodeTemp).Resistance;
-                                }
-
-                            // 전류
-                            if (total_resistance != 0.0f)
-                                strokeExperiment.Current = (strokeExperiment.Voltage / total_resistance);
-                            else
-                                strokeExperiment.Current = 0.0f;
+                            setCurrentInExperiment(node);
                         }
+
                         break;
 
                     default:
@@ -2949,6 +2930,50 @@ namespace DoSA
             m_design.m_bChanged = true;
 
             propertyGridMain.Refresh();
+        }
+
+        private void setCurrentInExperiment(CNode node)
+        {
+            // 총 저항은 합산이 필요함으로 0.0f 로 초기화 한다.
+            double total_resistance = 0.0f;
+
+            // 총 저항
+            foreach (CNode nodeTemp in m_design.NodeList)
+                if (nodeTemp.m_kindKey == EMKind.COIL)
+                {
+                    total_resistance += ((CCoil)nodeTemp).Resistance;
+                }
+
+            switch (node.m_kindKey)
+            {
+                case EMKind.FORCE_EXPERIMENT:
+
+                    CForceExperiment forceExperiment = (CForceExperiment)node;
+
+                    // 전류
+                    if (total_resistance != 0.0f)
+                        forceExperiment.Current = (forceExperiment.Voltage / total_resistance);
+                    else
+                        forceExperiment.Current = 0.0f;
+
+                    break;
+
+                case EMKind.STROKE_EXPERIMENT:
+
+                    CStrokeExperiment strokeExperiment = (CStrokeExperiment)node;
+
+                    // 전류
+                    if (total_resistance != 0.0f)
+                        strokeExperiment.Current = (strokeExperiment.Voltage / total_resistance);
+                    else
+                        strokeExperiment.Current = 0.0f;
+
+                    break;
+
+                default:
+                    break;
+            }
+
         }
 
         //property Category구성
