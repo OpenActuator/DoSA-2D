@@ -665,11 +665,11 @@ namespace Shapes
                 /// 1. 작업 중인 Face 를 제외하고 형상 그리기
                 foreach (CNode node in formMain.m_design.NodeList)
                 {
-                    if (node.GetType().BaseType.Name == "CParts")
+                    if (node.GetType().BaseType.Name == "CShapeParts")
                     {
                         if (node.NodeName != m_strPartName)
                         {
-                            ((CParts)node).Face.drawFace(femm);
+                            ((CShapeParts)node).Face.drawFace(femm);
                         }
                     }
                 }
@@ -733,10 +733,10 @@ namespace Shapes
                         /// 만약, Parts 의 모든 좌표점을 비교하면 다른 좌표점이 수정되었을때 나머지 좌표점의 수정이 없어도 다시 그리기가 된다.
                         if (ListPointControl[i] == pointControl)
                         {
-                            if (((CParts)nodeParts).Face.RelativePointList[i].m_dX != Double.Parse(ListPointControl[i].StrCoordX.Trim()))
+                            if (((CShapeParts)nodeParts).Face.RelativePointList[i].m_dX != Double.Parse(ListPointControl[i].StrCoordX.Trim()))
                                 retCheck = true;
 
-                            if (((CParts)nodeParts).Face.RelativePointList[i].m_dY != Double.Parse(ListPointControl[i].StrCoordY.Trim()))
+                            if (((CShapeParts)nodeParts).Face.RelativePointList[i].m_dY != Double.Parse(ListPointControl[i].StrCoordY.Trim()))
                                 retCheck = true;
                         }
                     }
@@ -753,11 +753,11 @@ namespace Shapes
                     /// 1. 혹시 수정중이라면, 현재 작업 중인 Face 를 제외하고 형상 그리기
                     foreach (CNode node in formMain.m_design.NodeList)
                     {
-                        if (node.GetType().BaseType.Name == "CParts")
+                        if (node.GetType().BaseType.Name == "CShapeParts")
                         {
                             if (node.NodeName != m_strPartName)
                             {
-                                ((CParts)node).Face.drawFace(femm);
+                                ((CShapeParts)node).Face.drawFace(femm);
                             }
                         }
                     }

@@ -184,7 +184,6 @@
       <DependentUpon>Resources.resx</DependentUpon>
       <DesignTime>True</DesignTime>
     </Compile>
-    <None Include="ClassDiagram.cd" />
     <None Include="Help\Install_Guide_ENG.pdf">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>

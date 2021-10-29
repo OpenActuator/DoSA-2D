@@ -183,17 +183,17 @@
             this.textBoxMeshSizePercent.Name = "textBoxMeshSizePercent";
             this.textBoxMeshSizePercent.Size = new System.Drawing.Size(103, 21);
             this.textBoxMeshSizePercent.TabIndex = 4;
-            this.textBoxMeshSizePercent.Text = "1";
+            this.textBoxMeshSizePercent.Text = "2";
             this.textBoxMeshSizePercent.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
             // 
             // labelMeshSize
             // 
             this.labelMeshSize.AutoSize = true;
-            this.labelMeshSize.Location = new System.Drawing.Point(146, 108);
+            this.labelMeshSize.Location = new System.Drawing.Point(68, 119);
             this.labelMeshSize.Name = "labelMeshSize";
-            this.labelMeshSize.Size = new System.Drawing.Size(172, 12);
+            this.labelMeshSize.Size = new System.Drawing.Size(219, 12);
             this.labelMeshSize.TabIndex = 3;
-            this.labelMeshSize.Text = "( = Mesh Size / Model Size )";
+            this.labelMeshSize.Text = "( = Mesh Size / Average Partsl Size )";
             // 
             // labelLanguage
             // 

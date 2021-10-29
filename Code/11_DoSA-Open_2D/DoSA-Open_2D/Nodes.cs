@@ -83,9 +83,9 @@ namespace Nodes
 
             foreach (CNode node in NodeList)
             {
-                if (node.GetType().BaseType.Name == "CParts")
+                if (node.GetType().BaseType.Name == "CShapeParts")
                 {
-                    CParts nodeParts = (CParts)node;
+                    CShapeParts nodeParts = (CShapeParts)node;
 
                     face = nodeParts.Face;
 
@@ -125,9 +125,9 @@ namespace Nodes
 
             foreach (CNode node in NodeList)
             {
-                if (node.GetType().BaseType.Name == "CParts")
+                if (node.GetType().BaseType.Name == "CShapeParts")
                 {
-                    CParts nodeParts = (CParts)node;
+                    CShapeParts nodeParts = (CShapeParts)node;
 
                     face = nodeParts.Face;
 
@@ -204,9 +204,9 @@ namespace Nodes
 
             foreach (CNode node in m_listNode)
             {
-                if (node.GetType().BaseType.Name == "CParts")
+                if (node.GetType().BaseType.Name == "CShapeParts")
                 {
-                    if (false == ((CParts)node).Face.getMinMaxX(ref tempMinX, ref tempMaxX))
+                    if (false == ((CShapeParts)node).Face.getMinMaxX(ref tempMinX, ref tempMaxX))
                         return false;
 
                     if (tempMinX < minX) minX = tempMinX;
@@ -235,15 +235,40 @@ namespace Nodes
 
             foreach (CNode node in m_listNode)
             {
-                if (node.GetType().BaseType.Name == "CParts")
+                if (node.GetType().BaseType.Name == "CShapeParts")
                 {
-                    dFaceArea = shapeTools.calcArea(((CParts)node).Face);
+                    dFaceArea = shapeTools.calcArea(((CShapeParts)node).Face);
 
                     dSumArea += dFaceArea;
                 }
             }
 
             return dSumArea;
+        }
+
+        // MeshSize 를 계산할 때 파트들의 면적 평균으로 지정한다.
+        public double calcShapeModelAverageArea()
+        {
+            double dFaceArea = 0;
+            double dSumArea = 0;
+
+            int nCountOfShapeParts = 0;
+
+            CShapeTools shapeTools = new CShapeTools();
+
+            foreach (CNode node in m_listNode)
+            {
+                if (node.GetType().BaseType.Name == "CShapeParts")
+                {
+                    dFaceArea = shapeTools.calcArea(((CShapeParts)node).Face);
+
+                    dSumArea += dFaceArea;
+
+                    nCountOfShapeParts++;
+                }
+            }
+
+            return dSumArea / nCountOfShapeParts;
         }
 
         public bool getModelMinMaxY(ref double dMinY, ref double dMaxY, double dPlusMovingStroke, double dMinusMovingStroke)
@@ -261,13 +286,13 @@ namespace Nodes
 
             foreach (CNode node in m_listNode)
             {
-                if (node.GetType().BaseType.Name == "CParts")
+                if (node.GetType().BaseType.Name == "CShapeParts")
                 {
-                    if (false == ((CParts)node).Face.getMinMaxY(ref tempMinY, ref tempMaxY))
+                    if (false == ((CShapeParts)node).Face.getMinMaxY(ref tempMinY, ref tempMaxY))
                         return false;
 
                     // Moving Part 인 경우는 Stroke 까지 고려해서 MinY 와 MaxY 를 구한다.
-                    if (((CParts)node).MovingPart == EMMoving.MOVING)
+                    if (((CShapeParts)node).MovingPart == EMMoving.MOVING)
                     {
                         if (tempMinY + dMinusMovingStroke < minY) minY = tempMinY + dMinusMovingStroke;
                         if (tempMaxY + dPlusMovingStroke > maxY) maxY = tempMaxY + dPlusMovingStroke;
@@ -382,9 +407,9 @@ namespace Nodes
 
             foreach (CNode node in NodeList)
             {
-                if (node.GetType().BaseType.Name == "CParts")
+                if (node.GetType().BaseType.Name == "CShapeParts")
                 {
-                    CParts nodeParts = (CParts)node;
+                    CShapeParts nodeParts = (CShapeParts)node;
 
                     face = nodeParts.Face;
 
@@ -405,7 +430,7 @@ namespace Nodes
                 dMeshSizePercent = 1;
 
             // Mesh Size 는 길이단위이기 때문에 면적을 루트 취한 값과 곱하고 있다.
-            double dMeshSize = Math.Sqrt(this.calcShapeModelArea()) * dMeshSizePercent / 100.0f;
+            double dMeshSize = Math.Sqrt(this.calcShapeModelAverageArea()) * dMeshSizePercent / 100.0f;
 
             foreach (CNode node in NodeList)
             {
@@ -458,7 +483,7 @@ namespace Nodes
                 dMeshSizePercent = 1;
 
             // Mesh Size 는 길이단위이기 때문에 면적을 루트 취한 값과 곱하고 있다.
-            double dMeshSize = Math.Sqrt(this.calcShapeModelArea()) * dMeshSizePercent / 100.0f;
+            double dMeshSize = Math.Sqrt(this.calcShapeModelAverageArea()) * dMeshSizePercent / 100.0f;
 
             foreach (CNode node in NodeList)
             {
@@ -494,9 +519,9 @@ namespace Nodes
             foreach (CNode node in NodeList)
             {
                 bCheck = false;
-                if (node.GetType().BaseType.Name == "CParts")
+                if (node.GetType().BaseType.Name == "CShapeParts")
                 {
-                    strMaterial = ((CParts)node).getMaterial();
+                    strMaterial = ((CShapeParts)node).getMaterial();
 
                     /// 현 파트의 재료가 기존에 저장된 Material 과 겹치는지를 확인한다.
                     foreach (string strTemp in listTempMaterial)
@@ -531,7 +556,7 @@ namespace Nodes
                 dMeshSizePercent = 1;
 
             // Mesh Size 는 길이단위이기 때문에 면적을 루트 취한 값과 곱하고 있다.
-            double dMeshSize = Math.Sqrt(this.calcShapeModelArea()) * dMeshSizePercent / 100.0f;
+            double dMeshSize = Math.Sqrt(this.calcShapeModelAverageArea()) * dMeshSizePercent / 100.0f;
 
             double padLengthX = lengthX * iPaddingPercent / 100.0f;
             double padLengthY = lengthY * iPaddingPercent / 100.0f;
@@ -589,14 +614,14 @@ namespace Nodes
         {
             CFace face = null;
             bool bError = false;
-            CParts nodeParts = null;
+            CShapeParts nodeParts = null;
 
             // Moving Part 를 Stroke 만큼 이동시킨다.
             foreach (CNode node in NodeList)
             {
-                if (node.GetType().BaseType.Name == "CParts")
+                if (node.GetType().BaseType.Name == "CShapeParts")
                 {
-                    nodeParts = (CParts)node;
+                    nodeParts = (CShapeParts)node;
 
                     if (nodeParts.MovingPart == EMMoving.MOVING)
                     {
@@ -621,9 +646,9 @@ namespace Nodes
             // Moving Part 를 Stroke 만큼 복원 시킨다.
             foreach (CNode node in NodeList)
             {
-                if (node.GetType().BaseType.Name == "CParts")
+                if (node.GetType().BaseType.Name == "CShapeParts")
                 {
-                    nodeParts = (CParts)node;
+                    nodeParts = (CShapeParts)node;
 
                     if (nodeParts.MovingPart == EMMoving.MOVING)
                     {

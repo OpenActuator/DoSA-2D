@@ -28,7 +28,7 @@ namespace Experiments
         public CExperiment()
         {
             // MeshSizePercent 와 이전 파일버전 인 경우는 아래의 값으로 초기화된다.
-            MeshSizePercent = 1;
+            MeshSizePercent = 2.0;
         }
     }
 
@@ -54,6 +54,7 @@ namespace Experiments
         public CForceExperiment()
         {
             m_kindKey = EMKind.FORCE_EXPERIMENT;
+            Voltage = 5.0;
         }
 
         // 파일스트림 객체에 코일 정보를 기록한다.
@@ -188,6 +189,10 @@ namespace Experiments
         public CStrokeExperiment()
         {
             m_kindKey = EMKind.STROKE_EXPERIMENT;
+            InitialStroke = 0.0;
+            FinalStroke = 0.1;
+            StepCount = 5;
+            Voltage = 5.0;
         }
 
         // 파일스트림 객체에 코일 정보를 기록한다.
@@ -322,6 +327,10 @@ namespace Experiments
         public CCurrentExperiment()
         {
             m_kindKey = EMKind.CURRENT_EXPERIMENT;
+            InitialCurrent = 0.0;
+            FinalCurrent = 0.1;
+            StepCount = 5;
+            MovingStroke = 0.0;
         }
 
         // 파일스트림 객체에 코일 정보를 기록한다.

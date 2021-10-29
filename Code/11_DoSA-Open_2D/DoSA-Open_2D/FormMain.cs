@@ -1164,7 +1164,7 @@ namespace DoSA
 
         private void buttonChangeShape_Click(object sender, EventArgs e)
         {
-            CParts nodeParts = (CParts)propertyGridMain.SelectedObject;
+            CShapeParts nodeParts = (CShapeParts)propertyGridMain.SelectedObject;
 
             changePartsShape(nodeParts);
         }
@@ -1496,9 +1496,9 @@ namespace DoSA
 
             foreach (CNode node in m_design.NodeList)
             {
-                if (node.GetType().BaseType.Name == "CParts")
+                if (node.GetType().BaseType.Name == "CShapeParts")
                 {
-                    CParts nodeParts = (CParts)node;
+                    CShapeParts nodeParts = (CShapeParts)node;
 
 
                     if (null != nodeParts.Face)
@@ -1613,21 +1613,21 @@ namespace DoSA
                 {
                     if (node.GetType().Name == "CCoil")
                     {
-                        strMaterial = ((CParts)node).getMaterial();
+                        strMaterial = ((CShapeParts)node).getMaterial();
 
                         if (CMaterialListInFEMM.isCoilWIreInList(strMaterial) == false)
                             bCheck = false;
                     }
                     else if (node.GetType().Name == "CMagnet")
                     {
-                        strMaterial = ((CParts)node).getMaterial();
+                        strMaterial = ((CShapeParts)node).getMaterial();
 
                         if (CMaterialListInFEMM.isMagnetlInList(strMaterial) == false)
                             bCheck = false;
                     }
                     else if (node.GetType().Name == "CSteel")
                     {
-                        strMaterial = ((CParts)node).getMaterial();
+                        strMaterial = ((CShapeParts)node).getMaterial();
 
                         if (CMaterialListInFEMM.isSteelInList(strMaterial) == false)
                             bCheck = false;
@@ -1652,9 +1652,9 @@ namespace DoSA
                 foreach (CNode node in m_design.NodeList)
                 {
                     // Parts 만 확인한다.
-                    if (node.GetType().BaseType.Name == "CParts")
+                    if (node.GetType().BaseType.Name == "CShapeParts")
                     {
-                        if (((CParts)node).MovingPart == EMMoving.MOVING)
+                        if (((CShapeParts)node).MovingPart == EMMoving.MOVING)
                             bCheck = true;
                     }
                 }
@@ -2260,8 +2260,8 @@ namespace DoSA
                 return;
             }
 
-            if (node.GetType().BaseType.Name == "CParts")
-                changePartsShape((CParts)node);
+            if (node.GetType().BaseType.Name == "CShapeParts")
+                changePartsShape((CShapeParts)node);
 
             // 수정 되었음을 기록한다.
             m_design.m_bChanged = true;
@@ -2365,7 +2365,7 @@ namespace DoSA
 
                 if (null != face)
                 {
-                    ((CParts)Node).Face = face;
+                    ((CShapeParts)Node).Face = face;
 
                     /// 형상에 맞추어 코일 설계 사양정보를 초기화 한다.
                     if(emKind == EMKind.COIL)
@@ -2559,12 +2559,12 @@ namespace DoSA
                     if (m_femm != null)
                     {
                         /// 부품이 선택되면 FEMM 에 선택 표시를 한다
-                        if (node.GetType().BaseType.Name == "CParts")
+                        if (node.GetType().BaseType.Name == "CShapeParts")
                         {
                             // 혹시 FEMM 의 화면이 닫힌 경우 FEMM 의 화면을 복원합니다.
                             reopenFEMM();
 
-                            CParts parts = (CParts)node;
+                            CShapeParts parts = (CShapeParts)node;
 
                             m_femm.clearSelected();
 
@@ -2695,7 +2695,7 @@ namespace DoSA
         /// 
         /// FEMM 에 표시함으로 절대좌표를 사용해야 한다
         /// </summary>
-        private void selectFace(CParts parts)
+        private void selectFace(CShapeParts parts)
         {
             /// 매번 생성하는 Property 이기 때문에 
             /// LineList 는 새로운 List에  담는 동작 한번만 호출하고, 사용은 새로운 List 를 사용한다.
@@ -2708,9 +2708,9 @@ namespace DoSA
             foreach(CNode node in m_design.NodeList)
             {
                 /// 부품이 선택되면 FEMM 에 선택 표시를 한다
-                if (node.GetType().BaseType.Name == "CParts")
+                if (node.GetType().BaseType.Name == "CShapeParts")
                 {
-                    foreach(CPoint point in ((CParts)node).Face.AbsolutePointList)
+                    foreach(CPoint point in ((CShapeParts)node).Face.AbsolutePointList)
                     {
                         listAbsoluteAllPoint.Add(point);
                     }
@@ -3326,7 +3326,7 @@ namespace DoSA
             System.Diagnostics.Process.Start(strWebAddress);
         }
 
-        private void changePartsShape(CParts nodeParts)
+        private void changePartsShape(CShapeParts nodeParts)
         {
             try
             {

@@ -52,7 +52,7 @@ namespace Parts
         Bonded_JIS_Class_2
     };
 
-    public class CParts : CNode
+    public class CShapeParts : CNode
     {
         protected string m_strMaterial;
 
@@ -77,7 +77,7 @@ namespace Parts
             return m_strMaterial;
         }
         
-        protected CParts()
+        protected CShapeParts()
         {
             // 초기값은 고정된 것으로 가정함
             this.MovingPart = EMMoving.FIXED;
@@ -190,7 +190,7 @@ namespace Parts
     }
 
     [DefaultPropertyAttribute("Turns")]
-    public class CCoil : CParts
+    public class CCoil : CShapeParts
     {
         // 상위 strMaterial 을 사용하기 때문에  { get; set; } 형식은 사용해서는 안된다
         // Property Change Event 에서 라벨이름으로 사용되고 있음을 주의하라
@@ -737,7 +737,7 @@ namespace Parts
         }
     }
 
-    public class CMagnet : CParts
+    public class CMagnet : CShapeParts
     {
         // 상위 strMaterial 을 사용하기 때문에  { get; set; } 형식은 사용해서는 안된다
         [TypeConverter(typeof(CMagnetPropertyConverter))]
@@ -946,7 +946,7 @@ namespace Parts
         }
     }
 
-    public class CSteel : CParts
+    public class CSteel : CShapeParts
     {
         // 상위 strMaterial 을 사용하기 때문에  { get; set; } 형식은 사용해서는 안된다
         [TypeConverter(typeof(CSteelPropertyConverter))]
