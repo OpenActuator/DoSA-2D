@@ -1,0 +1,1870 @@
+$begin 'MaterialDef'
+	$begin 'Pure Iron'
+		$begin 'BHCoordinates'
+ 			$begin 'Coordinate'		
+				X=0
+				Y=0
+			$end 'Coordinate'		
+			$begin 'Coordinate'		
+				X=13.8984
+				Y=0.227065
+			$end 'Coordinate'		
+			$begin 'Coordinate'		
+				X=27.7967
+				Y=0.45413
+			$end 'Coordinate'		
+			$begin 'Coordinate'		
+				X=42.3974
+				Y=0.681195
+			$end 'Coordinate'		
+			$begin 'Coordinate'		
+				X=61.4157
+				Y=0.90826
+			$end 'Coordinate'		
+			$begin 'Coordinate'		
+				X=82.3824
+				Y=1.13533
+			$end 'Coordinate'		
+			$begin 'Coordinate'		
+				X=144.669
+				Y=1.36239
+			$end 'Coordinate'		
+			$begin 'Coordinate'		
+				X=897.76
+				Y=1.58935
+			$end 'Coordinate'		
+			$begin 'Coordinate'		
+				X=4581.74
+				Y=1.81236
+			$end 'Coordinate'		
+			$begin 'Coordinate'		
+				X=17736.2
+				Y=2.01004
+			$end 'Coordinate'		
+			$begin 'Coordinate'		
+				X=41339.3
+				Y=2.13316
+			$end 'Coordinate'		
+			$begin 'Coordinate'		
+				X=68321.8
+				Y=2.19999
+			$end 'Coordinate'		
+			$begin 'Coordinate'		
+				X=95685.5
+				Y=2.25479
+			$end 'Coordinate'		
+			$begin 'Coordinate'		
+				X=123355
+				Y=2.29993
+			$end 'Coordinate'		
+			$begin 'Coordinate'		
+				X=151083
+				Y=2.34251
+			$end 'Coordinate'		
+			$begin 'Coordinate'		
+				X=178954
+				Y=2.37876
+			$end 'Coordinate'		
+			$begin 'Coordinate'		
+				X=206825
+				Y=2.41501
+			$end 'Coordinate'		
+			$begin 'Coordinate'		
+				X=234696
+				Y=2.45126
+			$end 'Coordinate'		
+			$begin 'Coordinate'		
+				X=262568
+				Y=2.4875
+			$end 'Coordinate'		
+			$begin 'Coordinate'		
+				X=290439
+				Y=2.52375
+			$end 'Coordinate'		
+			$begin 'Coordinate'		
+				X=318310
+				Y=2.56
+			$end 'Coordinate'
+		$end 'BHCoordinates'
+		conductivity=1
+	$end 'Pure Iron'
+$end 'MaterialDef'
+
+$begin 'MaterialDef'
+	$begin '1006 Steel'
+		$begin 'BHCoordinates'
+			$begin 'Coordinate'		
+				X=0
+				Y=0
+			$end 'Coordinate'		
+			$begin 'Coordinate'		
+				X=79.577472
+				Y=0.38833
+			$end 'Coordinate'		
+			$begin 'Coordinate'		
+				X=100.182101
+				Y=0.482524
+			$end 'Coordinate'		
+			$begin 'Coordinate'		
+				X=126.121793
+				Y=0.595293
+			$end 'Coordinate'		
+			$begin 'Coordinate'		
+				X=158.77793
+				Y=0.726634
+			$end 'Coordinate'		
+			$begin 'Coordinate'		
+				X=199.889571
+				Y=0.873453
+			$end 'Coordinate'		
+			$begin 'Coordinate'		
+				X=251.646061
+				Y=1.028101
+			$end 'Coordinate'		
+			$begin 'Coordinate'		
+				X=316.80362
+				Y=1.178099
+			$end 'Coordinate'		
+			$begin 'Coordinate'		
+				X=398.832128
+				Y=1.308718
+			$end 'Coordinate'		
+			$begin 'Coordinate'		
+				X=502.099901
+				Y=1.408663
+			$end 'Coordinate'		
+			$begin 'Coordinate'		
+				X=632.106325
+				Y=1.475645
+			$end 'Coordinate'		
+			$begin 'Coordinate'		
+				X=795.774715
+				Y=1.516957
+			$end 'Coordinate'		
+			$begin 'Coordinate'		
+				X=1001.821011
+				Y=1.544297
+			$end 'Coordinate'		
+			$begin 'Coordinate'		
+				X=1261.217929
+				Y=1.567545
+			$end 'Coordinate'		
+			$begin 'Coordinate'		
+				X=1587.779301
+				Y=1.592042
+			$end 'Coordinate'		
+			$begin 'Coordinate'		
+				X=1998.89571
+				Y=1.619381
+			$end 'Coordinate'		
+			$begin 'Coordinate'		
+				X=2516.460605
+				Y=1.649135
+			$end 'Coordinate'		
+			$begin 'Coordinate'		
+				X=3168.036204
+				Y=1.679984
+			$end 'Coordinate'		
+			$begin 'Coordinate'		
+				X=3988.321282
+				Y=1.710511
+			$end 'Coordinate'		
+			$begin 'Coordinate'		
+				X=5020.999013
+				Y=1.740077
+			$end 'Coordinate'		
+			$begin 'Coordinate'		
+				X=6321.06325
+				Y=1.769441
+			$end 'Coordinate'		
+			$begin 'Coordinate'		
+				X=7957.747155
+				Y=1.800555
+			$end 'Coordinate'		
+			$begin 'Coordinate'		
+				X=10018.21011
+				Y=1.835625
+			$end 'Coordinate'		
+			$begin 'Coordinate'		
+				X=12612.17929
+				Y=1.876121
+			$end 'Coordinate'		
+			$begin 'Coordinate'		
+				X=15877.79301
+				Y=1.922187
+			$end 'Coordinate'		
+			$begin 'Coordinate'		
+				X=19988.9571
+				Y=1.972386
+			$end 'Coordinate'		
+			$begin 'Coordinate'		
+				X=25164.60605
+				Y=2.023674
+			$end 'Coordinate'		
+			$begin 'Coordinate'		
+				X=31680.36204
+				Y=2.07195
+			$end 'Coordinate'		
+			$begin 'Coordinate'		
+				X=39883.21282
+				Y=2.113538
+			$end 'Coordinate'		
+			$begin 'Coordinate'		
+				X=50209.99013
+				Y=2.147083
+			$end 'Coordinate'		
+			$begin 'Coordinate'		
+				X=63210.6325
+				Y=2.174427
+			$end 'Coordinate'		
+			$begin 'Coordinate'		
+				X=79577.47155
+				Y=2.199604
+			$end 'Coordinate'		
+			$begin 'Coordinate'		
+				X=100182.1011
+				Y=2.226937
+			$end 'Coordinate'		
+			$begin 'Coordinate'		
+				X=126121.7929
+				Y=2.25985
+			$end 'Coordinate'		
+			$begin 'Coordinate'		
+				X=158777.9301
+				Y=2.300931
+			$end 'Coordinate'		
+			$begin 'Coordinate'		
+				X=199889.571
+				Y=2.352597
+			$end 'Coordinate'		
+			$begin 'Coordinate'		
+				X=251646.0605
+				Y=2.417636
+			$end 'Coordinate'		
+			$begin 'Coordinate'		
+				X=316803.6204
+				Y=2.499516
+			$end 'Coordinate'		
+		$end 'BHCoordinates'
+		conductivity=5.8
+	$end '1006 Steel'
+$end 'MaterialDef'
+
+$begin 'MaterialDef'
+	$begin '1010 Steel'
+		$begin 'BHCoordinates'
+ 			$begin 'Coordinate'		
+				X=0
+				Y=0
+			$end 'Coordinate'		
+			$begin 'Coordinate'		
+				X=79.577472
+				Y=0.211862
+			$end 'Coordinate'		
+			$begin 'Coordinate'		
+				X=100.182101
+				Y=0.265665
+			$end 'Coordinate'		
+			$begin 'Coordinate'		
+				X=126.121793
+				Y=0.332377
+			$end 'Coordinate'		
+			$begin 'Coordinate'		
+				X=158.77793
+				Y=0.414377
+			$end 'Coordinate'		
+			$begin 'Coordinate'		
+				X=199.889571
+				Y=0.513811
+			$end 'Coordinate'		
+			$begin 'Coordinate'		
+				X=251.646061
+				Y=0.631899
+			$end 'Coordinate'		
+			$begin 'Coordinate'		
+				X=316.80362
+				Y=0.767784
+			$end 'Coordinate'		
+			$begin 'Coordinate'		
+				X=398.832128
+				Y=0.917018
+			$end 'Coordinate'		
+			$begin 'Coordinate'		
+				X=502.099901
+				Y=1.070353
+			$end 'Coordinate'		
+			$begin 'Coordinate'		
+				X=632.106325
+				Y=1.214255
+			$end 'Coordinate'		
+			$begin 'Coordinate'		
+				X=795.774715
+				Y=1.334637
+			$end 'Coordinate'		
+			$begin 'Coordinate'		
+				X=1001.821011
+				Y=1.422981
+			$end 'Coordinate'		
+			$begin 'Coordinate'		
+				X=1261.217929
+				Y=1.480634
+			$end 'Coordinate'		
+			$begin 'Coordinate'		
+				X=1587.779301
+				Y=1.517214
+			$end 'Coordinate'		
+			$begin 'Coordinate'		
+				X=1998.89571
+				Y=1.544515
+			$end 'Coordinate'		
+			$begin 'Coordinate'		
+				X=2516.460605
+				Y=1.571296
+			$end 'Coordinate'		
+			$begin 'Coordinate'		
+				X=3168.036204
+				Y=1.602049
+			$end 'Coordinate'		
+			$begin 'Coordinate'		
+				X=3988.321282
+				Y=1.638404
+			$end 'Coordinate'		
+			$begin 'Coordinate'		
+				X=5020.999013
+				Y=1.68049
+			$end 'Coordinate'		
+			$begin 'Coordinate'		
+				X=6321.06325
+				Y=1.727311
+			$end 'Coordinate'		
+			$begin 'Coordinate'		
+				X=7957.747155
+				Y=1.776659
+			$end 'Coordinate'		
+			$begin 'Coordinate'		
+				X=10018.21011
+				Y=1.825401
+			$end 'Coordinate'		
+			$begin 'Coordinate'		
+				X=12612.17929
+				Y=1.870557
+			$end 'Coordinate'		
+			$begin 'Coordinate'		
+				X=15877.79301
+				Y=1.910809
+			$end 'Coordinate'		
+			$begin 'Coordinate'		
+				X=19988.9571
+				Y=1.947222
+			$end 'Coordinate'		
+			$begin 'Coordinate'		
+				X=25164.60605
+				Y=1.982328
+			$end 'Coordinate'		
+			$begin 'Coordinate'		
+				X=31680.36204
+				Y=2.018252
+			$end 'Coordinate'		
+			$begin 'Coordinate'		
+				X=39883.21282
+				Y=2.055398
+			$end 'Coordinate'		
+			$begin 'Coordinate'		
+				X=50209.99013
+				Y=2.092545
+			$end 'Coordinate'		
+			$begin 'Coordinate'		
+				X=63210.6325
+				Y=2.128095
+			$end 'Coordinate'		
+			$begin 'Coordinate'		
+				X=79577.47155
+				Y=2.161612
+			$end 'Coordinate'		
+			$begin 'Coordinate'		
+				X=100182.1011
+				Y=2.194644
+			$end 'Coordinate'		
+			$begin 'Coordinate'		
+				X=126121.7929
+				Y=2.230339
+			$end 'Coordinate'		
+			$begin 'Coordinate'		
+				X=158777.9301
+				Y=2.272386
+			$end 'Coordinate'		
+			$begin 'Coordinate'		
+				X=199889.571
+				Y=2.324282
+			$end 'Coordinate'		
+			$begin 'Coordinate'		
+				X=251646.0605
+				Y=2.389356
+			$end 'Coordinate'		
+			$begin 'Coordinate'		
+				X=316803.6204
+				Y=2.471238
+			$end 'Coordinate'		
+		$end 'BHCoordinates'
+		conductivity=5.8
+	$end '1010 Steel'
+$end 'MaterialDef'
+
+$begin 'MaterialDef'
+	$begin '1018 Steel'
+		$begin 'BHCoordinates'
+			$begin 'Coordinate'		
+				X=0
+				Y=0
+			$end 'Coordinate'		
+			$begin 'Coordinate'		
+				X=238.7325
+				Y=0.2503
+			$end 'Coordinate'		
+			$begin 'Coordinate'		
+				X=795.775
+				Y=0.925
+			$end 'Coordinate'		
+			$begin 'Coordinate'		
+				X=1591.55
+				Y=1.25
+			$end 'Coordinate'		
+			$begin 'Coordinate'		
+				X=2387.325
+				Y=1.39
+			$end 'Coordinate'		
+			$begin 'Coordinate'		
+				X=3978.875
+				Y=1.525
+			$end 'Coordinate'		
+			$begin 'Coordinate'		
+				X=7957.75
+				Y=1.71
+			$end 'Coordinate'		
+			$begin 'Coordinate'		
+				X=15915.5
+				Y=1.87
+			$end 'Coordinate'		
+			$begin 'Coordinate'		
+				X=23873.25
+				Y=1.955
+			$end 'Coordinate'		
+			$begin 'Coordinate'		
+				X=39788.75
+				Y=2.02
+			$end 'Coordinate'		
+			$begin 'Coordinate'		
+				X=79577.5
+				Y=2.11
+			$end 'Coordinate'		
+			$begin 'Coordinate'		
+				X=159155
+				Y=2.225
+			$end 'Coordinate'		
+			$begin 'Coordinate'		
+				X=318310
+				Y=2.43
+		$end 'BHCoordinates'
+		conductivity=5.8
+	$end '1018 Steel'
+$end 'MaterialDef'
+
+$begin 'MaterialDef'
+	$begin '1020 Steel'
+		$begin 'BHCoordinates'
+			$begin 'Coordinate'		
+				X=0
+				Y=0
+			$end 'Coordinate'		
+			$begin 'Coordinate'		
+				X=79.577472
+				Y=0.166252
+			$end 'Coordinate'		
+			$begin 'Coordinate'		
+				X=100.182101
+				Y=0.208725
+			$end 'Coordinate'		
+			$begin 'Coordinate'		
+				X=126.121793
+				Y=0.261635
+			$end 'Coordinate'		
+			$begin 'Coordinate'		
+				X=158.77793
+				Y=0.327146
+			$end 'Coordinate'		
+			$begin 'Coordinate'		
+				X=199.889571
+				Y=0.407495
+			$end 'Coordinate'		
+			$begin 'Coordinate'		
+				X=251.646061
+				Y=0.504604
+			$end 'Coordinate'		
+			$begin 'Coordinate'		
+				X=316.80362
+				Y=0.619366
+			$end 'Coordinate'		
+			$begin 'Coordinate'		
+				X=398.832128
+				Y=0.750502
+			$end 'Coordinate'		
+			$begin 'Coordinate'		
+				X=502.099901
+				Y=0.893195
+			$end 'Coordinate'		
+			$begin 'Coordinate'		
+				X=632.106325
+				Y=1.038258
+			$end 'Coordinate'		
+			$begin 'Coordinate'		
+				X=795.774715
+				Y=1.173276
+			$end 'Coordinate'		
+			$begin 'Coordinate'		
+				X=1001.821011
+				Y=1.286731
+			$end 'Coordinate'		
+			$begin 'Coordinate'		
+				X=1261.217929
+				Y=1.373533
+			$end 'Coordinate'		
+			$begin 'Coordinate'		
+				X=1587.779301
+				Y=1.437658
+			$end 'Coordinate'		
+			$begin 'Coordinate'		
+				X=1998.89571
+				Y=1.489189
+			$end 'Coordinate'		
+			$begin 'Coordinate'		
+				X=2516.460605
+				Y=1.538344
+			$end 'Coordinate'		
+			$begin 'Coordinate'		
+				X=3168.036204
+				Y=1.591321
+			$end 'Coordinate'		
+			$begin 'Coordinate'		
+				X=3988.321282
+				Y=1.649723
+			$end 'Coordinate'		
+			$begin 'Coordinate'		
+				X=5020.999013
+				Y=1.711927
+			$end 'Coordinate'		
+			$begin 'Coordinate'		
+				X=6321.06325
+				Y=1.774712
+			$end 'Coordinate'		
+			$begin 'Coordinate'		
+				X=7957.747155
+				Y=1.834976
+			$end 'Coordinate'		
+			$begin 'Coordinate'		
+				X=10018.21011
+				Y=1.891442
+			$end 'Coordinate'		
+			$begin 'Coordinate'		
+				X=12612.17929
+				Y=1.945262
+			$end 'Coordinate'		
+			$begin 'Coordinate'		
+				X=15877.79301
+				Y=1.998705
+			$end 'Coordinate'		
+			$begin 'Coordinate'		
+				X=19988.9571
+				Y=2.052852
+			$end 'Coordinate'		
+			$begin 'Coordinate'		
+				X=25164.60605
+				Y=2.106184
+			$end 'Coordinate'		
+			$begin 'Coordinate'		
+				X=31680.36204
+				Y=2.155149
+			$end 'Coordinate'		
+			$begin 'Coordinate'		
+				X=39883.21282
+				Y=2.196375
+			$end 'Coordinate'		
+			$begin 'Coordinate'		
+				X=50209.99013
+				Y=2.229008
+			$end 'Coordinate'		
+			$begin 'Coordinate'		
+				X=63210.6325
+				Y=2.25545
+			$end 'Coordinate'		
+			$begin 'Coordinate'		
+				X=79577.47155
+				Y=2.280053
+			$end 'Coordinate'		
+			$begin 'Coordinate'		
+				X=100182.1011
+				Y=2.307136
+			$end 'Coordinate'		
+			$begin 'Coordinate'		
+				X=126121.7929
+				Y=2.339975
+			$end 'Coordinate'		
+			$begin 'Coordinate'		
+				X=158777.9301
+				Y=2.381044
+			$end 'Coordinate'		
+			$begin 'Coordinate'		
+				X=199889.571
+				Y=2.432708
+			$end 'Coordinate'		
+			$begin 'Coordinate'		
+				X=251646.0605
+				Y=2.497748
+			$end 'Coordinate'		
+			$begin 'Coordinate'		
+				X=316803.6204
+				Y=2.579627
+			$end 'Coordinate'		
+		$end 'BHCoordinates'
+		conductivity=5.8
+	$end '1020 Steel'
+$end 'MaterialDef'
+
+$begin 'MaterialDef'
+	$begin '1117 Steel'
+		$begin 'BHCoordinates'
+			$begin 'Coordinate'		
+				X=0
+				Y=0
+			$end 'Coordinate'		
+			$begin 'Coordinate'		
+				X=238.7325
+				Y=0.7004
+			$end 'Coordinate'		
+			$begin 'Coordinate'		
+				X=795.775
+				Y=1.351
+			$end 'Coordinate'		
+			$begin 'Coordinate'		
+				X=3183.1
+				Y=1.624
+			$end 'Coordinate'		
+			$begin 'Coordinate'		
+				X=7957.75
+				Y=1.77
+			$end 'Coordinate'		
+			$begin 'Coordinate'		
+				X=31831
+				Y=2
+			$end 'Coordinate'		
+			$begin 'Coordinate'		
+				X=79577.5
+				Y=2.13
+			$end 'Coordinate'		
+			$begin 'Coordinate'		
+				X=159155
+				Y=2.25
+			$end 'Coordinate'		
+			$begin 'Coordinate'		
+				X=318310
+				Y=2.46
+			$end 'Coordinate'		
+		$end 'BHCoordinates'
+		conductivity=5.8
+	$end '1117 Steel'
+$end 'MaterialDef'
+
+$begin 'MaterialDef'
+	$begin '416 Stainless Steel'
+		$begin 'BHCoordinates'
+			$begin 'Coordinate'		
+				X=0
+				Y=0
+			$end 'Coordinate'		
+			$begin 'Coordinate'		
+				X=318.31
+				Y=0.2004
+			$end 'Coordinate'		
+			$begin 'Coordinate'		
+				X=477.465
+				Y=0.4256
+			$end 'Coordinate'		
+			$begin 'Coordinate'		
+				X=795.775
+				Y=0.761
+			$end 'Coordinate'		
+			$begin 'Coordinate'		
+				X=1591.55
+				Y=1.097
+			$end 'Coordinate'		
+			$begin 'Coordinate'		
+				X=2387.325
+				Y=1.233
+			$end 'Coordinate'		
+			$begin 'Coordinate'		
+				X=3978.875
+				Y=1.335
+			$end 'Coordinate'		
+			$begin 'Coordinate'		
+				X=7957.75
+				Y=1.46
+			$end 'Coordinate'		
+			$begin 'Coordinate'		
+				X=15915.5
+				Y=1.59
+			$end 'Coordinate'		
+			$begin 'Coordinate'		
+				X=31831
+				Y=1.69
+			$end 'Coordinate'		
+			$begin 'Coordinate'		
+				X=44456.28
+				Y=1.724232
+			$end 'Coordinate'		
+			$begin 'Coordinate'		
+				X=55704.25
+				Y=1.74
+			$end 'Coordinate'		
+		$end 'BHCoordinates'
+		conductivity=0
+	$end '416 Stainless Steel'
+$end 'MaterialDef'
+
+$begin 'MaterialDef'
+	$begin '430 Stainless Steel'
+		$begin 'BHCoordinates'
+			$begin 'Coordinate'		
+				X=0
+				Y=0
+			$end 'Coordinate'		
+			$begin 'Coordinate'		
+				X=318.31
+				Y=0.2004
+			$end 'Coordinate'		
+			$begin 'Coordinate'		
+				X=636.62
+				Y=0.6008
+			$end 'Coordinate'		
+			$begin 'Coordinate'		
+				X=1591.55
+				Y=1.102
+			$end 'Coordinate'		
+			$begin 'Coordinate'		
+				X=4774.65
+				Y=1.386
+			$end 'Coordinate'		
+			$begin 'Coordinate'		
+				X=7957.75
+				Y=1.465
+			$end 'Coordinate'		
+			$begin 'Coordinate'		
+				X=32902.23252
+				Y=1.667548
+			$end 'Coordinate'		
+			$begin 'Coordinate'		
+				X=92585.39731
+				Y=1.789509
+			$end 'Coordinate'		
+			$begin 'Coordinate'		
+				X=160685.3549
+				Y=1.878209
+			$end 'Coordinate'		
+			$begin 'Coordinate'		
+				X=318310
+				Y=2.08
+			$end 'Coordinate'		
+		$end 'BHCoordinates'
+		conductivity=0
+	$end '430 Stainless Steel'
+$end 'MaterialDef'
+
+$begin 'MaterialDef'
+	$begin '455 Stainless Steel'
+		$begin 'BHCoordinates'
+			$begin 'Coordinate'		
+				X=0
+				Y=0
+			$end 'Coordinate'		
+			$begin 'Coordinate'		
+				X=342.708
+				Y=0.067338
+			$end 'Coordinate'		
+			$begin 'Coordinate'		
+				X=514.031
+				Y=0.10261
+			$end 'Coordinate'		
+			$begin 'Coordinate'		
+				X=713.094
+				Y=0.18909
+			$end 'Coordinate'		
+			$begin 'Coordinate'		
+				X=854.582
+				Y=0.29154
+			$end 'Coordinate'		
+			$begin 'Coordinate'		
+				X=995.753
+				Y=0.41
+			$end 'Coordinate'		
+			$begin 'Coordinate'		
+				X=1107.72
+				Y=0.55725
+			$end 'Coordinate'		
+			$begin 'Coordinate'		
+				X=1247.93
+				Y=0.7301
+			$end 'Coordinate'		
+			$begin 'Coordinate'		
+				X=1417.43
+				Y=0.86777
+			$end 'Coordinate'		
+			$begin 'Coordinate'		
+				X=1616.14
+				Y=0.97345
+			$end 'Coordinate'		
+			$begin 'Coordinate'		
+				X=2273.69
+				Y=1.0633
+			$end 'Coordinate'		
+			$begin 'Coordinate'		
+				X=2931.63
+				Y=1.134
+			$end 'Coordinate'		
+			$begin 'Coordinate'		
+				X=4076.36
+				Y=1.224
+			$end 'Coordinate'		
+			$begin 'Coordinate'		
+				X=4906.59
+				Y=1.2724
+			$end 'Coordinate'		
+			$begin 'Coordinate'		
+				X=6968.68
+				Y=1.35
+			$end 'Coordinate'		
+			$begin 'Coordinate'		
+				X=8085.87
+				Y=1.3761
+			$end 'Coordinate'		
+			$begin 'Coordinate'		
+				X=9661.5
+				Y=1.3991
+			$end 'Coordinate'		
+			$begin 'Coordinate'		
+				X=11438.5
+				Y=1.419
+			$end 'Coordinate'		
+			$begin 'Coordinate'		
+				X=13874.3
+				Y=1.436
+			$end 'Coordinate'		
+			$begin 'Coordinate'		
+				X=15736.4
+				Y=1.4463
+			$end 'Coordinate'		
+			$begin 'Coordinate'		
+				X=17169.6
+				Y=1.4533
+			$end 'Coordinate'		
+			$begin 'Coordinate'		
+				X=19777.4
+				Y=1.464
+			$end 'Coordinate'		
+			$begin 'Coordinate'		
+				X=22986.7
+				Y=1.478
+			$end 'Coordinate'		
+			$begin 'Coordinate'		
+				X=25795
+				Y=1.4888
+			$end 'Coordinate'		
+			$begin 'Coordinate'		
+				X=27715.2
+				Y=1.4959
+			$end 'Coordinate'		
+			$begin 'Coordinate'		
+				X=28604.1
+				Y=1.4995
+			$end 'Coordinate'		
+		$end 'BHCoordinates'
+		conductivity=1.67
+	$end '455 Stainless Steel'	
+$end 'MaterialDef'
+
+$begin 'MaterialDef'					
+	$begin 'M-19 Steel'				
+		$begin 'BHCoordinates'			
+			$begin 'Coordinate'		
+				X=0
+				Y=0
+			$end 'Coordinate'		
+			$begin 'Coordinate'		
+				X=15.120714
+				Y=0.05
+			$end 'Coordinate'		
+			$begin 'Coordinate'		
+				X=22.718292
+				Y=0.1
+			$end 'Coordinate'		
+			$begin 'Coordinate'		
+				X=27.842733
+				Y=0.15
+			$end 'Coordinate'		
+			$begin 'Coordinate'		
+				X=31.871434
+				Y=0.2
+			$end 'Coordinate'		
+			$begin 'Coordinate'		
+				X=35.365044
+				Y=0.25
+			$end 'Coordinate'		
+			$begin 'Coordinate'		
+				X=38.600588
+				Y=0.3
+			$end 'Coordinate'		
+			$begin 'Coordinate'		
+				X=41.736202
+				Y=0.35
+			$end 'Coordinate'		
+			$begin 'Coordinate'		
+				X=44.873979
+				Y=0.4
+			$end 'Coordinate'		
+			$begin 'Coordinate'		
+				X=48.087807
+				Y=0.45
+			$end 'Coordinate'		
+			$begin 'Coordinate'		
+				X=51.437236
+				Y=0.5
+			$end 'Coordinate'		
+			$begin 'Coordinate'		
+				X=54.975221
+				Y=0.55
+			$end 'Coordinate'		
+			$begin 'Coordinate'		
+				X=58.752993
+				Y=0.6
+			$end 'Coordinate'		
+			$begin 'Coordinate'		
+				X=62.823644
+				Y=0.65
+			$end 'Coordinate'		
+			$begin 'Coordinate'		
+				X=67.245285
+				Y=0.7
+			$end 'Coordinate'		
+			$begin 'Coordinate'		
+				X=72.084406
+				Y=0.75
+			$end 'Coordinate'		
+			$begin 'Coordinate'		
+				X=77.4201
+				Y=0.8
+			$end 'Coordinate'		
+			$begin 'Coordinate'		
+				X=83.350021
+				Y=0.85
+			$end 'Coordinate'		
+			$begin 'Coordinate'		
+				X=89.999612
+				Y=0.9
+			$end 'Coordinate'		
+			$begin 'Coordinate'		
+				X=97.537353
+				Y=0.95
+			$end 'Coordinate'		
+			$begin 'Coordinate'		
+				X=106.201406
+				Y=1
+			$end 'Coordinate'		
+			$begin 'Coordinate'		
+				X=116.348464
+				Y=1.05
+			$end 'Coordinate'		
+			$begin 'Coordinate'		
+				X=128.547329
+				Y=1.1
+			$end 'Coordinate'		
+			$begin 'Coordinate'		
+				X=143.765431
+				Y=1.15
+			$end 'Coordinate'		
+			$begin 'Coordinate'		
+				X=163.754169
+				Y=1.2
+			$end 'Coordinate'		
+			$begin 'Coordinate'		
+				X=191.868158
+				Y=1.25
+			$end 'Coordinate'		
+			$begin 'Coordinate'		
+				X=234.833507
+				Y=1.3
+			$end 'Coordinate'		
+			$begin 'Coordinate'		
+				X=306.509769
+				Y=1.35
+			$end 'Coordinate'		
+			$begin 'Coordinate'		
+				X=435.255202
+				Y=1.4
+			$end 'Coordinate'		
+			$begin 'Coordinate'		
+				X=674.911968
+				Y=1.45
+			$end 'Coordinate'		
+			$begin 'Coordinate'		
+				X=1108.325569
+				Y=1.5
+			$end 'Coordinate'		
+			$begin 'Coordinate'		
+				X=1813.085468
+				Y=1.55
+			$end 'Coordinate'		
+			$begin 'Coordinate'		
+				X=2801.217421
+				Y=1.6
+			$end 'Coordinate'		
+			$begin 'Coordinate'		
+				X=4053.653117
+				Y=1.65
+			$end 'Coordinate'		
+			$begin 'Coordinate'		
+				X=5591.10689
+				Y=1.7
+			$end 'Coordinate'		
+			$begin 'Coordinate'		
+				X=7448.318413
+				Y=1.75
+			$end 'Coordinate'		
+			$begin 'Coordinate'		
+				X=9708.81567
+				Y=1.8
+			$end 'Coordinate'		
+			$begin 'Coordinate'		
+				X=12486.93162
+				Y=1.85
+			$end 'Coordinate'		
+			$begin 'Coordinate'		
+				X=16041.48364
+				Y=1.9
+			$end 'Coordinate'		
+			$begin 'Coordinate'		
+				X=21249.42062
+				Y=1.95
+			$end 'Coordinate'		
+			$begin 'Coordinate'		
+				X=31313.49588
+				Y=2
+			$end 'Coordinate'		
+			$begin 'Coordinate'		
+				X=53589.44688
+				Y=2.05
+			$end 'Coordinate'		
+			$begin 'Coordinate'		
+				X=88477.4846
+				Y=2.1
+			$end 'Coordinate'		
+			$begin 'Coordinate'		
+				X=124329.4105
+				Y=2.15
+			$end 'Coordinate'		
+			$begin 'Coordinate'		
+				X=159968.5693
+				Y=2.2
+			$end 'Coordinate'		
+			$begin 'Coordinate'		
+				X=197751.6043
+				Y=2.25
+			$end 'Coordinate'		
+			$begin 'Coordinate'		
+				X=234024.7513
+				Y=2.3
+			$end 'Coordinate'		
+		$end 'BHCoordinates'
+		conductivity=1.9		
+	$end 'M-19 Steel'				
+$end 'MaterialDef'				
+
+$begin 'MaterialDef'					
+	$begin 'M-27 Steel'				
+		$begin 'BHCoordinates'			
+			$begin 'Coordinate'		
+				X=0
+				Y=0
+			$end 'Coordinate'		
+			$begin 'Coordinate'		
+				X=17.059828
+				Y=0.05
+			$end 'Coordinate'		
+			$begin 'Coordinate'		
+				X=25.634971
+				Y=0.1
+			$end 'Coordinate'		
+			$begin 'Coordinate'		
+				X=31.338354
+				Y=0.15
+			$end 'Coordinate'		
+			$begin 'Coordinate'		
+				X=35.778997
+				Y=0.2
+			$end 'Coordinate'		
+			$begin 'Coordinate'		
+				X=39.602124
+				Y=0.25
+			$end 'Coordinate'		
+			$begin 'Coordinate'		
+				X=43.123143
+				Y=0.3
+			$end 'Coordinate'		
+			$begin 'Coordinate'		
+				X=46.520439
+				Y=0.35
+			$end 'Coordinate'		
+			$begin 'Coordinate'		
+				X=49.908177
+				Y=0.4
+			$end 'Coordinate'		
+			$begin 'Coordinate'		
+				X=53.368284
+				Y=0.45
+			$end 'Coordinate'		
+			$begin 'Coordinate'		
+				X=56.966318
+				Y=0.5
+			$end 'Coordinate'		
+			$begin 'Coordinate'		
+				X=60.760271
+				Y=0.55
+			$end 'Coordinate'		
+			$begin 'Coordinate'		
+				X=64.806105
+				Y=0.6
+			$end 'Coordinate'		
+			$begin 'Coordinate'		
+				X=69.161803
+				Y=0.65
+			$end 'Coordinate'		
+			$begin 'Coordinate'		
+				X=73.890922
+				Y=0.7
+			$end 'Coordinate'		
+			$begin 'Coordinate'		
+				X=79.066315
+				Y=0.75
+			$end 'Coordinate'		
+			$begin 'Coordinate'		
+				X=84.774676
+				Y=0.8
+			$end 'Coordinate'		
+			$begin 'Coordinate'		
+				X=91.122722
+				Y=0.85
+			$end 'Coordinate'		
+			$begin 'Coordinate'		
+				X=98.246299
+				Y=0.9
+			$end 'Coordinate'		
+			$begin 'Coordinate'		
+				X=106.324591
+				Y=0.95
+			$end 'Coordinate'		
+			$begin 'Coordinate'		
+				X=115.603417
+				Y=1
+			$end 'Coordinate'		
+			$begin 'Coordinate'		
+				X=126.435124
+				Y=1.05
+			$end 'Coordinate'		
+			$begin 'Coordinate'		
+				X=139.349759
+				Y=1.1
+			$end 'Coordinate'		
+			$begin 'Coordinate'		
+				X=155.187082
+				Y=1.15
+			$end 'Coordinate'		
+			$begin 'Coordinate'		
+				X=175.350538
+				Y=1.2
+			$end 'Coordinate'		
+			$begin 'Coordinate'		
+				X=202.312017
+				Y=1.25
+			$end 'Coordinate'		
+			$begin 'Coordinate'		
+				X=240.640455
+				Y=1.3
+			$end 'Coordinate'		
+			$begin 'Coordinate'		
+				X=299.118027
+				Y=1.35
+			$end 'Coordinate'		
+			$begin 'Coordinate'		
+				X=394.993386
+				Y=1.4
+			$end 'Coordinate'		
+			$begin 'Coordinate'		
+				X=561.726177
+				Y=1.45
+			$end 'Coordinate'		
+			$begin 'Coordinate'		
+				X=859.328763
+				Y=1.5
+			$end 'Coordinate'		
+			$begin 'Coordinate'		
+				X=1375.466888
+				Y=1.55
+			$end 'Coordinate'		
+			$begin 'Coordinate'		
+				X=2191.246914
+				Y=1.6
+			$end 'Coordinate'		
+			$begin 'Coordinate'		
+				X=3328.145908
+				Y=1.65
+			$end 'Coordinate'		
+			$begin 'Coordinate'		
+				X=4760.506172
+				Y=1.7
+			$end 'Coordinate'		
+			$begin 'Coordinate'		
+				X=6535.339449
+				Y=1.75
+			$end 'Coordinate'		
+			$begin 'Coordinate'		
+				X=8788.970657
+				Y=1.8
+			$end 'Coordinate'		
+			$begin 'Coordinate'		
+				X=11670.80435
+				Y=1.85
+			$end 'Coordinate'		
+			$begin 'Coordinate'		
+				X=15385.18621
+				Y=1.9
+			$end 'Coordinate'		
+			$begin 'Coordinate'		
+				X=20246.55303
+				Y=1.95
+			$end 'Coordinate'		
+			$begin 'Coordinate'		
+				X=26995.13114
+				Y=2
+			$end 'Coordinate'		
+			$begin 'Coordinate'		
+				X=38724.49637
+				Y=2.05
+			$end 'Coordinate'		
+			$begin 'Coordinate'		
+				X=64917.28446
+				Y=2.1
+			$end 'Coordinate'		
+			$begin 'Coordinate'		
+				X=101489.3093
+				Y=2.15
+			$end 'Coordinate'		
+			$begin 'Coordinate'		
+				X=137202.829
+				Y=2.2
+			$end 'Coordinate'		
+			$begin 'Coordinate'		
+				X=176835.7068
+				Y=2.25
+			$end 'Coordinate'		
+			$begin 'Coordinate'		
+				X=216374.2836
+				Y=2.3
+			$end 'Coordinate'		
+		$end 'BHCoordinates'			
+		conductivity=2		
+	$end 'M-27 Steel'				
+$end 'MaterialDef'					
+	
+$begin 'MaterialDef'					
+	$begin 'M-36 Steel'				
+		$begin 'BHCoordinates'			
+			$begin 'Coordinate'		
+				X=0
+				Y=0
+			$end 'Coordinate'		
+			$begin 'Coordinate'		
+				X=19.398586
+				Y=0.05
+			$end 'Coordinate'		
+			$begin 'Coordinate'		
+				X=29.611086
+				Y=0.1
+			$end 'Coordinate'		
+			$begin 'Coordinate'		
+				X=36.311286
+				Y=0.15
+			$end 'Coordinate'		
+			$begin 'Coordinate'		
+				X=41.39897
+				Y=0.2
+			$end 'Coordinate'		
+			$begin 'Coordinate'		
+				X=45.654681
+				Y=0.25
+			$end 'Coordinate'		
+			$begin 'Coordinate'		
+				X=49.463585
+				Y=0.3
+			$end 'Coordinate'		
+			$begin 'Coordinate'		
+				X=53.042857
+				Y=0.35
+			$end 'Coordinate'		
+			$begin 'Coordinate'		
+				X=56.529325
+				Y=0.4
+			$end 'Coordinate'		
+			$begin 'Coordinate'		
+				X=60.018492
+				Y=0.45
+			$end 'Coordinate'		
+			$begin 'Coordinate'		
+				X=63.584024
+				Y=0.5
+			$end 'Coordinate'		
+			$begin 'Coordinate'		
+				X=67.288555
+				Y=0.55
+			$end 'Coordinate'		
+			$begin 'Coordinate'		
+				X=71.190394
+				Y=0.6
+			$end 'Coordinate'		
+			$begin 'Coordinate'		
+				X=75.348316
+				Y=0.65
+			$end 'Coordinate'		
+			$begin 'Coordinate'		
+				X=79.825601
+				Y=0.7
+			$end 'Coordinate'		
+			$begin 'Coordinate'		
+				X=84.694101
+				Y=0.75
+			$end 'Coordinate'		
+			$begin 'Coordinate'		
+				X=90.039004
+				Y=0.8
+			$end 'Coordinate'		
+			$begin 'Coordinate'		
+				X=95.965085
+				Y=0.85
+			$end 'Coordinate'		
+			$begin 'Coordinate'		
+				X=102.605595
+				Y=0.9
+			$end 'Coordinate'		
+			$begin 'Coordinate'		
+				X=110.135639
+				Y=0.95
+			$end 'Coordinate'		
+			$begin 'Coordinate'		
+				X=118.793308
+				Y=1
+			$end 'Coordinate'		
+			$begin 'Coordinate'		
+				X=128.914555
+				Y=1.05
+			$end 'Coordinate'		
+			$begin 'Coordinate'		
+				X=140.993285
+				Y=1.1
+			$end 'Coordinate'		
+			$begin 'Coordinate'		
+				X=155.789587
+				Y=1.15
+			$end 'Coordinate'		
+			$begin 'Coordinate'		
+				X=174.53384
+				Y=1.2
+			$end 'Coordinate'		
+			$begin 'Coordinate'		
+				X=199.329946
+				Y=1.25
+			$end 'Coordinate'		
+			$begin 'Coordinate'		
+				X=233.989035
+				Y=1.3
+			$end 'Coordinate'		
+			$begin 'Coordinate'		
+				X=285.821861
+				Y=1.35
+			$end 'Coordinate'		
+			$begin 'Coordinate'		
+				X=369.571626
+				Y=1.4
+			$end 'Coordinate'		
+			$begin 'Coordinate'		
+				X=515.788276
+				Y=1.45
+			$end 'Coordinate'		
+			$begin 'Coordinate'		
+				X=785.785104
+				Y=1.5
+			$end 'Coordinate'		
+			$begin 'Coordinate'		
+				X=1282.793798
+				Y=1.55
+			$end 'Coordinate'		
+			$begin 'Coordinate'		
+				X=2108.172454
+				Y=1.6
+			$end 'Coordinate'		
+			$begin 'Coordinate'		
+				X=3257.880122
+				Y=1.65
+			$end 'Coordinate'		
+			$begin 'Coordinate'		
+				X=4726.442631
+				Y=1.7
+			$end 'Coordinate'		
+			$begin 'Coordinate'		
+				X=6512.009401
+				Y=1.75
+			$end 'Coordinate'		
+			$begin 'Coordinate'		
+				X=8720.265553
+				Y=1.8
+			$end 'Coordinate'		
+			$begin 'Coordinate'		
+				X=11459.42923
+				Y=1.85
+			$end 'Coordinate'		
+			$begin 'Coordinate'		
+				X=14887.90494
+				Y=1.9
+			$end 'Coordinate'		
+			$begin 'Coordinate'		
+				X=19350.57735
+				Y=1.95
+			$end 'Coordinate'		
+			$begin 'Coordinate'		
+				X=26042.60202
+				Y=2
+			$end 'Coordinate'		
+			$begin 'Coordinate'		
+				X=39200.40031
+				Y=2.05
+			$end 'Coordinate'		
+			$begin 'Coordinate'		
+				X=65518.13031
+				Y=2.1
+			$end 'Coordinate'		
+			$begin 'Coordinate'		
+				X=100476.6547
+				Y=2.15
+			$end 'Coordinate'		
+			$begin 'Coordinate'		
+				X=136976.9202
+				Y=2.2
+			$end 'Coordinate'		
+			$begin 'Coordinate'		
+				X=176029.8178
+				Y=2.25
+			$end 'Coordinate'		
+			$begin 'Coordinate'		
+				X=215228.8103
+				Y=2.3
+			$end 'Coordinate'		
+		$end 'BHCoordinates'			
+		conductivity=2
+	$end 'M-36 Steel'				
+$end 'MaterialDef'					
+
+$begin 'MaterialDef'					
+	$begin 'M-43 Steel'				
+		$begin 'BHCoordinates'			
+			$begin 'Coordinate'		
+				X=0
+				Y=0
+			$end 'Coordinate'		
+			$begin 'Coordinate'		
+				X=22.815826
+				Y=0.05
+			$end 'Coordinate'		
+			$begin 'Coordinate'		
+				X=34.292324
+				Y=0.1
+			$end 'Coordinate'		
+			$begin 'Coordinate'		
+				X=41.691795
+				Y=0.15
+			$end 'Coordinate'		
+			$begin 'Coordinate'		
+				X=47.276539
+				Y=0.2
+			$end 'Coordinate'		
+			$begin 'Coordinate'		
+				X=51.943273
+				Y=0.25
+			$end 'Coordinate'		
+			$begin 'Coordinate'		
+				X=56.12413
+				Y=0.3
+			$end 'Coordinate'		
+			$begin 'Coordinate'		
+				X=60.058389
+				Y=0.35
+			$end 'Coordinate'		
+			$begin 'Coordinate'		
+				X=63.894412
+				Y=0.4
+			$end 'Coordinate'		
+			$begin 'Coordinate'		
+				X=67.734109
+				Y=0.45
+			$end 'Coordinate'		
+			$begin 'Coordinate'		
+				X=71.654737
+				Y=0.5
+			$end 'Coordinate'		
+			$begin 'Coordinate'		
+				X=75.720755
+				Y=0.55
+			$end 'Coordinate'		
+			$begin 'Coordinate'		
+				X=79.991002
+				Y=0.6
+			$end 'Coordinate'		
+			$begin 'Coordinate'		
+				X=84.523665
+				Y=0.65
+			$end 'Coordinate'		
+			$begin 'Coordinate'		
+				X=89.380327
+				Y=0.7
+			$end 'Coordinate'		
+			$begin 'Coordinate'		
+				X=94.629948
+				Y=0.75
+			$end 'Coordinate'		
+			$begin 'Coordinate'		
+				X=100.353469
+				Y=0.8
+			$end 'Coordinate'		
+			$begin 'Coordinate'		
+				X=106.649919
+				Y=0.85
+			$end 'Coordinate'		
+			$begin 'Coordinate'		
+				X=113.645209
+				Y=0.9
+			$end 'Coordinate'		
+			$begin 'Coordinate'		
+				X=121.505665
+				Y=0.95
+			$end 'Coordinate'		
+			$begin 'Coordinate'		
+				X=130.459825
+				Y=1
+			$end 'Coordinate'		
+			$begin 'Coordinate'		
+				X=140.835022
+				Y=1.05
+			$end 'Coordinate'		
+			$begin 'Coordinate'		
+				X=153.121088
+				Y=1.1
+			$end 'Coordinate'		
+			$begin 'Coordinate'		
+				X=168.08529
+				Y=1.15
+			$end 'Coordinate'		
+			$begin 'Coordinate'		
+				X=186.986958
+				Y=1.2
+			$end 'Coordinate'		
+			$begin 'Coordinate'		
+				X=211.991513
+				Y=1.25
+			$end 'Coordinate'		
+			$begin 'Coordinate'		
+				X=246.99228
+				Y=1.3
+			$end 'Coordinate'		
+			$begin 'Coordinate'		
+				X=299.274213
+				Y=1.35
+			$end 'Coordinate'		
+			$begin 'Coordinate'		
+				X=382.882838
+				Y=1.4
+			$end 'Coordinate'		
+			$begin 'Coordinate'		
+				X=525.155143
+				Y=1.45
+			$end 'Coordinate'		
+			$begin 'Coordinate'		
+				X=777.592798
+				Y=1.5
+			$end 'Coordinate'		
+			$begin 'Coordinate'		
+				X=1226.457096
+				Y=1.55
+			$end 'Coordinate'		
+			$begin 'Coordinate'		
+				X=1979.929758
+				Y=1.6
+			$end 'Coordinate'		
+			$begin 'Coordinate'		
+				X=3105.52556
+				Y=1.65
+			$end 'Coordinate'		
+			$begin 'Coordinate'		
+				X=4589.182657
+				Y=1.7
+			$end 'Coordinate'		
+			$begin 'Coordinate'		
+				X=6410.967497
+				Y=1.75
+			$end 'Coordinate'		
+			$begin 'Coordinate'		
+				X=8681.339496
+				Y=1.8
+			$end 'Coordinate'		
+			$begin 'Coordinate'		
+				X=11524.47878
+				Y=1.85
+			$end 'Coordinate'		
+			$begin 'Coordinate'		
+				X=15121.4165
+				Y=1.9
+			$end 'Coordinate'		
+			$begin 'Coordinate'		
+				X=19833.36675
+				Y=1.95
+			$end 'Coordinate'		
+			$begin 'Coordinate'		
+				X=26795.52369
+				Y=2
+			$end 'Coordinate'		
+			$begin 'Coordinate'		
+				X=40064.36346
+				Y=2.05
+			$end 'Coordinate'		
+			$begin 'Coordinate'		
+				X=66950.84343
+				Y=2.1
+			$end 'Coordinate'		
+			$begin 'Coordinate'		
+				X=103339.7918
+				Y=2.15
+			$end 'Coordinate'		
+			$begin 'Coordinate'		
+				X=141054.3693
+				Y=2.2
+			$end 'Coordinate'		
+			$begin 'Coordinate'		
+				X=181684.219
+				Y=2.25
+			$end 'Coordinate'		
+			$begin 'Coordinate'		
+				X=223103.5726
+				Y=2.3
+			$end 'Coordinate'		
+		$end 'BHCoordinates'			
+		conductivity=2.6			
+	$end 'M-43 Steel'				
+$end 'MaterialDef'					
+
+$begin 'MaterialDef'		
+	$begin 'M-45 Steel'			
+		$begin 'BHCoordinates'			
+			$begin 'Coordinate'		
+				X=0
+				Y=0
+			$end 'Coordinate'		
+			$begin 'Coordinate'		
+				X=19.96533
+				Y=0.05
+			$end 'Coordinate'		
+			$begin 'Coordinate'		
+				X=29.906288
+				Y=0.1
+			$end 'Coordinate'		
+			$begin 'Coordinate'		
+				X=36.398771
+				Y=0.15
+			$end 'Coordinate'		
+			$begin 'Coordinate'		
+				X=41.371669
+				Y=0.2
+			$end 'Coordinate'		
+			$begin 'Coordinate'		
+				X=45.590262
+				Y=0.25
+			$end 'Coordinate'		
+			$begin 'Coordinate'		
+				X=49.424859
+				Y=0.3
+			$end 'Coordinate'		
+			$begin 'Coordinate'		
+				X=53.08228
+				Y=0.35
+			$end 'Coordinate'		
+			$begin 'Coordinate'		
+				X=56.692664
+				Y=0.4
+			$end 'Coordinate'		
+			$begin 'Coordinate'		
+				X=60.347374
+				Y=0.45
+			$end 'Coordinate'		
+			$begin 'Coordinate'		
+				X=64.117637
+				Y=0.5
+			$end 'Coordinate'		
+			$begin 'Coordinate'		
+				X=68.064755
+				Y=0.55
+			$end 'Coordinate'		
+			$begin 'Coordinate'		
+				X=72.246371
+				Y=0.6
+			$end 'Coordinate'		
+			$begin 'Coordinate'		
+				X=76.720886
+				Y=0.65
+			$end 'Coordinate'		
+			$begin 'Coordinate'		
+				X=81.551123
+				Y=0.7
+			$end 'Coordinate'		
+			$begin 'Coordinate'		
+				X=86.807959
+				Y=0.75
+			$end 'Coordinate'		
+			$begin 'Coordinate'		
+				X=92.574503
+				Y=0.8
+			$end 'Coordinate'		
+			$begin 'Coordinate'		
+				X=98.95152
+				Y=0.85
+			$end 'Coordinate'		
+			$begin 'Coordinate'		
+				X=106.065047
+				Y=0.9
+			$end 'Coordinate'		
+			$begin 'Coordinate'		
+				X=114.077777
+				Y=0.95
+			$end 'Coordinate'		
+			$begin 'Coordinate'		
+				X=123.206911
+				Y=1
+			$end 'Coordinate'		
+			$begin 'Coordinate'		
+				X=133.753385
+				Y=1.05
+			$end 'Coordinate'		
+			$begin 'Coordinate'		
+				X=146.151738
+				Y=1.1
+			$end 'Coordinate'		
+			$begin 'Coordinate'		
+				X=161.058668
+				Y=1.15
+			$end 'Coordinate'		
+			$begin 'Coordinate'		
+				X=179.516634
+				Y=1.2
+			$end 'Coordinate'		
+			$begin 'Coordinate'		
+				X=203.267945
+				Y=1.25
+			$end 'Coordinate'		
+			$begin 'Coordinate'		
+				X=235.379748
+				Y=1.3
+			$end 'Coordinate'		
+			$begin 'Coordinate'		
+				X=281.524948
+				Y=1.35
+			$end 'Coordinate'		
+			$begin 'Coordinate'		
+				X=352.648412
+				Y=1.4
+			$end 'Coordinate'		
+			$begin 'Coordinate'		
+				X=470.426179
+				Y=1.45
+			$end 'Coordinate'		
+			$begin 'Coordinate'		
+				X=677.451541
+				Y=1.5
+			$end 'Coordinate'		
+			$begin 'Coordinate'		
+				X=1051.068036
+				Y=1.55
+			$end 'Coordinate'		
+			$begin 'Coordinate'		
+				X=1703.275165
+				Y=1.6
+			$end 'Coordinate'		
+			$begin 'Coordinate'		
+				X=2726.517959
+				Y=1.65
+			$end 'Coordinate'		
+			$begin 'Coordinate'		
+				X=4137.981052
+				Y=1.7
+			$end 'Coordinate'		
+			$begin 'Coordinate'		
+				X=5832.619704
+				Y=1.75
+			$end 'Coordinate'		
+			$begin 'Coordinate'		
+				X=7939.55294
+				Y=1.8
+			$end 'Coordinate'		
+			$begin 'Coordinate'		
+				X=10565.29434
+				Y=1.85
+			$end 'Coordinate'		
+			$begin 'Coordinate'		
+				X=13843.91297
+				Y=1.9
+			$end 'Coordinate'		
+			$begin 'Coordinate'		
+				X=17970.3597
+				Y=1.95
+			$end 'Coordinate'		
+			$begin 'Coordinate'		
+				X=23423.77643
+				Y=2
+			$end 'Coordinate'		
+			$begin 'Coordinate'		
+				X=32234.32596
+				Y=2.05
+			$end 'Coordinate'		
+			$begin 'Coordinate'		
+				X=51366.77897
+				Y=2.1
+			$end 'Coordinate'		
+			$begin 'Coordinate'		
+				X=84577.8435
+				Y=2.15
+			$end 'Coordinate'		
+			$begin 'Coordinate'		
+				X=121162.4933
+				Y=2.2
+			$end 'Coordinate'		
+			$begin 'Coordinate'		
+				X=160127.8128
+				Y=2.25
+			$end 'Coordinate'		
+			$begin 'Coordinate'		
+				X=202470.2822
+				Y=2.3
+			$end 'Coordinate'		
+		$end 'BHCoordinates'			
+		conductivity=2.9		
+	$end 'M-45 Steel'				
+$end 'MaterialDef'					
