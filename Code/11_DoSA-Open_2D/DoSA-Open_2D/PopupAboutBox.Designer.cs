@@ -34,7 +34,7 @@
             this.tableLayoutPanel = new System.Windows.Forms.TableLayoutPanel();
             this.textBoxOpenLicense = new System.Windows.Forms.TextBox();
             this.labelProductName = new System.Windows.Forms.Label();
-            this.buttonQnA = new System.Windows.Forms.Button();
+            this.buttonHomepage = new System.Windows.Forms.Button();
             this.button1 = new System.Windows.Forms.Button();
             this.buttonLicense = new System.Windows.Forms.Button();
             this.buttonDonation = new System.Windows.Forms.Button();
@@ -146,16 +146,16 @@
             this.labelProductName.Text = "Product Name";
             this.labelProductName.TextAlign = System.Drawing.ContentAlignment.BottomLeft;
             // 
-            // buttonQnA
+            // buttonHomepage
             // 
-            this.buttonQnA.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.buttonQnA.Location = new System.Drawing.Point(116, 446);
-            this.buttonQnA.Name = "buttonQnA";
-            this.buttonQnA.Size = new System.Drawing.Size(100, 35);
-            this.buttonQnA.TabIndex = 1;
-            this.buttonQnA.Text = "QnA Board";
-            this.buttonQnA.UseVisualStyleBackColor = true;
-            this.buttonQnA.Click += new System.EventHandler(this.buttonQnA_Click);
+            this.buttonHomepage.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.buttonHomepage.Location = new System.Drawing.Point(116, 446);
+            this.buttonHomepage.Name = "buttonHomepage";
+            this.buttonHomepage.Size = new System.Drawing.Size(100, 35);
+            this.buttonHomepage.TabIndex = 1;
+            this.buttonHomepage.Text = "Homepage";
+            this.buttonHomepage.UseVisualStyleBackColor = true;
+            this.buttonHomepage.Click += new System.EventHandler(this.buttonHomepage_Click);
             // 
             // button1
             // 
@@ -198,7 +198,7 @@
             this.Controls.Add(this.buttonDonation);
             this.Controls.Add(this.buttonLicense);
             this.Controls.Add(this.button1);
-            this.Controls.Add(this.buttonQnA);
+            this.Controls.Add(this.buttonHomepage);
             this.Controls.Add(this.tableLayoutPanel);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
             this.MaximizeBox = false;
@@ -223,7 +223,7 @@
         private System.Windows.Forms.Label labelVersion;
         private System.Windows.Forms.TableLayoutPanel tableLayoutPanel;
         private System.Windows.Forms.Label labelProductName;
-        private System.Windows.Forms.Button buttonQnA;
+        private System.Windows.Forms.Button buttonHomepage;
         private System.Windows.Forms.Button button1;
         private System.Windows.Forms.Button buttonLicense;
         private System.Windows.Forms.TextBox textBoxOpenLicense;

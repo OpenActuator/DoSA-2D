@@ -116,6 +116,9 @@ namespace DoSA
             // 기존에 동작을 하고 있는 FEMM 이 있으면 오류가 발생한다.
             CProgramFEMM.killProcessOfFEMMs();
 
+            // 설치버전을 확인 한다.
+            checkDoSAVersion();
+
             initializeProgram();
 
             // 환경설정의 기본 작업디렉토리의 해당 프로그램의 디렉토리로 일단 설정한다.
@@ -141,10 +144,13 @@ namespace DoSA
                     m_strCommandLineDataFullName = strDataFileFullName;
             }
 
+            textBoxVectorScale.Text = "10";
+            textBoxVectorGridSize.Text = "1";
+            textBoxMaximumDensity.Text = "1.7";
         }
 
-
-
+        //----------- Update Dialog Test --------------
+        // - WiFi 를 연결하고, AssemblyInfo 에서 버전을 임의로 낮춘다.
         private void checkDoSAVersion()
         {
             try
@@ -152,7 +158,13 @@ namespace DoSA
                 // 인터넷이 연결되지 않으면 예외가 발생하여 catch 로 넘어가고 프로그램이 실행된다.
                 string strNewVersion = new WebClient().DownloadString("http://www.actuator.or.kr/DoSA_2D_Version.txt");
 
-                string strVersionPassFileFullName = Path.Combine(CSettingData.m_strProgramDirName, "VersionPass.txt");
+                string strAppDataPath = Environment.GetEnvironmentVariable("APPDATA");
+                string strSettingFilePath = Path.Combine(strAppDataPath, "DoSA-Open_2D");
+
+                if (m_manageFile.isExistDirectory(strSettingFilePath) == false)
+                    m_manageFile.createDirectory(strSettingFilePath);
+
+                string strVersionPassFileFullName = Path.Combine(strSettingFilePath, "VersionPass.txt");
 
                 /// 버전관리 유의사항
                 /// 
@@ -163,6 +175,21 @@ namespace DoSA
                 /// AssemblyFileVersion 는 직접 읽어오지 못해서 여기서도 DoSA 실행파일의 버전을 읽어서 ProductVersion 을 읽어낸다.
                 string strEXE_FileName = System.Reflection.Assembly.GetExecutingAssembly().Location;
                 string strProductVersion = System.Diagnostics.FileVersionInfo.GetVersionInfo(strEXE_FileName).ProductVersion;
+
+                // Version 뒤에 Update 내용을 붙히려다가 하위호환 문제로 포기했다.
+                //
+                //string[] arrayUpdateInform = strUpdateInform.Split('.');
+
+                //string strNewVersion = string.Empty;
+                //string strMainUpdateContents = string.Empty;
+
+                //if (arrayUpdateInform.Length == 5)
+                //{
+                //    int index = strUpdateInform.LastIndexOf(".");
+
+                //    strNewVersion = strUpdateInform.Remove(index);
+                //    strMainUpdateContents = arrayUpdateInform[4];
+                //}
 
                 string[] arrayNewVersion = strNewVersion.Split('.');
                 string[] arrayProductVersion = strProductVersion.Split('.');
@@ -206,7 +233,7 @@ namespace DoSA
 
                         iPassVersion = 0;
 
-                        // 3 자리만 사용한다. 마지막 자리는 너무 자주 버전업이 되어서 사용자들에 불편을 준다
+                        // 업그레이드 확인은 셋째 자리수로 결정된다. (마지막 자리수는 사용되지 않는다.)
                         for (int i = 0; i < 3; i++)
                             iPassVersion += (int)(Convert.ToInt32(arrayPassVersion[i]) * Math.Pow(10.0, (double)(2 - i)));
 
@@ -225,7 +252,10 @@ namespace DoSA
                 // 신규버전을 알리는 창을 띄운다.
                 if (bVersionCheckDialog == true)
                 {
-                    PopupNewVersion formNewVersion = new PopupNewVersion(strNewVersion, strProductVersion);
+                    // 인터넷이 연결되지 않으면 예외가 발생하여 catch 로 넘어가고 프로그램이 실행된다.
+                    string strMainUpdateContents = new WebClient().DownloadString("http://www.actuator.or.kr/DoSA_2D_Update_Contents.txt");
+
+                    PopupNewVersion formNewVersion = new PopupNewVersion(strNewVersion, strProductVersion, strMainUpdateContents);
                     formNewVersion.StartPosition = FormStartPosition.CenterParent;
 
                     formNewVersion.ShowDialog();
@@ -241,9 +271,19 @@ namespace DoSA
                         string target;
 
                         if (CSettingData.m_emLanguage == EMLanguage.Korean)
-                            target = "http://solenoid.or.kr/index_dosa_open_2d_kor.html";
+                        {
+                            target = "https://solenoid.or.kr/direct_kor.php?address=https://solenoid.or.kr/openactuator/dosa_open_2d_kor.htm";
+
+                            // DoSA 이전 버전의 주소 설정이 아래와 같아서 해당 html 을 삭제하고 못하고 있다.
+                            //target = "http://solenoid.or.kr/index_dosa_open_2d_kor.html";
+                        }
                         else
-                            target = "http://solenoid.or.kr/index_dosa_open_2d_eng.html";
+                        {
+                            target = "https://solenoid.or.kr/direct_eng.php?address=https://solenoid.or.kr/openactuator/dosa_open_2d_eng.htm";
+
+                            // DoSA 이전 버전의 주소 설정이 아래와 같아서 해당 html 을 삭제하고 못하고 있다.
+                            //target = "http://solenoid.or.kr/index_dosa_open_2d_eng.html";
+                        }
 
                         try
                         {
@@ -284,9 +324,6 @@ namespace DoSA
         {
             try
             {
-                // 설치버전을 확인 한다.
-                checkDoSAVersion();
-
                 /// Net Framework V4.51 이전버전이 설치 되었는지를 확인한다.
                 bool retFreamework = checkFramework451();
 
@@ -954,6 +991,35 @@ namespace DoSA
             frmHelp.ShowDialog();
         }
 
+
+        private void ribbonButtonHomepage_Click(object sender, EventArgs e)
+        {
+            string target;
+
+            if (CSettingData.m_emLanguage == EMLanguage.Korean)
+            {
+                target = "https://solenoid.or.kr/index_kor.html";
+            }
+            else
+            {
+                target = "https://solenoid.or.kr/index_eng.html";
+            }
+
+            try
+            {
+                System.Diagnostics.Process.Start(target);
+            }
+            catch (System.ComponentModel.Win32Exception noBrowser)
+            {
+                if (noBrowser.ErrorCode == -2147467259)
+                    CNotice.printTrace(noBrowser.Message);
+            }
+            catch (System.Exception other)
+            {
+                CNotice.printTrace(other.Message);
+            }
+        }
+
         private void ribbonButtonAbout_Click(object sender, EventArgs e)
         {
             PopupAboutBox frmAbout = new PopupAboutBox();
@@ -1014,14 +1080,14 @@ namespace DoSA
 
             m_design.getModelMinMaxX(ref minX, ref maxX);
             // 이동한 상태에서 해석이 진행됨으로 이동량을 Plus 와 Minus 에 모두 사용한다.
-            m_design.getModelMinMaxY(ref minY, ref maxY, currentExperiment.MovingStroke, currentExperiment.MovingStroke);
+            m_design.getModelMinMaxY(ref minY, ref maxY, currentExperiment.MovingStroke);
 
             m_design.setBoundary(m_femm, currentExperiment.MeshSizePercent, minX, maxX, minY, maxY);
 
-            m_femm.saveAs(strExperimentFullName);
-
-            /// FEMM 기본모델은 구동부 이동전으로 저장하고 해석전에 구동부를 이동해서 해석한다.
+            // FEMM 기본모델은 구동부 이동전으로 저장하고 해석전에 구동부를 이동해서 해석한다.
             m_femm.moveMovingParts(currentExperiment.MovingStroke);
+
+            m_femm.saveAs(strExperimentFullName);
 
             double dInitialCurrent = currentExperiment.InitialCurrent;
             double dFinalCurrent = currentExperiment.FinalCurrent;
@@ -1042,6 +1108,8 @@ namespace DoSA
             DateTime previousTime = new DateTime();
             previousTime = DateTime.Now;
 
+            getPostRegion(ref minX, ref maxX, ref minY, ref maxY, 1.2f);
+
             /// 총 계산횟수는 Step + 1 회이다.
             for (int i = 0; i < nStepCount + 1; i++)
             {
@@ -1052,7 +1120,8 @@ namespace DoSA
                 progressBarCurrent.PerformStep();
                 labelProgressCurrent.Text = "Current Step : " + i.ToString() + " / " + nStepCount.ToString();
 
-                double dForce = m_femm.solveForce(minX, minY, maxX, maxY);                
+                // 해석 중에 전체 해석영역이 표시되는 것을 막기 위해 제품영역 정보를 송부한다. 
+                double dForce = m_femm.solveForce(minX, maxX, minY, maxY);
 
                 string strCurrent = String.Format("{0}", dCurrent);
                 string strForce = String.Format("{0}", dForce);
@@ -1169,11 +1238,44 @@ namespace DoSA
             changePartsShape(nodeParts);
         }
 
-        private void buttonForceResult_Click(object sender, EventArgs e)
+        private void buttonForceAndMagnitudeB_Result_Click(object sender, EventArgs e)
         {
-            plotForceResult();
+            CForceExperiment forceExperiment = (CForceExperiment)propertyGridMain.SelectedObject;
+
+            double minX, maxX, minY, maxY;
+            minX = maxX = minY = maxY = 0;
+
+            m_design.getModelMinMaxX(ref minX, ref maxX);
+            // 이동한 상태에서 해석이 진행됨으로 이동량을 Plus 와 Minus 에 모두 사용한다.
+            m_design.getModelMinMaxY(ref minY, ref maxY, forceExperiment.MovingStroke);
+
+            getPostRegion(ref minX, ref maxX, ref minY, ref maxY, 1.2f);
+
+            plotForce();
+
+            // parameter = ture : Magnitude B
+            plotMagneticDensity(minX, maxX, minY, maxY, true, false);
         }
-        
+
+        private void buttonForceAndVectorB_Result_Click(object sender, EventArgs e)
+        {
+            CForceExperiment forceExperiment = (CForceExperiment)propertyGridMain.SelectedObject;
+
+            double minX, maxX, minY, maxY;
+            minX = maxX = minY = maxY = 0;
+
+            m_design.getModelMinMaxX(ref minX, ref maxX);
+            // 이동한 상태에서 해석이 진행됨으로 이동량을 Plus 와 Minus 에 모두 사용한다.
+            m_design.getModelMinMaxY(ref minY, ref maxY, forceExperiment.MovingStroke);
+
+            getPostRegion(ref minX, ref maxX, ref minY, ref maxY, 1.2f);
+
+            plotForce();
+
+            // parameter = false : Vector B
+            plotMagneticDensity(minX, maxX, minY, maxY, false, false);
+        }
+
         private void buttonExperimentForce_Click(object sender, EventArgs e)
         {
             CForceExperiment forceExperiment = (CForceExperiment)propertyGridMain.SelectedObject;
@@ -1185,8 +1287,6 @@ namespace DoSA
 
             string strExperimentFullName = Path.Combine(strExperimentDirName, strExperimentName + ".fem");
             string strForceFileFullName = Path.Combine(strExperimentDirName, strExperimentName + ".txt");
-            string strFieldImageFullName = Path.Combine(strExperimentDirName, strExperimentName + ".bmp");            
-            
 
             if (false == isForceExperimentOK(forceExperiment))
                 return;
@@ -1213,21 +1313,18 @@ namespace DoSA
             // 혹시 FEMM 의 화면이 닫힌 경우 FEMM 의 화면을 복원합니다.
             reopenFEMM();
 
-            // 이미지 캡쳐 때문에 해석중에 FEMM 의 넓이를 일시적으로 넓힌다
-            resizeFEMM(1040);
-
             m_design.addMaterials(m_femm);
 
             m_design.drawDesign(m_femm);
 
             m_design.setBlockPropeties(m_femm, forceExperiment.Voltage, forceExperiment.MeshSizePercent);
-            
+
             double minX, maxX, minY, maxY;
             minX = maxX = minY = maxY = 0;
 
             m_design.getModelMinMaxX(ref minX, ref maxX);
             // 이동한 상태에서 해석이 진행됨으로 이동량을 Plus 와 Minus 에 모두 사용한다.
-            m_design.getModelMinMaxY(ref minY, ref maxY, forceExperiment.MovingStroke, forceExperiment.MovingStroke);
+            m_design.getModelMinMaxY(ref minY, ref maxY, forceExperiment.MovingStroke);
 
             m_design.setBoundary(m_femm, forceExperiment.MeshSizePercent, minX, maxX, minY, maxY);
 
@@ -1238,8 +1335,11 @@ namespace DoSA
 
             DateTime previousTime = new DateTime();
             previousTime = DateTime.Now;
+                        
+            double dlongerLength = getPostRegion(ref minX, ref maxX, ref minY, ref maxY, 1.2f);
 
-            double dForce = m_femm.solveForce(minX, minY, maxX, maxY, strFieldImageFullName);
+            // 해석 중에 전체 해석영역이 표시되는 것을 막기 위해 제품영역 정보를 송부한다. 
+            double dForce = m_femm.solveForce(minX, maxX, minY, maxY);
 
             DateTime currentTime = new DateTime();
             currentTime = DateTime.Now;
@@ -1248,11 +1348,7 @@ namespace DoSA
 
             string strForce = String.Format("{0,15:N5}", dForce);
 
-            closePostView();
-
-            resizeFEMM();
-
-            CWriteFile writefile = new CWriteFile();      
+            CWriteFile writefile = new CWriteFile();
 
             List<string> listString = new List<string>();
 
@@ -1260,10 +1356,35 @@ namespace DoSA
 
             writefile.writeLineString(strForceFileFullName, listString, true);
 
-            plotForceResult();
 
-            // Result 버튼이 동작하게 한다.
-            buttonLoadForceResult.Enabled = true;
+            string strPostDataFullName = Path.Combine(strExperimentDirName, strExperimentName + ".ans");
+
+            textBoxVectorGridSize.Text = (dlongerLength / 50.0f).ToString();
+            textBoxVectorScale.Text = 10.ToString();
+
+            textBoxMaximumDensity.Text = "1.7";
+
+            // 해석결과가 존재하지 않으면 Result 와 Report 버튼을 비활성화 한다.
+            if (m_manageFile.isExistFile(strPostDataFullName) == true)
+            {
+                // Result 버튼이 동작하게 한다.
+                buttonLoadForceAndMagnitudeB.Enabled = true;
+                buttonLoadForceAndVectorB.Enabled = true;
+
+                plotForce();
+
+                plotMagneticDensity(minX, maxX, minY, maxY, true, true);
+            }
+            else
+            {
+                buttonLoadForceAndMagnitudeB.Enabled = false;
+                buttonLoadForceAndVectorB.Enabled = false;
+
+                // plotMagneticDensity() 가 실행되면 내부에 들어 있다.
+                // 실행되지 않는 경우에만 화면을 후처리를 닫는다.
+                closePostView();
+            }
+
 
             if (diffTime.Hours > 0)
                 CNotice.printUserMessage(strExperimentName + m_resManager.GetString("_THBC") +
@@ -1278,7 +1399,29 @@ namespace DoSA
             /// DoSA 를 활성화하여 창을 최상위에 위치시킨다.
             this.Activate();
         }
-        
+
+        // 후처리 영역을 계산한다.
+        private double getPostRegion(ref double minX, ref double maxX, ref double minY, ref double maxY, double dExpandScale = 1.0f)
+        {
+            if (dExpandScale <= 0.0f)
+                return 0.0f;
+
+            // 전체 해석영역이 아니라 제품 영역으로 후처리 화면을 설정하기 위해 제품 크기를 넘겨 준다.
+            double witdhSolvedRegion = Math.Abs(maxX - minX);
+            double heightSolvedResion = Math.Abs(maxY - minY);
+
+            // 해석영역의 폭과 높이 기준으로 20% 더 크게 후처리 영역으로 사용한다.
+            minX = minX - witdhSolvedRegion * (dExpandScale - 1.0f);
+            maxX = maxX + witdhSolvedRegion * (dExpandScale - 1.0f);
+            minY = minY - heightSolvedResion * (dExpandScale - 1.0f);
+            maxY = maxY + heightSolvedResion * (dExpandScale - 1.0f);
+
+            if (witdhSolvedRegion > heightSolvedResion)
+                return witdhSolvedRegion;
+            else
+                return heightSolvedResion;
+        }
+
         private void buttonStrokeResult_Click(object sender, EventArgs e)
         {
             plotStrokeResult();
@@ -1329,16 +1472,8 @@ namespace DoSA
 
             m_design.drawDesign(m_femm);
 
-            m_design.setBlockPropeties(m_femm, strokeExperiment.Voltage, strokeExperiment.MeshSizePercent);
-
             double minX, maxX, minY, maxY;
             minX = maxX = minY = maxY = 0;
-
-            m_design.getModelMinMaxX(ref minX, ref maxX);
-            // 이동으로 고려해야 함으로 초기변위와 최대변위를 모두 넘긴다.
-            m_design.getModelMinMaxY(ref minY, ref maxY, dFinalStroke, dInitialStroke);
-
-            m_design.setBoundary(m_femm, strokeExperiment.MeshSizePercent, minX, maxX, minY, maxY);
 
             m_femm.saveAs(strExperimentFullName);
 
@@ -1356,11 +1491,19 @@ namespace DoSA
 
             DateTime previousTime = new DateTime();
             previousTime = DateTime.Now;
-                 
+
             /// 총 계산횟수는 Step + 1 회이다.
             for (int i = 0; i < nStepCount + 1; i++ )
             {
                 dStroke = dInitialStroke + dStepIncrease * i;
+
+                m_design.setBlockPropeties(m_femm, strokeExperiment.Voltage, strokeExperiment.MeshSizePercent);
+
+                m_design.getModelMinMaxX(ref minX, ref maxX);
+                // 이동으로 고려해야 함으로 초기변위와 최대변위를 모두 넘긴다.
+                m_design.getModelMinMaxY(ref minY, ref maxY, dStroke);
+
+                m_design.setBoundary(m_femm, strokeExperiment.MeshSizePercent, minX, maxX, minY, maxY);
 
                 /// 항상 초기위치 기준으로 이동한다.
                 m_femm.moveMovingParts(dStroke);
@@ -1368,7 +1511,10 @@ namespace DoSA
                 progressBarStroke.PerformStep();
                 labelProgressStroke.Text = "Storke Step : " + i.ToString() + " / " + nStepCount.ToString();
 
-                double dForce = m_femm.solveForce(minX, minY, maxX, maxY);
+                getPostRegion(ref minX, ref maxX, ref minY, ref maxY, 1.2f);
+
+                // 해석 중에 전체 해석영역이 표시되는 것을 막기 위해 제품영역 정보를 송부한다. 
+                double dForce = m_femm.solveForce(minX, maxX, minY, maxY);
 
                 /// 해석을 마치고 나면 구동부를 다시 초기위치로 복귀시킨다.
                 m_femm.moveMovingParts(-dStroke);
@@ -1377,6 +1523,9 @@ namespace DoSA
                 string strForce = String.Format("{0}", dForce);
 
                 listString.Add(strStroke + "," + strForce);
+
+                // 전처리를 부품 형상으로 초기화 한다.
+                m_design.redrawDesign(m_femm);
             }
 
             DateTime currentTime = new DateTime();
@@ -1489,25 +1638,6 @@ namespace DoSA
         #region----------------------- FEMM 제어관련 기능함수 ------------------------
         // m_femm 의 스크립트를 사용하여 제어하는 함수들은 CProgramFEMM 에 추가하지 못해서 FormMain 에 두고 있다.
         // FEMM 자체적으로 처리가 가능한 함수라면 CProgramFEMM 에 추가하라.
-     
-        private void redrawPartsInFEMM()
-        {
-            m_femm.deleteAll();
-
-            foreach (CNode node in m_design.NodeList)
-            {
-                if (node.GetType().BaseType.Name == "CShapeParts")
-                {
-                    CShapeParts nodeParts = (CShapeParts)node;
-
-
-                    if (null != nodeParts.Face)
-                    {
-                        nodeParts.Face.drawFace(m_femm, nodeParts.MovingPart);
-                    }
-                }
-            }
-        }
 
         public void openFEMM(int iWidthFEMM = 500)
         {
@@ -1535,8 +1665,7 @@ namespace DoSA
                         
             if(m_femm != null)
             {
-                redrawPartsInFEMM();
-                m_femm.zoomFit();
+                m_design.redrawDesign(m_femm);
             }
         }
 
@@ -1554,8 +1683,7 @@ namespace DoSA
                 m_femm = new CScriptFEMM();
                 resizeFEMM(iWidthFEMM);
 
-                redrawPartsInFEMM();
-                m_femm.zoomFit();
+                m_design.redrawDesign(m_femm);
             }
         }
 
@@ -1592,9 +1720,7 @@ namespace DoSA
         {
             m_femm.closePost();
 
-            redrawPartsInFEMM();
-
-            m_femm.zoomFit();
+            m_design.redrawDesign(m_femm);
         }
 
         #endregion
@@ -1782,41 +1908,59 @@ namespace DoSA
             return true;
         }
 
-        private void plotForceResult()
+        private void plotMagneticDensity(double minX, double maxX, double minY, double maxY, bool bMagnitude, bool bForceTest)
         {
-            CForceExperiment forceExperiment = (CForceExperiment)propertyGridMain.SelectedObject;
-
             // 현재 시험의 이름을 m_nodeList 에서 찾지 않고
             // 현재 표시되고 있는 PropertyGird 창에서 Experiment 이름을 찾아 낸다
             string strExperimentName = ((CForceExperiment)propertyGridMain.SelectedObject).NodeName;
             string strExperimentDirName = Path.Combine(m_design.m_strDesignDirPath, strExperimentName);
 
-            string densityImageFileFullName = Path.Combine(strExperimentDirName, strExperimentName + ".bmp");
-            string strForceFileFullName = Path.Combine(strExperimentDirName, strExperimentName + ".txt");
+            string strPostDataFullName = Path.Combine(strExperimentDirName, strExperimentName + ".ans");
+
+            string densityImageFileFullName = string.Empty;
+
+            if(bForceTest == false)
+            {
+                // 혹시 FEMM 의 화면이 닫힌 경우 FEMM 의 화면을 복원합니다.
+                reopenFEMM();
+            }
+
+            // 이미지 캡쳐 때문에 해석중에 FEMM 의 넓이를 일시적으로 넓힌다
+            resizeFEMM(1040);
+
+            //------------------------- 자속밀도 이미지 생성 --------------------------------
+            if (bMagnitude == true)
+            {
+                densityImageFileFullName = Path.Combine(strExperimentDirName, strExperimentName + "_magnitude.bmp");
+
+                if (m_manageFile.isExistFile(densityImageFileFullName))
+                    m_manageFile.deleteFile(densityImageFileFullName);
+
+                m_femm.writeDensityMagnitudeImage(  minX, minY, maxX, maxY, densityImageFileFullName, strPostDataFullName, bForceTest,
+                                                    Convert.ToDouble(textBoxMaximumDensity.Text));
+            }                
+            else
+            {
+                densityImageFileFullName = Path.Combine(strExperimentDirName, strExperimentName + "_vector.bmp");
+
+                if (m_manageFile.isExistFile(densityImageFileFullName))
+                    m_manageFile.deleteFile(densityImageFileFullName);
+
+                m_femm.writeDensityVectorImage( minX, minY, maxX, maxY, densityImageFileFullName, strPostDataFullName, bForceTest, 
+                                                Convert.ToDouble(textBoxVectorGridSize.Text), Convert.ToDouble(textBoxVectorScale.Text));
+            }
+
+            closePostView();
+
+            // 자속밀도가 표시된 경우라면 resize 에서 다시 자속밀도를 그린다.
+            // 따라서 closePostView 후에 resize 하라.
+            resizeFEMM();
 
             bool bCheck = false;
 
-            string strReturn;
-            double dForce;
-            CReadFile readfile = new CReadFile();
-
+            //------------------------ 자속밀도 이미지 로딩 ------------------------------------
             try
             {
-
-                bCheck = m_manageFile.isExistFile(strForceFileFullName);
-
-                if (bCheck == true)
-                {
-                    strReturn = readfile.pickoutString(strForceFileFullName, "force:", 7, 21);
-                    dForce = Double.Parse(strReturn);
-
-                    textBoxForce.Text = dForce.ToString();
-                }
-                else
-                {
-                    CNotice.noticeWarningID("TROA1");
-                    return;
-                }
 
                 bCheck = m_manageFile.isExistFile(densityImageFileFullName);
 
@@ -1837,6 +1981,45 @@ namespace DoSA
                     return;
                 }
 
+            }
+            catch (Exception ex)
+            {
+                CNotice.printTrace(ex.Message);
+                return;
+            }
+        }
+
+        private void plotForce()
+        {
+            // 현재 시험의 이름을 m_nodeList 에서 찾지 않고
+            // 현재 표시되고 있는 PropertyGird 창에서 Experiment 이름을 찾아 낸다
+            string strExperimentName = ((CForceExperiment)propertyGridMain.SelectedObject).NodeName;
+            string strExperimentDirName = Path.Combine(m_design.m_strDesignDirPath, strExperimentName);
+
+            string strForceFileFullName = Path.Combine(strExperimentDirName, strExperimentName + ".txt");
+
+            bool bCheck = false;
+
+            string strReturn;
+            double dForce;
+            CReadFile readfile = new CReadFile();
+
+            try
+            {
+                bCheck = m_manageFile.isExistFile(strForceFileFullName);
+
+                if (bCheck == true)
+                {
+                    strReturn = readfile.pickoutString(strForceFileFullName, "force:", 7, 21);
+                    dForce = Double.Parse(strReturn);
+
+                    textBoxForce.Text = dForce.ToString();
+                }
+                else
+                {
+                    CNotice.noticeWarningID("TROA1");
+                    return;
+                }
             }
             catch (Exception ex)
             {
@@ -2233,7 +2416,7 @@ namespace DoSA
                 this.treeViewMain.SelectedNode.Remove();
                 deleteRawNode(selectedNodeText);
 
-                redrawPartsInFEMM();
+                m_design.redrawDesign(m_femm);
 
                 // 혹시 FEMM 의 화면이 닫힌 경우 FEMM 의 화면을 복원합니다.
                 reopenFEMM();
@@ -2315,7 +2498,7 @@ namespace DoSA
                 if (DialogResult.Cancel == popupShape.ShowDialog(this))
                 {
                     // 삽입 동안 화면에 그렸던 형상을 제거한다.
-                    redrawPartsInFEMM();
+                    m_design.redrawDesign(m_femm);
 
                     return;
                 }                    
@@ -2594,18 +2777,18 @@ namespace DoSA
 
                         case EMKind.FORCE_EXPERIMENT:
 
-                            CForceExperiment forceExperiment = (CForceExperiment)node;
-
-                            string strFieldImageFullName = Path.Combine(strExperimentDirName, node.NodeName + ".txt");
+                            string strPostDataFullName = Path.Combine(strExperimentDirName, node.NodeName + ".ans");
 
                             // 해석결과가 존재하지 않으면 Result 와 Report 버튼을 비활성화 한다.
-                            if (m_manageFile.isExistFile(strFieldImageFullName) == true)
+                            if (m_manageFile.isExistFile(strPostDataFullName) == true)
                             {
-                                buttonLoadForceResult.Enabled = true;
+                                buttonLoadForceAndMagnitudeB.Enabled = true;
+                                buttonLoadForceAndVectorB.Enabled = true;
                             }
                             else
                             {
-                                buttonLoadForceResult.Enabled = false;
+                                buttonLoadForceAndMagnitudeB.Enabled = false;
+                                buttonLoadForceAndVectorB.Enabled = false;
                             }
 
                             splitContainerRight.Panel1.Controls.Add(this.panelForce);
@@ -2623,16 +2806,16 @@ namespace DoSA
 
                             string strResultForceStrokeFileFullName = Path.Combine(strExperimentDirName, node.NodeName + ".csv");
 
+                            progressBarStroke.Value = 0;
+
                             // 해석결과가 존재하지 않으면 Result 와 Report 버튼을 비활성화 한다.
                             if (m_manageFile.isExistFile(strResultForceStrokeFileFullName) == true)
                             {
                                 buttonLoadStrokeResult.Enabled = true;
-                                progressBarStroke.Value = progressBarStroke.Maximum;
                             }
                             else
                             {
                                 buttonLoadStrokeResult.Enabled = false;
-                                progressBarStroke.Value = 0;
                             }
 
                             splitContainerRight.Panel1.Controls.Add(this.panelStroke);
@@ -2649,16 +2832,16 @@ namespace DoSA
 
                             string strResultForceCurrentFileFullName = Path.Combine(strExperimentDirName, node.NodeName + ".csv");
 
+                            progressBarCurrent.Value = 0;
+
                             // 해석결과가 존재하지 않으면 Result 와 Report 버튼을 비활성화 한다.
                             if (m_manageFile.isExistFile(strResultForceCurrentFileFullName) == true)
                             {
                                 buttonLoadCurrentResult.Enabled = true;
-                                progressBarCurrent.Value = progressBarCurrent.Maximum;
                             }
                             else
                             {
                                 buttonLoadCurrentResult.Enabled = false;
-                                progressBarCurrent.Value = 0;
                             }
 
                             splitContainerRight.Panel1.Controls.Add(this.panelCurrent);
@@ -3374,7 +3557,8 @@ namespace DoSA
                 else
                 {
                     // 삽입 동안 화면에 그렸던 형상을 제거한다.
-                    redrawPartsInFEMM();
+                    m_design.redrawDesign(m_femm);
+
                     return;
                 }
             }

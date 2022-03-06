@@ -56,9 +56,10 @@
             this.ribbonButtonForce = new System.Windows.Forms.RibbonButton();
             this.ribbonButtonStroke = new System.Windows.Forms.RibbonButton();
             this.ribbonButtonCurrent = new System.Windows.Forms.RibbonButton();
-            this.ribbonPanelSetting = new System.Windows.Forms.RibbonPanel();
+            this.ribbonPanelHelp = new System.Windows.Forms.RibbonPanel();
             this.ribbonButtonSetting = new System.Windows.Forms.RibbonButton();
             this.ribbonButtonHelp = new System.Windows.Forms.RibbonButton();
+            this.ribbonButtonHomepage = new System.Windows.Forms.RibbonButton();
             this.ribbonButtonAbout = new System.Windows.Forms.RibbonButton();
             this.splitContainerLeft = new System.Windows.Forms.SplitContainer();
             this.treeViewMain = new System.Windows.Forms.TreeView();
@@ -69,6 +70,21 @@
             this.panelEmpty = new System.Windows.Forms.Panel();
             this.messageListView = new gtLibrary.MessageListView();
             this.columnHeaderMessage = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.panelForce = new System.Windows.Forms.Panel();
+            this.label4 = new System.Windows.Forms.Label();
+            this.label3 = new System.Windows.Forms.Label();
+            this.textBoxMaximumDensity = new System.Windows.Forms.TextBox();
+            this.label2 = new System.Windows.Forms.Label();
+            this.textBoxVectorGridSize = new System.Windows.Forms.TextBox();
+            this.label1 = new System.Windows.Forms.Label();
+            this.textBoxVectorScale = new System.Windows.Forms.TextBox();
+            this.buttonLoadForceAndVectorB = new System.Windows.Forms.Button();
+            this.buttonLoadForceAndMagnitudeB = new System.Windows.Forms.Button();
+            this.labelN = new System.Windows.Forms.Label();
+            this.labelForce = new System.Windows.Forms.Label();
+            this.textBoxForce = new System.Windows.Forms.TextBox();
+            this.pictureBoxForce = new System.Windows.Forms.PictureBox();
+            this.buttonExperimentForce = new System.Windows.Forms.Button();
             this.panelStroke = new System.Windows.Forms.Panel();
             this.labelProgressStroke = new System.Windows.Forms.Label();
             this.progressBarStroke = new System.Windows.Forms.ProgressBar();
@@ -83,13 +99,6 @@
             this.buttonLoadCurrentResult = new System.Windows.Forms.Button();
             this.pictureBoxCurrent = new System.Windows.Forms.PictureBox();
             this.buttonExperimentCurrent = new System.Windows.Forms.Button();
-            this.panelForce = new System.Windows.Forms.Panel();
-            this.buttonLoadForceResult = new System.Windows.Forms.Button();
-            this.labelN = new System.Windows.Forms.Label();
-            this.labelForce = new System.Windows.Forms.Label();
-            this.textBoxForce = new System.Windows.Forms.TextBox();
-            this.pictureBoxForce = new System.Windows.Forms.PictureBox();
-            this.buttonExperimentForce = new System.Windows.Forms.Button();
             this.panelSteel = new System.Windows.Forms.Panel();
             this.buttonSteelShape = new System.Windows.Forms.Button();
             this.chartBHCurve = new System.Windows.Forms.DataVisualization.Charting.Chart();
@@ -112,14 +121,14 @@
             this.splitContainerRight.Panel1.SuspendLayout();
             this.splitContainerRight.Panel2.SuspendLayout();
             this.splitContainerRight.SuspendLayout();
+            this.panelForce.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBoxForce)).BeginInit();
             this.panelStroke.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.chartStrokeResult)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBoxStroke)).BeginInit();
             this.panelCurrent.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.chartCurrentResult)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBoxCurrent)).BeginInit();
-            this.panelForce.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBoxForce)).BeginInit();
             this.panelSteel.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.chartBHCurve)).BeginInit();
             this.panelMagnet.SuspendLayout();
@@ -215,7 +224,7 @@
             this.ribbonTabMenu.Panels.Add(this.ribbonPanelFile);
             this.ribbonTabMenu.Panels.Add(this.ribbonPanelDesign);
             this.ribbonTabMenu.Panels.Add(this.ribbonPanelExperiment);
-            this.ribbonTabMenu.Panels.Add(this.ribbonPanelSetting);
+            this.ribbonTabMenu.Panels.Add(this.ribbonPanelHelp);
             this.ribbonTabMenu.Text = "Menu";
             // 
             // ribbonPanelFile
@@ -320,12 +329,13 @@
             this.ribbonButtonCurrent.Text = "Current";
             this.ribbonButtonCurrent.Click += new System.EventHandler(this.ribbonButtonCurrent_Click);
             // 
-            // ribbonPanelSetting
+            // ribbonPanelHelp
             // 
-            this.ribbonPanelSetting.Items.Add(this.ribbonButtonSetting);
-            this.ribbonPanelSetting.Items.Add(this.ribbonButtonHelp);
-            this.ribbonPanelSetting.Items.Add(this.ribbonButtonAbout);
-            this.ribbonPanelSetting.Text = "SETTING";
+            this.ribbonPanelHelp.Items.Add(this.ribbonButtonSetting);
+            this.ribbonPanelHelp.Items.Add(this.ribbonButtonHelp);
+            this.ribbonPanelHelp.Items.Add(this.ribbonButtonHomepage);
+            this.ribbonPanelHelp.Items.Add(this.ribbonButtonAbout);
+            this.ribbonPanelHelp.Text = "HELP";
             // 
             // ribbonButtonSetting
             // 
@@ -342,6 +352,13 @@
             this.ribbonButtonHelp.SmallImage = ((System.Drawing.Image)(resources.GetObject("ribbonButtonHelp.SmallImage")));
             this.ribbonButtonHelp.Text = "Help";
             this.ribbonButtonHelp.Click += new System.EventHandler(this.ribbonButtonHelp_Click);
+            // 
+            // ribbonButtonHomepage
+            // 
+            this.ribbonButtonHomepage.Image = ((System.Drawing.Image)(resources.GetObject("ribbonButtonHomepage.Image")));
+            this.ribbonButtonHomepage.SmallImage = ((System.Drawing.Image)(resources.GetObject("ribbonButtonHomepage.SmallImage")));
+            this.ribbonButtonHomepage.Text = "Homepage";
+            this.ribbonButtonHomepage.Click += new System.EventHandler(this.ribbonButtonHomepage_Click);
             // 
             // ribbonButtonAbout
             // 
@@ -451,6 +468,7 @@
             this.columnHeaderMessage});
             this.messageListView.Dock = System.Windows.Forms.DockStyle.Fill;
             this.messageListView.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.None;
+            this.messageListView.HideSelection = false;
             this.messageListView.Location = new System.Drawing.Point(0, 0);
             this.messageListView.Name = "messageListView";
             this.messageListView.Size = new System.Drawing.Size(742, 178);
@@ -461,6 +479,153 @@
             // columnHeaderMessage
             // 
             this.columnHeaderMessage.Width = 732;
+            // 
+            // panelForce
+            // 
+            this.panelForce.Controls.Add(this.label4);
+            this.panelForce.Controls.Add(this.label3);
+            this.panelForce.Controls.Add(this.textBoxMaximumDensity);
+            this.panelForce.Controls.Add(this.label2);
+            this.panelForce.Controls.Add(this.textBoxVectorGridSize);
+            this.panelForce.Controls.Add(this.label1);
+            this.panelForce.Controls.Add(this.textBoxVectorScale);
+            this.panelForce.Controls.Add(this.buttonLoadForceAndVectorB);
+            this.panelForce.Controls.Add(this.buttonLoadForceAndMagnitudeB);
+            this.panelForce.Controls.Add(this.labelN);
+            this.panelForce.Controls.Add(this.labelForce);
+            this.panelForce.Controls.Add(this.textBoxForce);
+            this.panelForce.Controls.Add(this.pictureBoxForce);
+            this.panelForce.Controls.Add(this.buttonExperimentForce);
+            this.panelForce.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.panelForce.Location = new System.Drawing.Point(0, 0);
+            this.panelForce.Name = "panelForce";
+            this.panelForce.Size = new System.Drawing.Size(742, 554);
+            this.panelForce.TabIndex = 0;
+            // 
+            // label4
+            // 
+            this.label4.AutoSize = true;
+            this.label4.Location = new System.Drawing.Point(161, 286);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(13, 12);
+            this.label4.TabIndex = 15;
+            this.label4.Text = "T";
+            // 
+            // label3
+            // 
+            this.label3.AutoSize = true;
+            this.label3.Location = new System.Drawing.Point(25, 266);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(116, 12);
+            this.label3.TabIndex = 14;
+            this.label3.Text = "Maximum Density :";
+            // 
+            // textBoxMaximumDensity
+            // 
+            this.textBoxMaximumDensity.Location = new System.Drawing.Point(25, 282);
+            this.textBoxMaximumDensity.Name = "textBoxMaximumDensity";
+            this.textBoxMaximumDensity.Size = new System.Drawing.Size(130, 21);
+            this.textBoxMaximumDensity.TabIndex = 13;
+            this.textBoxMaximumDensity.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
+            // 
+            // label2
+            // 
+            this.label2.AutoSize = true;
+            this.label2.Location = new System.Drawing.Point(25, 423);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(105, 12);
+            this.label2.TabIndex = 12;
+            this.label2.Text = "Vector Grid Size :";
+            // 
+            // textBoxVectorGridSize
+            // 
+            this.textBoxVectorGridSize.Location = new System.Drawing.Point(25, 439);
+            this.textBoxVectorGridSize.Name = "textBoxVectorGridSize";
+            this.textBoxVectorGridSize.Size = new System.Drawing.Size(130, 21);
+            this.textBoxVectorGridSize.TabIndex = 11;
+            this.textBoxVectorGridSize.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
+            // 
+            // label1
+            // 
+            this.label1.AutoSize = true;
+            this.label1.Location = new System.Drawing.Point(25, 379);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(85, 12);
+            this.label1.TabIndex = 10;
+            this.label1.Text = "Vector Scale :";
+            // 
+            // textBoxVectorScale
+            // 
+            this.textBoxVectorScale.Location = new System.Drawing.Point(25, 395);
+            this.textBoxVectorScale.Name = "textBoxVectorScale";
+            this.textBoxVectorScale.Size = new System.Drawing.Size(130, 21);
+            this.textBoxVectorScale.TabIndex = 9;
+            this.textBoxVectorScale.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
+            // 
+            // buttonLoadForceAndVectorB
+            // 
+            this.buttonLoadForceAndVectorB.Location = new System.Drawing.Point(25, 322);
+            this.buttonLoadForceAndVectorB.Name = "buttonLoadForceAndVectorB";
+            this.buttonLoadForceAndVectorB.Size = new System.Drawing.Size(130, 50);
+            this.buttonLoadForceAndVectorB.TabIndex = 8;
+            this.buttonLoadForceAndVectorB.Text = "B Vector";
+            this.buttonLoadForceAndVectorB.UseVisualStyleBackColor = true;
+            this.buttonLoadForceAndVectorB.Click += new System.EventHandler(this.buttonForceAndVectorB_Result_Click);
+            // 
+            // buttonLoadForceAndMagnitudeB
+            // 
+            this.buttonLoadForceAndMagnitudeB.Location = new System.Drawing.Point(25, 209);
+            this.buttonLoadForceAndMagnitudeB.Name = "buttonLoadForceAndMagnitudeB";
+            this.buttonLoadForceAndMagnitudeB.Size = new System.Drawing.Size(130, 50);
+            this.buttonLoadForceAndMagnitudeB.TabIndex = 7;
+            this.buttonLoadForceAndMagnitudeB.Text = "B Magnitude";
+            this.buttonLoadForceAndMagnitudeB.UseVisualStyleBackColor = true;
+            this.buttonLoadForceAndMagnitudeB.Click += new System.EventHandler(this.buttonForceAndMagnitudeB_Result_Click);
+            // 
+            // labelN
+            // 
+            this.labelN.AutoSize = true;
+            this.labelN.Location = new System.Drawing.Point(159, 144);
+            this.labelN.Name = "labelN";
+            this.labelN.Size = new System.Drawing.Size(14, 12);
+            this.labelN.TabIndex = 5;
+            this.labelN.Text = "N";
+            // 
+            // labelForce
+            // 
+            this.labelForce.AutoSize = true;
+            this.labelForce.Location = new System.Drawing.Point(25, 123);
+            this.labelForce.Name = "labelForce";
+            this.labelForce.Size = new System.Drawing.Size(45, 12);
+            this.labelForce.TabIndex = 5;
+            this.labelForce.Text = "Force :";
+            // 
+            // textBoxForce
+            // 
+            this.textBoxForce.Location = new System.Drawing.Point(25, 139);
+            this.textBoxForce.Name = "textBoxForce";
+            this.textBoxForce.Size = new System.Drawing.Size(130, 21);
+            this.textBoxForce.TabIndex = 4;
+            this.textBoxForce.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
+            // 
+            // pictureBoxForce
+            // 
+            this.pictureBoxForce.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.pictureBoxForce.Location = new System.Drawing.Point(185, 60);
+            this.pictureBoxForce.Name = "pictureBoxForce";
+            this.pictureBoxForce.Size = new System.Drawing.Size(520, 400);
+            this.pictureBoxForce.TabIndex = 2;
+            this.pictureBoxForce.TabStop = false;
+            // 
+            // buttonExperimentForce
+            // 
+            this.buttonExperimentForce.Location = new System.Drawing.Point(25, 60);
+            this.buttonExperimentForce.Name = "buttonExperimentForce";
+            this.buttonExperimentForce.Size = new System.Drawing.Size(130, 50);
+            this.buttonExperimentForce.TabIndex = 1;
+            this.buttonExperimentForce.Text = "Force Test";
+            this.buttonExperimentForce.UseVisualStyleBackColor = true;
+            this.buttonExperimentForce.Click += new System.EventHandler(this.buttonExperimentForce_Click);
             // 
             // panelStroke
             // 
@@ -507,7 +672,7 @@
             // 
             // buttonLoadStrokeResult
             // 
-            this.buttonLoadStrokeResult.Location = new System.Drawing.Point(25, 120);
+            this.buttonLoadStrokeResult.Location = new System.Drawing.Point(25, 140);
             this.buttonLoadStrokeResult.Name = "buttonLoadStrokeResult";
             this.buttonLoadStrokeResult.Size = new System.Drawing.Size(130, 50);
             this.buttonLoadStrokeResult.TabIndex = 4;
@@ -579,7 +744,7 @@
             // 
             // buttonLoadCurrentResult
             // 
-            this.buttonLoadCurrentResult.Location = new System.Drawing.Point(25, 120);
+            this.buttonLoadCurrentResult.Location = new System.Drawing.Point(25, 140);
             this.buttonLoadCurrentResult.Name = "buttonLoadCurrentResult";
             this.buttonLoadCurrentResult.Size = new System.Drawing.Size(130, 50);
             this.buttonLoadCurrentResult.TabIndex = 13;
@@ -605,75 +770,6 @@
             this.buttonExperimentCurrent.Text = "Current Test";
             this.buttonExperimentCurrent.UseVisualStyleBackColor = true;
             this.buttonExperimentCurrent.Click += new System.EventHandler(this.buttonExperimentCurrent_Click);
-            // 
-            // panelForce
-            // 
-            this.panelForce.Controls.Add(this.buttonLoadForceResult);
-            this.panelForce.Controls.Add(this.labelN);
-            this.panelForce.Controls.Add(this.labelForce);
-            this.panelForce.Controls.Add(this.textBoxForce);
-            this.panelForce.Controls.Add(this.pictureBoxForce);
-            this.panelForce.Controls.Add(this.buttonExperimentForce);
-            this.panelForce.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.panelForce.Location = new System.Drawing.Point(0, 0);
-            this.panelForce.Name = "panelForce";
-            this.panelForce.Size = new System.Drawing.Size(742, 554);
-            this.panelForce.TabIndex = 0;
-            // 
-            // buttonLoadForceResult
-            // 
-            this.buttonLoadForceResult.Location = new System.Drawing.Point(25, 120);
-            this.buttonLoadForceResult.Name = "buttonLoadForceResult";
-            this.buttonLoadForceResult.Size = new System.Drawing.Size(130, 50);
-            this.buttonLoadForceResult.TabIndex = 7;
-            this.buttonLoadForceResult.Text = "Result";
-            this.buttonLoadForceResult.UseVisualStyleBackColor = true;
-            this.buttonLoadForceResult.Click += new System.EventHandler(this.buttonForceResult_Click);
-            // 
-            // labelN
-            // 
-            this.labelN.AutoSize = true;
-            this.labelN.Location = new System.Drawing.Point(141, 443);
-            this.labelN.Name = "labelN";
-            this.labelN.Size = new System.Drawing.Size(14, 12);
-            this.labelN.TabIndex = 5;
-            this.labelN.Text = "N";
-            // 
-            // labelForce
-            // 
-            this.labelForce.AutoSize = true;
-            this.labelForce.Location = new System.Drawing.Point(25, 424);
-            this.labelForce.Name = "labelForce";
-            this.labelForce.Size = new System.Drawing.Size(45, 12);
-            this.labelForce.TabIndex = 5;
-            this.labelForce.Text = "Force :";
-            // 
-            // textBoxForce
-            // 
-            this.textBoxForce.Location = new System.Drawing.Point(25, 440);
-            this.textBoxForce.Name = "textBoxForce";
-            this.textBoxForce.Size = new System.Drawing.Size(110, 21);
-            this.textBoxForce.TabIndex = 4;
-            this.textBoxForce.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
-            // 
-            // pictureBoxForce
-            // 
-            this.pictureBoxForce.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.pictureBoxForce.Location = new System.Drawing.Point(185, 60);
-            this.pictureBoxForce.Name = "pictureBoxForce";
-            this.pictureBoxForce.Size = new System.Drawing.Size(520, 400);
-            this.pictureBoxForce.TabIndex = 2;
-            this.pictureBoxForce.TabStop = false;
-            // 
-            // buttonExperimentForce
-            // 
-            this.buttonExperimentForce.Location = new System.Drawing.Point(25, 60);
-            this.buttonExperimentForce.Name = "buttonExperimentForce";
-            this.buttonExperimentForce.Size = new System.Drawing.Size(130, 50);
-            this.buttonExperimentForce.TabIndex = 1;
-            this.buttonExperimentForce.Text = "Force Test";
-            this.buttonExperimentForce.UseVisualStyleBackColor = true;
-            this.buttonExperimentForce.Click += new System.EventHandler(this.buttonExperimentForce_Click);
             // 
             // panelSteel
             // 
@@ -847,6 +943,9 @@
             this.splitContainerRight.Panel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.splitContainerRight)).EndInit();
             this.splitContainerRight.ResumeLayout(false);
+            this.panelForce.ResumeLayout(false);
+            this.panelForce.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBoxForce)).EndInit();
             this.panelStroke.ResumeLayout(false);
             this.panelStroke.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.chartStrokeResult)).EndInit();
@@ -855,9 +954,6 @@
             this.panelCurrent.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.chartCurrentResult)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBoxCurrent)).EndInit();
-            this.panelForce.ResumeLayout(false);
-            this.panelForce.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBoxForce)).EndInit();
             this.panelSteel.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.chartBHCurve)).EndInit();
             this.panelMagnet.ResumeLayout(false);
@@ -890,7 +986,7 @@
         private System.Windows.Forms.RibbonPanel ribbonPanelExperiment;
         private System.Windows.Forms.RibbonButton ribbonButtonForce;
         private System.Windows.Forms.RibbonButton ribbonButtonStroke;
-        private System.Windows.Forms.RibbonPanel ribbonPanelSetting;
+        private System.Windows.Forms.RibbonPanel ribbonPanelHelp;
         private System.Windows.Forms.RibbonButton ribbonButtonSetting;
         private System.Windows.Forms.RibbonButton ribbonButtonHelp;
         private System.Windows.Forms.RibbonButton ribbonButtonAbout;
@@ -913,7 +1009,7 @@
         
         private System.Windows.Forms.Panel panelForce;
         private System.Windows.Forms.PictureBox pictureBoxForce;
-        private System.Windows.Forms.Button buttonLoadForceResult;
+        private System.Windows.Forms.Button buttonLoadForceAndMagnitudeB;
         private System.Windows.Forms.Label labelN;
         private System.Windows.Forms.Label labelForce;
         private System.Windows.Forms.TextBox textBoxForce;
@@ -947,6 +1043,15 @@
         private System.Windows.Forms.ProgressBar progressBarCurrent;
         private System.Windows.Forms.Label labelProgressStroke;
         private System.Windows.Forms.ProgressBar progressBarStroke;
-	}
+        private System.Windows.Forms.Button buttonLoadForceAndVectorB;
+        private System.Windows.Forms.Label label2;
+        private System.Windows.Forms.TextBox textBoxVectorGridSize;
+        private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.TextBox textBoxVectorScale;
+        private System.Windows.Forms.Label label4;
+        private System.Windows.Forms.Label label3;
+        private System.Windows.Forms.TextBox textBoxMaximumDensity;
+        private System.Windows.Forms.RibbonButton ribbonButtonHomepage;
+    }
 }
 

@@ -377,46 +377,36 @@ namespace Scripts
             }
         }
 
-        public void settingPost()
-        {
-            string strCommand;
+        //public void settingPost()
+        //{
+        //    string strCommand;
 
-            try
-            {
-                /// If legend is set to -1 all parameters are ignored and default values are used.
-                strCommand = "mo_showdensityplot(1, 0, 1.7, 0, \"bmag\")";
-                sendCommand(strCommand);
+        //    try
+        //    {
 
-                /// If numcontours is -1 all parameters are ignored and default values are used.
-                //strCommand = "mo_showcontourplot(-1)";
-                //sendCommand(strCommand);
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        CNotice.printTrace(ex.Message);
+        //        return;
+        //    }
+        //}
 
-                /// 0 is none
-                //strCommand = "mo_showvectorplot(0,1)";
-                //sendCommand(strCommand);
-            }
-            catch (Exception ex)
-            {
-                CNotice.printTrace(ex.Message);
-                return;
-            }
-        }
+        //public void settingPre()
+        //{
+        //    string strCommand;
 
-        public void settingPre()
-        {
-            string strCommand;
-
-            try
-            {
-                strCommand = "mi_hidegrid()";
-                sendCommand(strCommand);
-            }
-            catch (Exception ex)
-            {
-                CNotice.printTrace(ex.Message);
-                return;
-            }
-        }
+        //    try
+        //    {
+        //        strCommand = "mi_hidegrid()";
+        //        sendCommand(strCommand);
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        CNotice.printTrace(ex.Message);
+        //        return;
+        //    }
+        //}
 
         public void zoomFit(bool bExceptionZoomout = false)
         {
@@ -860,24 +850,21 @@ namespace Scripts
                 return;
             }
         }
-        
-        public double solveForce(double minX, double minY, double maxX, double maxY, string strFieldImageFullName = null)
+
+        /// 해석 중에 전체 해석영역이 표시되는 것을 막기 위해 제품영역 정보를 송부한다. 
+        public double solveForce(double minX, double maxX, double minY, double maxY)
         {
-            string strCommand;
+            string strCommand = string.Empty;
             double dForce;
-
-            const double dOutSpace = 0.2f;
-
-            maxX = maxX + Math.Abs(maxX - minX) * dOutSpace;
-            minY = minY - Math.Abs(maxY - minY) * dOutSpace;
-            maxY = maxY + Math.Abs(maxY - minY) * dOutSpace;
 
             try
             {
-                strCommand = "mi_zoom(" + minX.ToString() + "," + minY.ToString() + "," + maxX.ToString() + "," + maxY.ToString() + ")";
-                sendCommand(strCommand);
+                // mi_loadsolution() 에서 다시 크기가 초기화 되기 때문에 굳이 필요없다.
+                //
+                //strCommand = "mi_zoom(" + minX.ToString() + "," + minY.ToString() + "," + maxX.ToString() + "," + maxY.ToString() + ")";
+                //sendCommand(strCommand);
 
-                strCommand = "mi_analyse()";
+                strCommand = "mi_analyze()";
                 sendCommand(strCommand);
 
                 strCommand = "mi_loadsolution()";
@@ -885,11 +872,6 @@ namespace Scripts
 
                 strCommand = "mo_zoom(" + minX.ToString() + "," + minY.ToString() + "," + maxX.ToString() + "," + maxY.ToString() + ")";
                 sendCommand(strCommand);
-
-                /// mi_loadsolution() 후에 호출해야 한다.
-                /// 깜빡임이 심해서 이미지 저장때만 사용한다.            
-                if (strFieldImageFullName != null)
-                    settingPost();
 
                 strCommand = "mi_seteditmode(\"group\")";
                 sendCommand(strCommand);
@@ -902,32 +884,118 @@ namespace Scripts
 
                 strCommand = "mo_clearblock()";
                 sendCommand(strCommand);
-
-                if (null != strFieldImageFullName)
-                {
-                    //-------------------------------------------------------------
-                    // 아주 중요
-                    //-------------------------------------------------------------
-                    //
-                    // 디렉토리에 들어있는 \\ 기호는 FEMM 에서 인식하지 못한다.
-                    // 따라서 디렉토리안의 \\ 기호를 / 기호로 변경한다
-                    strFieldImageFullName = strFieldImageFullName.Replace("\\", "/");
-                    //-------------------------------------------------------------
-
-                    strFieldImageFullName = "\"" + strFieldImageFullName + "\"";
-
-                    strCommand = "mo_savebitmap(" + strFieldImageFullName + ")";
-                    sendCommand(strCommand);
-                }
             }
             catch (Exception ex)
             {
                 CNotice.printTrace(ex.Message);
                 return 0;
             }
-
             
             return dForce;
+        }
+
+        public bool writeDensityMagnitudeImage( double minX, double minY, 
+                                                double maxX, double maxY, 
+                                                string strFieldImageName, 
+                                                string strPostDataFullName,
+                                                bool bForceTest,
+                                                double maximumDensity)
+        {
+            string strCommand = string.Empty;
+
+            //-------------------------------------------------------------
+            // 아주 중요
+            //-------------------------------------------------------------
+            //
+            // 디렉토리에 들어있는 \\ 기호는 FEMM 에서 인식하지 못한다.
+            // 따라서 디렉토리안의 \\ 기호를 / 기호로 변경한다
+            strPostDataFullName = strPostDataFullName.Replace("\\", "/");
+            strFieldImageName = strFieldImageName.Replace("\\", "/");
+            //-------------------------------------------------------------
+
+            strPostDataFullName = "\"" + strPostDataFullName + "\"";
+
+            if(bForceTest == true)
+            {
+                strCommand = "mi_loadsolution()";
+                sendCommand(strCommand);
+            }
+            else
+            {
+                // 해석 후 바로 출력은 상관 없지만
+                // 프로그램을 다시 실행한 다음에 해석결과로 이미지를 만들때는 ans 파일을 읽어드리고 진행해야 한다.
+                strCommand = "open(" + strPostDataFullName + ")";
+                sendCommand(strCommand);
+            }
+
+            strCommand = "mo_zoom(" + minX.ToString() + "," + minY.ToString() + "," + maxX.ToString() + "," + maxY.ToString() + ")";
+            sendCommand(strCommand);
+
+
+            //------------------ 자속밀도 Magnitude 저장 -------------------
+            strCommand = "mo_showdensityplot(1, 0, " + maximumDensity.ToString() + ", 0, \"bmag\")";
+            sendCommand(strCommand);
+
+            strFieldImageName = "\"" + strFieldImageName + "\"";
+
+            strCommand = "mo_savebitmap(" + strFieldImageName + ")";
+            sendCommand(strCommand);
+
+            return true;
+        }
+
+        public bool writeDensityVectorImage(    double minX, double minY, 
+                                                double maxX, double maxY, 
+                                                string strFieldImageName,
+                                                string strPostDataFullName,
+                                                bool bForceTest,
+                                                double gridSize, 
+                                                double vectorScale)
+        {
+            string strCommand = string.Empty;
+
+            //-------------------------------------------------------------
+            // 아주 중요
+            //-------------------------------------------------------------
+            //
+            // 디렉토리에 들어있는 \\ 기호는 FEMM 에서 인식하지 못한다.
+            // 따라서 디렉토리안의 \\ 기호를 / 기호로 변경한다
+            strPostDataFullName = strPostDataFullName.Replace("\\", "/");
+            strFieldImageName = strFieldImageName.Replace("\\", "/");
+            //-------------------------------------------------------------
+
+            strPostDataFullName = "\"" + strPostDataFullName + "\"";
+
+            if (bForceTest == true)
+            {
+                strCommand = "mi_loadsolution()";
+                sendCommand(strCommand);
+            }
+            else
+            {
+                // 해석 후 바로 출력은 상관 없지만
+                // 프로그램을 다시 실행한 다음에 해석결과로 이미지를 만들때는 ans 파일을 읽어드리고 진행해야 한다.
+                strCommand = "open(" + strPostDataFullName + ")";
+                sendCommand(strCommand);
+            }
+
+
+            strCommand = "mo_zoom(" + minX.ToString() + "," + minY.ToString() + "," + maxX.ToString() + "," + maxY.ToString() + ")";
+            sendCommand(strCommand);
+
+            //------------------ 자속밀도 Magnitude 저장 -------------------
+            strCommand = "mo_setgrid(" + gridSize.ToString() + ",\"cart\")";
+            sendCommand(strCommand);
+
+            strCommand = "mo_showvectorplot(1, " + vectorScale.ToString() + ")";
+            sendCommand(strCommand);
+
+            strFieldImageName = "\"" + strFieldImageName + "\"";
+
+            strCommand = "mo_savebitmap(" + strFieldImageName + ")";
+            sendCommand(strCommand);
+
+            return true;
         }
 
         public void lockEdit()

@@ -2,6 +2,9 @@ DoSA-Open_2D
 Gi-Tae Kweon
 zgitae@gmail.com
 
+2022-03-06 Ver(0.9.14.0)
+ - New Feature : Plot the vector image of magnetic density
+
 2021-10-19 Ver(0.9.13.0)
  - Bug Fix : Error finding block points in steel 
 

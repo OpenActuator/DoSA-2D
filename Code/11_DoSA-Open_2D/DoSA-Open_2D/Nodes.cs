@@ -271,7 +271,7 @@ namespace Nodes
             return dSumArea / nCountOfShapeParts;
         }
 
-        public bool getModelMinMaxY(ref double dMinY, ref double dMaxY, double dPlusMovingStroke, double dMinusMovingStroke)
+        public bool getModelMinMaxY(ref double dMinY, ref double dMaxY, double dMovingStroke)
         {
             /// 비교 값을 초기화 한다.
             /// Max 는 아주 작은 값, Min 는 아주 큰 값으로 설정한다.
@@ -294,8 +294,8 @@ namespace Nodes
                     // Moving Part 인 경우는 Stroke 까지 고려해서 MinY 와 MaxY 를 구한다.
                     if (((CShapeParts)node).MovingPart == EMMoving.MOVING)
                     {
-                        if (tempMinY + dMinusMovingStroke < minY) minY = tempMinY + dMinusMovingStroke;
-                        if (tempMaxY + dPlusMovingStroke > maxY) maxY = tempMaxY + dPlusMovingStroke;
+                        if (tempMinY + dMovingStroke < minY) minY = tempMinY + dMovingStroke;
+                        if (tempMaxY + dMovingStroke > maxY) maxY = tempMaxY + dMovingStroke;
                     }
                     else
                     {
@@ -403,17 +403,13 @@ namespace Nodes
 
         public void drawDesign(CScriptFEMM femm)
         {
-            CFace face = null;
-
             foreach (CNode node in NodeList)
             {
                 if (node.GetType().BaseType.Name == "CShapeParts")
                 {
                     CShapeParts nodeParts = (CShapeParts)node;
 
-                    face = nodeParts.Face;
-
-                    if (null != face)
+                    if (null != nodeParts.Face)
                         nodeParts.Face.drawFace(femm, nodeParts.MovingPart);
                     else
                         CNotice.printTraceID("YATT1");
@@ -421,6 +417,13 @@ namespace Nodes
             }
 
             femm.zoomFit();
+        }
+
+        public void redrawDesign(CScriptFEMM femm)
+        {
+            femm.deleteAll();
+
+            drawDesign(femm);
         }
 
         public void setBlockPropeties(CScriptFEMM femm, double dVolt, double dMeshSizePercent)
