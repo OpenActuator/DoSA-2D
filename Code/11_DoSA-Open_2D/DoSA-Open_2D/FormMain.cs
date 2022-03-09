@@ -41,6 +41,9 @@ namespace DoSA
 		const int FIRST_PARTS_INDEX = 0;
 		const int FIRST_ANALYSIS_INDEX = 1;
 
+        const int FEMM_DEFAULT_WIDTH = 600;
+        const int FEMM_DEFAULT_HEIGHT = 900;
+
         private CManageFile m_manageFile = new CManageFile();
 
         private string m_strBackupNodeName = string.Empty;
@@ -52,7 +55,9 @@ namespace DoSA
 
         public CScriptFEMM m_femm;
 
-        public ResourceManager m_resManager = null;        
+        public ResourceManager m_resManager = null;
+
+        private bool bPostMode = false;
 
         #endregion
 
@@ -1134,7 +1139,7 @@ namespace DoSA
 
             TimeSpan diffTime = currentTime - previousTime;
 
-            closePostView();
+            //closePostView();
 
             CWriteFile writefile = new CWriteFile();
 
@@ -1251,10 +1256,8 @@ namespace DoSA
 
             getPostRegion(ref minX, ref maxX, ref minY, ref maxY, 1.2f);
 
-            plotForce();
-
             // parameter = ture : Magnitude B
-            plotMagneticDensity(minX, maxX, minY, maxY, true, false);
+            plotForceDensityResult(minX, maxX, minY, maxY, false, true);
         }
 
         private void buttonForceAndVectorB_Result_Click(object sender, EventArgs e)
@@ -1270,10 +1273,8 @@ namespace DoSA
 
             getPostRegion(ref minX, ref maxX, ref minY, ref maxY, 1.2f);
 
-            plotForce();
-
             // parameter = false : Vector B
-            plotMagneticDensity(minX, maxX, minY, maxY, false, false);
+            plotForceDensityResult(minX, maxX, minY, maxY, false, false);
         }
 
         private void buttonExperimentForce_Click(object sender, EventArgs e)
@@ -1312,6 +1313,20 @@ namespace DoSA
 
             // 혹시 FEMM 의 화면이 닫힌 경우 FEMM 의 화면을 복원합니다.
             reopenFEMM();
+
+            // Post Mode 인 경우 m_femm.solveForce() 에서 여러번 화면이 갱신되기 때문에 이전 결과를 닫는다.
+            if (bPostMode == true)
+            {
+                // 순서 주의 할 것
+                closePostView();
+
+                resizeFEMM();
+
+                bPostMode = false;
+
+                // 초기이미지가 없어서 이미지를 비우고 있다.
+                loadDefaultImage(EMKind.FORCE_EXPERIMENT);
+            }
 
             m_design.addMaterials(m_femm);
 
@@ -1371,18 +1386,12 @@ namespace DoSA
                 buttonLoadForceAndMagnitudeB.Enabled = true;
                 buttonLoadForceAndVectorB.Enabled = true;
 
-                plotForce();
-
-                plotMagneticDensity(minX, maxX, minY, maxY, true, true);
+                plotForceDensityResult(minX, maxX, minY, maxY, true, true);
             }
             else
             {
                 buttonLoadForceAndMagnitudeB.Enabled = false;
                 buttonLoadForceAndVectorB.Enabled = false;
-
-                // plotMagneticDensity() 가 실행되면 내부에 들어 있다.
-                // 실행되지 않는 경우에만 화면을 후처리를 닫는다.
-                closePostView();
             }
 
 
@@ -1533,7 +1542,7 @@ namespace DoSA
 
             TimeSpan diffTime = currentTime - previousTime;
 
-            closePostView();
+            //closePostView();
 
             CWriteFile writefile = new CWriteFile();
 
@@ -1639,7 +1648,7 @@ namespace DoSA
         // m_femm 의 스크립트를 사용하여 제어하는 함수들은 CProgramFEMM 에 추가하지 못해서 FormMain 에 두고 있다.
         // FEMM 자체적으로 처리가 가능한 함수라면 CProgramFEMM 에 추가하라.
 
-        public void openFEMM(int iWidthFEMM = 500)
+        public void openFEMM(int iWidthFEMM = FEMM_DEFAULT_WIDTH)
         {
             // FEMM.exe 가 실행되지 않았으면 FEMM 을 생성하고 크기를 변경한다.
             if (m_femm == null)
@@ -1669,7 +1678,7 @@ namespace DoSA
             }
         }
 
-        public void reopenFEMM(int iWidthFEMM = 500)
+        public void reopenFEMM(int iWidthFEMM = FEMM_DEFAULT_WIDTH)
         {
             if (m_femm == null)
             {
@@ -1687,7 +1696,7 @@ namespace DoSA
             }
         }
 
-        private void resizeFEMM(int widthFEMM = 500)
+        private void resizeFEMM(int widthFEMM = FEMM_DEFAULT_WIDTH)
         {
             if (m_femm == null)
                 return;
@@ -1696,12 +1705,14 @@ namespace DoSA
             /// 먼저 실행이 되어야 한다.
             m_femm.restoreMainWindow();
 
+            const int LEFT_MARGIN = 100;
+            const int TOP_MARGIN = 50;
+
             /// 좌측에 FEMM 공간을 확보하기 위해서 DoSA 의 위치를 지정한다
-            this.Left = 600;
+            this.Left = FEMM_DEFAULT_WIDTH + LEFT_MARGIN;
+            this.Top = TOP_MARGIN;
 
-            const int FEMM_DEFAULT_WIDTH = 500;
-
-            CProgramFEMM.moveFEMM(this.Location.X - FEMM_DEFAULT_WIDTH, this.Location.Y, widthFEMM, 900);
+            CProgramFEMM.moveFEMM(this.Location.X - FEMM_DEFAULT_WIDTH, this.Location.Y, widthFEMM, FEMM_DEFAULT_HEIGHT);
 
             m_femm.zoomFit();
         }
@@ -1908,7 +1919,7 @@ namespace DoSA
             return true;
         }
 
-        private void plotMagneticDensity(double minX, double maxX, double minY, double maxY, bool bMagnitude, bool bForceTest)
+        private void plotForceDensityResult(double minX, double maxX, double minY, double maxY, bool bForceExperiment, bool bMagnitude)
         {
             // 현재 시험의 이름을 m_nodeList 에서 찾지 않고
             // 현재 표시되고 있는 PropertyGird 창에서 Experiment 이름을 찾아 낸다
@@ -1917,16 +1928,63 @@ namespace DoSA
 
             string strPostDataFullName = Path.Combine(strExperimentDirName, strExperimentName + ".ans");
 
+            string strForceFileFullName = Path.Combine(strExperimentDirName, strExperimentName + ".txt");
+
             string densityImageFileFullName = string.Empty;
 
-            if(bForceTest == false)
+            bool bCheck = false;
+
+            string strReturn;
+            double dForce;
+            CReadFile readfile = new CReadFile();
+
+            if (bForceExperiment == false)
             {
                 // 혹시 FEMM 의 화면이 닫힌 경우 FEMM 의 화면을 복원합니다.
                 reopenFEMM();
             }
 
+            // 혹시 후처리 모드라면 이전 후처리를 없애고 전처리로 복구한다.
+            if (bPostMode == true)
+            {
+                // 순서 주의 할 것
+                closePostView();
+
+                //resizeFEMM();
+
+                bPostMode = false;
+            }
+
             // 이미지 캡쳐 때문에 해석중에 FEMM 의 넓이를 일시적으로 넓힌다
             resizeFEMM(1040);
+
+            //--------------------- 자기력을 저장하고 화면에 표시함 --------------------------
+            try
+            {
+                bCheck = m_manageFile.isExistFile(strForceFileFullName);
+
+                if (bCheck == true)
+                {
+                    strReturn = readfile.pickoutString(strForceFileFullName, "force:", 7, 21);
+                    dForce = Double.Parse(strReturn);
+
+                    textBoxForce.Text = dForce.ToString();
+                }
+                else
+                {
+                    CNotice.noticeWarningID("TROA1");
+                    return;
+                }
+            }
+            catch (Exception ex)
+            {
+                CNotice.printTrace(ex.Message);
+                return;
+            }
+
+            // Density 출력이 아니라 Force 실험인 경우는 패턴 출력을 하지 않는다.
+            if (bForceExperiment == true)
+                return;
 
             //------------------------- 자속밀도 이미지 생성 --------------------------------
             if (bMagnitude == true)
@@ -1936,7 +1994,7 @@ namespace DoSA
                 if (m_manageFile.isExistFile(densityImageFileFullName))
                     m_manageFile.deleteFile(densityImageFileFullName);
 
-                m_femm.writeDensityMagnitudeImage(  minX, minY, maxX, maxY, densityImageFileFullName, strPostDataFullName, bForceTest,
+                m_femm.writeDensityMagnitudeImage(  minX, minY, maxX, maxY, densityImageFileFullName, strPostDataFullName, //bForceExperiment,
                                                     Convert.ToDouble(textBoxMaximumDensity.Text));
             }                
             else
@@ -1946,17 +2004,13 @@ namespace DoSA
                 if (m_manageFile.isExistFile(densityImageFileFullName))
                     m_manageFile.deleteFile(densityImageFileFullName);
 
-                m_femm.writeDensityVectorImage( minX, minY, maxX, maxY, densityImageFileFullName, strPostDataFullName, bForceTest, 
+                m_femm.writeDensityVectorImage( minX, minY, maxX, maxY, densityImageFileFullName, strPostDataFullName, //bForceExperiment, 
                                                 Convert.ToDouble(textBoxVectorGridSize.Text), Convert.ToDouble(textBoxVectorScale.Text));
             }
 
-            closePostView();
-
-            // 자속밀도가 표시된 경우라면 resize 에서 다시 자속밀도를 그린다.
-            // 따라서 closePostView 후에 resize 하라.
-            resizeFEMM();
-
-            bool bCheck = false;
+            // 후처리 모드이 인것을 저장한다.
+            // 추후 Tree 를 선택할 때 전처리로 모드를 전환한다.
+            bPostMode = true;
 
             //------------------------ 자속밀도 이미지 로딩 ------------------------------------
             try
@@ -1981,45 +2035,6 @@ namespace DoSA
                     return;
                 }
 
-            }
-            catch (Exception ex)
-            {
-                CNotice.printTrace(ex.Message);
-                return;
-            }
-        }
-
-        private void plotForce()
-        {
-            // 현재 시험의 이름을 m_nodeList 에서 찾지 않고
-            // 현재 표시되고 있는 PropertyGird 창에서 Experiment 이름을 찾아 낸다
-            string strExperimentName = ((CForceExperiment)propertyGridMain.SelectedObject).NodeName;
-            string strExperimentDirName = Path.Combine(m_design.m_strDesignDirPath, strExperimentName);
-
-            string strForceFileFullName = Path.Combine(strExperimentDirName, strExperimentName + ".txt");
-
-            bool bCheck = false;
-
-            string strReturn;
-            double dForce;
-            CReadFile readfile = new CReadFile();
-
-            try
-            {
-                bCheck = m_manageFile.isExistFile(strForceFileFullName);
-
-                if (bCheck == true)
-                {
-                    strReturn = readfile.pickoutString(strForceFileFullName, "force:", 7, 21);
-                    dForce = Double.Parse(strReturn);
-
-                    textBoxForce.Text = dForce.ToString();
-                }
-                else
-                {
-                    CNotice.noticeWarningID("TROA1");
-                    return;
-                }
             }
             catch (Exception ex)
             {
@@ -2756,6 +2771,17 @@ namespace DoSA
                         /// 부품이 아닌 경우는 선택을 해지한다
                         else
                             m_femm.clearSelected();
+
+                        // 혹시 후처리 모드라면 전처리로 복구한다.
+                        if (bPostMode == true)
+                        {
+                            // 순서 주의 할 것
+                            closePostView();
+
+                            resizeFEMM();
+
+                            bPostMode = false;
+                        }
                     }
 
                     switch (node.m_kindKey)

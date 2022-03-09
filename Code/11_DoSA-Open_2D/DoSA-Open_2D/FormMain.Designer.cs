@@ -30,9 +30,9 @@
         {
             this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormMain));
-            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea1 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
-            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea2 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
-            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea3 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
+            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea4 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
+            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea5 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
+            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea6 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
             this.ribbonToolbar = new System.Windows.Forms.Ribbon();
             this.ribbonOrbMenuItemNew = new System.Windows.Forms.RibbonOrbMenuItem();
             this.ribbonOrbMenuItemOpen = new System.Windows.Forms.RibbonOrbMenuItem();
@@ -383,8 +383,8 @@
             // splitContainerLeft.Panel2
             // 
             this.splitContainerLeft.Panel2.Controls.Add(this.propertyGridMain);
-            this.splitContainerLeft.Size = new System.Drawing.Size(335, 744);
-            this.splitContainerLeft.SplitterDistance = 250;
+            this.splitContainerLeft.Size = new System.Drawing.Size(335, 743);
+            this.splitContainerLeft.SplitterDistance = 249;
             this.splitContainerLeft.TabIndex = 1;
             // 
             // treeViewMain
@@ -395,7 +395,7 @@
             this.treeViewMain.Location = new System.Drawing.Point(0, 0);
             this.treeViewMain.Name = "treeViewMain";
             this.treeViewMain.SelectedImageIndex = 0;
-            this.treeViewMain.Size = new System.Drawing.Size(331, 246);
+            this.treeViewMain.Size = new System.Drawing.Size(331, 245);
             this.treeViewMain.TabIndex = 0;
             this.treeViewMain.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.treeView_AfterSelect);
             this.treeViewMain.DoubleClick += new System.EventHandler(this.treeViewMain_DoubleClick);
@@ -430,7 +430,7 @@
             // 
             this.splitterHorizontal.Location = new System.Drawing.Point(335, 118);
             this.splitterHorizontal.Name = "splitterHorizontal";
-            this.splitterHorizontal.Size = new System.Drawing.Size(3, 744);
+            this.splitterHorizontal.Size = new System.Drawing.Size(3, 743);
             this.splitterHorizontal.TabIndex = 2;
             this.splitterHorizontal.TabStop = false;
             // 
@@ -449,8 +449,8 @@
             // splitContainerRight.Panel2
             // 
             this.splitContainerRight.Panel2.Controls.Add(this.messageListView);
-            this.splitContainerRight.Size = new System.Drawing.Size(746, 744);
-            this.splitContainerRight.SplitterDistance = 558;
+            this.splitContainerRight.Size = new System.Drawing.Size(746, 743);
+            this.splitContainerRight.SplitterDistance = 557;
             this.splitContainerRight.TabIndex = 3;
             // 
             // panelEmpty
@@ -458,7 +458,7 @@
             this.panelEmpty.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panelEmpty.Location = new System.Drawing.Point(0, 0);
             this.panelEmpty.Name = "panelEmpty";
-            this.panelEmpty.Size = new System.Drawing.Size(742, 554);
+            this.panelEmpty.Size = new System.Drawing.Size(742, 553);
             this.panelEmpty.TabIndex = 0;
             // 
             // messageListView
@@ -661,8 +661,8 @@
             // 
             this.chartStrokeResult.BorderlineColor = System.Drawing.Color.Black;
             this.chartStrokeResult.BorderlineDashStyle = System.Windows.Forms.DataVisualization.Charting.ChartDashStyle.Solid;
-            chartArea1.Name = "ChartArea1";
-            this.chartStrokeResult.ChartAreas.Add(chartArea1);
+            chartArea4.Name = "ChartArea1";
+            this.chartStrokeResult.ChartAreas.Add(chartArea4);
             this.chartStrokeResult.Location = new System.Drawing.Point(185, 60);
             this.chartStrokeResult.Name = "chartStrokeResult";
             this.chartStrokeResult.Size = new System.Drawing.Size(520, 400);
@@ -733,8 +733,8 @@
             // 
             this.chartCurrentResult.BorderlineColor = System.Drawing.Color.Black;
             this.chartCurrentResult.BorderlineDashStyle = System.Windows.Forms.DataVisualization.Charting.ChartDashStyle.Solid;
-            chartArea2.Name = "ChartArea1";
-            this.chartCurrentResult.ChartAreas.Add(chartArea2);
+            chartArea5.Name = "ChartArea1";
+            this.chartCurrentResult.ChartAreas.Add(chartArea5);
             this.chartCurrentResult.Location = new System.Drawing.Point(185, 60);
             this.chartCurrentResult.Name = "chartCurrentResult";
             this.chartCurrentResult.Size = new System.Drawing.Size(520, 400);
@@ -795,8 +795,8 @@
             // 
             this.chartBHCurve.BorderlineColor = System.Drawing.Color.Black;
             this.chartBHCurve.BorderlineDashStyle = System.Windows.Forms.DataVisualization.Charting.ChartDashStyle.Solid;
-            chartArea3.Name = "ChartArea1";
-            this.chartBHCurve.ChartAreas.Add(chartArea3);
+            chartArea6.Name = "ChartArea1";
+            this.chartBHCurve.ChartAreas.Add(chartArea6);
             this.chartBHCurve.Location = new System.Drawing.Point(185, 60);
             this.chartBHCurve.Name = "chartBHCurve";
             this.chartBHCurve.Size = new System.Drawing.Size(520, 400);
@@ -923,7 +923,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1084, 862);
+            this.ClientSize = new System.Drawing.Size(1084, 861);
             this.Controls.Add(this.splitContainerRight);
             this.Controls.Add(this.splitterHorizontal);
             this.Controls.Add(this.splitContainerLeft);

@@ -898,7 +898,7 @@ namespace Scripts
                                                 double maxX, double maxY, 
                                                 string strFieldImageName, 
                                                 string strPostDataFullName,
-                                                bool bForceTest,
+                                                //bool bForceExperiment,
                                                 double maximumDensity)
         {
             string strCommand = string.Empty;
@@ -915,18 +915,18 @@ namespace Scripts
 
             strPostDataFullName = "\"" + strPostDataFullName + "\"";
 
-            if(bForceTest == true)
-            {
-                strCommand = "mi_loadsolution()";
-                sendCommand(strCommand);
-            }
-            else
-            {
+            //if(bForceExperiment == true)
+            //{
+            //    strCommand = "mi_loadsolution()";
+            //    sendCommand(strCommand);
+            //}
+            //else
+            //{
                 // 해석 후 바로 출력은 상관 없지만
                 // 프로그램을 다시 실행한 다음에 해석결과로 이미지를 만들때는 ans 파일을 읽어드리고 진행해야 한다.
                 strCommand = "open(" + strPostDataFullName + ")";
                 sendCommand(strCommand);
-            }
+            //}
 
             strCommand = "mo_zoom(" + minX.ToString() + "," + minY.ToString() + "," + maxX.ToString() + "," + maxY.ToString() + ")";
             sendCommand(strCommand);
@@ -948,7 +948,7 @@ namespace Scripts
                                                 double maxX, double maxY, 
                                                 string strFieldImageName,
                                                 string strPostDataFullName,
-                                                bool bForceTest,
+                                                //bool bForceTest,
                                                 double gridSize, 
                                                 double vectorScale)
         {
@@ -966,18 +966,18 @@ namespace Scripts
 
             strPostDataFullName = "\"" + strPostDataFullName + "\"";
 
-            if (bForceTest == true)
-            {
-                strCommand = "mi_loadsolution()";
-                sendCommand(strCommand);
-            }
-            else
-            {
+            //if (bForceTest == true)
+            //{
+            //    strCommand = "mi_loadsolution()";
+            //    sendCommand(strCommand);
+            //}
+            //else
+            //{
                 // 해석 후 바로 출력은 상관 없지만
                 // 프로그램을 다시 실행한 다음에 해석결과로 이미지를 만들때는 ans 파일을 읽어드리고 진행해야 한다.
                 strCommand = "open(" + strPostDataFullName + ")";
                 sendCommand(strCommand);
-            }
+            //}
 
 
             strCommand = "mo_zoom(" + minX.ToString() + "," + minY.ToString() + "," + maxX.ToString() + "," + maxY.ToString() + ")";
