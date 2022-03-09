@@ -1134,6 +1134,10 @@ namespace DoSA
                 listString.Add(strCurrent + "," + strForce);
             }
 
+            // Force 계산이 진행되면 후처리로 변화하기 때문에 후처리 모드를 저장한다.
+            // 추후 Tree 를 선택할 때 전처리로 모드를 전환한다.
+            bPostMode = true;
+
             DateTime currentTime = new DateTime();
             currentTime = DateTime.Now;
 
@@ -1356,6 +1360,10 @@ namespace DoSA
             // 해석 중에 전체 해석영역이 표시되는 것을 막기 위해 제품영역 정보를 송부한다. 
             double dForce = m_femm.solveForce(minX, maxX, minY, maxY);
 
+            // Force 계산이 진행되면 후처리로 변화하기 때문에 후처리 모드를 저장한다.
+            // 추후 Tree 를 선택할 때 전처리로 모드를 전환한다.
+            bPostMode = true;
+
             DateTime currentTime = new DateTime();
             currentTime = DateTime.Now;
 
@@ -1536,6 +1544,11 @@ namespace DoSA
                 // 전처리를 부품 형상으로 초기화 한다.
                 m_design.redrawDesign(m_femm);
             }
+
+            // Force 계산이 진행되면 후처리로 변화하기 때문에 후처리 모드를 저장한다.
+            // 추후 Tree 를 선택할 때 전처리로 모드를 전환한다.
+            bPostMode = true;
+
 
             DateTime currentTime = new DateTime();
             currentTime = DateTime.Now;
