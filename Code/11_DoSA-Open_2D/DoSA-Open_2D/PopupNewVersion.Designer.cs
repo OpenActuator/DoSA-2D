@@ -29,6 +29,8 @@
         private void InitializeComponent()
         {
             this.groupBoxNotice = new System.Windows.Forms.GroupBox();
+            this.labelMainUpdateContents = new System.Windows.Forms.Label();
+            this.labelMainUpdate = new System.Windows.Forms.Label();
             this.labelProductVersionDisplay = new System.Windows.Forms.Label();
             this.labelProductVersion = new System.Windows.Forms.Label();
             this.buttonStopNotice = new System.Windows.Forms.Button();
@@ -36,8 +38,6 @@
             this.labelNewVersionDisplay = new System.Windows.Forms.Label();
             this.labelNewVersion = new System.Windows.Forms.Label();
             this.buttonClose = new System.Windows.Forms.Button();
-            this.labelMainUpdate = new System.Windows.Forms.Label();
-            this.labelMainUpdateContents = new System.Windows.Forms.Label();
             this.groupBoxNotice.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -45,23 +45,41 @@
             // 
             this.groupBoxNotice.Controls.Add(this.labelMainUpdateContents);
             this.groupBoxNotice.Controls.Add(this.labelMainUpdate);
-            this.groupBoxNotice.Controls.Add(this.labelProductVersionDisplay);
-            this.groupBoxNotice.Controls.Add(this.labelProductVersion);
-            this.groupBoxNotice.Controls.Add(this.buttonStopNotice);
             this.groupBoxNotice.Controls.Add(this.buttonOpenWebSite);
+            this.groupBoxNotice.Controls.Add(this.labelProductVersionDisplay);
+            this.groupBoxNotice.Controls.Add(this.buttonStopNotice);
+            this.groupBoxNotice.Controls.Add(this.labelProductVersion);
             this.groupBoxNotice.Controls.Add(this.labelNewVersionDisplay);
             this.groupBoxNotice.Controls.Add(this.labelNewVersion);
             this.groupBoxNotice.Location = new System.Drawing.Point(12, 12);
             this.groupBoxNotice.Name = "groupBoxNotice";
-            this.groupBoxNotice.Size = new System.Drawing.Size(319, 230);
+            this.groupBoxNotice.Size = new System.Drawing.Size(499, 171);
             this.groupBoxNotice.TabIndex = 1;
             this.groupBoxNotice.TabStop = false;
             this.groupBoxNotice.Text = "Notice";
             // 
+            // labelMainUpdateContents
+            // 
+            this.labelMainUpdateContents.AutoSize = true;
+            this.labelMainUpdateContents.Location = new System.Drawing.Point(119, 83);
+            this.labelMainUpdateContents.Name = "labelMainUpdateContents";
+            this.labelMainUpdateContents.Size = new System.Drawing.Size(361, 12);
+            this.labelMainUpdateContents.TabIndex = 7;
+            this.labelMainUpdateContents.Text = "abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcd";
+            // 
+            // labelMainUpdate
+            // 
+            this.labelMainUpdate.AutoSize = true;
+            this.labelMainUpdate.Location = new System.Drawing.Point(20, 83);
+            this.labelMainUpdate.Name = "labelMainUpdate";
+            this.labelMainUpdate.Size = new System.Drawing.Size(98, 12);
+            this.labelMainUpdate.TabIndex = 6;
+            this.labelMainUpdate.Text = "- Main Update : ";
+            // 
             // labelProductVersionDisplay
             // 
             this.labelProductVersionDisplay.AutoSize = true;
-            this.labelProductVersionDisplay.Location = new System.Drawing.Point(153, 27);
+            this.labelProductVersionDisplay.Location = new System.Drawing.Point(147, 27);
             this.labelProductVersionDisplay.Name = "labelProductVersionDisplay";
             this.labelProductVersionDisplay.Size = new System.Drawing.Size(41, 12);
             this.labelProductVersionDisplay.TabIndex = 5;
@@ -70,7 +88,7 @@
             // labelProductVersion
             // 
             this.labelProductVersion.AutoSize = true;
-            this.labelProductVersion.Location = new System.Drawing.Point(26, 27);
+            this.labelProductVersion.Location = new System.Drawing.Point(20, 27);
             this.labelProductVersion.Name = "labelProductVersion";
             this.labelProductVersion.Size = new System.Drawing.Size(127, 12);
             this.labelProductVersion.TabIndex = 5;
@@ -78,17 +96,17 @@
             // 
             // buttonStopNotice
             // 
-            this.buttonStopNotice.Location = new System.Drawing.Point(47, 172);
+            this.buttonStopNotice.Location = new System.Drawing.Point(255, 117);
             this.buttonStopNotice.Name = "buttonStopNotice";
             this.buttonStopNotice.Size = new System.Drawing.Size(226, 38);
             this.buttonStopNotice.TabIndex = 4;
-            this.buttonStopNotice.Text = "Stop the new version notice";
+            this.buttonStopNotice.Text = "Stop this new version notice";
             this.buttonStopNotice.UseVisualStyleBackColor = true;
             this.buttonStopNotice.Click += new System.EventHandler(this.buttonStopNotice_Click);
             // 
             // buttonOpenWebSite
             // 
-            this.buttonOpenWebSite.Location = new System.Drawing.Point(47, 119);
+            this.buttonOpenWebSite.Location = new System.Drawing.Point(19, 117);
             this.buttonOpenWebSite.Name = "buttonOpenWebSite";
             this.buttonOpenWebSite.Size = new System.Drawing.Size(226, 38);
             this.buttonOpenWebSite.TabIndex = 3;
@@ -99,7 +117,7 @@
             // labelNewVersionDisplay
             // 
             this.labelNewVersionDisplay.AutoSize = true;
-            this.labelNewVersionDisplay.Location = new System.Drawing.Point(153, 55);
+            this.labelNewVersionDisplay.Location = new System.Drawing.Point(147, 55);
             this.labelNewVersionDisplay.Name = "labelNewVersionDisplay";
             this.labelNewVersionDisplay.Size = new System.Drawing.Size(41, 12);
             this.labelNewVersionDisplay.TabIndex = 1;
@@ -108,7 +126,7 @@
             // labelNewVersion
             // 
             this.labelNewVersion.AutoSize = true;
-            this.labelNewVersion.Location = new System.Drawing.Point(26, 55);
+            this.labelNewVersion.Location = new System.Drawing.Point(20, 55);
             this.labelNewVersion.Name = "labelNewVersion";
             this.labelNewVersion.Size = new System.Drawing.Size(127, 12);
             this.labelNewVersion.TabIndex = 1;
@@ -116,7 +134,7 @@
             // 
             // buttonClose
             // 
-            this.buttonClose.Location = new System.Drawing.Point(223, 248);
+            this.buttonClose.Location = new System.Drawing.Point(401, 198);
             this.buttonClose.Name = "buttonClose";
             this.buttonClose.Size = new System.Drawing.Size(110, 31);
             this.buttonClose.TabIndex = 5;
@@ -124,29 +142,11 @@
             this.buttonClose.UseVisualStyleBackColor = true;
             this.buttonClose.Click += new System.EventHandler(this.buttonClose_Click);
             // 
-            // labelMainUpdate
-            // 
-            this.labelMainUpdate.AutoSize = true;
-            this.labelMainUpdate.Location = new System.Drawing.Point(26, 83);
-            this.labelMainUpdate.Name = "labelMainUpdate";
-            this.labelMainUpdate.Size = new System.Drawing.Size(98, 12);
-            this.labelMainUpdate.TabIndex = 6;
-            this.labelMainUpdate.Text = "- Main Update : ";
-            // 
-            // labelMainUpdateContents
-            // 
-            this.labelMainUpdateContents.AutoSize = true;
-            this.labelMainUpdateContents.Location = new System.Drawing.Point(125, 83);
-            this.labelMainUpdateContents.Name = "labelMainUpdateContents";
-            this.labelMainUpdateContents.Size = new System.Drawing.Size(98, 12);
-            this.labelMainUpdateContents.TabIndex = 7;
-            this.labelMainUpdateContents.Text = "Update Contents";
-            // 
             // PopupNewVersion
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(345, 288);
+            this.ClientSize = new System.Drawing.Size(523, 241);
             this.Controls.Add(this.buttonClose);
             this.Controls.Add(this.groupBoxNotice);
             this.Name = "PopupNewVersion";
