@@ -30,9 +30,9 @@
         {
             this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormMain));
-            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea4 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
-            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea5 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
-            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea6 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
+            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea1 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
+            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea2 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
+            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea3 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
             this.ribbonToolbar = new System.Windows.Forms.Ribbon();
             this.ribbonOrbMenuItemNew = new System.Windows.Forms.RibbonOrbMenuItem();
             this.ribbonOrbMenuItemOpen = new System.Windows.Forms.RibbonOrbMenuItem();
@@ -67,17 +67,7 @@
             this.propertyGridMain = new System.Windows.Forms.PropertyGrid();
             this.splitterHorizontal = new System.Windows.Forms.Splitter();
             this.splitContainerRight = new System.Windows.Forms.SplitContainer();
-            this.panelEmpty = new System.Windows.Forms.Panel();
-            this.messageListView = new gtLibrary.MessageListView();
-            this.columnHeaderMessage = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.panelForce = new System.Windows.Forms.Panel();
-            this.label4 = new System.Windows.Forms.Label();
-            this.label3 = new System.Windows.Forms.Label();
-            this.textBoxMaximumDensity = new System.Windows.Forms.TextBox();
-            this.label2 = new System.Windows.Forms.Label();
-            this.textBoxVectorGridSize = new System.Windows.Forms.TextBox();
-            this.label1 = new System.Windows.Forms.Label();
-            this.textBoxVectorScale = new System.Windows.Forms.TextBox();
             this.buttonLoadForceAndVectorB = new System.Windows.Forms.Button();
             this.buttonLoadForceAndMagnitudeB = new System.Windows.Forms.Button();
             this.labelN = new System.Windows.Forms.Label();
@@ -85,6 +75,9 @@
             this.textBoxForce = new System.Windows.Forms.TextBox();
             this.pictureBoxForce = new System.Windows.Forms.PictureBox();
             this.buttonExperimentForce = new System.Windows.Forms.Button();
+            this.messageListView = new gtLibrary.MessageListView();
+            this.columnHeaderMessage = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.panelEmpty = new System.Windows.Forms.Panel();
             this.panelStroke = new System.Windows.Forms.Panel();
             this.labelProgressStroke = new System.Windows.Forms.Label();
             this.progressBarStroke = new System.Windows.Forms.ProgressBar();
@@ -453,42 +446,8 @@
             this.splitContainerRight.SplitterDistance = 557;
             this.splitContainerRight.TabIndex = 3;
             // 
-            // panelEmpty
-            // 
-            this.panelEmpty.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.panelEmpty.Location = new System.Drawing.Point(0, 0);
-            this.panelEmpty.Name = "panelEmpty";
-            this.panelEmpty.Size = new System.Drawing.Size(742, 553);
-            this.panelEmpty.TabIndex = 0;
-            // 
-            // messageListView
-            // 
-            this.messageListView.BackColor = System.Drawing.Color.Ivory;
-            this.messageListView.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
-            this.columnHeaderMessage});
-            this.messageListView.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.messageListView.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.None;
-            this.messageListView.HideSelection = false;
-            this.messageListView.Location = new System.Drawing.Point(0, 0);
-            this.messageListView.Name = "messageListView";
-            this.messageListView.Size = new System.Drawing.Size(742, 178);
-            this.messageListView.TabIndex = 1;
-            this.messageListView.UseCompatibleStateImageBehavior = false;
-            this.messageListView.View = System.Windows.Forms.View.Details;
-            // 
-            // columnHeaderMessage
-            // 
-            this.columnHeaderMessage.Width = 732;
-            // 
             // panelForce
             // 
-            this.panelForce.Controls.Add(this.label4);
-            this.panelForce.Controls.Add(this.label3);
-            this.panelForce.Controls.Add(this.textBoxMaximumDensity);
-            this.panelForce.Controls.Add(this.label2);
-            this.panelForce.Controls.Add(this.textBoxVectorGridSize);
-            this.panelForce.Controls.Add(this.label1);
-            this.panelForce.Controls.Add(this.textBoxVectorScale);
             this.panelForce.Controls.Add(this.buttonLoadForceAndVectorB);
             this.panelForce.Controls.Add(this.buttonLoadForceAndMagnitudeB);
             this.panelForce.Controls.Add(this.labelN);
@@ -499,72 +458,12 @@
             this.panelForce.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panelForce.Location = new System.Drawing.Point(0, 0);
             this.panelForce.Name = "panelForce";
-            this.panelForce.Size = new System.Drawing.Size(742, 554);
+            this.panelForce.Size = new System.Drawing.Size(742, 553);
             this.panelForce.TabIndex = 0;
-            // 
-            // label4
-            // 
-            this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(161, 286);
-            this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(13, 12);
-            this.label4.TabIndex = 15;
-            this.label4.Text = "T";
-            // 
-            // label3
-            // 
-            this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(25, 266);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(116, 12);
-            this.label3.TabIndex = 14;
-            this.label3.Text = "Maximum Density :";
-            // 
-            // textBoxMaximumDensity
-            // 
-            this.textBoxMaximumDensity.Location = new System.Drawing.Point(25, 282);
-            this.textBoxMaximumDensity.Name = "textBoxMaximumDensity";
-            this.textBoxMaximumDensity.Size = new System.Drawing.Size(130, 21);
-            this.textBoxMaximumDensity.TabIndex = 13;
-            this.textBoxMaximumDensity.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
-            // 
-            // label2
-            // 
-            this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(25, 423);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(105, 12);
-            this.label2.TabIndex = 12;
-            this.label2.Text = "Vector Grid Size :";
-            // 
-            // textBoxVectorGridSize
-            // 
-            this.textBoxVectorGridSize.Location = new System.Drawing.Point(25, 439);
-            this.textBoxVectorGridSize.Name = "textBoxVectorGridSize";
-            this.textBoxVectorGridSize.Size = new System.Drawing.Size(130, 21);
-            this.textBoxVectorGridSize.TabIndex = 11;
-            this.textBoxVectorGridSize.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
-            // 
-            // label1
-            // 
-            this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(25, 379);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(85, 12);
-            this.label1.TabIndex = 10;
-            this.label1.Text = "Vector Scale :";
-            // 
-            // textBoxVectorScale
-            // 
-            this.textBoxVectorScale.Location = new System.Drawing.Point(25, 395);
-            this.textBoxVectorScale.Name = "textBoxVectorScale";
-            this.textBoxVectorScale.Size = new System.Drawing.Size(130, 21);
-            this.textBoxVectorScale.TabIndex = 9;
-            this.textBoxVectorScale.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
             // 
             // buttonLoadForceAndVectorB
             // 
-            this.buttonLoadForceAndVectorB.Location = new System.Drawing.Point(25, 322);
+            this.buttonLoadForceAndVectorB.Location = new System.Drawing.Point(25, 196);
             this.buttonLoadForceAndVectorB.Name = "buttonLoadForceAndVectorB";
             this.buttonLoadForceAndVectorB.Size = new System.Drawing.Size(130, 50);
             this.buttonLoadForceAndVectorB.TabIndex = 8;
@@ -574,7 +473,7 @@
             // 
             // buttonLoadForceAndMagnitudeB
             // 
-            this.buttonLoadForceAndMagnitudeB.Location = new System.Drawing.Point(25, 209);
+            this.buttonLoadForceAndMagnitudeB.Location = new System.Drawing.Point(25, 140);
             this.buttonLoadForceAndMagnitudeB.Name = "buttonLoadForceAndMagnitudeB";
             this.buttonLoadForceAndMagnitudeB.Size = new System.Drawing.Size(130, 50);
             this.buttonLoadForceAndMagnitudeB.TabIndex = 7;
@@ -585,7 +484,7 @@
             // labelN
             // 
             this.labelN.AutoSize = true;
-            this.labelN.Location = new System.Drawing.Point(159, 144);
+            this.labelN.Location = new System.Drawing.Point(159, 444);
             this.labelN.Name = "labelN";
             this.labelN.Size = new System.Drawing.Size(14, 12);
             this.labelN.TabIndex = 5;
@@ -594,7 +493,7 @@
             // labelForce
             // 
             this.labelForce.AutoSize = true;
-            this.labelForce.Location = new System.Drawing.Point(25, 123);
+            this.labelForce.Location = new System.Drawing.Point(25, 423);
             this.labelForce.Name = "labelForce";
             this.labelForce.Size = new System.Drawing.Size(45, 12);
             this.labelForce.TabIndex = 5;
@@ -602,7 +501,7 @@
             // 
             // textBoxForce
             // 
-            this.textBoxForce.Location = new System.Drawing.Point(25, 139);
+            this.textBoxForce.Location = new System.Drawing.Point(25, 439);
             this.textBoxForce.Name = "textBoxForce";
             this.textBoxForce.Size = new System.Drawing.Size(130, 21);
             this.textBoxForce.TabIndex = 4;
@@ -626,6 +525,33 @@
             this.buttonExperimentForce.Text = "Force Test";
             this.buttonExperimentForce.UseVisualStyleBackColor = true;
             this.buttonExperimentForce.Click += new System.EventHandler(this.buttonExperimentForce_Click);
+            // 
+            // messageListView
+            // 
+            this.messageListView.BackColor = System.Drawing.Color.Ivory;
+            this.messageListView.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
+            this.columnHeaderMessage});
+            this.messageListView.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.messageListView.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.None;
+            this.messageListView.HideSelection = false;
+            this.messageListView.Location = new System.Drawing.Point(0, 0);
+            this.messageListView.Name = "messageListView";
+            this.messageListView.Size = new System.Drawing.Size(742, 178);
+            this.messageListView.TabIndex = 1;
+            this.messageListView.UseCompatibleStateImageBehavior = false;
+            this.messageListView.View = System.Windows.Forms.View.Details;
+            // 
+            // columnHeaderMessage
+            // 
+            this.columnHeaderMessage.Width = 732;
+            // 
+            // panelEmpty
+            // 
+            this.panelEmpty.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.panelEmpty.Location = new System.Drawing.Point(0, 0);
+            this.panelEmpty.Name = "panelEmpty";
+            this.panelEmpty.Size = new System.Drawing.Size(742, 553);
+            this.panelEmpty.TabIndex = 0;
             // 
             // panelStroke
             // 
@@ -661,8 +587,8 @@
             // 
             this.chartStrokeResult.BorderlineColor = System.Drawing.Color.Black;
             this.chartStrokeResult.BorderlineDashStyle = System.Windows.Forms.DataVisualization.Charting.ChartDashStyle.Solid;
-            chartArea4.Name = "ChartArea1";
-            this.chartStrokeResult.ChartAreas.Add(chartArea4);
+            chartArea1.Name = "ChartArea1";
+            this.chartStrokeResult.ChartAreas.Add(chartArea1);
             this.chartStrokeResult.Location = new System.Drawing.Point(185, 60);
             this.chartStrokeResult.Name = "chartStrokeResult";
             this.chartStrokeResult.Size = new System.Drawing.Size(520, 400);
@@ -733,8 +659,8 @@
             // 
             this.chartCurrentResult.BorderlineColor = System.Drawing.Color.Black;
             this.chartCurrentResult.BorderlineDashStyle = System.Windows.Forms.DataVisualization.Charting.ChartDashStyle.Solid;
-            chartArea5.Name = "ChartArea1";
-            this.chartCurrentResult.ChartAreas.Add(chartArea5);
+            chartArea2.Name = "ChartArea1";
+            this.chartCurrentResult.ChartAreas.Add(chartArea2);
             this.chartCurrentResult.Location = new System.Drawing.Point(185, 60);
             this.chartCurrentResult.Name = "chartCurrentResult";
             this.chartCurrentResult.Size = new System.Drawing.Size(520, 400);
@@ -795,8 +721,8 @@
             // 
             this.chartBHCurve.BorderlineColor = System.Drawing.Color.Black;
             this.chartBHCurve.BorderlineDashStyle = System.Windows.Forms.DataVisualization.Charting.ChartDashStyle.Solid;
-            chartArea6.Name = "ChartArea1";
-            this.chartBHCurve.ChartAreas.Add(chartArea6);
+            chartArea3.Name = "ChartArea1";
+            this.chartBHCurve.ChartAreas.Add(chartArea3);
             this.chartBHCurve.Location = new System.Drawing.Point(185, 60);
             this.chartBHCurve.Name = "chartBHCurve";
             this.chartBHCurve.Size = new System.Drawing.Size(520, 400);
@@ -1044,13 +970,6 @@
         private System.Windows.Forms.Label labelProgressStroke;
         private System.Windows.Forms.ProgressBar progressBarStroke;
         private System.Windows.Forms.Button buttonLoadForceAndVectorB;
-        private System.Windows.Forms.Label label2;
-        private System.Windows.Forms.TextBox textBoxVectorGridSize;
-        private System.Windows.Forms.Label label1;
-        private System.Windows.Forms.TextBox textBoxVectorScale;
-        private System.Windows.Forms.Label label4;
-        private System.Windows.Forms.Label label3;
-        private System.Windows.Forms.TextBox textBoxMaximumDensity;
         private System.Windows.Forms.RibbonButton ribbonButtonHomepage;
     }
 }

@@ -897,9 +897,7 @@ namespace Scripts
         public bool writeDensityMagnitudeImage( double minX, double minY, 
                                                 double maxX, double maxY, 
                                                 string strFieldImageName, 
-                                                string strPostDataFullName,
-                                                //bool bForceExperiment,
-                                                double maximumDensity)
+                                                string strPostDataFullName)
         {
             string strCommand = string.Empty;
 
@@ -933,7 +931,7 @@ namespace Scripts
 
 
             //------------------ 자속밀도 Magnitude 저장 -------------------
-            strCommand = "mo_showdensityplot(1, 0, " + maximumDensity.ToString() + ", 0, \"bmag\")";
+            strCommand = "mo_showdensityplot(1, 0, 1.7, 0, \"bmag\")";
             sendCommand(strCommand);
 
             strFieldImageName = "\"" + strFieldImageName + "\"";

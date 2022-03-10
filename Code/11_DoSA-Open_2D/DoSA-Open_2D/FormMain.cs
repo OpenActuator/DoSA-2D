@@ -58,6 +58,8 @@ namespace DoSA
         public ResourceManager m_resManager = null;
 
         private bool bPostMode = false;
+        private double m_dGridSize;
+        private double m_dVectorScale;
 
         #endregion
 
@@ -149,10 +151,9 @@ namespace DoSA
                     m_strCommandLineDataFullName = strDataFileFullName;
             }
 
-            textBoxVectorScale.Text = "10";
-            textBoxVectorGridSize.Text = "1";
-            textBoxMaximumDensity.Text = "1.7";
-        }
+            m_dGridSize = 1.0f;
+            m_dVectorScale = 10.0f;
+    }
 
         //----------- Update Dialog Test --------------
         // - WiFi 를 연결하고, AssemblyInfo 에서 버전을 임의로 낮춘다.
@@ -1382,10 +1383,9 @@ namespace DoSA
 
             string strPostDataFullName = Path.Combine(strExperimentDirName, strExperimentName + ".ans");
 
-            textBoxVectorGridSize.Text = (dlongerLength / 50.0f).ToString();
-            textBoxVectorScale.Text = 10.ToString();
+            m_dGridSize = dlongerLength / 50.0f;
+            m_dVectorScale = 10;
 
-            textBoxMaximumDensity.Text = "1.7";
 
             // 해석결과가 존재하지 않으면 Result 와 Report 버튼을 비활성화 한다.
             if (m_manageFile.isExistFile(strPostDataFullName) == true)
@@ -1957,17 +1957,6 @@ namespace DoSA
                 reopenFEMM();
             }
 
-            // 혹시 후처리 모드라면 이전 후처리를 없애고 전처리로 복구한다.
-            if (bPostMode == true)
-            {
-                // 순서 주의 할 것
-                closePostView();
-
-                //resizeFEMM();
-
-                bPostMode = false;
-            }
-
             // 이미지 캡쳐 때문에 해석중에 FEMM 의 넓이를 일시적으로 넓힌다
             resizeFEMM(1040);
 
@@ -1999,6 +1988,16 @@ namespace DoSA
             if (bForceExperiment == true)
                 return;
 
+
+            // 혹시 후처리 모드라면 이전 후처리를 없애고 전처리로 복구한다.
+            if (bPostMode == true)
+            {
+                // 순서 주의 할 것
+                closePostView();
+
+                bPostMode = false;
+            }
+
             //------------------------- 자속밀도 이미지 생성 --------------------------------
             if (bMagnitude == true)
             {
@@ -2007,8 +2006,7 @@ namespace DoSA
                 if (m_manageFile.isExistFile(densityImageFileFullName))
                     m_manageFile.deleteFile(densityImageFileFullName);
 
-                m_femm.writeDensityMagnitudeImage(  minX, minY, maxX, maxY, densityImageFileFullName, strPostDataFullName, //bForceExperiment,
-                                                    Convert.ToDouble(textBoxMaximumDensity.Text));
+                m_femm.writeDensityMagnitudeImage(  minX, minY, maxX, maxY, densityImageFileFullName, strPostDataFullName);
             }                
             else
             {
@@ -2017,8 +2015,8 @@ namespace DoSA
                 if (m_manageFile.isExistFile(densityImageFileFullName))
                     m_manageFile.deleteFile(densityImageFileFullName);
 
-                m_femm.writeDensityVectorImage( minX, minY, maxX, maxY, densityImageFileFullName, strPostDataFullName, //bForceExperiment, 
-                                                Convert.ToDouble(textBoxVectorGridSize.Text), Convert.ToDouble(textBoxVectorScale.Text));
+                m_femm.writeDensityVectorImage( minX, minY, maxX, maxY, densityImageFileFullName, strPostDataFullName,  
+                                                m_dGridSize, m_dVectorScale);
             }
 
             // 후처리 모드이 인것을 저장한다.
