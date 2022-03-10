@@ -31,10 +31,10 @@
             this.groupBoxNotice = new System.Windows.Forms.GroupBox();
             this.labelMainUpdateContents = new System.Windows.Forms.Label();
             this.labelMainUpdate = new System.Windows.Forms.Label();
-            this.labelProductVersionDisplay = new System.Windows.Forms.Label();
-            this.labelProductVersion = new System.Windows.Forms.Label();
-            this.buttonStopNotice = new System.Windows.Forms.Button();
             this.buttonOpenWebSite = new System.Windows.Forms.Button();
+            this.labelProductVersionDisplay = new System.Windows.Forms.Label();
+            this.buttonStopNotice = new System.Windows.Forms.Button();
+            this.labelProductVersion = new System.Windows.Forms.Label();
             this.labelNewVersionDisplay = new System.Windows.Forms.Label();
             this.labelNewVersion = new System.Windows.Forms.Label();
             this.buttonClose = new System.Windows.Forms.Button();
@@ -76,34 +76,6 @@
             this.labelMainUpdate.TabIndex = 6;
             this.labelMainUpdate.Text = "- Main Update : ";
             // 
-            // labelProductVersionDisplay
-            // 
-            this.labelProductVersionDisplay.AutoSize = true;
-            this.labelProductVersionDisplay.Location = new System.Drawing.Point(147, 27);
-            this.labelProductVersionDisplay.Name = "labelProductVersionDisplay";
-            this.labelProductVersionDisplay.Size = new System.Drawing.Size(41, 12);
-            this.labelProductVersionDisplay.TabIndex = 5;
-            this.labelProductVersionDisplay.Text = "0.1.0.0";
-            // 
-            // labelProductVersion
-            // 
-            this.labelProductVersion.AutoSize = true;
-            this.labelProductVersion.Location = new System.Drawing.Point(20, 27);
-            this.labelProductVersion.Name = "labelProductVersion";
-            this.labelProductVersion.Size = new System.Drawing.Size(127, 12);
-            this.labelProductVersion.TabIndex = 5;
-            this.labelProductVersion.Text = "- Your Version :  Ver.";
-            // 
-            // buttonStopNotice
-            // 
-            this.buttonStopNotice.Location = new System.Drawing.Point(255, 117);
-            this.buttonStopNotice.Name = "buttonStopNotice";
-            this.buttonStopNotice.Size = new System.Drawing.Size(226, 38);
-            this.buttonStopNotice.TabIndex = 4;
-            this.buttonStopNotice.Text = "Stop this new version notice";
-            this.buttonStopNotice.UseVisualStyleBackColor = true;
-            this.buttonStopNotice.Click += new System.EventHandler(this.buttonStopNotice_Click);
-            // 
             // buttonOpenWebSite
             // 
             this.buttonOpenWebSite.Location = new System.Drawing.Point(19, 117);
@@ -113,6 +85,34 @@
             this.buttonOpenWebSite.Text = "Move to the download website";
             this.buttonOpenWebSite.UseVisualStyleBackColor = true;
             this.buttonOpenWebSite.Click += new System.EventHandler(this.buttonOpenWebSite_Click);
+            // 
+            // labelProductVersionDisplay
+            // 
+            this.labelProductVersionDisplay.AutoSize = true;
+            this.labelProductVersionDisplay.Location = new System.Drawing.Point(147, 27);
+            this.labelProductVersionDisplay.Name = "labelProductVersionDisplay";
+            this.labelProductVersionDisplay.Size = new System.Drawing.Size(41, 12);
+            this.labelProductVersionDisplay.TabIndex = 5;
+            this.labelProductVersionDisplay.Text = "0.1.0.0";
+            // 
+            // buttonStopNotice
+            // 
+            this.buttonStopNotice.Location = new System.Drawing.Point(256, 117);
+            this.buttonStopNotice.Name = "buttonStopNotice";
+            this.buttonStopNotice.Size = new System.Drawing.Size(226, 38);
+            this.buttonStopNotice.TabIndex = 4;
+            this.buttonStopNotice.Text = "Stop this new version notice";
+            this.buttonStopNotice.UseVisualStyleBackColor = true;
+            this.buttonStopNotice.Click += new System.EventHandler(this.buttonStopNotice_Click);
+            // 
+            // labelProductVersion
+            // 
+            this.labelProductVersion.AutoSize = true;
+            this.labelProductVersion.Location = new System.Drawing.Point(20, 27);
+            this.labelProductVersion.Name = "labelProductVersion";
+            this.labelProductVersion.Size = new System.Drawing.Size(127, 12);
+            this.labelProductVersion.TabIndex = 5;
+            this.labelProductVersion.Text = "- Your Version :  Ver.";
             // 
             // labelNewVersionDisplay
             // 

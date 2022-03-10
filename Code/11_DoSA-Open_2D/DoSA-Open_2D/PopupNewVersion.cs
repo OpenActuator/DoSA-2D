@@ -24,13 +24,13 @@ namespace DoSA
 
             if (CSettingData.m_emLanguage == EMLanguage.Korean)
             {
-                this.buttonOpenWebSite.Text = "최신버전 다운페이지로 이동";
-                this.buttonStopNotice.Text = "최신버전 공지 띄우지 않기";                
+                this.buttonOpenWebSite.Text = "신규버전 다운페이지로 이동";
+                this.buttonStopNotice.Text = "이번 신규버전 공지 띄우지 않기";                
             }
             else
             {
                 this.buttonOpenWebSite.Text = "Move to the download website";                
-                this.buttonStopNotice.Text = "Stop the new version notice";                
+                this.buttonStopNotice.Text = "Stop this new version notice";                
             }
         }
 
