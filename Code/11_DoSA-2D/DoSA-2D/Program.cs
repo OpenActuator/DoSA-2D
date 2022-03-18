@@ -70,7 +70,7 @@ namespace DoSA
 
 		// 내부 사용변수
 		// - 프로그램이 실행될때 초기화하여 내부에서 사용한다.
-		public static string m_strProgramDirName { get; set; }
+		public static string m_strProgramDirPath { get; set; }
 
         public static void updataLanguge()
         {
@@ -118,7 +118,7 @@ namespace DoSA
                 return false;
             }
             
-            bCheck = m_manageFile.isExistDirectory(m_strProgramDirName);
+            bCheck = m_manageFile.isExistDirectory(m_strProgramDirPath);
 
             if (bCheck == false)
             {

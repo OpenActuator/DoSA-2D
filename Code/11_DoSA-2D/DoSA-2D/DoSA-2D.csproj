@@ -8,7 +8,7 @@
     <OutputType>WinExe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>DoSA</RootNamespace>
-    <AssemblyName>DoSA-Open_2D</AssemblyName>
+    <AssemblyName>DoSA-2D</AssemblyName>
     <TargetFrameworkVersion>v4.5.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <IsWebBootstrapper>false</IsWebBootstrapper>
@@ -78,21 +78,21 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="..\..\21_DoSA-Open_Library\ManageFile.cs">
-      <Link>ManageFile.cs</Link>
+    <Compile Include="..\..\21_DoSA-Library\ManageFile.cs">
+      <Link>gtLibraries\ManageFile.cs</Link>
     </Compile>
-    <Compile Include="..\..\21_DoSA-Open_Library\ManageProcess.cs">
-      <Link>ManageProcess.cs</Link>
+    <Compile Include="..\..\21_DoSA-Library\ManageProcess.cs">
+      <Link>gtLibraries\ManageProcess.cs</Link>
     </Compile>
-    <Compile Include="..\..\21_DoSA-Open_Library\MessageListView.cs">
-      <Link>MessageListView.cs</Link>
+    <Compile Include="..\..\21_DoSA-Library\MessageListView.cs">
+      <Link>gtLibraries\MessageListView.cs</Link>
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="..\..\21_DoSA-Open_Library\Notice.cs">
-      <Link>Notice.cs</Link>
+    <Compile Include="..\..\21_DoSA-Library\Notice.cs">
+      <Link>gtLibraries\Notice.cs</Link>
     </Compile>
-    <Compile Include="..\..\21_DoSA-Open_Library\ReadWriteFile.cs">
-      <Link>ReadWriteFile.cs</Link>
+    <Compile Include="..\..\21_DoSA-Library\ReadWriteFile.cs">
+      <Link>gtLibraries\ReadWriteFile.cs</Link>
     </Compile>
     <Compile Include="PointControl.cs">
       <SubType>UserControl</SubType>

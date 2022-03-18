@@ -117,7 +117,7 @@ namespace DoSA
         public bool saveSettingToFile()
         {
             string strAppDataPath = Environment.GetEnvironmentVariable("APPDATA");
-            string strSettingFilePath = Path.Combine(strAppDataPath, "DoSA-Open_2D");
+            string strSettingFilePath = Path.Combine(strAppDataPath, "DoSA-2D");
 
             string strSettingFileFullName = Path.Combine(strSettingFilePath, "setting.ini");
 
@@ -144,7 +144,7 @@ namespace DoSA
         public bool loadSettingFromFile()
         {
             string strAppDataPath = Environment.GetEnvironmentVariable("APPDATA");
-            string strSettingFilePath = Path.Combine(strAppDataPath, "DoSA-Open_2D");
+            string strSettingFilePath = Path.Combine(strAppDataPath, "DoSA-2D");
 
             string strSettingFileFullName = Path.Combine(strSettingFilePath, "setting.ini");
 

@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.31205.134
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DoSA-Open_2D", "DoSA-Open_2D\DoSA-Open_2D.csproj", "{72429FF1-515A-4AD8-BF14-6D3CE69FA5FD}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DoSA-2D", "DoSA-2D\DoSA-2D.csproj", "{72429FF1-515A-4AD8-BF14-6D3CE69FA5FD}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

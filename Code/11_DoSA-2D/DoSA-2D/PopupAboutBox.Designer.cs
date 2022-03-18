@@ -34,7 +34,6 @@
             this.tableLayoutPanel = new System.Windows.Forms.TableLayoutPanel();
             this.textBoxOpenLicense = new System.Windows.Forms.TextBox();
             this.labelProductName = new System.Windows.Forms.Label();
-            this.buttonHomepage = new System.Windows.Forms.Button();
             this.button1 = new System.Windows.Forms.Button();
             this.buttonLicense = new System.Windows.Forms.Button();
             this.buttonDonation = new System.Windows.Forms.Button();
@@ -146,17 +145,6 @@
             this.labelProductName.Text = "Product Name";
             this.labelProductName.TextAlign = System.Drawing.ContentAlignment.BottomLeft;
             // 
-            // buttonHomepage
-            // 
-            this.buttonHomepage.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.buttonHomepage.Location = new System.Drawing.Point(116, 446);
-            this.buttonHomepage.Name = "buttonHomepage";
-            this.buttonHomepage.Size = new System.Drawing.Size(100, 35);
-            this.buttonHomepage.TabIndex = 1;
-            this.buttonHomepage.Text = "Homepage";
-            this.buttonHomepage.UseVisualStyleBackColor = true;
-            this.buttonHomepage.Click += new System.EventHandler(this.buttonHomepage_Click);
-            // 
             // button1
             // 
             this.button1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
@@ -170,7 +158,7 @@
             // buttonLicense
             // 
             this.buttonLicense.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.buttonLicense.Location = new System.Drawing.Point(222, 446);
+            this.buttonLicense.Location = new System.Drawing.Point(116, 446);
             this.buttonLicense.Name = "buttonLicense";
             this.buttonLicense.Size = new System.Drawing.Size(100, 35);
             this.buttonLicense.TabIndex = 2;
@@ -181,7 +169,7 @@
             // buttonDonation
             // 
             this.buttonDonation.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.buttonDonation.Font = new System.Drawing.Font("Gulim", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(129)));
+            this.buttonDonation.Font = new System.Drawing.Font("Gulim", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(129)));
             this.buttonDonation.Location = new System.Drawing.Point(10, 446);
             this.buttonDonation.Name = "buttonDonation";
             this.buttonDonation.Size = new System.Drawing.Size(100, 35);
@@ -198,7 +186,6 @@
             this.Controls.Add(this.buttonDonation);
             this.Controls.Add(this.buttonLicense);
             this.Controls.Add(this.button1);
-            this.Controls.Add(this.buttonHomepage);
             this.Controls.Add(this.tableLayoutPanel);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
             this.MaximizeBox = false;
@@ -223,7 +210,6 @@
         private System.Windows.Forms.Label labelVersion;
         private System.Windows.Forms.TableLayoutPanel tableLayoutPanel;
         private System.Windows.Forms.Label labelProductName;
-        private System.Windows.Forms.Button buttonHomepage;
         private System.Windows.Forms.Button button1;
         private System.Windows.Forms.Button buttonLicense;
         private System.Windows.Forms.TextBox textBoxOpenLicense;

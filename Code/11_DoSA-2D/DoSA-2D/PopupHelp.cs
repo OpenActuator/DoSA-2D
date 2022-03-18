@@ -49,9 +49,9 @@ namespace DoSA
             CultureInfo ctInfo = Thread.CurrentThread.CurrentCulture;
 
             if (ctInfo.Name == "en-US")
-                strHelpFileFullName = Path.Combine(CSettingData.m_strProgramDirName, "Help", "User_Guide_ENG.pdf");
+                strHelpFileFullName = Path.Combine(CSettingData.m_strProgramDirPath, "Help", "User_Guide_ENG.pdf");
             else if (ctInfo.Name == "ko-KR")
-                strHelpFileFullName = Path.Combine(CSettingData.m_strProgramDirName, "Help", "User_Guide_KOR.pdf");
+                strHelpFileFullName = Path.Combine(CSettingData.m_strProgramDirPath, "Help", "User_Guide_KOR.pdf");
             else
                 return;
 
@@ -70,9 +70,9 @@ namespace DoSA
             CultureInfo ctInfo = Thread.CurrentThread.CurrentCulture;
 
             if (ctInfo.Name == "en-US")
-                strHelpFileFullName = Path.Combine(CSettingData.m_strProgramDirName, "Help", "VCM_Sample_ENG.pdf");
+                strHelpFileFullName = Path.Combine(CSettingData.m_strProgramDirPath, "Help", "VCM_Sample_ENG.pdf");
             else if (ctInfo.Name == "ko-KR")
-                strHelpFileFullName = Path.Combine(CSettingData.m_strProgramDirName, "Help", "VCM_Sample_KOR.pdf");
+                strHelpFileFullName = Path.Combine(CSettingData.m_strProgramDirPath, "Help", "VCM_Sample_KOR.pdf");
             else
                 return;
 
@@ -91,9 +91,9 @@ namespace DoSA
             CultureInfo ctInfo = Thread.CurrentThread.CurrentCulture;
 
             if (ctInfo.Name == "en-US")
-                strHelpFileFullName = Path.Combine(CSettingData.m_strProgramDirName, "Help", "Solenoid_Sample_ENG.pdf");
+                strHelpFileFullName = Path.Combine(CSettingData.m_strProgramDirPath, "Help", "Solenoid_Sample_ENG.pdf");
             else if (ctInfo.Name == "ko-KR")
-                strHelpFileFullName = Path.Combine(CSettingData.m_strProgramDirName, "Help", "Solenoid_Sample_KOR.pdf");
+                strHelpFileFullName = Path.Combine(CSettingData.m_strProgramDirPath, "Help", "Solenoid_Sample_KOR.pdf");
             else
                 return;
 

@@ -24,19 +24,17 @@ namespace DoSA
             
             string strDescription;
             string strDonation;
-            string strQnaBoard;
 
             if (CSettingData.m_emLanguage == EMLanguage.Korean)
             {
                 strDonation = "기여하기";
-                strQnaBoard = "홈페이지";
 
-                strDescription = @"DoSA-Open 은 
+                strDescription = @"DoSA-2D 는 
 정보통신산업진흥원 (NIPA) 의 지원사업으로 개발이 시작된 프로그램입니다.
 따라서 누구나 회사에서도 무료로 사용할 수 있는 
 오픈소스 액추에이터(솔레노이드) 자기력 전산해석 프로그램입니다.
 
-그리고 DoSA-Open 의 사용 환경은 액추에이터 제품개발과 유사해서
+그리고 DoSA-2D 의 사용 환경은 액추에이터 제품개발과 유사해서
 전산해석 담당자보다도 액추에이터 개발자들이 오히려 쉽게 사용할 수 있는 
 전산해석 프로그램입니다.
 
@@ -46,12 +44,11 @@ namespace DoSA
             else
             {
                 strDonation = "Donation";
-                strQnaBoard = "Homepage";
 
-                strDescription = @"DoSA-Open is open source actuator design software. 
+                strDescription = @"DoSA-2D is open source actuator design software. 
 Anyone can use it free of charge in the company.
 
-DoSA-Open's user environment is similar to actuator product development. 
+DoSA-2D's user environment is similar to actuator product development. 
 This allows actuator developers to easily use it rather than computational analysts.
 
 We hope that all actuator developers will be able to use magnetic analysis 
@@ -59,7 +56,7 @@ to predict magnetic forces in product development of actuators..
 ";
             }
 
-            string strOpenLicense = @"DoSA-Open_2D is open source actuator design software using Onelab.
+            string strOpenLicense = @"DoSA-2D is open source actuator design software using Onelab.
 
 This application uses open source software below.
 
@@ -111,7 +108,6 @@ Nuvola 1.0 (KDE 3.x icon set) (nuvola)
             this.textBoxOpenLicense.Text = strOpenLicense;
 
             this.buttonDonation.Text = strDonation;
-            this.buttonHomepage.Text = strQnaBoard;
         }
 
         #region Assembly Attribute Accessors
@@ -195,37 +191,37 @@ Nuvola 1.0 (KDE 3.x icon set) (nuvola)
         #endregion
 
 
-        private void buttonHomepage_Click(object sender, EventArgs e)
-        {
-            string target;
+        //private void buttonHomepage_Click(object sender, EventArgs e)
+        //{
+        //    string target;
 
-            if (CSettingData.m_emLanguage == EMLanguage.Korean)
-            {
-                target = "https://solenoid.or.kr/index_kor.html";
-            }
-            else
-            {
-                target = "https://solenoid.or.kr/index_eng.html";
-            }
+        //    if (CSettingData.m_emLanguage == EMLanguage.Korean)
+        //    {
+        //        target = "https://solenoid.or.kr/index_kor.html";
+        //    }
+        //    else
+        //    {
+        //        target = "https://solenoid.or.kr/index_eng.html";
+        //    }
 
-            try
-            {
-                System.Diagnostics.Process.Start(target);
-            }
-            catch (System.ComponentModel.Win32Exception noBrowser)
-            {
-                if (noBrowser.ErrorCode == -2147467259)
-                    CNotice.printTrace(noBrowser.Message);
-            }
-            catch (System.Exception other)
-            {
-                CNotice.printTrace(other.Message);
-            }
-        }
+        //    try
+        //    {
+        //        System.Diagnostics.Process.Start(target);
+        //    }
+        //    catch (System.ComponentModel.Win32Exception noBrowser)
+        //    {
+        //        if (noBrowser.ErrorCode == -2147467259)
+        //            CNotice.printTrace(noBrowser.Message);
+        //    }
+        //    catch (System.Exception other)
+        //    {
+        //        CNotice.printTrace(other.Message);
+        //    }
+        //}
 
         private void buttonLicense_Click(object sender, EventArgs e)
         {
-            string target = "https://github.com/OpenActuator/DoSA-Open_2D/blob/master/LICENSE";
+            string target = "https://github.com/OpenActuator/DoSA-2D/blob/master/LICENSE";
 
             try
             {

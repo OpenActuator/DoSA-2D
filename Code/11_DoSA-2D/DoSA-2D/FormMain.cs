@@ -71,7 +71,7 @@ namespace DoSA
             InitializeComponent();
 
             // 여러곳에서 CSettingData 을 사용하기 때문에 가장 먼저 실시한다.
-            CSettingData.m_strProgramDirName = System.Windows.Forms.Application.StartupPath;
+            CSettingData.m_strProgramDirPath = System.Windows.Forms.Application.StartupPath;
 
             m_resManager = ResourceManager.CreateFileBasedResourceManager("LanguageResource", Application.StartupPath, null);
 
@@ -107,14 +107,14 @@ namespace DoSA
                 Environment.Exit(0);            
             }
 
-            int nDoSACount = CManageProcess.getProcessesCount("DoSA-Open_2D");
+            int nDoSACount = CManageProcess.getProcessesCount("DoSA-2D");
 
             if (nDoSACount >= 2)
             {
                 if (CSettingData.m_emLanguage == EMLanguage.English)
-                    CNotice.noticeWarning("DoSA-Open_2D 의 중복 실행은 허용하지 않습니다.");
+                    CNotice.noticeWarning("DoSA-2D 의 중복 실행은 허용하지 않습니다.");
                 else
-                    CNotice.noticeWarning("Duplicate execution of DoSA-Open_2D is not allowed.");
+                    CNotice.noticeWarning("Duplicate execution of DoSA-2D is not allowed.");
 
                 System.Windows.Forms.Application.ExitThread();
                 Environment.Exit(0);
@@ -125,6 +125,12 @@ namespace DoSA
 
             // 설치버전을 확인 한다.
             checkDoSAVersion();
+
+            //=====================================================================
+            // 2023-03-18일 까지 코드를 유지하고 이후는 삭제한다
+            //=====================================================================
+            deleteOldDirectories();
+            //=====================================================================
 
             initializeProgram();
 
@@ -165,7 +171,7 @@ namespace DoSA
                 string strNewVersion = new WebClient().DownloadString("http://www.actuator.or.kr/DoSA_2D_Version.txt");
 
                 string strAppDataPath = Environment.GetEnvironmentVariable("APPDATA");
-                string strSettingFilePath = Path.Combine(strAppDataPath, "DoSA-Open_2D");
+                string strSettingFilePath = Path.Combine(strAppDataPath, "DoSA-2D");
 
                 if (m_manageFile.isExistDirectory(strSettingFilePath) == false)
                     m_manageFile.createDirectory(strSettingFilePath);
@@ -326,6 +332,37 @@ namespace DoSA
 
         }
 
+        /// <summary>
+        /// 2023-03-18일 까지 코드를 유지하고 이후는 삭제한다.
+        /// 
+        /// 2022-03-18 의 DoSA-2D Ver0.9.15.2 에서 
+        /// 프로그램 명칭을 DoSA-Open_2D --> DoSA-2D 로 변경함에 의해 발생한
+        /// 기존 설치 프로그램과 작업환경 디렉토리를 삭제한다.
+        /// </summary>
+        private void deleteOldDirectories()
+        {
+            string strAppDataDirPath = Environment.GetEnvironmentVariable("APPDATA");
+            string strSettingDirPath = Path.Combine(strAppDataDirPath, "DoSA-2D");
+            string strOldSettingDirPath = Path.Combine(strAppDataDirPath, "DoSA-Open_2D");
+
+            string strParentDirPath = Path.GetDirectoryName(CSettingData.m_strProgramDirPath);
+            string strOldInstallDirPath = Path.Combine(strParentDirPath, "DoSA-Open_2D");
+
+            // 기존 작업환경 디렉토리가 있으면 디렉토리을 바꾸어 복사하고 기존 디렉토리는 삭제한다.
+            if (m_manageFile.isExistDirectory(strOldSettingDirPath) == true)
+            {
+                m_manageFile.copyDirectory(strOldSettingDirPath, strSettingDirPath);
+                m_manageFile.deleteDirectory(strOldSettingDirPath);
+            }
+
+            // 기존 설치 디렉토리가 있으면 삭제한다.
+            if (m_manageFile.isExistDirectory(strOldInstallDirPath) == true)
+            {
+                m_manageFile.deleteDirectory(strOldInstallDirPath);
+            }
+
+        }
+
         private void initializeProgram()
         {
             try
@@ -345,13 +382,13 @@ namespace DoSA
                 }
 
                 // Log 디렉토리가 없으면 생성 한다.
-                string strLogDirName = Path.Combine(CSettingData.m_strProgramDirName, "Log");
+                string strLogDirName = Path.Combine(CSettingData.m_strProgramDirPath, "Log");
 
                 if (m_manageFile.isExistDirectory(strLogDirName) == false)
                     m_manageFile.createDirectory(strLogDirName);
 
                 // 출력방향을 결정함 (아래 코드가 동작하면 파일 출력, 동작하지 않으면 Output 창 출력)
-                Trace.Listeners.Add(new TextWriterTraceListener(Path.Combine(CSettingData.m_strProgramDirName, "Log", DateTime.Now.ToString("yyyyMMdd_HH_mm_ss") + ".Log")));
+                Trace.Listeners.Add(new TextWriterTraceListener(Path.Combine(CSettingData.m_strProgramDirPath, "Log", DateTime.Now.ToString("yyyyMMdd_HH_mm_ss") + ".Log")));
 
                 // 이벤트 생성 부
                 // 
@@ -359,15 +396,15 @@ namespace DoSA
                 CNotice.Notice += printLogEvent;
 
 
-                string strAppDataPath = Environment.GetEnvironmentVariable("APPDATA");
-                string strSettingFilePath = Path.Combine(strAppDataPath, "DoSA-Open_2D");
+                string strAppDataDirPath = Environment.GetEnvironmentVariable("APPDATA");
+                string strSettingDirPath = Path.Combine(strAppDataDirPath, "DoSA-2D");
 
-                if (m_manageFile.isExistDirectory(strSettingFilePath) == false)
-                    m_manageFile.createDirectory(strSettingFilePath);
+                if (m_manageFile.isExistDirectory(strSettingDirPath) == false)
+                    m_manageFile.createDirectory(strSettingDirPath);
 
                 /// 환경파일 작업
                 ///
-                string strSettingFileFullName = Path.Combine(strSettingFilePath, "setting.ini");
+                string strSettingFileFullName = Path.Combine(strSettingDirPath, "setting.ini");
                 
                 PopupSetting frmSetting = new PopupSetting();
                 frmSetting.StartPosition = FormStartPosition.CenterParent;
@@ -467,11 +504,11 @@ namespace DoSA
         //-------------------------------------------------------------------------------------------
         // 재질 관련 
         //
-        // - DoSA-Open_2D 은 사용자 재질을 지원하지 않고 FEMM 내장 재질만 사용한다.
-        //   따라서 FEMM 내장 재질의 이름으로 해석모델 자동생성에서 재질을 설정하기 때문에 DoSA-Open_2D 에서 사용하는 재질명과 FEMM 내장 재질의 이름을 같아야 한다. 
+        // - DoSA-2D 은 사용자 재질을 지원하지 않고 FEMM 내장 재질만 사용한다.
+        //   따라서 FEMM 내장 재질의 이름으로 해석모델 자동생성에서 재질을 설정하기 때문에 DoSA-2D 에서 사용하는 재질명과 FEMM 내장 재질의 이름을 같아야 한다. 
         //   (FEMM Ver 21Apr2019 에서 재질명이 변경되면서 문제가 발생하였음)
         //
-        // - DoSA-Open_2D 에서 내장하고 있는 DoSA.dmat 파일은 해석모델을 생성할 때 재질을 생성하는 목적이 아니라
+        // - DoSA-2D 에서 내장하고 있는 DoSA.dmat 파일은 해석모델을 생성할 때 재질을 생성하는 목적이 아니라
         //   단지, S/W 안에서 BH 곡선을 표시하기 위한 파일이다.
         //   loadMaterial() 안에서 추가되는 연자성체의 재질이 DoSA.dmat 에 존재하지 않는다면 연자성체의 BH 곡선이 표시되지 않는다.
         //
@@ -722,7 +759,7 @@ namespace DoSA
             openFEMM();
 
             // 제목줄에 디자인명을 표시한다
-            this.Text = "Designer of Solenoid & Actuator - " + m_design.m_strDesignName;
+            this.Text = "DoSA-2D - " + m_design.m_strDesignName;
 
             CNotice.printUserMessage(m_design.m_strDesignName + m_resManager.GetString("_DHBC1"));    
 
@@ -790,7 +827,7 @@ namespace DoSA
             openFEMM();
 
             // 제목줄에 디자인명을 표시한다
-            this.Text = "Designer of Solenoid & Actuator - " + m_design.m_strDesignName;
+            this.Text = "DoSA-2D - " + m_design.m_strDesignName;
 
             CNotice.printUserMessage(m_design.m_strDesignName + m_resManager.GetString("_DHBO"));    
         }
@@ -814,7 +851,7 @@ namespace DoSA
             closeDesign();
 
             // 제목줄에 디자인명을 삭제한다
-            this.Text = "Designer of Solenoid & Actuator";
+            this.Text = "DoSA-2D";
 
             quitFEMM();
         }
@@ -917,7 +954,7 @@ namespace DoSA
                     propertyGridMain.SelectedObject = null;
 
                     // 제목줄에 디자인명을 변경한다
-                    this.Text = "Designer of Solenoid & Actuator - " + m_design.m_strDesignName;
+                    this.Text = "DoSA-2D - " + m_design.m_strDesignName;
 
                     CNotice.noticeInfomation(m_design.m_strDesignName + m_resManager.GetString("_DHBS1"), m_resManager.GetString("SAN"));
 
@@ -1649,7 +1686,7 @@ namespace DoSA
             openFEMM();
 
             // 제목줄에 디자인명을 표시한다
-            this.Text = "Designer of Solenoid & Actuator - " + m_design.m_strDesignName;
+            this.Text = "DoSA-2D - " + m_design.m_strDesignName;
 
             CNotice.printUserMessage(m_design.m_strDesignName + m_resManager.GetString("_DHBO"));
         }
@@ -3230,7 +3267,7 @@ namespace DoSA
             List<double> listB = new List<double>();
 
             //string strMaxwellMaterialDirName = CSettingData.m_strMaxwellMaterialDirName;
-            string strProgramMaterialDirName = Path.Combine(CSettingData.m_strProgramDirName, "Materials");
+            string strProgramMaterialDirName = Path.Combine(CSettingData.m_strProgramDirPath, "Materials");
 
             // 내장 비자성 재료
             if (strMaterialName == "Aluminum, 1100" || strMaterialName == "Copper" ||
@@ -3385,7 +3422,7 @@ namespace DoSA
                         chartStrokeResult.Visible = false;
                         pictureBoxStroke.Visible = true;
 
-                        strImageFullFileName = Path.Combine(CSettingData.m_strProgramDirName, "Images", "Stroke_Information.png");
+                        strImageFullFileName = Path.Combine(CSettingData.m_strProgramDirPath, "Images", "Stroke_Information.png");
                         bRet = m_manageFile.isExistFile(strImageFullFileName);
 
                         if (bRet == true)
@@ -3416,7 +3453,7 @@ namespace DoSA
                         chartCurrentResult.Visible = false;
                         pictureBoxCurrent.Visible = true;
 
-                        strImageFullFileName = Path.Combine(CSettingData.m_strProgramDirName, "Images", "Current_Information.png");
+                        strImageFullFileName = Path.Combine(CSettingData.m_strProgramDirPath, "Images", "Current_Information.png");
                         bRet = m_manageFile.isExistFile(strImageFullFileName);
 
                         if (bRet == true)
