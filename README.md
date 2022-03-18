@@ -1,4 +1,4 @@
-# DoSA-2D (Ver 0.9.15.1)
+# DoSA-2D (Ver 0.9.15.2)
 
 This program is an open source software for Solenoid &amp; Actuator design
 
@@ -8,4 +8,4 @@ This program is an open source software for Solenoid &amp; Actuator design
  - English : <a href="https://solenoid.or.kr/direct_eng.php?address=https://solenoid.or.kr/openactuator/dosa_2d_eng.htm">DoSA-2D Homepage Link (English)</a><br>
  - Korean  : <a href="https://solenoid.or.kr/direct_kor.php?address=https://solenoid.or.kr/openactuator/dosa_3d_kor.htm">DoSA-2D Homepage Link (Korean)</a>
 <br><br>
-<img src="http://www.solenoid.or.kr/openactuator/DoSA_Open/DoSA-Open_2D.png" border="0" alt="">
+<img src="http://www.solenoid.or.kr/openactuator/DoSA/DoSA-2D.png" border="0" alt="">
