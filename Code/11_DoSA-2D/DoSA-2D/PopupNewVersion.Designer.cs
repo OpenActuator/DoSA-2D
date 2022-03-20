@@ -53,7 +53,7 @@
             this.groupBoxNotice.Controls.Add(this.labelNewVersion);
             this.groupBoxNotice.Location = new System.Drawing.Point(12, 12);
             this.groupBoxNotice.Name = "groupBoxNotice";
-            this.groupBoxNotice.Size = new System.Drawing.Size(499, 171);
+            this.groupBoxNotice.Size = new System.Drawing.Size(500, 170);
             this.groupBoxNotice.TabIndex = 1;
             this.groupBoxNotice.TabStop = false;
             this.groupBoxNotice.Text = "Notice";
@@ -146,7 +146,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(523, 241);
+            this.ClientSize = new System.Drawing.Size(524, 241);
             this.Controls.Add(this.buttonClose);
             this.Controls.Add(this.groupBoxNotice);
             this.Name = "PopupNewVersion";

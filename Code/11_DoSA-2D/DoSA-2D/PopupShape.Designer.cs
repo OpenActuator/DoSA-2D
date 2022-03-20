@@ -153,7 +153,7 @@
             this.buttonOK.Location = new System.Drawing.Point(161, 500);
             this.buttonOK.Name = "buttonOK";
             this.buttonOK.Size = new System.Drawing.Size(95, 35);
-            this.buttonOK.TabIndex = 0;
+            this.buttonOK.TabIndex = 1;
             this.buttonOK.Text = "OK";
             this.buttonOK.UseVisualStyleBackColor = false;
             this.buttonOK.Click += new System.EventHandler(this.buttonOK_Click);
@@ -220,7 +220,7 @@
             this.panelPointControl.Location = new System.Drawing.Point(7, 176);
             this.panelPointControl.Name = "panelPointControl";
             this.panelPointControl.Size = new System.Drawing.Size(350, 254);
-            this.panelPointControl.TabIndex = 1;
+            this.panelPointControl.TabIndex = 0;
             // 
             // labelX
             // 

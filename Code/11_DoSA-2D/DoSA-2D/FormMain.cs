@@ -284,14 +284,14 @@ namespace DoSA
 
                         if (CSettingData.m_emLanguage == EMLanguage.Korean)
                         {
-                            target = "https://solenoid.or.kr/direct_kor.php?address=https://solenoid.or.kr/openactuator/dosa_open_2d_kor.htm";
+                            target = "https://solenoid.or.kr/direct_kor.php?address=https://solenoid.or.kr/openactuator/dosa_2d_kor.htm";
 
                             // DoSA 이전 버전의 주소 설정이 아래와 같아서 해당 html 을 삭제하고 못하고 있다.
                             //target = "http://solenoid.or.kr/index_dosa_open_2d_kor.html";
                         }
                         else
                         {
-                            target = "https://solenoid.or.kr/direct_eng.php?address=https://solenoid.or.kr/openactuator/dosa_open_2d_eng.htm";
+                            target = "https://solenoid.or.kr/direct_eng.php?address=https://solenoid.or.kr/openactuator/dosa_2d_eng.htm";
 
                             // DoSA 이전 버전의 주소 설정이 아래와 같아서 해당 html 을 삭제하고 못하고 있다.
                             //target = "http://solenoid.or.kr/index_dosa_open_2d_eng.html";
@@ -2635,15 +2635,15 @@ namespace DoSA
                 switch (emKind)
                 {
                     case EMKind.FORCE_EXPERIMENT:
-                        strKind = "Force Experiment";
+                        strKind = "Force Test";
                         break;
 
                     case EMKind.STROKE_EXPERIMENT:
-                        strKind = "Stroke Experiment";
+                        strKind = "Stroke Test";
                         break;
 
                     case EMKind.CURRENT_EXPERIMENT:
-                        strKind = "Current Experiment";
+                        strKind = "Current Test";
                         break;
 
                     default:
