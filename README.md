@@ -2,7 +2,7 @@
 
 This program is an open source software for Solenoid &amp; Actuator design
 
-1. Introduction Video : https://youtu.be/AMPY6ZBbO9Y <br>
+1. Working Video : https://youtu.be/AMPY6ZBbO9Y <br>
 2. Installation Video : https://youtu.be/323tNuSe6DI <br>
 3. Detail Information
  - English : <a href="https://solenoid.or.kr/direct_eng.php?address=https://solenoid.or.kr/openactuator/dosa_2d_eng.htm">DoSA-2D Homepage Link (English)</a><br>
