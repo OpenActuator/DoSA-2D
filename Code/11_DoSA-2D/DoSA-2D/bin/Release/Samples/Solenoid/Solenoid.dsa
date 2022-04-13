@@ -1,7 +1,7 @@
 $begin "DoSA_Project"
-	Writed=12/25/2019 4:43:04 PM
-	DoSA_Version=0.9.8.0
-	File_Version=0.9.8.0
+	Writed=4/13/2022 9:50:44 PM
+	DoSA_Version=0.9.15.6
+	File_Version=0.9.15.6
 	$begin "Design"
 		DesignName=Solenoid
 		$begin "Coil"
@@ -50,7 +50,7 @@ $begin "DoSA_Project"
 			NodeName=plunger
 			KindKey=STEEL
 			MovingParts=MOVING
-			Material=430 Stainless Steel
+			Material=1010 Steel
 			$begin "Shape"
 				BasePointX=0
 				BasePointY=-12
@@ -112,7 +112,7 @@ $begin "DoSA_Project"
 			NodeName=case
 			KindKey=STEEL
 			MovingParts=FIXED
-			Material=430 Stainless Steel
+			Material=1010 Steel
 			$begin "Shape"
 				BasePointX=4.4
 				BasePointY=-10.4
@@ -143,32 +143,32 @@ $begin "DoSA_Project"
 				ArcDriction=FORWARD
 			$end "Shape"
 		$end "Steel"
-		$begin "ForceExperiment"
+		$begin "ForceTest"
 			NodeName=force
-			KindKey=FORCE_EXPERIMENT
-			MeshSizePercent=1
+			KindKey=FORCE_TEST
+			MeshSizePercent=2
 			Voltage=14.5
 			Current=0.95335
 			MovingStroke=0
-		$end "ForceExperiment"
-		$begin "StrokeExperiment"
+		$end "ForceTest"
+		$begin "StrokeTest"
 			NodeName=stroke
-			KindKey=STROKE_EXPERIMENT
-			MeshSizePercent=1
+			KindKey=STROKE_TEST
+			MeshSizePercent=2
 			Voltage=14.5
 			Current=0.95335
 			InitialStroke=0
 			FinalStroke=1
 			StepCount=5
-		$end "StrokeExperiment"
-		$begin "CurrentExperiment"
+		$end "StrokeTest"
+		$begin "CurrentTest"
 			NodeName=current
-			KindKey=CURRENT_EXPERIMENT
-			MeshSizePercent=1
+			KindKey=CURRENT_TEST
+			MeshSizePercent=2
 			InitialCurrent=0
 			FinalCurrent=1.5
 			StepCount=5
 			MovingStroke=0
-		$end "CurrentExperiment"
+		$end "CurrentTest"
 	$end "Design"
 $end "DoSA_Project"

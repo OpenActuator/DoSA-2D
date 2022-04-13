@@ -26,10 +26,10 @@ namespace Nodes
         COIL,
         MAGNET,
         STEEL,
-        EXPERIMENTS,
-        FORCE_EXPERIMENT,
-        STROKE_EXPERIMENT,
-        CURRENT_EXPERIMENT
+        TESTS,
+        FORCE_TEST,
+        STROKE_TEST,
+        CURRENT_TEST
     };
 
     public class CNode

@@ -80,7 +80,7 @@ namespace DoSA
                         }
                     }
                 }
-                /// Experiment 들의 생성이다.        
+                /// Test 들의 생성이다.        
                 else
                 {
                     /// 호출할 때 Owner 를 FormMain 으로 초기화 해야 확실하게 얻을 수 있다.

@@ -64,6 +64,7 @@
     <Reference Include="System.Core" />
     <Reference Include="System.Design" />
     <Reference Include="System.Messaging" />
+    <Reference Include="System.Web" />
     <Reference Include="System.Windows.Forms.DataVisualization" />
     <Reference Include="System.Windows.Forms.Ribbon35">
       <HintPath>.\System.Windows.Forms.Ribbon35.dll</HintPath>
@@ -124,7 +125,7 @@
     <Compile Include="PopupShape.Designer.cs">
       <DependentUpon>PopupShape.cs</DependentUpon>
     </Compile>
-    <Compile Include="Experiments.cs" />
+    <Compile Include="Tests.cs" />
     <Compile Include="FormMain.cs">
       <SubType>Form</SubType>
     </Compile>

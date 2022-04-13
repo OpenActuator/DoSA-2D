@@ -13,26 +13,26 @@ using Nodes;
 using Scripts;
 using gtLibrary;
 
-namespace Experiments
+namespace Tests
 {
 
     //------------------------------------------------------------------------------------------
     // 측정조건에 대해 Node 들을 만들고 성능결과를 얻고 싶을 때 개발자에게 측정 조건의 입력을 요청한다 
     //------------------------------------------------------------------------------------------
-    public class CExperiment : CNode
+    public class CTest : CNode
     {
 
         [DisplayNameAttribute("Mesh Size [%]"), CategoryAttribute("Condition Fields"), DescriptionAttribute("Mesh Size / Shape Length * 100")]
         public double MeshSizePercent { get; set; }
 
-        public CExperiment()
+        public CTest()
         {
             // MeshSizePercent 와 이전 파일버전 인 경우는 아래의 값으로 초기화된다.
             MeshSizePercent = 2.0;
         }
     }
 
-    public class CForceExperiment : CExperiment
+    public class CForceTest : CTest
     {
         private double m_dCurrent;
 
@@ -51,9 +51,9 @@ namespace Experiments
         [DisplayNameAttribute("Moving Stroke [mm]"), CategoryAttribute("\tStroke Fields"), DescriptionAttribute("Moving Displacement")]
         public double MovingStroke { get; set; }
 
-        public CForceExperiment()
+        public CForceTest()
         {
-            m_kindKey = EMKind.FORCE_EXPERIMENT;
+            m_kindKey = EMKind.FORCE_TEST;
             Voltage = 5.0;
         }
 
@@ -65,21 +65,21 @@ namespace Experiments
             {
                 CWriteFile writeFile = new CWriteFile();
 
-                writeFile.writeBeginLine(writeStream, "ForceExperiment", 2);
+                writeFile.writeBeginLine(writeStream, "ForceTest", 2);
 
                 // CNode
                 writeFile.writeDataLine(writeStream, "NodeName", NodeName, 3);
                 writeFile.writeDataLine(writeStream, "KindKey", m_kindKey, 3);
 
-                // CExperiment
+                // CTest
                 writeFile.writeDataLine(writeStream, "MeshSizePercent", MeshSizePercent, 3);
 
-                // CForceExperiment
+                // CForceTest
                 writeFile.writeDataLine(writeStream, "Voltage", Voltage, 3);
                 writeFile.writeDataLine(writeStream, "Current", Current, 3);
                 writeFile.writeDataLine(writeStream, "MovingStroke", MovingStroke, 3);
 
-                writeFile.writeEndLine(writeStream, "ForceExperiment", 2);
+                writeFile.writeEndLine(writeStream, "ForceTest", 2);
             }
             catch (Exception ex)
             {
@@ -96,9 +96,9 @@ namespace Experiments
             string strTemp;
             string[] arrayString;
 
-            //if (KindKey != EMKind.FORCE_EXPERIMENT)
+            //if (KindKey != EMKind.FORCE_TEST)
             //{
-            //    CNotice.printTrace("다른 객체를 ForceExperiment 로 읽으려고 하고 있습니다.");
+            //    CNotice.printTrace("다른 객체를 ForceTest 로 읽으려고 하고 있습니다.");
             //    return false;
             //}
 
@@ -124,15 +124,19 @@ namespace Experiments
                             break;
 
                         case "KindKey":
+                            // 하위 버전 호환 유지 ver(0.9.15.6)
+                            if (arrayString[1] == "FORCE_EXPERIMENT")
+                                arrayString[1] = "FORCE_TEST";
+
                             m_kindKey = (EMKind)Enum.Parse(typeof(EMKind), arrayString[1]);
                             break;
 
-                        // CExperiment
+                        // CTest
                         case "MeshSizePercent":
                             MeshSizePercent = Convert.ToDouble(arrayString[1]);
                             break;
 
-                        // CForceExperiment
+                        // CForceTest
                         case "Voltage":
                             Voltage = Convert.ToDouble(arrayString[1]);
                             break;
@@ -160,7 +164,7 @@ namespace Experiments
         }
     }
 
-    public class CStrokeExperiment : CExperiment
+    public class CStrokeTest : CTest
     {
 
         private double m_dCurrent;
@@ -186,9 +190,9 @@ namespace Experiments
         [DisplayNameAttribute("Step Count"), CategoryAttribute("\tStroke Fields"), DescriptionAttribute("Step Count")]
         public int StepCount { get; set; }
 
-        public CStrokeExperiment()
+        public CStrokeTest()
         {
-            m_kindKey = EMKind.STROKE_EXPERIMENT;
+            m_kindKey = EMKind.STROKE_TEST;
             InitialStroke = 0.0;
             FinalStroke = 0.1;
             StepCount = 5;
@@ -203,23 +207,23 @@ namespace Experiments
             { 
                 CWriteFile writeFile = new CWriteFile();
 
-                writeFile.writeBeginLine(writeStream, "StrokeExperiment", 2);
+                writeFile.writeBeginLine(writeStream, "StrokeTest", 2);
 
                 // CNode
                 writeFile.writeDataLine(writeStream, "NodeName", NodeName, 3);
                 writeFile.writeDataLine(writeStream, "KindKey", m_kindKey, 3);
 
-                // CExperiment
+                // CTest
                 writeFile.writeDataLine(writeStream, "MeshSizePercent", MeshSizePercent, 3);
 
-                // CStrokeExperiment
+                // CStrokeTest
                 writeFile.writeDataLine(writeStream, "Voltage", Voltage, 3);
                 writeFile.writeDataLine(writeStream, "Current", Current, 3);
                 writeFile.writeDataLine(writeStream, "InitialStroke", InitialStroke, 3);
                 writeFile.writeDataLine(writeStream, "FinalStroke", FinalStroke, 3);
                 writeFile.writeDataLine(writeStream, "StepCount", StepCount, 3);
 
-                writeFile.writeEndLine(writeStream, "StrokeExperiment", 2);
+                writeFile.writeEndLine(writeStream, "StrokeTest", 2);
             }
             catch (Exception ex)
             {
@@ -236,9 +240,9 @@ namespace Experiments
             string strTemp;
             string[] arrayString;
 
-            //if (KindKey != EMKind.STROKE_EXPERIMENT)
+            //if (KindKey != EMKind.STROKE_TEST)
             //{
-            //    CNotice.printTrace("다른 객체를 StrokeExperiment 로 읽으려고 하고 있습니다.");
+            //    CNotice.printTrace("다른 객체를 StrokeTest 로 읽으려고 하고 있습니다.");
             //    return false;
             //}
 
@@ -264,15 +268,19 @@ namespace Experiments
                             break;
 
                         case "KindKey":
+                            // 하위 버전 호환 유지 ver(0.9.15.6)
+                            if (arrayString[1] == "STROKE_EXPERIMENT")
+                                arrayString[1] = "STROKE_TEST";
+
                             m_kindKey = (EMKind)Enum.Parse(typeof(EMKind), arrayString[1]);
                             break;
 
-                        // CExperiment
+                        // CTest
                         case "MeshSizePercent":
                             MeshSizePercent = Convert.ToDouble(arrayString[1]);
                             break;
 
-                        // CStrokeExperiment
+                        // CStrokeTest
                         case "Voltage":
                             Voltage = Convert.ToDouble(arrayString[1]);
                             break;
@@ -309,7 +317,7 @@ namespace Experiments
 
     }
 
-    public class CCurrentExperiment : CExperiment
+    public class CCurrentTest : CTest
     {
 
         [DisplayNameAttribute("Initial Current [A]"), CategoryAttribute("\t\tCurrent Fields"), DescriptionAttribute("Initial Current")]
@@ -324,9 +332,9 @@ namespace Experiments
         [DisplayNameAttribute("Moving Stroke [mm]"), CategoryAttribute("\tStroke Fields"), DescriptionAttribute("Moving Displacement")]
         public double MovingStroke { get; set; }
 
-        public CCurrentExperiment()
+        public CCurrentTest()
         {
-            m_kindKey = EMKind.CURRENT_EXPERIMENT;
+            m_kindKey = EMKind.CURRENT_TEST;
             InitialCurrent = 0.0;
             FinalCurrent = 0.1;
             StepCount = 5;
@@ -341,22 +349,22 @@ namespace Experiments
             {
                 CWriteFile writeFile = new CWriteFile();
 
-                writeFile.writeBeginLine(writeStream, "CurrentExperiment", 2);
+                writeFile.writeBeginLine(writeStream, "CurrentTest", 2);
 
                 // CNode
                 writeFile.writeDataLine(writeStream, "NodeName", NodeName, 3);
                 writeFile.writeDataLine(writeStream, "KindKey", m_kindKey, 3);
 
-                // CExperiment
+                // CTest
                 writeFile.writeDataLine(writeStream, "MeshSizePercent", MeshSizePercent, 3);
 
-                // CCurrentExperiment
+                // CCurrentTest
                 writeFile.writeDataLine(writeStream, "InitialCurrent", InitialCurrent, 3);
                 writeFile.writeDataLine(writeStream, "FinalCurrent", FinalCurrent, 3);
                 writeFile.writeDataLine(writeStream, "StepCount", StepCount, 3);
                 writeFile.writeDataLine(writeStream, "MovingStroke", MovingStroke, 3);
 
-                writeFile.writeEndLine(writeStream, "CurrentExperiment", 2);
+                writeFile.writeEndLine(writeStream, "CurrentTest", 2);
             }
             catch (Exception ex)
             {
@@ -373,9 +381,9 @@ namespace Experiments
             string strTemp;
             string[] arrayString;
 
-            //if (KindKey != EMKind.CURRENT_EXPERIMENT)
+            //if (KindKey != EMKind.CURRENT_TEST)
             //{
-            //    CNotice.printTrace("다른 객체를 StrokeExperiment 로 읽으려고 하고 있습니다.");
+            //    CNotice.printTrace("다른 객체를 StrokeTest 로 읽으려고 하고 있습니다.");
             //    return false;
             //}
 
@@ -401,15 +409,19 @@ namespace Experiments
                             break;
                             
                         case "KindKey":
+                            // 하위 버전 호환 유지 ver(0.9.15.6)
+                            if (arrayString[1] == "CURRENT_EXPERIMENT")
+                                arrayString[1] = "CURRENT_TEST";
+
                             m_kindKey = (EMKind)Enum.Parse(typeof(EMKind), arrayString[1]);
                             break;
 
-                        // CExperiment
+                        // CTest
                         case "MeshSizePercent":
                             MeshSizePercent = Convert.ToDouble(arrayString[1]);
                             break;
 
-                        // CCurrentExperiment
+                        // CCurrentTest
                         case "InitialCurrent":
                             InitialCurrent = Convert.ToDouble(arrayString[1]);
                             break;

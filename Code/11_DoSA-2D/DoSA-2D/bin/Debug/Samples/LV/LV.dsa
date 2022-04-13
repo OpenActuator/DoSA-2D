@@ -1,13 +1,13 @@
 $begin "DoSA_Project"
-	Writed=12/25/2019 4:42:59 PM
-	DoSA_Version=0.9.8.0
-	File_Version=0.9.8.0
+	Writed=4/13/2022 9:50:19 PM
+	DoSA_Version=0.9.15.6
+	File_Version=0.9.15.6
 	$begin "Design"
 		DesignName=LV
 		$begin "Coil"
 			NodeName=coil
 			KindKey=COIL
-			MovingParts=MOVING
+			MovingParts=FIXED
 			Material=Copper
 			CurrentDirection=IN
 			Turns=126
@@ -46,38 +46,11 @@ $begin "DoSA_Project"
 				ArcDriction=FORWARD
 			$end "Shape"
 		$end "Coil"
-		$begin "Steel"
-			NodeName=plate
-			KindKey=STEEL
-			MovingParts=FIXED
-			Material=430 Stainless Steel
-			$begin "Shape"
-				BasePointX=0
-				BasePointY=0.2
-				FaceType=RECTANGLE
-				PointX=0
-				PointY=0
-				LineKind=STRAIGHT
-				ArcDriction=FORWARD
-				PointX=1.35
-				PointY=0
-				LineKind=STRAIGHT
-				ArcDriction=FORWARD
-				PointX=1.35
-				PointY=0.2
-				LineKind=STRAIGHT
-				ArcDriction=FORWARD
-				PointX=0
-				PointY=0.2
-				LineKind=STRAIGHT
-				ArcDriction=FORWARD
-			$end "Shape"
-		$end "Steel"
 		$begin "Magnet"
 			NodeName=magnet
 			KindKey=MAGNET
-			MovingParts=FIXED
-			Material=N40
+			MovingParts=MOVING
+			Material=N52
 			MagnetDirection=UP
 			$begin "Shape"
 				BasePointX=0
@@ -102,10 +75,37 @@ $begin "DoSA_Project"
 			$end "Shape"
 		$end "Magnet"
 		$begin "Steel"
-			NodeName=case
+			NodeName=plate
 			KindKey=STEEL
-			MovingParts=FIXED
+			MovingParts=MOVING
 			Material=430 Stainless Steel
+			$begin "Shape"
+				BasePointX=0
+				BasePointY=0.2
+				FaceType=RECTANGLE
+				PointX=0
+				PointY=0
+				LineKind=STRAIGHT
+				ArcDriction=FORWARD
+				PointX=1.35
+				PointY=0
+				LineKind=STRAIGHT
+				ArcDriction=FORWARD
+				PointX=1.35
+				PointY=0.2
+				LineKind=STRAIGHT
+				ArcDriction=FORWARD
+				PointX=0
+				PointY=0.2
+				LineKind=STRAIGHT
+				ArcDriction=FORWARD
+			$end "Shape"
+		$end "Steel"
+		$begin "Steel"
+			NodeName=yoke
+			KindKey=STEEL
+			MovingParts=MOVING
+			Material=1010 Steel
 			$begin "Shape"
 				BasePointX=0
 				BasePointY=0.2
@@ -144,32 +144,32 @@ $begin "DoSA_Project"
 				ArcDriction=FORWARD
 			$end "Shape"
 		$end "Steel"
-		$begin "ForceExperiment"
+		$begin "ForceTest"
 			NodeName=force
-			KindKey=FORCE_EXPERIMENT
-			MeshSizePercent=1
+			KindKey=FORCE_TEST
+			MeshSizePercent=2
 			Voltage=2.5
 			Current=0.15875
 			MovingStroke=0
-		$end "ForceExperiment"
-		$begin "StrokeExperiment"
+		$end "ForceTest"
+		$begin "StrokeTest"
 			NodeName=stroke
-			KindKey=STROKE_EXPERIMENT
-			MeshSizePercent=1
+			KindKey=STROKE_TEST
+			MeshSizePercent=2
 			Voltage=2.5
 			Current=0.15875
-			InitialStroke=-0.7
-			FinalStroke=0.1
-			StepCount=10
-		$end "StrokeExperiment"
-		$begin "CurrentExperiment"
+			InitialStroke=-0.5
+			FinalStroke=0.5
+			StepCount=5
+		$end "StrokeTest"
+		$begin "CurrentTest"
 			NodeName=current
-			KindKey=CURRENT_EXPERIMENT
-			MeshSizePercent=1
+			KindKey=CURRENT_TEST
+			MeshSizePercent=2
 			InitialCurrent=0
 			FinalCurrent=0.1
 			StepCount=5
 			MovingStroke=0
-		$end "CurrentExperiment"
+		$end "CurrentTest"
 	$end "Design"
 $end "DoSA_Project"

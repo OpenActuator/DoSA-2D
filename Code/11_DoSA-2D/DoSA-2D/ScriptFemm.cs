@@ -824,7 +824,7 @@ namespace Scripts
 
         }
 
-        public void saveAs(string strExperimentFullName)
+        public void saveAs(string strTestFullName)
         {
             string strCommand;
 
@@ -836,12 +836,12 @@ namespace Scripts
                 //
                 // 디렉토리에 들어있는 \\ 기호는 FEMM 에서 인식하지 못한다.
                 // 따라서 디렉토리안의 \\ 기호를 / 기호로 변경한다
-                strExperimentFullName = strExperimentFullName.Replace("\\", "/");
+                strTestFullName = strTestFullName.Replace("\\", "/");
                 //-------------------------------------------------------------
 
-                strExperimentFullName = "\"" + strExperimentFullName + "\"";
+                strTestFullName = "\"" + strTestFullName + "\"";
 
-                strCommand = "mi_saveas(" + strExperimentFullName + ")";
+                strCommand = "mi_saveas(" + strTestFullName + ")";
                 sendCommand(strCommand);    
             }
             catch (Exception ex)
@@ -913,16 +913,16 @@ namespace Scripts
 
             strPostDataFullName = "\"" + strPostDataFullName + "\"";
 
-            //if(bForceExperiment == true)
+            //if(bForceTest == true)
             //{
             //    strCommand = "mi_loadsolution()";
             //    sendCommand(strCommand);
             //}
             //else
             //{
-                // 해석 후 바로 출력은 상관 없지만
-                // 프로그램을 다시 실행한 다음에 해석결과로 이미지를 만들때는 ans 파일을 읽어드리고 진행해야 한다.
-                strCommand = "open(" + strPostDataFullName + ")";
+            // 해석 후 바로 출력은 상관 없지만
+            // 프로그램을 다시 실행한 다음에 해석결과로 이미지를 만들때는 ans 파일을 읽어드리고 진행해야 한다.
+            strCommand = "open(" + strPostDataFullName + ")";
                 sendCommand(strCommand);
             //}
 
@@ -1254,7 +1254,7 @@ namespace Scripts
             }
         }
 
-        public bool attachDefault(string strExperimentFullName, CPoint pointBoundaryBlock)
+        public bool attachDefault(string strTestFullName, CPoint pointBoundaryBlock)
         {
             CReadFile readFile = new CReadFile();
             CManageFile manageFile = new CManageFile();
@@ -1264,20 +1264,20 @@ namespace Scripts
             char[] separators = { ' ', '\t' };
             string[] strArray;
  
-            string strFileName = Path.GetFileNameWithoutExtension(strExperimentFullName);
-            string strTempFileFullName = Path.Combine(Path.GetDirectoryName(strExperimentFullName), strFileName + "_temp.fem");
+            string strFileName = Path.GetFileNameWithoutExtension(strTestFullName);
+            string strTempFileFullName = Path.Combine(Path.GetDirectoryName(strTestFullName), strFileName + "_temp.fem");
 
-            if (manageFile.isExistFile(strExperimentFullName) == false)
+            if (manageFile.isExistFile(strTestFullName) == false)
             {
                 CNotice.printTraceID("NFFF");
                 return false;
             }
             else
             {
-                File.Move(strExperimentFullName, strTempFileFullName);
+                File.Move(strTestFullName, strTempFileFullName);
             }
 
-            StreamWriter writeFile = new StreamWriter(strExperimentFullName);
+            StreamWriter writeFile = new StreamWriter(strTestFullName);
             int iNumBlock = 0;
             int nCountBlock = 0;
             bool bBlockLabels = false;
@@ -1346,7 +1346,7 @@ namespace Scripts
             return true;
         }
 
-        public void openDesign(string strExperimentFullName)
+        public void openDesign(string strTestFullName)
         {
             string strCommand;
 
@@ -1356,15 +1356,15 @@ namespace Scripts
             //
             // 디렉토리에 들어있는 \\ 기호는 FEMM 에서 인식하지 못한다.
             // 따라서 디렉토리안의 \\ 기호를 / 기호로 변경한다
-            strExperimentFullName = strExperimentFullName.Replace("\\", "/");
+            strTestFullName = strTestFullName.Replace("\\", "/");
             //-------------------------------------------------------------
 
-            strExperimentFullName = "\"" + strExperimentFullName + "\"";
+            strTestFullName = "\"" + strTestFullName + "\"";
 
             try
             {
                 /// nodes, segments, arcsegments, blocks, group
-                strCommand = "open(" + strExperimentFullName + ")";
+                strCommand = "open(" + strTestFullName + ")";
                 sendCommand(strCommand);
             }
             catch (Exception ex)

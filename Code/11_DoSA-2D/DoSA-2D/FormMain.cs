@@ -21,7 +21,7 @@ using System.Windows.Forms.DataVisualization.Charting;
 // DoSA 생성 클래스들을 오픈한다
 // 같은 namespace 를 사용해도 가능하나 ClassView 에서 보기가 어려워서 구분해서 사용한다.
 using Parts;
-using Experiments;
+using Tests;
 using Nodes;
 using Scripts;
 using Shapes;
@@ -188,20 +188,6 @@ namespace DoSA
                 string strEXE_FileName = System.Reflection.Assembly.GetExecutingAssembly().Location;
                 string strProductVersion = System.Diagnostics.FileVersionInfo.GetVersionInfo(strEXE_FileName).ProductVersion;
 
-                // Version 뒤에 Update 내용을 붙히려다가 하위호환 문제로 포기했다.
-                //
-                //string[] arrayUpdateInform = strUpdateInform.Split('.');
-
-                //string strNewVersion = string.Empty;
-                //string strMainUpdateContents = string.Empty;
-
-                //if (arrayUpdateInform.Length == 5)
-                //{
-                //    int index = strUpdateInform.LastIndexOf(".");
-
-                //    strNewVersion = strUpdateInform.Remove(index);
-                //    strMainUpdateContents = arrayUpdateInform[4];
-                //}
 
                 string[] arrayNewVersion = strNewVersion.Split('.');
                 string[] arrayProductVersion = strProductVersion.Split('.');
@@ -284,17 +270,17 @@ namespace DoSA
 
                         if (CSettingData.m_emLanguage == EMLanguage.Korean)
                         {
-                            target = "https://solenoid.or.kr/direct_kor.php?address=https://solenoid.or.kr/openactuator/dosa_2d_kor.htm";
+                            //target = "https://solenoid.or.kr/direct_kor.php?address=https://solenoid.or.kr/openactuator/dosa_2d_kor.htm";
 
-                            // DoSA 이전 버전의 주소 설정이 아래와 같아서 해당 html 을 삭제하고 못하고 있다.
-                            //target = "http://solenoid.or.kr/index_dosa_open_2d_kor.html";
+                            // DoSA 이전 버전의 주소 설정이 아래와 같아서 html 을 삭제하지 않고 그대로 사용하고 있다.
+                            target = "https://solenoid.or.kr/index_dosa_open_2d_kor.html";
                         }
                         else
                         {
-                            target = "https://solenoid.or.kr/direct_eng.php?address=https://solenoid.or.kr/openactuator/dosa_2d_eng.htm";
+                            //target = "https://solenoid.or.kr/direct_eng.php?address=https://solenoid.or.kr/openactuator/dosa_2d_eng.htm";
 
-                            // DoSA 이전 버전의 주소 설정이 아래와 같아서 해당 html 을 삭제하고 못하고 있다.
-                            //target = "http://solenoid.or.kr/index_dosa_open_2d_eng.html";
+                            //DoSA 이전 버전의 주소 설정이 아래와 같아서 html 을 삭제하지 않고 그대로 사용하고 있다.
+                            target = "https://solenoid.or.kr/index_dosa_open_2d_eng.html";
                         }
 
                         try
@@ -749,7 +735,7 @@ namespace DoSA
             TreeNode treeNode = new TreeNode("Parts", (int)EMKind.PARTS, (int)EMKind.PARTS);
             treeViewMain.Nodes.Add(treeNode);
 
-            treeNode = new TreeNode("Experiments", (int)EMKind.EXPERIMENTS, (int)EMKind.EXPERIMENTS);
+            treeNode = new TreeNode("Tests", (int)EMKind.TESTS, (int)EMKind.TESTS);
             treeViewMain.Nodes.Add(treeNode);
 
             // 수정 되었음을 기록한다.
@@ -811,7 +797,7 @@ namespace DoSA
                 TreeNode treeNode = new TreeNode("Parts", (int)EMKind.PARTS, (int)EMKind.PARTS);
                 treeViewMain.Nodes.Add(treeNode);
 
-                treeNode = new TreeNode("Experiments", (int)EMKind.EXPERIMENTS, (int)EMKind.EXPERIMENTS);
+                treeNode = new TreeNode("Tests", (int)EMKind.TESTS, (int)EMKind.TESTS);
                 treeViewMain.Nodes.Add(treeNode);
 
                 foreach (CNode node in m_design.NodeList)
@@ -998,17 +984,17 @@ namespace DoSA
 
         private void ribbonButtonForce_Click(object sender, EventArgs e)
         {
-            addRawNode(EMKind.FORCE_EXPERIMENT);
+            addRawNode(EMKind.FORCE_TEST);
         }
 
         private void ribbonButtonStroke_Click(object sender, EventArgs e)
         {
-            addRawNode(EMKind.STROKE_EXPERIMENT);
+            addRawNode(EMKind.STROKE_TEST);
         }
 
         private void ribbonButtonCurrent_Click(object sender, EventArgs e)
         {
-            addRawNode(EMKind.CURRENT_EXPERIMENT);
+            addRawNode(EMKind.CURRENT_TEST);
         }
         
         private void ribbonButtonSetting_Click(object sender, EventArgs e)
@@ -1035,34 +1021,6 @@ namespace DoSA
         }
 
 
-        private void ribbonButtonHomepage_Click(object sender, EventArgs e)
-        {
-            string target;
-
-            if (CSettingData.m_emLanguage == EMLanguage.Korean)
-            {
-                target = "https://solenoid.or.kr/index_kor.html";
-            }
-            else
-            {
-                target = "https://solenoid.or.kr/index_eng.html";
-            }
-
-            try
-            {
-                System.Diagnostics.Process.Start(target);
-            }
-            catch (System.ComponentModel.Win32Exception noBrowser)
-            {
-                if (noBrowser.ErrorCode == -2147467259)
-                    CNotice.printTrace(noBrowser.Message);
-            }
-            catch (System.Exception other)
-            {
-                CNotice.printTrace(other.Message);
-            }
-        }
-
         private void ribbonButtonAbout_Click(object sender, EventArgs e)
         {
             PopupAboutBox frmAbout = new PopupAboutBox();
@@ -1074,36 +1032,36 @@ namespace DoSA
 
         #region----------------------- Button -------------------------------
         
-        private void buttonExperimentCurrent_Click(object sender, EventArgs e)
+        private void buttonTestCurrent_Click(object sender, EventArgs e)
         {
-            CCurrentExperiment currentExperiment = (CCurrentExperiment)propertyGridMain.SelectedObject;
+            CCurrentTest currentTest = (CCurrentTest)propertyGridMain.SelectedObject;
 
-            // 현재 표시되고 있는 PropertyGird 창에서 Experiment 이름을 찾아 낸다
-            string strExperimentName = currentExperiment.NodeName;
-            string strExperimentDirName = Path.Combine(m_design.m_strDesignDirPath, strExperimentName);
+            // 현재 표시되고 있는 PropertyGird 창에서 Test 이름을 찾아 낸다
+            string strTestName = currentTest.NodeName;
+            string strTestDirName = Path.Combine(m_design.m_strDesignDirPath, strTestName);
 
-            string strExperimentFullName = Path.Combine(strExperimentDirName, strExperimentName + ".fem");
-            string strStrokeFileFullName = Path.Combine(strExperimentDirName, strExperimentName + ".csv");
+            string strTestFullName = Path.Combine(strTestDirName, strTestName + ".fem");
+            string strStrokeFileFullName = Path.Combine(strTestDirName, strTestName + ".csv");
 
 
-            if (false == isCurrentExperimentOK(currentExperiment))
+            if (false == isCurrentTestOK(currentTest))
                 return;
 
-            if (m_manageFile.isExistDirectory(strExperimentDirName) == true)
+            if (m_manageFile.isExistDirectory(strTestDirName) == true)
             {
                 DialogResult ret = CNotice.noticeWarningOKCancelID("TIAP", "NE");
 
                 if (ret == DialogResult.Cancel)
                     return;
 
-                m_manageFile.deleteDirectory(strExperimentDirName);
+                m_manageFile.deleteDirectory(strTestDirName);
 
                 // 삭제되는 시간이 필요한 듯 한다.
                 Thread.Sleep(1000);
             }
 
             // 시험 디렉토리를 생성한다.
-            m_manageFile.createDirectory(strExperimentDirName);
+            m_manageFile.createDirectory(strTestDirName);
 
             // 해석전 현 설정을 저장한다.
             saveDesignFile();
@@ -1116,25 +1074,25 @@ namespace DoSA
             m_design.drawDesign(m_femm);
 
             /// 전류, 전압을 영으로 설정해서 기본모델을 만든다.
-            m_design.setBlockPropeties(m_femm, 0, currentExperiment.MeshSizePercent);
+            m_design.setBlockPropeties(m_femm, 0, currentTest.MeshSizePercent);
 
             double minX, maxX, minY, maxY;
             minX = maxX = minY = maxY = 0;
 
             m_design.getModelMinMaxX(ref minX, ref maxX);
             // 이동한 상태에서 해석이 진행됨으로 이동량을 Plus 와 Minus 에 모두 사용한다.
-            m_design.getModelMinMaxY(ref minY, ref maxY, currentExperiment.MovingStroke);
+            m_design.getModelMinMaxY(ref minY, ref maxY, currentTest.MovingStroke);
 
-            m_design.setBoundary(m_femm, currentExperiment.MeshSizePercent, minX, maxX, minY, maxY);
+            m_design.setBoundary(m_femm, currentTest.MeshSizePercent, minX, maxX, minY, maxY);
 
             // FEMM 기본모델은 구동부 이동전으로 저장하고 해석전에 구동부를 이동해서 해석한다.
-            m_femm.moveMovingParts(currentExperiment.MovingStroke);
+            m_femm.moveMovingParts(currentTest.MovingStroke);
 
-            m_femm.saveAs(strExperimentFullName);
+            m_femm.saveAs(strTestFullName);
 
-            double dInitialCurrent = currentExperiment.InitialCurrent;
-            double dFinalCurrent = currentExperiment.FinalCurrent;
-            int nStepCount = currentExperiment.StepCount;
+            double dInitialCurrent = currentTest.InitialCurrent;
+            double dFinalCurrent = currentTest.FinalCurrent;
+            int nStepCount = currentTest.StepCount;
 
             double dStepIncrease = Math.Abs(dFinalCurrent - dInitialCurrent) / nStepCount;
             double dCurrent;
@@ -1158,7 +1116,7 @@ namespace DoSA
             {
                 dCurrent = dInitialCurrent + dStepIncrease * i;
 
-                m_design.changeCurrent(m_femm, dCurrent, currentExperiment.MeshSizePercent);
+                m_design.changeCurrent(m_femm, dCurrent, currentTest.MeshSizePercent);
 
                 progressBarCurrent.PerformStep();
                 labelProgressCurrent.Text = "Current Step : " + i.ToString() + " / " + nStepCount.ToString();
@@ -1193,12 +1151,12 @@ namespace DoSA
             buttonLoadCurrentResult.Enabled = true;
 
             if (diffTime.Hours > 0)
-                CNotice.printUserMessage(strExperimentName + m_resManager.GetString("_THBC") +
+                CNotice.printUserMessage(strTestName + m_resManager.GetString("_THBC") +
                                             diffTime.Hours.ToString() + m_resManager.GetString("H") +
                                             diffTime.Minutes.ToString() + m_resManager.GetString("M") +
                                             diffTime.Seconds.ToString() + m_resManager.GetString("S"));
             else
-                CNotice.printUserMessage(strExperimentName + m_resManager.GetString("_THBC") +
+                CNotice.printUserMessage(strTestName + m_resManager.GetString("_THBC") +
                                             diffTime.Minutes.ToString() + m_resManager.GetString("M") +
                                             diffTime.Seconds.ToString() + m_resManager.GetString("S"));
 
@@ -1287,14 +1245,14 @@ namespace DoSA
 
         private void buttonForceAndMagnitudeB_Result_Click(object sender, EventArgs e)
         {
-            CForceExperiment forceExperiment = (CForceExperiment)propertyGridMain.SelectedObject;
+            CForceTest forceTest = (CForceTest)propertyGridMain.SelectedObject;
 
             double minX, maxX, minY, maxY;
             minX = maxX = minY = maxY = 0;
 
             m_design.getModelMinMaxX(ref minX, ref maxX);
             // 이동한 상태에서 해석이 진행됨으로 이동량을 Plus 와 Minus 에 모두 사용한다.
-            m_design.getModelMinMaxY(ref minY, ref maxY, forceExperiment.MovingStroke);
+            m_design.getModelMinMaxY(ref minY, ref maxY, forceTest.MovingStroke);
 
             getPostRegion(ref minX, ref maxX, ref minY, ref maxY, 1.2f);
 
@@ -1304,14 +1262,14 @@ namespace DoSA
 
         private void buttonForceAndVectorB_Result_Click(object sender, EventArgs e)
         {
-            CForceExperiment forceExperiment = (CForceExperiment)propertyGridMain.SelectedObject;
+            CForceTest forceTest = (CForceTest)propertyGridMain.SelectedObject;
 
             double minX, maxX, minY, maxY;
             minX = maxX = minY = maxY = 0;
 
             m_design.getModelMinMaxX(ref minX, ref maxX);
             // 이동한 상태에서 해석이 진행됨으로 이동량을 Plus 와 Minus 에 모두 사용한다.
-            m_design.getModelMinMaxY(ref minY, ref maxY, forceExperiment.MovingStroke);
+            m_design.getModelMinMaxY(ref minY, ref maxY, forceTest.MovingStroke);
 
             getPostRegion(ref minX, ref maxX, ref minY, ref maxY, 1.2f);
 
@@ -1319,36 +1277,36 @@ namespace DoSA
             plotForceDensityResult(minX, maxX, minY, maxY, false, false);
         }
 
-        private void buttonExperimentForce_Click(object sender, EventArgs e)
+        private void buttonTestForce_Click(object sender, EventArgs e)
         {
-            CForceExperiment forceExperiment = (CForceExperiment)propertyGridMain.SelectedObject;
+            CForceTest forceTest = (CForceTest)propertyGridMain.SelectedObject;
 
             // 현재 시험의 이름을 m_nodeList 에서 찾지 않고
-            // 현재 표시되고 있는 PropertyGird 창에서 Experiment 이름을 찾아 낸다
-            string strExperimentName = forceExperiment.NodeName;
-            string strExperimentDirName = Path.Combine(m_design.m_strDesignDirPath, strExperimentName);
+            // 현재 표시되고 있는 PropertyGird 창에서 Test 이름을 찾아 낸다
+            string strTestName = forceTest.NodeName;
+            string strTestDirName = Path.Combine(m_design.m_strDesignDirPath, strTestName);
 
-            string strExperimentFullName = Path.Combine(strExperimentDirName, strExperimentName + ".fem");
-            string strForceFileFullName = Path.Combine(strExperimentDirName, strExperimentName + ".txt");
+            string strTestFullName = Path.Combine(strTestDirName, strTestName + ".fem");
+            string strForceFileFullName = Path.Combine(strTestDirName, strTestName + ".txt");
 
-            if (false == isForceExperimentOK(forceExperiment))
+            if (false == isForceTestOK(forceTest))
                 return;
 
-            if (m_manageFile.isExistDirectory(strExperimentDirName) == true)
+            if (m_manageFile.isExistDirectory(strTestDirName) == true)
             {
                 DialogResult ret = CNotice.noticeWarningOKCancelID("TIAP", "NE");
 
                 if (ret == DialogResult.Cancel)
                     return;
 
-                m_manageFile.deleteDirectory(strExperimentDirName);
+                m_manageFile.deleteDirectory(strTestDirName);
 
                 // 삭제되는 시간이 필요한 듯 한다.
                 Thread.Sleep(1000);
             }
 
             // 시험 디렉토리를 생성한다.
-            m_manageFile.createDirectory(strExperimentDirName);
+            m_manageFile.createDirectory(strTestDirName);
 
             // 해석전 현 설정을 저장한다.
             saveDesignFile();
@@ -1367,28 +1325,28 @@ namespace DoSA
                 bPostMode = false;
 
                 // 초기이미지가 없어서 이미지를 비우고 있다.
-                loadDefaultImage(EMKind.FORCE_EXPERIMENT);
+                loadDefaultImage(EMKind.FORCE_TEST);
             }
 
             m_design.addMaterials(m_femm);
 
             m_design.drawDesign(m_femm);
 
-            m_design.setBlockPropeties(m_femm, forceExperiment.Voltage, forceExperiment.MeshSizePercent);
+            m_design.setBlockPropeties(m_femm, forceTest.Voltage, forceTest.MeshSizePercent);
 
             double minX, maxX, minY, maxY;
             minX = maxX = minY = maxY = 0;
 
             m_design.getModelMinMaxX(ref minX, ref maxX);
             // 이동한 상태에서 해석이 진행됨으로 이동량을 Plus 와 Minus 에 모두 사용한다.
-            m_design.getModelMinMaxY(ref minY, ref maxY, forceExperiment.MovingStroke);
+            m_design.getModelMinMaxY(ref minY, ref maxY, forceTest.MovingStroke);
 
-            m_design.setBoundary(m_femm, forceExperiment.MeshSizePercent, minX, maxX, minY, maxY);
+            m_design.setBoundary(m_femm, forceTest.MeshSizePercent, minX, maxX, minY, maxY);
 
             /// 저장 전에 이동량을 반영한다.
-            m_femm.moveMovingParts(forceExperiment.MovingStroke);
+            m_femm.moveMovingParts(forceTest.MovingStroke);
 
-            m_femm.saveAs(strExperimentFullName);
+            m_femm.saveAs(strTestFullName);
 
             DateTime previousTime = new DateTime();
             previousTime = DateTime.Now;
@@ -1418,7 +1376,7 @@ namespace DoSA
             writefile.writeLineString(strForceFileFullName, listString, true);
 
 
-            string strPostDataFullName = Path.Combine(strExperimentDirName, strExperimentName + ".ans");
+            string strPostDataFullName = Path.Combine(strTestDirName, strTestName + ".ans");
 
             m_dGridSize = dlongerLength / 50.0f;
             m_dVectorScale = 10;
@@ -1441,12 +1399,12 @@ namespace DoSA
 
 
             if (diffTime.Hours > 0)
-                CNotice.printUserMessage(strExperimentName + m_resManager.GetString("_THBC") +
+                CNotice.printUserMessage(strTestName + m_resManager.GetString("_THBC") +
                                             diffTime.Hours.ToString() + m_resManager.GetString("H") +
                                             diffTime.Minutes.ToString() + m_resManager.GetString("M") +
                                             diffTime.Seconds.ToString() + m_resManager.GetString("S"));
             else
-                CNotice.printUserMessage(strExperimentName + m_resManager.GetString("_THBC") +
+                CNotice.printUserMessage(strTestName + m_resManager.GetString("_THBC") +
                                             diffTime.Minutes.ToString() + m_resManager.GetString("M") +
                                             diffTime.Seconds.ToString() + m_resManager.GetString("S"));
 
@@ -1481,40 +1439,40 @@ namespace DoSA
             plotStrokeResult();
         }
 
-        private void buttonExperimentStroke_Click(object sender, EventArgs e)
+        private void buttonTestStroke_Click(object sender, EventArgs e)
         {
-            CStrokeExperiment strokeExperiment = (CStrokeExperiment)propertyGridMain.SelectedObject;
+            CStrokeTest strokeTest = (CStrokeTest)propertyGridMain.SelectedObject;
 
-            double dInitialStroke = strokeExperiment.InitialStroke;
-            double dFinalStroke = strokeExperiment.FinalStroke;
-            int nStepCount = strokeExperiment.StepCount;
+            double dInitialStroke = strokeTest.InitialStroke;
+            double dFinalStroke = strokeTest.FinalStroke;
+            int nStepCount = strokeTest.StepCount;
 
-            // 현재 표시되고 있는 PropertyGird 창에서 Experiment 이름을 찾아 낸다
-            string strExperimentName = strokeExperiment.NodeName;
-            string strExperimentDirName = Path.Combine(m_design.m_strDesignDirPath, strExperimentName);
+            // 현재 표시되고 있는 PropertyGird 창에서 Test 이름을 찾아 낸다
+            string strTestName = strokeTest.NodeName;
+            string strTestDirName = Path.Combine(m_design.m_strDesignDirPath, strTestName);
 
-            string strExperimentFullName = Path.Combine(strExperimentDirName, strExperimentName + ".fem");
-            string strStrokeFileFullName = Path.Combine(strExperimentDirName, strExperimentName + ".csv");
+            string strTestFullName = Path.Combine(strTestDirName, strTestName + ".fem");
+            string strStrokeFileFullName = Path.Combine(strTestDirName, strTestName + ".csv");
 
             
-            if (false == isStrokeExperimentOK(strokeExperiment))
+            if (false == isStrokeTestOK(strokeTest))
                 return;
 
-            if (m_manageFile.isExistDirectory(strExperimentDirName) == true)
+            if (m_manageFile.isExistDirectory(strTestDirName) == true)
             {
                 DialogResult ret = CNotice.noticeWarningOKCancelID("TIAP", "NE");
 
                 if (ret == DialogResult.Cancel)
                     return;
 
-                m_manageFile.deleteDirectory(strExperimentDirName);
+                m_manageFile.deleteDirectory(strTestDirName);
 
                 // 삭제되는 시간이 필요한 듯 한다.
                 Thread.Sleep(1000);
             }
 
             // 시험 디렉토리를 생성한다.
-            m_manageFile.createDirectory(strExperimentDirName);
+            m_manageFile.createDirectory(strTestDirName);
 
             // 해석전 현 설정을 저장한다.
             saveDesignFile();
@@ -1529,7 +1487,7 @@ namespace DoSA
             double minX, maxX, minY, maxY;
             minX = maxX = minY = maxY = 0;
 
-            m_femm.saveAs(strExperimentFullName);
+            m_femm.saveAs(strTestFullName);
 
             double dStepIncrease = Math.Abs(dFinalStroke - dInitialStroke) / nStepCount;
             double dStroke;
@@ -1551,13 +1509,13 @@ namespace DoSA
             {
                 dStroke = dInitialStroke + dStepIncrease * i;
 
-                m_design.setBlockPropeties(m_femm, strokeExperiment.Voltage, strokeExperiment.MeshSizePercent);
+                m_design.setBlockPropeties(m_femm, strokeTest.Voltage, strokeTest.MeshSizePercent);
 
                 m_design.getModelMinMaxX(ref minX, ref maxX);
                 // 이동으로 고려해야 함으로 초기변위와 최대변위를 모두 넘긴다.
                 m_design.getModelMinMaxY(ref minY, ref maxY, dStroke);
 
-                m_design.setBoundary(m_femm, strokeExperiment.MeshSizePercent, minX, maxX, minY, maxY);
+                m_design.setBoundary(m_femm, strokeTest.MeshSizePercent, minX, maxX, minY, maxY);
 
                 /// 항상 초기위치 기준으로 이동한다.
                 m_femm.moveMovingParts(dStroke);
@@ -1605,14 +1563,14 @@ namespace DoSA
 
             if (diffTime.Hours > 0)
             {
-                CNotice.printUserMessage(strExperimentName + m_resManager.GetString("_THBC") +
+                CNotice.printUserMessage(strTestName + m_resManager.GetString("_THBC") +
                                             diffTime.Hours.ToString() + m_resManager.GetString("H") +
                                             diffTime.Minutes.ToString() + m_resManager.GetString("M") +
                                             diffTime.Seconds.ToString() + m_resManager.GetString("S"));
             }
             else
             {
-                CNotice.printUserMessage(strExperimentName + m_resManager.GetString("_THBC") +
+                CNotice.printUserMessage(strTestName + m_resManager.GetString("_THBC") +
                                             diffTime.Minutes.ToString() + m_resManager.GetString("M") +
                                             diffTime.Seconds.ToString() + m_resManager.GetString("S"));
             }
@@ -1675,7 +1633,7 @@ namespace DoSA
             TreeNode treeNode = new TreeNode("Parts", (int)EMKind.PARTS, (int)EMKind.PARTS);
             treeViewMain.Nodes.Add(treeNode);
 
-            treeNode = new TreeNode("Experiments", (int)EMKind.EXPERIMENTS, (int)EMKind.EXPERIMENTS);
+            treeNode = new TreeNode("Tests", (int)EMKind.TESTS, (int)EMKind.TESTS);
             treeViewMain.Nodes.Add(treeNode);
 
             foreach (CNode node in m_design.NodeList)
@@ -1855,7 +1813,7 @@ namespace DoSA
             }
         }
 
-        private bool isForceExperimentOK(CForceExperiment forceExperiment)
+        private bool isForceTestOK(CForceTest forceTest)
         {
 
             if (checkMovingParts() == false)
@@ -1883,15 +1841,15 @@ namespace DoSA
             return true;
         }
 
-        private bool isStrokeExperimentOK(CStrokeExperiment strokeExperiment)
+        private bool isStrokeTestOK(CStrokeTest strokeTest)
         {
-            if (strokeExperiment.InitialStroke >= strokeExperiment.FinalStroke)
+            if (strokeTest.InitialStroke >= strokeTest.FinalStroke)
             {
                 CNotice.noticeWarningID("TFSM");
                 return false;
             }
 
-            if (strokeExperiment.StepCount <= 0)
+            if (strokeTest.StepCount <= 0)
             {
                 CNotice.noticeWarningID("TSSM");
                 return false;
@@ -1904,14 +1862,14 @@ namespace DoSA
             }
 
             // 구동부를 초기 변위로 이동 후에 형상 검사를 한다.
-            if (m_design.isDesignShapeOK(strokeExperiment.InitialStroke) == false)
+            if (m_design.isDesignShapeOK(strokeTest.InitialStroke) == false)
             {
                 CNotice.noticeWarningID("AEOT1");
                 return false;
             }
 
             // 구동부를 최대 변위로 이동 후에 형상 검사를 한다.
-            if (m_design.isDesignShapeOK(strokeExperiment.FinalStroke) == false)
+            if (m_design.isDesignShapeOK(strokeTest.FinalStroke) == false)
             {
                 CNotice.noticeWarningID("AEOT2");
                 return false;
@@ -1930,15 +1888,15 @@ namespace DoSA
             return true;
         }
 
-        private bool isCurrentExperimentOK(CCurrentExperiment currentExperiment)
+        private bool isCurrentTestOK(CCurrentTest currentTest)
         {
-            if (currentExperiment.InitialCurrent >= currentExperiment.FinalCurrent)
+            if (currentTest.InitialCurrent >= currentTest.FinalCurrent)
             {
                 CNotice.noticeWarningID("TFCM");
                 return false;
             }
 
-            if (currentExperiment.StepCount <= 0)
+            if (currentTest.StepCount <= 0)
             {
                 CNotice.noticeWarningID("TCSS");
                 return false;
@@ -1969,16 +1927,16 @@ namespace DoSA
             return true;
         }
 
-        private void plotForceDensityResult(double minX, double maxX, double minY, double maxY, bool bForceExperiment, bool bMagnitude)
+        private void plotForceDensityResult(double minX, double maxX, double minY, double maxY, bool bForceTest, bool bMagnitude)
         {
             // 현재 시험의 이름을 m_nodeList 에서 찾지 않고
-            // 현재 표시되고 있는 PropertyGird 창에서 Experiment 이름을 찾아 낸다
-            string strExperimentName = ((CForceExperiment)propertyGridMain.SelectedObject).NodeName;
-            string strExperimentDirName = Path.Combine(m_design.m_strDesignDirPath, strExperimentName);
+            // 현재 표시되고 있는 PropertyGird 창에서 Test 이름을 찾아 낸다
+            string strTestName = ((CForceTest)propertyGridMain.SelectedObject).NodeName;
+            string strTestDirName = Path.Combine(m_design.m_strDesignDirPath, strTestName);
 
-            string strPostDataFullName = Path.Combine(strExperimentDirName, strExperimentName + ".ans");
+            string strPostDataFullName = Path.Combine(strTestDirName, strTestName + ".ans");
 
-            string strForceFileFullName = Path.Combine(strExperimentDirName, strExperimentName + ".txt");
+            string strForceFileFullName = Path.Combine(strTestDirName, strTestName + ".txt");
 
             string densityImageFileFullName = string.Empty;
 
@@ -1988,7 +1946,7 @@ namespace DoSA
             double dForce;
             CReadFile readfile = new CReadFile();
 
-            if (bForceExperiment == false)
+            if (bForceTest == false)
             {
                 // 혹시 FEMM 의 화면이 닫힌 경우 FEMM 의 화면을 복원합니다.
                 reopenFEMM();
@@ -2022,7 +1980,7 @@ namespace DoSA
             }
 
             // Density 출력이 아니라 Force 실험인 경우는 패턴 출력을 하지 않는다.
-            if (bForceExperiment == true)
+            if (bForceTest == true)
                 return;
 
 
@@ -2038,7 +1996,7 @@ namespace DoSA
             //------------------------- 자속밀도 이미지 생성 --------------------------------
             if (bMagnitude == true)
             {
-                densityImageFileFullName = Path.Combine(strExperimentDirName, strExperimentName + "_magnitude.bmp");
+                densityImageFileFullName = Path.Combine(strTestDirName, strTestName + "_magnitude.bmp");
 
                 if (m_manageFile.isExistFile(densityImageFileFullName))
                     m_manageFile.deleteFile(densityImageFileFullName);
@@ -2047,7 +2005,7 @@ namespace DoSA
             }                
             else
             {
-                densityImageFileFullName = Path.Combine(strExperimentDirName, strExperimentName + "_vector.bmp");
+                densityImageFileFullName = Path.Combine(strTestDirName, strTestName + "_vector.bmp");
 
                 if (m_manageFile.isExistFile(densityImageFileFullName))
                     m_manageFile.deleteFile(densityImageFileFullName);
@@ -2099,13 +2057,13 @@ namespace DoSA
 
             try
             {
-                CStrokeExperiment strokeExperiment = (CStrokeExperiment)propertyGridMain.SelectedObject;
+                CStrokeTest strokeTest = (CStrokeTest)propertyGridMain.SelectedObject;
 
-                //// 현재 표시되고 있는 PropertyGird 창에서 Experiment 이름을 찾아 낸다
-                string strExperimentName = strokeExperiment.NodeName;
-                string strExperimentDirName = Path.Combine(m_design.m_strDesignDirPath, strExperimentName);
+                //// 현재 표시되고 있는 PropertyGird 창에서 Test 이름을 찾아 낸다
+                string strTestName = strokeTest.NodeName;
+                string strTestDirName = Path.Combine(m_design.m_strDesignDirPath, strTestName);
 
-                string strStrokeFileFullName = Path.Combine(strExperimentDirName, strExperimentName + ".csv");
+                string strStrokeFileFullName = Path.Combine(strTestDirName, strTestName + ".csv");
 
                 if (false == m_manageFile.isExistFile(strStrokeFileFullName))
                 {
@@ -2129,8 +2087,8 @@ namespace DoSA
 
                 double dXMin, dXMax, dYMin, dYMax;
 
-                dXMin = strokeExperiment.InitialStroke;
-                dXMax = strokeExperiment.FinalStroke;
+                dXMin = strokeTest.InitialStroke;
+                dXMax = strokeTest.FinalStroke;
 
                 //dYMin = listDataY.Min();
                 //dYMax = listDataY.Max();
@@ -2158,13 +2116,13 @@ namespace DoSA
 
             try
             {
-                CCurrentExperiment currentExperiment = (CCurrentExperiment)propertyGridMain.SelectedObject;
+                CCurrentTest currentTest = (CCurrentTest)propertyGridMain.SelectedObject;
 
-                //// 현재 표시되고 있는 PropertyGird 창에서 Experiment 이름을 찾아 낸다
-                string strExperimentName = currentExperiment.NodeName;
-                string strExperimentDirName = Path.Combine(m_design.m_strDesignDirPath, strExperimentName);
+                //// 현재 표시되고 있는 PropertyGird 창에서 Test 이름을 찾아 낸다
+                string strTestName = currentTest.NodeName;
+                string strTestDirName = Path.Combine(m_design.m_strDesignDirPath, strTestName);
 
-                string strCurrentFileFullName = Path.Combine(strExperimentDirName, strExperimentName + ".csv");
+                string strCurrentFileFullName = Path.Combine(strTestDirName, strTestName + ".csv");
 
                 if (false == m_manageFile.isExistFile(strCurrentFileFullName))
                 {
@@ -2188,8 +2146,8 @@ namespace DoSA
 
                 double dXMin, dXMax, dYMin, dYMax;
 
-                dXMin = currentExperiment.InitialCurrent;
-                dXMax = currentExperiment.FinalCurrent;
+                dXMin = currentTest.InitialCurrent;
+                dXMax = currentTest.FinalCurrent;
 
                 //dYMin = listDataY.Min();
                 //dYMax = listDataY.Max();
@@ -2363,22 +2321,25 @@ namespace DoSA
                             break;
 
                         // CExpriment 하위 객체
-                        case "ForceExperiment":
-                            CForceExperiment forceExperiment = new CForceExperiment();
-                            if (true == forceExperiment.readObject(listStringNode))
-                                m_design.NodeList.Add(forceExperiment);
+                        case "ForceExperiment":     // 하위 버전 호환 유지 ver(0.9.15.6)
+                        case "ForceTest":
+                            CForceTest forceTest = new CForceTest();
+                            if (true == forceTest.readObject(listStringNode))
+                                m_design.NodeList.Add(forceTest);
                             break;
 
-                        case "StrokeExperiment":
-                            CStrokeExperiment strokeExperiment = new CStrokeExperiment();
-                            if (true == strokeExperiment.readObject(listStringNode))
-                                m_design.NodeList.Add(strokeExperiment);
+                        case "StrokeExperiment":    // 하위 버전 호환 유지 ver(0.9.15.6)
+                        case "StrokeTest":
+                            CStrokeTest strokeTest = new CStrokeTest();
+                            if (true == strokeTest.readObject(listStringNode))
+                                m_design.NodeList.Add(strokeTest);
                             break;
 
-                        case "CurrentExperiment":
-                            CCurrentExperiment currentExperiment = new CCurrentExperiment();
-                            if (true == currentExperiment.readObject(listStringNode))
-                                m_design.NodeList.Add(currentExperiment);
+                        case "CurrentExperiment":   // 하위 버전 호환 유지 ver(0.9.15.6)
+                        case "CurrentTest":
+                            CCurrentTest currentTest = new CCurrentTest();
+                            if (true == currentTest.readObject(listStringNode))
+                                m_design.NodeList.Add(currentTest);
                             break;
 
                         default:
@@ -2440,7 +2401,7 @@ namespace DoSA
                 // Node Name 이 SelectedNode.Name 아니라 SelectedNode.Text 에 들어 있다
                 string selectedNodeText = this.treeViewMain.SelectedNode.Text;
 
-                if (selectedNodeText == "Parts" || selectedNodeText == "Experiments")
+                if (selectedNodeText == "Parts" || selectedNodeText == "Tests")
                 {
                     return;
                 }
@@ -2455,18 +2416,18 @@ namespace DoSA
 
                 // 가상 시험 Node 의 경우는 결과 디렉토리와 연결이 되기 때문에
                 // 해석 결과 디렉토리가 있는 경우는 해석결과를 삭제할지를 물어보고 같이 삭제한다.
-                if (node.GetType().BaseType.Name == "CExperiment")
+                if (node.GetType().BaseType.Name == "CTest")
                 {
-                    string strExperimentDirName = Path.Combine(m_design.m_strDesignDirPath, node.NodeName);
+                    string strTestDirName = Path.Combine(m_design.m_strDesignDirPath, node.NodeName);
 
-                    if (m_manageFile.isExistDirectory(strExperimentDirName) == true)
+                    if (m_manageFile.isExistDirectory(strTestDirName) == true)
                     {
                         DialogResult ret = CNotice.noticeWarningOKCancelID("TTHR", "W");
 
                         if (ret == DialogResult.Cancel)
                             return;
 
-                        m_manageFile.deleteDirectory(strExperimentDirName);
+                        m_manageFile.deleteDirectory(strTestDirName);
 
                         // 삭제되는 시간이 필요한 듯 한다.
                         Thread.Sleep(1000);
@@ -2493,7 +2454,7 @@ namespace DoSA
             // Node Name 이 SelectedNode.Name 아니라 SelectedNode.Text 에 들어 있다
             string selectedNodeText = this.treeViewMain.SelectedNode.Text;
 
-            if (selectedNodeText == "Parts" || selectedNodeText == "Experiments")
+            if (selectedNodeText == "Parts" || selectedNodeText == "Tests")
             {
                 return;
             }
@@ -2518,7 +2479,7 @@ namespace DoSA
         {
             string selectedNodeText = this.treeViewMain.SelectedNode.Text;
 
-            if (selectedNodeText == "Parts" || selectedNodeText == "Experiments")
+            if (selectedNodeText == "Parts" || selectedNodeText == "Tests")
             {
                 return;
             }
@@ -2634,15 +2595,15 @@ namespace DoSA
 
                 switch (emKind)
                 {
-                    case EMKind.FORCE_EXPERIMENT:
+                    case EMKind.FORCE_TEST:
                         strKind = "Force Test";
                         break;
 
-                    case EMKind.STROKE_EXPERIMENT:
+                    case EMKind.STROKE_TEST:
                         strKind = "Stroke Test";
                         break;
 
-                    case EMKind.CURRENT_EXPERIMENT:
+                    case EMKind.CURRENT_TEST:
                         strKind = "Current Test";
                         break;
 
@@ -2665,37 +2626,37 @@ namespace DoSA
 
                 switch (emKind)
                 {
-                    case EMKind.FORCE_EXPERIMENT:
-                        CForceExperiment forceExperiment = new CForceExperiment();
-                        forceExperiment.NodeName = strName;
-                        forceExperiment.m_kindKey = emKind;
+                    case EMKind.FORCE_TEST:
+                        CForceTest forceTest = new CForceTest();
+                        forceTest.NodeName = strName;
+                        forceTest.m_kindKey = emKind;
 
                         // 생성될 때 환경설정의 조건으로 초기화한다.
-                        forceExperiment.MeshSizePercent = CSettingData.m_dMeshLevelPercent;
+                        forceTest.MeshSizePercent = CSettingData.m_dMeshLevelPercent;
 
-                        bRet = m_design.addNode(forceExperiment);
+                        bRet = m_design.addNode(forceTest);
                         break;
 
-                    case EMKind.STROKE_EXPERIMENT:
-                        CStrokeExperiment strokeExperiment = new CStrokeExperiment();
-                        strokeExperiment.NodeName = strName;
-                        strokeExperiment.m_kindKey = emKind;
+                    case EMKind.STROKE_TEST:
+                        CStrokeTest strokeTest = new CStrokeTest();
+                        strokeTest.NodeName = strName;
+                        strokeTest.m_kindKey = emKind;
 
                         // 생성될 때 환경설정의 조건으로 초기화한다.
-                        strokeExperiment.MeshSizePercent = CSettingData.m_dMeshLevelPercent;
+                        strokeTest.MeshSizePercent = CSettingData.m_dMeshLevelPercent;
 
-                        bRet = m_design.addNode(strokeExperiment);
+                        bRet = m_design.addNode(strokeTest);
                         break;
 
-                    case EMKind.CURRENT_EXPERIMENT:
-                        CCurrentExperiment currentExperiment = new CCurrentExperiment();
-                        currentExperiment.NodeName = strName;
-                        currentExperiment.m_kindKey = emKind;
+                    case EMKind.CURRENT_TEST:
+                        CCurrentTest currentTest = new CCurrentTest();
+                        currentTest.NodeName = strName;
+                        currentTest.m_kindKey = emKind;
 
                         // 생성될 때 환경설정의 조건으로 초기화한다.
-                        currentExperiment.MeshSizePercent = CSettingData.m_dMeshLevelPercent;
+                        currentTest.MeshSizePercent = CSettingData.m_dMeshLevelPercent;
 
-                        bRet = m_design.addNode(currentExperiment);
+                        bRet = m_design.addNode(currentTest);
                         break;
 
                     default:
@@ -2739,9 +2700,9 @@ namespace DoSA
                     treeViewMain.Nodes[FIRST_PARTS_INDEX].Nodes.Add(treeNode);
                     break;
 
-                case EMKind.FORCE_EXPERIMENT:
-                case EMKind.STROKE_EXPERIMENT:
-                case EMKind.CURRENT_EXPERIMENT:
+                case EMKind.FORCE_TEST:
+                case EMKind.STROKE_TEST:
+                case EMKind.CURRENT_TEST:
                     treeViewMain.Nodes[FIRST_ANALYSIS_INDEX].Nodes.Add(treeNode);
                     break;
 
@@ -2778,7 +2739,7 @@ namespace DoSA
         {
             CNode node = m_design.getNode(nodeName);
 
-            string strExperimentDirName = string.Empty;
+            string strTestDirName = string.Empty;
 
             try
             {
@@ -2800,7 +2761,7 @@ namespace DoSA
 
                     splitContainerRight.Panel1.Controls.Clear();
 
-                    strExperimentDirName = Path.Combine(m_design.m_strDesignDirPath, node.NodeName);
+                    strTestDirName = Path.Combine(m_design.m_strDesignDirPath, node.NodeName);
 
                     if (m_femm != null)
                     {
@@ -2849,9 +2810,9 @@ namespace DoSA
                             drawBHCurve(steel.Material);
                             break;
 
-                        case EMKind.FORCE_EXPERIMENT:
+                        case EMKind.FORCE_TEST:
 
-                            string strPostDataFullName = Path.Combine(strExperimentDirName, node.NodeName + ".ans");
+                            string strPostDataFullName = Path.Combine(strTestDirName, node.NodeName + ".ans");
 
                             // 해석결과가 존재하지 않으면 Result 와 Report 버튼을 비활성화 한다.
                             if (m_manageFile.isExistFile(strPostDataFullName) == true)
@@ -2868,17 +2829,17 @@ namespace DoSA
                             splitContainerRight.Panel1.Controls.Add(this.panelForce);
 
                             // 초기이미지가 없어서 이미지를 비우고 있다.
-                            loadDefaultImage(EMKind.FORCE_EXPERIMENT);
+                            loadDefaultImage(EMKind.FORCE_TEST);
                             textBoxForce.Text = "0.0";
 
                             // 트리로 선택할 때도 가상실험 내부 전류를 재계산한다.
-                            setCurrentInExperiment(node);
+                            setCurrentInTest(node);
 
                             break;
 
-                        case EMKind.STROKE_EXPERIMENT:
+                        case EMKind.STROKE_TEST:
 
-                            string strResultForceStrokeFileFullName = Path.Combine(strExperimentDirName, node.NodeName + ".csv");
+                            string strResultForceStrokeFileFullName = Path.Combine(strTestDirName, node.NodeName + ".csv");
 
                             progressBarStroke.Value = 0;
 
@@ -2895,16 +2856,16 @@ namespace DoSA
                             splitContainerRight.Panel1.Controls.Add(this.panelStroke);
                             
                             // 해석결과로 Panel 이미지가 변경된 경우를 대비해서 초기이미지로 복원한다.                        
-                            loadDefaultImage(EMKind.STROKE_EXPERIMENT);
+                            loadDefaultImage(EMKind.STROKE_TEST);
 
                             // 트리로 선택할 때도 가상실험 내부 전류를 재계산한다.
-                            setCurrentInExperiment(node);
+                            setCurrentInTest(node);
 
                             break;
 
-                        case EMKind.CURRENT_EXPERIMENT:
+                        case EMKind.CURRENT_TEST:
 
-                            string strResultForceCurrentFileFullName = Path.Combine(strExperimentDirName, node.NodeName + ".csv");
+                            string strResultForceCurrentFileFullName = Path.Combine(strTestDirName, node.NodeName + ".csv");
 
                             progressBarCurrent.Value = 0;
 
@@ -2921,7 +2882,7 @@ namespace DoSA
                             splitContainerRight.Panel1.Controls.Add(this.panelCurrent);
 
                             // 해석결과로 Panel 이미지가 변경된 경우를 대비해서 초기이미지로 복원한다.                        
-                            loadDefaultImage(EMKind.CURRENT_EXPERIMENT);
+                            loadDefaultImage(EMKind.CURRENT_TEST);
                             break;
 
                         default:
@@ -3155,21 +3116,21 @@ namespace DoSA
 
                         break;
 
-                    case EMKind.FORCE_EXPERIMENT:
+                    case EMKind.FORCE_TEST:
 
                         if (e.ChangedItem.Label == "Voltage [V]")
                         {
-                            setCurrentInExperiment(node);
+                            setCurrentInTest(node);
                         }
 
                         break;
 
-                    case EMKind.STROKE_EXPERIMENT:
+                    case EMKind.STROKE_TEST:
 
 
                         if (e.ChangedItem.Label == "Voltage [V]")
                         {
-                            setCurrentInExperiment(node);
+                            setCurrentInTest(node);
                         }
 
                         break;
@@ -3189,7 +3150,7 @@ namespace DoSA
             propertyGridMain.Refresh();
         }
 
-        private void setCurrentInExperiment(CNode node)
+        private void setCurrentInTest(CNode node)
         {
             // 총 저항은 합산이 필요함으로 0.0f 로 초기화 한다.
             double total_resistance = 0.0f;
@@ -3203,27 +3164,27 @@ namespace DoSA
 
             switch (node.m_kindKey)
             {
-                case EMKind.FORCE_EXPERIMENT:
+                case EMKind.FORCE_TEST:
 
-                    CForceExperiment forceExperiment = (CForceExperiment)node;
+                    CForceTest forceTest = (CForceTest)node;
 
                     // 전류
                     if (total_resistance != 0.0f)
-                        forceExperiment.Current = (forceExperiment.Voltage / total_resistance);
+                        forceTest.Current = (forceTest.Voltage / total_resistance);
                     else
-                        forceExperiment.Current = 0.0f;
+                        forceTest.Current = 0.0f;
 
                     break;
 
-                case EMKind.STROKE_EXPERIMENT:
+                case EMKind.STROKE_TEST:
 
-                    CStrokeExperiment strokeExperiment = (CStrokeExperiment)node;
+                    CStrokeTest strokeTest = (CStrokeTest)node;
 
                     // 전류
                     if (total_resistance != 0.0f)
-                        strokeExperiment.Current = (strokeExperiment.Voltage / total_resistance);
+                        strokeTest.Current = (strokeTest.Voltage / total_resistance);
                     else
-                        strokeExperiment.Current = 0.0f;
+                        strokeTest.Current = 0.0f;
 
                     break;
 
@@ -3411,12 +3372,12 @@ namespace DoSA
             { 
                 switch (kind)
                 {
-                    case EMKind.FORCE_EXPERIMENT:
+                    case EMKind.FORCE_TEST:
                         // 이미지를 비운다
                         pictureBoxForce.Image = null;
                         break;
 
-                    case EMKind.STROKE_EXPERIMENT:
+                    case EMKind.STROKE_TEST:
 
                         // Chart 를 대신해서 이미지가 보이게 한다.
                         chartStrokeResult.Visible = false;
@@ -3447,7 +3408,7 @@ namespace DoSA
 
                         break;
 
-                    case EMKind.CURRENT_EXPERIMENT:
+                    case EMKind.CURRENT_TEST:
 
                         // Chart 를 대신해서 이미지가 보이게 한다.
                         chartCurrentResult.Visible = false;
@@ -3651,8 +3612,78 @@ namespace DoSA
             /// 수정된 코일형상을 프로퍼티에 표시한다.
             propertyGridMain.Refresh();
         }
-        
+
         #endregion
-        
+
+        private void ribbonButtonShare_Click(object sender, EventArgs e)
+        {
+            string strTarget;
+            string strSubject;
+            string strBody;
+
+
+            if (CSettingData.m_emLanguage == EMLanguage.Korean)
+            {
+                strSubject = @"DoSA-2D 추천 (2차원 액추에이터 자기력해석 프로그램)";
+                strBody = @"
+%0D%0A%0D%0A
+%0D%0A%0D%0A
+[ DoSA-2D 소개글 ] %0D%0A
+%0D%0A
+DoSA-2D 는 액추에이터나 솔레노이드의 자기력을 해석할 수 있는 2차원 오픈소스 소프트웨어입니다. %0D%0A
+오픈소스 프로젝트로 개발되어 개인 뿐만아니라 회사에서도 무료로 사용할 수 있습니다. %0D%0A
+%0D%0A
+프로그램 작업 환경을 제품개발 과정과 유사하도록 개발 되었습니다. %0D%0A
+따라서 해석을 전공하지 않은 제품개발자도 쉽게 액추에이터나 솔레노이드의 자기력을 해석할 수 있습니다. %0D%0A
+%0D%0A
+설치는 아래의 설치 가이드 동영상과 설치 도움말 파일을 참조 하세요.%0D%0A
+%0D%0A
+- 설치 가이드 동영상 : https://youtu.be/323tNuSe6DI %0D%0A
+- 설치 도움말 파일 : https://solenoid.or.kr/data/DoSA-2D_Install_Guide_KOR.pdf %0D%0A
+- DoSA-2D 무료 다운로드 : https://solenoid.or.kr/index_dosa_open_2d_kor.html %0D%0A
+%0D%0A
+감사합니다.
+";
+            }
+            else
+            {
+                strSubject = @"DoSA-2D recommendation (2D actuator simulation software)";
+                strBody = @"
+%0D%0A%0D%0A
+%0D%0A%0D%0A
+[ DoSA-2D Indroduction ] %0D%0A
+%0D%0A
+DoSA-2D is a two-dimensional open source software for magnetic force analysis of actuators and solenoids. %0D%0A
+%0D%0A
+Because it is an open source project, not only individuals but also companies can use the program for free. %0D%0A
+The program environment is developed to be similar to that of product development, %0D%0A
+so even product developers who have not majored in analysis can easily analyze the magnetic force of actuators or solenoids. %0D%0A
+%0D%0A
+Please refer to the installation guide video and installation help file below for installation. %0D%0A
+%0D%0A
+- Installation guide video: https://youtu.be/323tNuSe6DI %0D%0A
+- Installation help file: https://solenoid.or.kr/data/DoSA-2D_Install_Guide_ENG.pdf %0D%0A
+- DoSA-2D Free Download : https://solenoid.or.kr/index_dosa_open_2d_eng.html %0D%0A
+%0D%0A
+Thank you.
+";
+            }
+
+            strTarget = "mailto:" + "?subject=" + strSubject + "&body=" + strBody;
+
+            try
+            {
+                System.Diagnostics.Process.Start(strTarget);
+            }
+            catch (System.ComponentModel.Win32Exception noBrowser)
+            {
+                if (noBrowser.ErrorCode == -2147467259)
+                    CNotice.printTrace(noBrowser.Message);
+            }
+            catch (System.Exception other)
+            {
+                CNotice.printTrace(other.Message);
+            }
+        }
     }
 }
