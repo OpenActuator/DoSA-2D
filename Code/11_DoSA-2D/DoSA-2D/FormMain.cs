@@ -70,6 +70,10 @@ namespace DoSA
         {
             InitializeComponent();
 
+
+            #region -------------- CSettingData 설정 -----------------------
+
+            // initializeProgram() 안에서 CSettingData 를 사용하기 때문에 우선적으로 설정한다.
             // 여러곳에서 CSettingData 을 사용하기 때문에 가장 먼저 실시한다.
             CSettingData.m_strProgramDirPath = System.Windows.Forms.Application.StartupPath;
 
@@ -82,6 +86,7 @@ namespace DoSA
             /// 환경설정의 언어 설정과 상관없이 무조건 시스템언어를 읽어서 프로그램 언어를 설정해 둔다.
             /// 
             /// 환경설정값으로 언어 설정은 이후에 바로 이어지는 CSettingData.updataLanguge() 에서 이루어진다.
+            ///------------------------------------------------------------------------
             CultureInfo ctInfo = Thread.CurrentThread.CurrentCulture;
 
             /// 한국어가 아니라면 모두 영어로 처리하라.
@@ -90,49 +95,14 @@ namespace DoSA
             else
                 CSettingData.m_emLanguage = EMLanguage.English;
 
-            CSettingData.updataLanguge();
-            ///------------------------------------------------------------------------
+            CSettingData.updataLanguage();
+
+        	#endregion
 
 
-            /// 리소스 파일을 확인하다.
-            bool retEnglish, retKorean;
-            retEnglish = m_manageFile.isExistFile(Path.Combine(Application.StartupPath, "LanguageResource.en-US.resources"));
-            retKorean = m_manageFile.isExistFile(Path.Combine(Application.StartupPath, "LanguageResource.ko-KR.resources"));
-
-            if(retEnglish == false || retKorean == false)
-            {
-                MessageBox.Show("There are no Language resource files.", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-
-                System.Windows.Forms.Application.ExitThread();
-                Environment.Exit(0);            
-            }
-
-            int nDoSACount = CManageProcess.getProcessesCount("DoSA-2D");
-
-            if (nDoSACount >= 2)
-            {
-                if (CSettingData.m_emLanguage == EMLanguage.English)
-                    CNotice.noticeWarning("DoSA-2D 의 중복 실행은 허용하지 않습니다.");
-                else
-                    CNotice.noticeWarning("Duplicate execution of DoSA-2D is not allowed.");
-
-                System.Windows.Forms.Application.ExitThread();
-                Environment.Exit(0);
-            }
-
-            // 기존에 동작을 하고 있는 FEMM 이 있으면 오류가 발생한다.
-            CProgramFEMM.killProcessOfFEMMs();
-
-            // 설치버전을 확인 한다.
-            checkDoSAVersion();
-
-            //=====================================================================
-            // 2023-03-18일 까지 코드를 유지하고 이후는 삭제한다
-            //=====================================================================
-            deleteOldDirectories();
-            //=====================================================================
-
+            // 실행전에 CSettingData 의 값들이 설정되어야 한다.
             initializeProgram();
+
 
             // 환경설정의 기본 작업디렉토리의 해당 프로그램의 디렉토리로 일단 설정한다.
             // 환경설정을 읽어온 후 에 초기화 해야 한다.
@@ -159,7 +129,7 @@ namespace DoSA
 
             m_dGridSize = 1.0f;
             m_dVectorScale = 10.0f;
-    }
+        }
 
         //----------- Update Dialog Test --------------
         // - WiFi 를 연결하고, AssemblyInfo 에서 버전을 임의로 낮춘다.
@@ -353,20 +323,9 @@ namespace DoSA
         {
             try
             {
-                /// Net Framework V4.51 이전버전이 설치 되었는지를 확인한다.
-                bool retFreamework = checkFramework451();
-
-                if (retFreamework == false)
-                {
-                    DialogResult result = CNotice.noticeWarningOKCancelID("DRIO1", "W");
-                    
-                    if(result == DialogResult.OK )
-                        openWebsite(@"https://www.microsoft.com/ko-kr/download/details.aspx?id=30653");
-
-                    System.Windows.Forms.Application.ExitThread();
-                    Environment.Exit(0);
-                }
-
+                //-----------------------------------------------------------------------------
+                // Notice 동작을 위해 우선 실행한다.
+                //-----------------------------------------------------------------------------
                 // Log 디렉토리가 없으면 생성 한다.
                 string strLogDirName = Path.Combine(CSettingData.m_strProgramDirPath, "Log");
 
@@ -381,6 +340,59 @@ namespace DoSA
                 // 내부함수인 printLogEvent() 의 함수포인트를 사용해서 이벤트 함수를 설정한다
                 CNotice.Notice += printLogEvent;
 
+
+                /// 리소스 파일을 확인하다.
+                bool retEnglish, retKorean;
+                retEnglish = m_manageFile.isExistFile(Path.Combine(Application.StartupPath, "LanguageResource.en-US.resources"));
+                retKorean = m_manageFile.isExistFile(Path.Combine(Application.StartupPath, "LanguageResource.ko-KR.resources"));
+
+                if (retEnglish == false || retKorean == false)
+                {
+                    MessageBox.Show("There are no Language resource files.", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+
+                    System.Windows.Forms.Application.ExitThread();
+                    Environment.Exit(0);
+                }
+
+                int nDoSACount = CManageProcess.getProcessesCount("DoSA-2D");
+
+                if (nDoSACount >= 2)
+                {
+                    if (CSettingData.m_emLanguage == EMLanguage.English)
+                        CNotice.noticeWarning("DoSA-2D 의 중복 실행은 허용하지 않습니다.");
+                    else
+                        CNotice.noticeWarning("Duplicate execution of DoSA-2D is not allowed.");
+
+                    System.Windows.Forms.Application.ExitThread();
+                    Environment.Exit(0);
+                }
+
+                // 기존에 동작을 하고 있는 FEMM 이 있으면 오류가 발생한다.
+                CProgramFEMM.killProcessOfFEMMs();
+
+                // 설치버전을 확인 한다.
+                checkDoSAVersion();
+
+                //=====================================================================
+                // 2023-03-18일 까지 코드를 유지하고 이후는 삭제한다
+                //=====================================================================
+                deleteOldDirectories();
+                //=====================================================================
+
+
+                /// Net Framework V4.51 이전버전이 설치 되었는지를 확인한다.
+                bool retFreamework = checkFramework451();
+
+                if (retFreamework == false)
+                {
+                    DialogResult result = CNotice.noticeWarningOKCancelID("DRIO1", "W");
+                    
+                    if(result == DialogResult.OK )
+                        openWebsite(@"https://www.microsoft.com/ko-kr/download/details.aspx?id=30653");
+
+                    System.Windows.Forms.Application.ExitThread();
+                    Environment.Exit(0);
+                }
 
                 string strAppDataDirPath = Environment.GetEnvironmentVariable("APPDATA");
                 string strSettingDirPath = Path.Combine(strAppDataDirPath, "DoSA-2D");
@@ -440,7 +452,7 @@ namespace DoSA
                 }
 
                 /// 파일에서 읽어오든 신규파일에서 생성을 하든 Setting 파일안의 프로그램 언어를 설정한다.
-                CSettingData.updataLanguge();
+                CSettingData.updataLanguage();
 
                 /// FEMM 버전을 확인한다.
                 /// 
@@ -1008,7 +1020,7 @@ namespace DoSA
                 frmSetting.saveSettingToFile();
 
                 // 언어를 수정과 동시에 반영한다.
-                CSettingData.updataLanguge();
+                CSettingData.updataLanguage();
             }
         }
 
@@ -3615,65 +3627,13 @@ namespace DoSA
 
         #endregion
 
-        private void ribbonButtonShare_Click(object sender, EventArgs e)
+        private void ribbonButtonDonation_Click(object sender, EventArgs e)
         {
-            string strTarget;
-            string strSubject;
-            string strBody;
-
-
-            if (CSettingData.m_emLanguage == EMLanguage.Korean)
-            {
-                strSubject = @"DoSA-2D 추천 (2차원 액추에이터 자기력해석 프로그램)";
-                strBody = @"
-%0D%0A%0D%0A
-%0D%0A%0D%0A
-[ DoSA-2D 소개글 ] %0D%0A
-%0D%0A
-DoSA-2D 는 액추에이터나 솔레노이드의 자기력을 해석할 수 있는 2차원 오픈소스 소프트웨어입니다. %0D%0A
-오픈소스 프로젝트로 개발되어 개인 뿐만아니라 회사에서도 무료로 사용할 수 있습니다. %0D%0A
-%0D%0A
-프로그램 작업 환경을 제품개발 과정과 유사하도록 개발 되었습니다. %0D%0A
-따라서 해석을 전공하지 않은 제품개발자도 쉽게 액추에이터나 솔레노이드의 자기력을 해석할 수 있습니다. %0D%0A
-%0D%0A
-설치는 아래의 설치 가이드 동영상과 설치 도움말 파일을 참조 하세요.%0D%0A
-%0D%0A
-- 설치 가이드 동영상 : https://youtu.be/323tNuSe6DI %0D%0A
-- 설치 도움말 파일 : https://solenoid.or.kr/data/DoSA-2D_Install_Guide_KOR.pdf %0D%0A
-- DoSA-2D 무료 다운로드 : https://solenoid.or.kr/index_dosa_open_2d_kor.html %0D%0A
-%0D%0A
-감사합니다.
-";
-            }
-            else
-            {
-                strSubject = @"DoSA-2D recommendation (2D actuator simulation software)";
-                strBody = @"
-%0D%0A%0D%0A
-%0D%0A%0D%0A
-[ DoSA-2D Indroduction ] %0D%0A
-%0D%0A
-DoSA-2D is a two-dimensional open source software for magnetic force analysis of actuators and solenoids. %0D%0A
-%0D%0A
-Because it is an open source project, not only individuals but also companies can use the program for free. %0D%0A
-The program environment is developed to be similar to that of product development, %0D%0A
-so even product developers who have not majored in analysis can easily analyze the magnetic force of actuators or solenoids. %0D%0A
-%0D%0A
-Please refer to the installation guide video and installation help file below for installation. %0D%0A
-%0D%0A
-- Installation guide video: https://youtu.be/323tNuSe6DI %0D%0A
-- Installation help file: https://solenoid.or.kr/data/DoSA-2D_Install_Guide_ENG.pdf %0D%0A
-- DoSA-2D Free Download : https://solenoid.or.kr/index_dosa_open_2d_eng.html %0D%0A
-%0D%0A
-Thank you.
-";
-            }
-
-            strTarget = "mailto:" + "?subject=" + strSubject + "&body=" + strBody;
+            string target = "https://www.buymeacoffee.com/openactuator";
 
             try
             {
-                System.Diagnostics.Process.Start(strTarget);
+                System.Diagnostics.Process.Start(target);
             }
             catch (System.ComponentModel.Win32Exception noBrowser)
             {

@@ -29,12 +29,12 @@ namespace DoSA
 
             if (CSettingData.m_emLanguage == EMLanguage.Korean)
             {
-                strDonation = "기여하기";
+                strDonation = "참여하기";
                 strLicense = "라이선스";
                 strHomepage = "홈페이지";
 
-                strDescription = @"DoSA-2D 는 
-액추에이터나 솔레노이드의 자기력을 해석할 수 있는 3차원 오픈소스 프로그램 입니다.
+                strDescription = @"DoSA-2D 는
+액추에이터나 솔레노이드의 자기력을 해석할 수 있는 2차원 오픈소스 프로그램 입니다.
 
 오픈소스 프로젝트로 개발되어 
 개인 뿐만아니라 회사에서도 무료로 프로그램을 사용할 수 있습니다.
@@ -44,14 +44,14 @@ namespace DoSA
             }
             else
             {
-                strDonation = "Donation";
+                strDonation = "Contribution";
                 strLicense = "License";
                 strHomepage = "Homepage";
 
                 strDescription = @"DoSA-2D is an open source actuator software. 
 Anyone can use it free of charge in the company.
 
-DoSA-3D's user environment is similar to actuator product development. 
+DoSA-2D's user environment is similar to actuator product development. 
 This allows actuator developers to easily use it rather than computational analysts.
 
 The program environment is developed to be similar to that of product development.
