@@ -30,6 +30,7 @@ using Microsoft.Win32;
 using System.Resources;
 using System.Globalization;
 using System.Net;
+using SimpleDXF;
 
 namespace DoSA
 {
@@ -46,6 +47,10 @@ namespace DoSA
 
         private CManageFile m_manageFile = new CManageFile();
 
+        // - Property 창이 중복 호출되는 것을 방지하기 위해 사용한다.
+        // - Propety 안의 노드명을 수정할 때 잘못 수정이 발생할 경우 복원용으로도 사용한다.
+        private string m_strSelectedNodeName = string.Empty;
+
         private string m_strBackupNodeName = string.Empty;
 
         private string m_strCommandLineDesignFullName = string.Empty;
@@ -57,7 +62,7 @@ namespace DoSA
 
         public ResourceManager m_resManager = null;
 
-        private bool bPostMode = false;
+        private bool m_bPostMode = false;
         private double m_dGridSize;
         private double m_dVectorScale;
 
@@ -82,7 +87,8 @@ namespace DoSA
             ///------------------------------------------------------------------------
             /// 환경설정전 언어의 초기 설정
             /// 
-            /// 환경설정의 언어 설정값을 읽어드리기 전에 혹시 언어를 사용하는 경우를 대비하여
+            /// 첫 설치 때와 같이
+            /// 환경설정의 언어 설정값을 읽어드리기 전이나 설정 전에 언어를 사용하는 경우를 대비하여
             /// 환경설정의 언어 설정과 상관없이 무조건 시스템언어를 읽어서 프로그램 언어를 설정해 둔다.
             /// 
             /// 환경설정값으로 언어 설정은 이후에 바로 이어지는 CSettingData.updataLanguge() 에서 이루어진다.
@@ -260,11 +266,11 @@ namespace DoSA
                         catch (System.ComponentModel.Win32Exception noBrowser)
                         {
                             if (noBrowser.ErrorCode == -2147467259)
-                                CNotice.printTrace(noBrowser.Message);
+                                CNotice.printLog(noBrowser.Message);
                         }
                         catch (System.Exception other)
                         {
-                            CNotice.printTrace(other.Message);
+                            CNotice.printLog(other.Message);
                         }
 
                         System.Windows.Forms.Application.ExitThread();
@@ -283,7 +289,7 @@ namespace DoSA
             // 인터넷이 연결되지 않았으면 예외 처리가 되면서 함수를 빠져 나간다.
             catch (Exception ex)
             {
-                CNotice.printTrace(ex.Message);
+                CNotice.printLog(ex.Message);
             }
 
         }
@@ -358,7 +364,7 @@ namespace DoSA
 
                 if (nDoSACount >= 2)
                 {
-                    if (CSettingData.m_emLanguage == EMLanguage.English)
+                    if (CSettingData.m_emLanguage == EMLanguage.Korean)
                         CNotice.noticeWarning("DoSA-2D 의 중복 실행은 허용하지 않습니다.");
                     else
                         CNotice.noticeWarning("Duplicate execution of DoSA-2D is not allowed.");
@@ -385,9 +391,9 @@ namespace DoSA
 
                 if (retFreamework == false)
                 {
-                    DialogResult result = CNotice.noticeWarningOKCancelID("DRIO1", "W");
+                    DialogResult result = CNotice.noticeWarningYesNoID("DRIO1", "W");
                     
-                    if(result == DialogResult.OK )
+                    if(result == DialogResult.Yes )
                         openWebsite(@"https://www.microsoft.com/ko-kr/download/details.aspx?id=30653");
 
                     System.Windows.Forms.Application.ExitThread();
@@ -409,6 +415,10 @@ namespace DoSA
 
                 if (false == m_manageFile.isExistFile(strSettingFileFullName))
                 {
+                    // 첫 실행때 환경 설정파일이 존재하지 않는 경우라도
+                    // FromMain() 상단에서 시스템 언어를 확인해서CSettingData.m_emLanguage 을 설정 했기 때문에
+                    // 사용자가 선택 전에도 사용 언어는 지정되어 있고 공지글 언어에도 문제가 없다.
+
                     // 언어 설정 후에 출력해야 한다.
                     CNotice.noticeWarningID("TCFC");
 
@@ -461,9 +471,9 @@ namespace DoSA
                 // 2017 년 이전 버전이면 설치를 유도한다.
                 if (yearOfFEMM < 2017)
                 {
-                    DialogResult result = CNotice.noticeWarningOKCancelID("DRIO", "W");
+                    DialogResult result = CNotice.noticeWarningYesNoID("DRIO", "W");
 
-                    if (result == DialogResult.OK)
+                    if (result == DialogResult.Yes)
                         openWebsite(@"http://www.femm.info/wiki/download");
 
                     System.Windows.Forms.Application.ExitThread();
@@ -473,7 +483,7 @@ namespace DoSA
             }
             catch (Exception ex)
             {
-                CNotice.printTrace(ex.Message);
+                CNotice.printLog(ex.Message);
             }
         }
 
@@ -484,7 +494,7 @@ namespace DoSA
         // 이벤트 발생 때 호출되는 함수
         void printLogEvent(EMOutputTarget emTarget, string strMSG)
         {
-            if (emTarget == EMOutputTarget.TRACE)
+            if (emTarget == EMOutputTarget.LOG_FILE)
             {
                 Trace.WriteLine(DateTime.Now.ToString() + ", " + strMSG);
                 Trace.Flush();
@@ -670,7 +680,7 @@ namespace DoSA
             }
             catch (Exception ex)
             {
-                CNotice.printTrace(ex.Message);
+                CNotice.printLog(ex.Message);
             }
 
         }
@@ -705,7 +715,7 @@ namespace DoSA
         {
             if (m_design.m_bChanged == true)
             {
-                if (DialogResult.OK == CNotice.noticeWarningOKCancelID("DYWT", "W"))
+                if (DialogResult.Yes == CNotice.noticeWarningYesNoID("DYWT", "W"))
                 {
                     saveDesignFile();
                 }
@@ -731,7 +741,7 @@ namespace DoSA
             // - .Length == 0 나 "" 를 사용하라
             if (strDesignName.Length == 0)
             {
-                CNotice.printTraceID("DNIN");
+                CNotice.printLogID("DNIN");
                 return;
             }
 
@@ -767,7 +777,7 @@ namespace DoSA
         {
             if (m_design.m_bChanged == true)
             {
-                if (DialogResult.OK == CNotice.noticeWarningOKCancelID("DYWT", "W"))
+                if (DialogResult.Yes == CNotice.noticeWarningYesNoID("DYWT", "W"))
                 {
                     saveDesignFile();
                 }
@@ -780,7 +790,7 @@ namespace DoSA
             // 디자인 파일을 열 때 디렉토리는 프로그램 작업 디렉토리로 하고 있다.
             openFileDialog.InitialDirectory = CSettingData.m_strCurrentWorkingDirPath;
             openFileDialog.FileName = null;
-            openFileDialog.Filter = "Toolkit Files (*.dsa)|*.dsa|All files (*.*)|*.*";
+            openFileDialog.Filter = "Toolkit File (*.dsa)|*.dsa|All files (*.*)|*.*";
             openFileDialog.FilterIndex = 1;
             openFileDialog.RestoreDirectory = true;
 
@@ -812,10 +822,8 @@ namespace DoSA
                 treeNode = new TreeNode("Tests", (int)EMKind.TESTS, (int)EMKind.TESTS);
                 treeViewMain.Nodes.Add(treeNode);
 
-                foreach (CNode node in m_design.NodeList)
-                {
+                foreach (CDataNode node in m_design.GetNodeList)
                     this.addTreeNode(node.NodeName, node.m_kindKey);
-                }
             }
             else
             {
@@ -834,7 +842,7 @@ namespace DoSA
         {
             if (m_design.m_bChanged == true)
             {
-                if (DialogResult.OK == CNotice.noticeWarningOKCancelID("DYWT1", "W"))
+                if (DialogResult.Yes == CNotice.noticeWarningYesNoID("DYWT1", "W"))
                 {
                     saveDesignFile();
                 }
@@ -960,7 +968,7 @@ namespace DoSA
                 }
                 catch (Exception ex)
                 {
-                    CNotice.printTrace(ex.Message);
+                    CNotice.printLog(ex.Message);
                     return;
                 }
             }
@@ -970,7 +978,7 @@ namespace DoSA
         {
             if (m_design.m_bChanged == true)
             {
-                if (DialogResult.OK == CNotice.noticeWarningOKCancelID("DYWT", "W"))
+                if (DialogResult.Yes == CNotice.noticeWarningYesNoID("DYWT", "W"))
                 {
                     saveDesignFile();
                 }
@@ -981,32 +989,32 @@ namespace DoSA
 
         private void ribbonButtonCoil_Click(object sender, EventArgs e)
         {
-            addRawNode(EMKind.COIL);
+            addDataNode(EMKind.COIL);
         }
 
         private void ribbonButtonMagnet_Click(object sender, EventArgs e)
         {
-            addRawNode(EMKind.MAGNET);
+            addDataNode(EMKind.MAGNET);
         }
         
         private void ribbonButtonSteel_Click(object sender, EventArgs e)
         {
-            addRawNode(EMKind.STEEL);
+            addDataNode(EMKind.STEEL);
         }
 
         private void ribbonButtonForce_Click(object sender, EventArgs e)
         {
-            addRawNode(EMKind.FORCE_TEST);
+            addDataNode(EMKind.FORCE_TEST);
         }
 
         private void ribbonButtonStroke_Click(object sender, EventArgs e)
         {
-            addRawNode(EMKind.STROKE_TEST);
+            addDataNode(EMKind.STROKE_TEST);
         }
 
         private void ribbonButtonCurrent_Click(object sender, EventArgs e)
         {
-            addRawNode(EMKind.CURRENT_TEST);
+            addDataNode(EMKind.CURRENT_TEST);
         }
         
         private void ribbonButtonSetting_Click(object sender, EventArgs e)
@@ -1061,9 +1069,9 @@ namespace DoSA
 
             if (m_manageFile.isExistDirectory(strTestDirName) == true)
             {
-                DialogResult ret = CNotice.noticeWarningOKCancelID("TIAP", "NE");
+                DialogResult ret = CNotice.noticeWarningYesNoID("TIAP", "NE");
 
-                if (ret == DialogResult.Cancel)
+                if (ret == DialogResult.No)
                     return;
 
                 m_manageFile.deleteDirectory(strTestDirName);
@@ -1144,7 +1152,7 @@ namespace DoSA
 
             // Force 계산이 진행되면 후처리로 변화하기 때문에 후처리 모드를 저장한다.
             // 추후 Tree 를 선택할 때 전처리로 모드를 전환한다.
-            bPostMode = true;
+            m_bPostMode = true;
 
             DateTime currentTime = new DateTime();
             currentTime = DateTime.Now;
@@ -1183,7 +1191,7 @@ namespace DoSA
 
         private void buttonMagnetUp_Click(object sender, EventArgs e)
         {
-            CNode node = (CNode)propertyGridMain.SelectedObject;
+            CDataNode node = (CDataNode)propertyGridMain.SelectedObject;
 
             if ("CMagnet" != node.GetType().Name)
             {
@@ -1198,7 +1206,7 @@ namespace DoSA
 
         private void buttonMagnetDown_Click(object sender, EventArgs e)
         {
-            CNode node = (CNode)propertyGridMain.SelectedObject;
+            CDataNode node = (CDataNode)propertyGridMain.SelectedObject;
 
             if ("CMagnet" != node.GetType().Name)
             {
@@ -1213,7 +1221,7 @@ namespace DoSA
 
         private void buttonMagnetLeft_Click(object sender, EventArgs e)
         {
-            CNode node = (CNode)propertyGridMain.SelectedObject;
+            CDataNode node = (CDataNode)propertyGridMain.SelectedObject;
 
             if ("CMagnet" != node.GetType().Name)
             {
@@ -1228,7 +1236,7 @@ namespace DoSA
 
         private void buttonMagnetRight_Click(object sender, EventArgs e)
         {
-            CNode node = (CNode)propertyGridMain.SelectedObject;
+            CDataNode node = (CDataNode)propertyGridMain.SelectedObject;
 
             if ("CMagnet" != node.GetType().Name)
             {
@@ -1252,7 +1260,7 @@ namespace DoSA
         {
             CShapeParts nodeParts = (CShapeParts)propertyGridMain.SelectedObject;
 
-            changePartsShape(nodeParts);
+            changePartsShapeInPopup(nodeParts);
         }
 
         private void buttonForceAndMagnitudeB_Result_Click(object sender, EventArgs e)
@@ -1306,9 +1314,9 @@ namespace DoSA
 
             if (m_manageFile.isExistDirectory(strTestDirName) == true)
             {
-                DialogResult ret = CNotice.noticeWarningOKCancelID("TIAP", "NE");
+                DialogResult ret = CNotice.noticeWarningYesNoID("TIAP", "NE");
 
-                if (ret == DialogResult.Cancel)
+                if (ret == DialogResult.No)
                     return;
 
                 m_manageFile.deleteDirectory(strTestDirName);
@@ -1327,14 +1335,14 @@ namespace DoSA
             reopenFEMM();
 
             // Post Mode 인 경우 m_femm.solveForce() 에서 여러번 화면이 갱신되기 때문에 이전 결과를 닫는다.
-            if (bPostMode == true)
+            if (m_bPostMode == true)
             {
                 // 순서 주의 할 것
                 closePostView();
 
                 resizeFEMM();
 
-                bPostMode = false;
+                m_bPostMode = false;
 
                 // 초기이미지가 없어서 이미지를 비우고 있다.
                 loadDefaultImage(EMKind.FORCE_TEST);
@@ -1370,7 +1378,7 @@ namespace DoSA
 
             // Force 계산이 진행되면 후처리로 변화하기 때문에 후처리 모드를 저장한다.
             // 추후 Tree 를 선택할 때 전처리로 모드를 전환한다.
-            bPostMode = true;
+            m_bPostMode = true;
 
             DateTime currentTime = new DateTime();
             currentTime = DateTime.Now;
@@ -1472,9 +1480,9 @@ namespace DoSA
 
             if (m_manageFile.isExistDirectory(strTestDirName) == true)
             {
-                DialogResult ret = CNotice.noticeWarningOKCancelID("TIAP", "NE");
+                DialogResult ret = CNotice.noticeWarningYesNoID("TIAP", "NE");
 
-                if (ret == DialogResult.Cancel)
+                if (ret == DialogResult.No)
                     return;
 
                 m_manageFile.deleteDirectory(strTestDirName);
@@ -1554,7 +1562,7 @@ namespace DoSA
 
             // Force 계산이 진행되면 후처리로 변화하기 때문에 후처리 모드를 저장한다.
             // 추후 Tree 를 선택할 때 전처리로 모드를 전환한다.
-            bPostMode = true;
+            m_bPostMode = true;
 
 
             DateTime currentTime = new DateTime();
@@ -1613,7 +1621,7 @@ namespace DoSA
             // 이름이 지정된 Design 만 저장을 확인한다.
             if (m_design.m_bChanged == true)
             {
-                if (DialogResult.OK == CNotice.noticeWarningOKCancelID("DYWT1", "W"))
+                if (DialogResult.Yes == CNotice.noticeWarningYesNoID("DYWT1", "W"))
                 {
                     saveDesignFile();
                 }
@@ -1628,7 +1636,11 @@ namespace DoSA
             
             if (false == m_manageFile.isExistFile(m_strCommandLineDesignFullName))
             {
-                CNotice.noticeWarning("커멘드라인으로 입력한 디자인 파일이 존재하지 않습니다.");
+                if (CSettingData.m_emLanguage == EMLanguage.Korean)
+                    CNotice.noticeWarning("디자인 파일이 존재하지 않습니다.");
+                else
+                    CNotice.noticeWarning("The design file does not exist.");
+
                 return;
             }
 
@@ -1648,10 +1660,8 @@ namespace DoSA
             treeNode = new TreeNode("Tests", (int)EMKind.TESTS, (int)EMKind.TESTS);
             treeViewMain.Nodes.Add(treeNode);
 
-            foreach (CNode node in m_design.NodeList)
-            {
+            foreach (CDataNode node in m_design.GetNodeList)
                 this.addTreeNode(node.NodeName, node.m_kindKey);
-            }
 
             openFEMM();
 
@@ -1702,7 +1712,7 @@ namespace DoSA
         {
             if (m_femm == null)
             {
-                CNotice.printTraceID("YATT8");
+                CNotice.printLogID("YATT8");
             }
             // FEMM.exe 가 실행되어 열려 있는 경우는 내용만 삭제하고 크기만 변경한다.
             // FEMM.exe 가 실행되었지만 열려 있지 않은 경우라면 (사용자가 강제로 닫은 경우) 는 종료하고 다시 생성한다.
@@ -1766,7 +1776,7 @@ namespace DoSA
 
             try
             {
-                foreach (CNode node in m_design.NodeList)
+                foreach (CDataNode node in m_design.GetNodeList)
                 {
                     if (node.GetType().Name == "CCoil")
                     {
@@ -1795,7 +1805,7 @@ namespace DoSA
             }
             catch (Exception ex)
             {
-                CNotice.printTrace(ex.Message);
+                CNotice.printLog(ex.Message);
                 return false;
             }
         }
@@ -1806,7 +1816,7 @@ namespace DoSA
 
             try
             {
-                foreach (CNode node in m_design.NodeList)
+                foreach (CDataNode node in m_design.GetNodeList)
                 {
                     // Parts 만 확인한다.
                     if (node.GetType().BaseType.Name == "CShapeParts")
@@ -1820,7 +1830,7 @@ namespace DoSA
             }
             catch (Exception ex)
             {
-                CNotice.printTrace(ex.Message);
+                CNotice.printLog(ex.Message);
                 return false;
             }
         }
@@ -1836,7 +1846,7 @@ namespace DoSA
 
             if (m_design.isDesignShapeOK() == false)
             {
-                CNotice.printTraceID("AEOI");
+                CNotice.printLogID("AEOI");
                 return false;
             }
 
@@ -1916,7 +1926,7 @@ namespace DoSA
 
             if (m_design.isDesignShapeOK() == false)
             {
-                CNotice.printTraceID("AEOT");
+                CNotice.printLogID("AEOT");
                 return false;
             }
 
@@ -1950,7 +1960,7 @@ namespace DoSA
 
             string strForceFileFullName = Path.Combine(strTestDirName, strTestName + ".txt");
 
-            string densityImageFileFullName = string.Empty;
+            string strImageFileFullName = string.Empty;
 
             bool bCheck = false;
 
@@ -1987,59 +1997,67 @@ namespace DoSA
             }
             catch (Exception ex)
             {
-                CNotice.printTrace(ex.Message);
+                CNotice.printLog(ex.Message);
                 return;
             }
 
-            // Density 출력이 아니라 Force 실험인 경우는 패턴 출력을 하지 않는다.
+            // 자기력 해석버튼이라면 Flux 을 출력한다.
             if (bForceTest == true)
-                return;
-
-
-            // 혹시 후처리 모드라면 이전 후처리를 없애고 전처리로 복구한다.
-            if (bPostMode == true)
             {
-                // 순서 주의 할 것
-                closePostView();
+                strImageFileFullName = Path.Combine(strTestDirName, strTestName + "_flux.bmp");
 
-                bPostMode = false;
+                if (m_manageFile.isExistFile(strImageFileFullName))
+                    m_manageFile.deleteFile(strImageFileFullName);
+
+                m_femm.writeContourImage(minX, minY, maxX, maxY, strImageFileFullName, strPostDataFullName);
+
             }
-
-            //------------------------- 자속밀도 이미지 생성 --------------------------------
-            if (bMagnitude == true)
-            {
-                densityImageFileFullName = Path.Combine(strTestDirName, strTestName + "_magnitude.bmp");
-
-                if (m_manageFile.isExistFile(densityImageFileFullName))
-                    m_manageFile.deleteFile(densityImageFileFullName);
-
-                m_femm.writeDensityMagnitudeImage(  minX, minY, maxX, maxY, densityImageFileFullName, strPostDataFullName);
-            }                
             else
             {
-                densityImageFileFullName = Path.Combine(strTestDirName, strTestName + "_vector.bmp");
+                // 후처리 모드라면 이전 후처리를 없애고 전처리로 복구해야 화면 중복을 막을 수 있다.
+                if (m_bPostMode == true)
+                {
+                    // 순서 주의 할 것
+                    closePostView();
 
-                if (m_manageFile.isExistFile(densityImageFileFullName))
-                    m_manageFile.deleteFile(densityImageFileFullName);
+                    m_bPostMode = false;
+                }
 
-                m_femm.writeDensityVectorImage( minX, minY, maxX, maxY, densityImageFileFullName, strPostDataFullName,  
-                                                m_dGridSize, m_dVectorScale);
+                if (bMagnitude == true)
+                {
+                    strImageFileFullName = Path.Combine(strTestDirName, strTestName + "_magnitude.bmp");
+
+                    if (m_manageFile.isExistFile(strImageFileFullName))
+                        m_manageFile.deleteFile(strImageFileFullName);
+
+                    m_femm.writeDensityMagnitudeImage(minX, minY, maxX, maxY, strImageFileFullName, strPostDataFullName);
+                }
+                else
+                {
+                    strImageFileFullName = Path.Combine(strTestDirName, strTestName + "_vector.bmp");
+
+                    if (m_manageFile.isExistFile(strImageFileFullName))
+                        m_manageFile.deleteFile(strImageFileFullName);
+
+                    m_femm.writeDensityVectorImage(minX, minY, maxX, maxY, strImageFileFullName, strPostDataFullName,
+                                                    m_dGridSize, m_dVectorScale);
+                }
             }
 
             // 후처리 모드이 인것을 저장한다.
             // 추후 Tree 를 선택할 때 전처리로 모드를 전환한다.
-            bPostMode = true;
+            m_bPostMode = true;
 
             //------------------------ 자속밀도 이미지 로딩 ------------------------------------
             try
             {
 
-                bCheck = m_manageFile.isExistFile(densityImageFileFullName);
+                bCheck = m_manageFile.isExistFile(strImageFileFullName);
 
                 if (bCheck == true)
                 {
                     // 파일을 잡고 있지 않기 위해서 임시 이미지를 사용하고 Dispose 한다.
-                    Image tmpImage = Image.FromFile(densityImageFileFullName);
+                    Image tmpImage = Image.FromFile(strImageFileFullName);
 
                     pictureBoxForce.Image = new Bitmap(tmpImage);
                     pictureBoxForce.SizeMode = PictureBoxSizeMode.StretchImage;
@@ -2056,7 +2074,7 @@ namespace DoSA
             }
             catch (Exception ex)
             {
-                CNotice.printTrace(ex.Message);
+                CNotice.printLog(ex.Message);
                 return;
             }
         }
@@ -2093,7 +2111,7 @@ namespace DoSA
 
                 if (listDataX.Count != listDataY.Count)
                 {
-                    CNotice.printTraceID("TNOR");
+                    CNotice.printLogID("TNOR");
                     return;
                 }
 
@@ -2114,8 +2132,8 @@ namespace DoSA
             }
             catch (Exception ex)
             {
-                CNotice.printTrace(ex.Message);
-                CNotice.printTraceID("AEOI");
+                CNotice.printLog(ex.Message);
+                CNotice.printLogID("AEOI");
                 return;
             }
         }
@@ -2152,7 +2170,7 @@ namespace DoSA
 
                 if (listDataX.Count != listDataY.Count)
                 {
-                    CNotice.printTraceID("TNOR");
+                    CNotice.printLogID("TNOR");
                     return;
                 }
 
@@ -2174,8 +2192,8 @@ namespace DoSA
             }
             catch (Exception ex)
             {
-                CNotice.printTrace(ex.Message);
-                CNotice.printTraceID("AEOI");
+                CNotice.printLog(ex.Message);
+                CNotice.printLogID("AEOI");
                 return;
             }
         }
@@ -2188,7 +2206,7 @@ namespace DoSA
         {
             if (m_design.m_strDesignName.Length == 0)
             {
-                CNotice.printTraceID("YATT9");
+                CNotice.printLogID("YATT9");
                 return false;
             }
 
@@ -2216,7 +2234,7 @@ namespace DoSA
                 writeFile.writeDataLine(writeStream, "DoSA_Version", Assembly.GetExecutingAssembly().GetName().Version, 1);
                 writeFile.writeDataLine(writeStream, "File_Version", FileVersionInfo.GetVersionInfo(Assembly.GetExecutingAssembly().Location).FileVersion, 1);
 
-                m_design.writeObject(writeStream);
+                m_design.writeObject(writeStream, 1);
 
                 writeFile.writeEndLine(writeStream, "DoSA_Project", 0);
 
@@ -2233,7 +2251,7 @@ namespace DoSA
             }
             catch (Exception ex)
             {
-                CNotice.printTrace(ex.Message);
+                CNotice.printLog(ex.Message);
             }
 
             return true;
@@ -2278,7 +2296,7 @@ namespace DoSA
             }
             catch (Exception ex)
             {
-                CNotice.printTrace(ex.Message);
+                CNotice.printLog(ex.Message);
                 return false;
             }
 
@@ -2317,19 +2335,25 @@ namespace DoSA
                         case "Coil":
                             CCoil coil = new CCoil();
                             if (true == coil.readObject(listStringNode))
-                                m_design.NodeList.Add(coil);
+                                m_design.GetNodeList.Add(coil);
                             break;
 
                         case "Steel":
                             CSteel steel = new CSteel();
                             if (true == steel.readObject(listStringNode))
-                                m_design.NodeList.Add(steel);
+                                m_design.GetNodeList.Add(steel);
                             break;
 
                         case "Magnet":
                             CMagnet magnet = new CMagnet();
                             if (true == magnet.readObject(listStringNode))
-                                m_design.NodeList.Add(magnet);
+                                m_design.GetNodeList.Add(magnet);
+                            break;
+
+                        case "Non-Kind":
+                            CNonKind nonKind = new CNonKind();
+                            if (true == nonKind.readObject(listStringNode))
+                                m_design.GetNodeList.Add(nonKind);
                             break;
 
                         // CExpriment 하위 객체
@@ -2337,21 +2361,21 @@ namespace DoSA
                         case "ForceTest":
                             CForceTest forceTest = new CForceTest();
                             if (true == forceTest.readObject(listStringNode))
-                                m_design.NodeList.Add(forceTest);
+                                m_design.GetNodeList.Add(forceTest);
                             break;
 
                         case "StrokeExperiment":    // 하위 버전 호환 유지 ver(0.9.15.6)
                         case "StrokeTest":
                             CStrokeTest strokeTest = new CStrokeTest();
                             if (true == strokeTest.readObject(listStringNode))
-                                m_design.NodeList.Add(strokeTest);
+                                m_design.GetNodeList.Add(strokeTest);
                             break;
 
                         case "CurrentExperiment":   // 하위 버전 호환 유지 ver(0.9.15.6)
                         case "CurrentTest":
                             CCurrentTest currentTest = new CCurrentTest();
                             if (true == currentTest.readObject(listStringNode))
-                                m_design.NodeList.Add(currentTest);
+                                m_design.GetNodeList.Add(currentTest);
                             break;
 
                         default:
@@ -2418,11 +2442,11 @@ namespace DoSA
                     return;
                 }
 
-                CNode node = m_design.getNode(selectedNodeText);
+                CDataNode node = m_design.getNode(selectedNodeText);
 
                 if (node == null)
                 {
-                    CNotice.printTraceID("TDNI");
+                    CNotice.printLogID("TDNI");
                     return;
                 }
 
@@ -2434,9 +2458,9 @@ namespace DoSA
 
                     if (m_manageFile.isExistDirectory(strTestDirName) == true)
                     {
-                        DialogResult ret = CNotice.noticeWarningOKCancelID("TTHR", "W");
+                        DialogResult ret = CNotice.noticeWarningYesNoID("TTHR", "W");
 
-                        if (ret == DialogResult.Cancel)
+                        if (ret == DialogResult.No)
                             return;
 
                         m_manageFile.deleteDirectory(strTestDirName);
@@ -2450,7 +2474,7 @@ namespace DoSA
                 m_design.m_bChanged = true;
 
                 this.treeViewMain.SelectedNode.Remove();
-                deleteRawNode(selectedNodeText);
+                deleteDataNode(selectedNodeText);
 
                 m_design.redrawDesign(m_femm);
 
@@ -2471,16 +2495,16 @@ namespace DoSA
                 return;
             }
 
-            CNode node = m_design.getNode(selectedNodeText);
+            CDataNode node = m_design.getNode(selectedNodeText);
 
             if (node == null)
             {
-                CNotice.printTraceID("TDNI");
+                CNotice.printLogID("TDNI");
                 return;
             }
 
             if (node.GetType().BaseType.Name == "CShapeParts")
-                changePartsShape((CShapeParts)node);
+                changePartsShapeInPopup((CShapeParts)node);
 
             // 수정 되었음을 기록한다.
             m_design.m_bChanged = true;
@@ -2498,16 +2522,17 @@ namespace DoSA
 
             // 신기하게 treeViewMain_Click 나 treeViewMain_MouseUp 이벤트에서 동작시키면 이상하게 동작한다.
             // 그래서 중복 호출이 되더라도 AfterSelect 을 사용한다.
-            showNode(selectedNodeText);
+            showDataNode(selectedNodeText);
         }
 
+
         //노드 추가를 위한 유효성검사
-        private void addRawNode(EMKind emKind)
+        private void addDataNode(EMKind emKind)
         {
             string strName = string.Empty;
             bool bRet = false;
 
-            CNode Node = null;
+            CDataNode Node = null;
 
             if (m_design.m_strDesignName.Length == 0)
             {
@@ -2539,7 +2564,7 @@ namespace DoSA
                     return;
                 }                    
 
-                strName = popupShape.m_strPartName;
+                strName = popupShape.PartName;
 
                 //==================================================================
                 // 결과리포트에서 지원하는 만큼 복수개의 Coil 과 Spring 을 지원한다.
@@ -2554,7 +2579,7 @@ namespace DoSA
                         coil.NodeName = strName;
                         coil.m_kindKey = emKind;
 
-                        bRet = m_design.addNode(coil);
+                        bRet = m_design.addDataNode(coil);
                         break;
 
                     case EMKind.MAGNET:
@@ -2563,7 +2588,7 @@ namespace DoSA
                         magnet.NodeName = strName;
                         magnet.m_kindKey = emKind;
 
-                        bRet = m_design.addNode(magnet);
+                        bRet = m_design.addDataNode(magnet);
                         break;
 
                     case EMKind.STEEL:
@@ -2572,15 +2597,15 @@ namespace DoSA
                         steel.NodeName = strName;
                         steel.m_kindKey = emKind;
 
-                        bRet = m_design.addNode(steel);
+                        bRet = m_design.addDataNode(steel);
                         break;    
 
                     default:
-                        CNotice.printTraceID("TWKO");
+                        CNotice.printLogID("TWKO");
                         return;
                 }
 
-                CFace face = popupShape.makeFace();
+                CFace face = popupShape.makeFaceInPopup();
 
                 if (null != face)
                 {
@@ -2596,7 +2621,7 @@ namespace DoSA
                 {
                     CNotice.noticeWarningID("TGWN");
 
-                    CNotice.printTraceID("TGWN");
+                    CNotice.printLogID("TGWN");
 
                     return;
                 }
@@ -2620,7 +2645,7 @@ namespace DoSA
                         break;
 
                     default:
-                        CNotice.printTraceID("YATT4");
+                        CNotice.printLogID("YATT4");
                         return;
                 }
 
@@ -2646,7 +2671,7 @@ namespace DoSA
                         // 생성될 때 환경설정의 조건으로 초기화한다.
                         forceTest.MeshSizePercent = CSettingData.m_dMeshLevelPercent;
 
-                        bRet = m_design.addNode(forceTest);
+                        bRet = m_design.addDataNode(forceTest);
                         break;
 
                     case EMKind.STROKE_TEST:
@@ -2657,7 +2682,7 @@ namespace DoSA
                         // 생성될 때 환경설정의 조건으로 초기화한다.
                         strokeTest.MeshSizePercent = CSettingData.m_dMeshLevelPercent;
 
-                        bRet = m_design.addNode(strokeTest);
+                        bRet = m_design.addDataNode(strokeTest);
                         break;
 
                     case EMKind.CURRENT_TEST:
@@ -2668,11 +2693,11 @@ namespace DoSA
                         // 생성될 때 환경설정의 조건으로 초기화한다.
                         currentTest.MeshSizePercent = CSettingData.m_dMeshLevelPercent;
 
-                        bRet = m_design.addNode(currentTest);
+                        bRet = m_design.addDataNode(currentTest);
                         break;
 
                     default:
-                        CNotice.printTraceID("TWKO");
+                        CNotice.printLogID("TWKO");
                         return;
                 }
 
@@ -2688,7 +2713,7 @@ namespace DoSA
                 addTreeNode(strName, emKind);
 
                 // 해당 Node 의 Properies View 와 Information Windows 를 표시한다
-                showNode(strName);
+                showDataNode(strName);
             }
             else
                 CNotice.noticeWarningID("TNIA");
@@ -2709,6 +2734,7 @@ namespace DoSA
                 case EMKind.COIL:
                 case EMKind.MAGNET:
                 case EMKind.STEEL:
+                case EMKind.NON_KIND:
                     treeViewMain.Nodes[FIRST_PARTS_INDEX].Nodes.Add(treeNode);
                     break;
 
@@ -2747,9 +2773,9 @@ namespace DoSA
         //}
 
         // 선택한 노드를 Information Window 와 Property View 에 보여준다
-        private void showNode(string nodeName)
+        private void showDataNode(string nodeName)
         {
-            CNode node = m_design.getNode(nodeName);
+            CDataNode node = m_design.getNode(nodeName);
 
             string strTestDirName = string.Empty;
 
@@ -2757,6 +2783,14 @@ namespace DoSA
             {
                 if (node != null)
                 {
+                    // 선택된 Node 를 다시 클릭한 경우고 Node 의 프로퍼티가 보이고 있는 경우라면
+                    // 중복동작을 막기 위해 바로 리턴한다.
+                    if (m_strSelectedNodeName == node.NodeName && propertyGridMain.SelectedObject != null)
+                        return;
+                    else
+                        /// 중복선택을 확인하기 위해서 선택된 이름을 보관한다.
+                        m_strSelectedNodeName = node.NodeName;
+
                     // 프로퍼티창을 변경한다.
                     propertyGridMain.SelectedObject = node;
 
@@ -2787,24 +2821,25 @@ namespace DoSA
 
                             m_femm.clearSelected();
 
-                            selectFace(parts);
+                            selectFaceOnFemm(parts);
                         }
                         /// 부품이 아닌 경우는 선택을 해지한다
                         else
                             m_femm.clearSelected();
 
                         // 혹시 후처리 모드라면 전처리로 복구한다.
-                        if (bPostMode == true)
+                        if (m_bPostMode == true)
                         {
                             // 순서 주의 할 것
                             closePostView();
 
                             resizeFEMM();
 
-                            bPostMode = false;
+                            m_bPostMode = false;
                         }
                     }
 
+                    // 종류에 따라 우측창을 처리한다.
                     switch (node.m_kindKey)
                     {
                         case EMKind.COIL:
@@ -2819,7 +2854,16 @@ namespace DoSA
                             splitContainerRight.Panel1.Controls.Add(this.panelSteel);
 
                             CSteel steel = (CSteel)node;
-                            drawBHCurve(steel.Material);
+                            drawBHCurve(steel.MaterialName);
+                            break;
+
+                        case EMKind.NON_KIND:
+                            // 화면을 갱신한다.
+                            splitContainerRight.Panel1.Controls.Clear();
+                            splitContainerRight.Panel1.Controls.Add(this.panelEmpty);
+
+                            // PropertyGrid 창을 초기화 한다.
+                            propertyGridMain.SelectedObject = null;
                             break;
 
                         case EMKind.FORCE_TEST:
@@ -2900,11 +2944,12 @@ namespace DoSA
                         default:
                             return;
                     }
+
                 }
             }
             catch (Exception ex)
             {
-                CNotice.printTrace(ex.Message);
+                CNotice.printLog(ex.Message);
             }
         }
 
@@ -2925,7 +2970,7 @@ namespace DoSA
         /// 
         /// FEMM 에 표시함으로 절대좌표를 사용해야 한다
         /// </summary>
-        private void selectFace(CShapeParts parts)
+        private void selectFaceOnFemm(CShapeParts parts)
         {
             /// 매번 생성하는 Property 이기 때문에 
             /// LineList 는 새로운 List에  담는 동작 한번만 호출하고, 사용은 새로운 List 를 사용한다.
@@ -2935,7 +2980,7 @@ namespace DoSA
             /// 디자인의 모든 포인트를 담는다.
             List<CPoint> listAbsoluteAllPoint = new List<CPoint>();
 
-            foreach(CNode node in m_design.NodeList)
+            foreach(CDataNode node in m_design.GetNodeList)
             {
                 /// 부품이 선택되면 FEMM 에 선택 표시를 한다
                 if (node.GetType().BaseType.Name == "CShapeParts")
@@ -2961,7 +3006,7 @@ namespace DoSA
             
             for (int i = 0; i < listAbsolutePoints.Count; i++)
             {
-                if(listAbsolutePoints[i].m_emLineKind == EMLineKind.STRAIGHT)
+                if(listAbsolutePoints[i].LineKind == EMLineKind.STRAIGHT)
                 {
                     //// 마지막 라인만 다르게 처리한다.
                     if (i < listAbsolutePoints.Count - 1)
@@ -2994,8 +3039,8 @@ namespace DoSA
                     // 양단에 두점에 라인위에 있는 경우는 라인을 분리하는 점이 없음을 의미한다.
                     if (listPointOnLine.Count == 2)
                     {
-                        selectPoint.m_dX = (startPoint.m_dX + endPoint.m_dX) / 2.0f;
-                        selectPoint.m_dY = (startPoint.m_dY + endPoint.m_dY) / 2.0f;
+                        selectPoint.X = (startPoint.X + endPoint.X) / 2.0f;
+                        selectPoint.Z = (startPoint.Z + endPoint.Z) / 2.0f;
 
                         m_femm.selectLine(selectPoint);
                     }
@@ -3005,8 +3050,8 @@ namespace DoSA
                         /// 인덱스와 같이 클래스로 만들어서 CSortDataSet 형태로 List 에 저장한다.
                         foreach(CPoint point in listPointOnLine)
                         {
-                            dLength = Math.Sqrt(    Math.Pow(startPoint.m_dX - point.m_dX, 2) +
-                                                    Math.Pow(startPoint.m_dY - point.m_dY, 2));
+                            dLength = Math.Sqrt(    Math.Pow(startPoint.X - point.X, 2) +
+                                                    Math.Pow(startPoint.Z - point.Z, 2));
 
                             listDataSet.Add(new CSortDataSet(dLength, index));
                             index ++;
@@ -3029,18 +3074,18 @@ namespace DoSA
                             startPoint = listPointOnLine[listDataSet[j].m_iIndex];
                             endPoint = listPointOnLine[listDataSet[j+1].m_iIndex];
 
-                            selectPoint.m_dX = (startPoint.m_dX + endPoint.m_dX) / 2.0f;
-                            selectPoint.m_dY = (startPoint.m_dY + endPoint.m_dY) / 2.0f;
+                            selectPoint.X = (startPoint.X + endPoint.X) / 2.0f;
+                            selectPoint.Z = (startPoint.Z + endPoint.Z) / 2.0f;
 
                             m_femm.selectLine(selectPoint);
                         }
                     }               
                     
                 }
-                else if(listAbsolutePoints[i].m_emLineKind == EMLineKind.ARC)
+                else if(listAbsolutePoints[i].LineKind == EMLineKind.ARC)
                 {
-                    selectPoint.m_dX = listAbsolutePoints[i].m_dX;
-                    selectPoint.m_dY = listAbsolutePoints[i].m_dY;
+                    selectPoint.X = listAbsolutePoints[i].X;
+                    selectPoint.Z = listAbsolutePoints[i].Z;
 
                     m_femm.selectArc(selectPoint);
                 }
@@ -3048,7 +3093,7 @@ namespace DoSA
         }
 
         /// 트리를 삭제 한다
-        private void deleteRawNode(string nodeName)
+        private void deleteDataNode(string nodeName)
         {
             // 내부적으로 명칭배열까지도 모두 삭제한다.
             m_design.deleteNode(nodeName);
@@ -3061,6 +3106,21 @@ namespace DoSA
             propertyGridMain.SelectedObject = null;
         }
 
+        private void deleteTreeNode(string nodeName)
+        {
+            int iRemoveIndex = -1;
+
+            int nodeCount = treeViewMain.Nodes[0].Nodes.Count;
+
+            for (int i = 0; i < nodeCount; i++)
+                if (treeViewMain.Nodes[0].Nodes[i].Text == nodeName)
+                    iRemoveIndex = i;
+
+            // 루프안에 삭제를 하면 인덱스 에러가 발생한다.							
+            if (iRemoveIndex != -1)
+                treeViewMain.Nodes[0].Nodes[iRemoveIndex].Remove();
+        }
+
         #endregion
 
         #region------------------------ PropertyView 관련 ------------------------------
@@ -3068,7 +3128,7 @@ namespace DoSA
         //property 수정
         private void propertyGrid_PropertyValueChanged(object s, PropertyValueChangedEventArgs e)
         {
-            CNode node = (CNode)propertyGridMain.SelectedObject;
+            CDataNode node = (CDataNode)propertyGridMain.SelectedObject;
 
             string strChangedItemValue = e.ChangedItem.Value.ToString();
             string strChangedItemLabel = e.ChangedItem.Label;
@@ -3153,7 +3213,7 @@ namespace DoSA
             }
             catch (Exception ex)
             {
-                CNotice.printTrace(ex.Message);
+                CNotice.printLog(ex.Message);
             }
 
             // 수정 되었음을 기록한다.
@@ -3162,13 +3222,13 @@ namespace DoSA
             propertyGridMain.Refresh();
         }
 
-        private void setCurrentInTest(CNode node)
+        private void setCurrentInTest(CDataNode node)
         {
             // 총 저항은 합산이 필요함으로 0.0f 로 초기화 한다.
             double total_resistance = 0.0f;
 
             // 총 저항
-            foreach (CNode nodeTemp in m_design.NodeList)
+            foreach (CDataNode nodeTemp in m_design.GetNodeList)
                 if (nodeTemp.m_kindKey == EMKind.COIL)
                 {
                     total_resistance += ((CCoil)nodeTemp).Resistance;
@@ -3272,7 +3332,7 @@ namespace DoSA
 
                 if (listH.Count != listB.Count)
                 {
-                    CNotice.printTraceID("TSOT");
+                    CNotice.printLogID("TSOT");
                     return;
                 }
                 
@@ -3299,7 +3359,7 @@ namespace DoSA
 
             if (false == m_manageFile.isExistFile(strFileFullName))
             {
-                CNotice.printTraceID("TMFD");
+                CNotice.printLogID("TMFD");
                 return false;
             }
 
@@ -3360,14 +3420,14 @@ namespace DoSA
 
                 if(bFoundMaterial == false)
                 {
-                    CNotice.printTraceID("TDFT");
+                    CNotice.printLogID("TDFT");
                     return false;
                 }
             }
             catch (Exception ex)
             {
-                CNotice.printTrace(ex.Message);
-                CNotice.printTraceID("AETT");
+                CNotice.printLog(ex.Message);
+                CNotice.printLogID("AETT");
                 return false;
             }
 
@@ -3462,7 +3522,7 @@ namespace DoSA
             }
             catch (Exception ex)
             {
-                CNotice.printTrace(ex.Message);
+                CNotice.printLog(ex.Message);
                 return;
             }           
         }
@@ -3493,7 +3553,7 @@ namespace DoSA
 
                 if (dMinX >= dMaxX || dMinY >= dMaxY)
                 {
-                    CNotice.printTraceID("TMVI");
+                    CNotice.printLogID("TMVI");
                     return;
                 }
 
@@ -3521,8 +3581,8 @@ namespace DoSA
             }
             catch (Exception ex)
             {
-                CNotice.printTrace(ex.Message);
-                CNotice.printTraceID("AEOI1");
+                CNotice.printLog(ex.Message);
+                CNotice.printLogID("AEOI1");
                 return;
             }
         }
@@ -3556,50 +3616,99 @@ namespace DoSA
             System.Diagnostics.Process.Start(strWebAddress);
         }
 
-        private void changePartsShape(CShapeParts nodeParts)
+        private void changePartsShapeInPopup(CShapeParts shapePart)
         {
             try
             {
                 // 형상이 설정되지 않는 경우는
                 // Part 별로 다른 형상을 기본값으로 PopupShape 객체를 생성한다.
-                if (nodeParts.Face == null)
+                if (shapePart.Face == null)
                 {
-                    CNotice.printTraceID("APWT");
+                    CNotice.printLogID("APWT");
                     return;
                 }
 
-                // 혹시 FEMM 의 화면이 닫힌 경우 FEMM 의 화면을 복원합니다.
-                reopenFEMM();
+                // 변경전 정보를 저장해 둔다.
+                string strOriginalNodeName = shapePart.NodeName;
 
-                PopupShape popupShape = new PopupShape(nodeParts.NodeName, nodeParts.Face, nodeParts.m_kindKey);
+                PopupShape popupShape = new PopupShape(shapePart.NodeName, shapePart.Face, shapePart.m_kindKey);
                 popupShape.StartPosition = FormStartPosition.CenterParent;
-
-                /// 이해할 수 없지만, 자동으로 Owner 설정이 되는 경우도 있고 아닌 경우도 있기 때문에
-                /// Shape 창에서 MainForm 을 접근할 수 있도록 미리 설정을 한다.
-                //popupShape.Owner = this;
 
                 if (DialogResult.OK == popupShape.ShowDialog(this))
                 {
-                    CFace face = popupShape.makeFace();
-
-                    if (null != face)
+                    if (shapePart.m_kindKey == EMKind.NON_KIND && popupShape.PartType != EMKind.NON_KIND)
                     {
-                        nodeParts.Face = face;
+                        CShapeParts newShapePart = new CShapeParts();
 
-                        /// 형상에 맞추어 코일 설계 사양정보를 초기화 한다.
-                        if (nodeParts.m_kindKey == EMKind.COIL)
-                            ((CCoil)nodeParts).initialShapeDesignValue();
+                        switch (popupShape.PartType)
+                        {
+                            case EMKind.COIL:
+                                newShapePart = (CShapeParts)new CCoil();
+                                break;
 
-                        // 혹시 FEMM 의 화면이 닫힌 경우 FEMM 의 화면을 복원합니다.
-                        reopenFEMM();
+                            case EMKind.MAGNET:
+                                newShapePart = (CShapeParts)new CMagnet();
+                                break;
+
+                            case EMKind.STEEL:
+                                newShapePart = (CShapeParts)new CSteel();
+                                break;
+
+                            default:
+                                CNotice.printLog("선택할 수 없는 종류가 선택 되었다.");
+                                return;
+                        }
+
+                        ///???????????????????????????????????????????????????????
+                        /// C# 은 아직도 애매하다. Call by Reference 에 대해서.
+                        /// ??????????????????????????????????????????????????????
+                        /// Face 의 생성을 해서 교체는 가능한데 종류를 가진 객체는 교체가 불가능하기 때문에
+                        /// 직접 해당 객체를 삭제하고 추가하는 방식을 사용하고 있다.
+                        deleteDataNode(strOriginalNodeName);
+                        deleteTreeNode(strOriginalNodeName);
+
+                        // CFormMain 의 addDataNode() 는 Dialog 를 띠워서 추가할 때만 사용이 가능하다.
+                        // 따라서 직접 추가를 위해서는 m_design 안의 addDataNode() 를 사용한다.
+                        m_design.addDataNode((CDataNode)newShapePart);
+                        addTreeNode(strOriginalNodeName, popupShape.PartType);
+
+                        /// 수정이 없을때도 아래의 코드를 동일하게 사용하기 위해 객체의 교체작업도 같이 한다.
+                        shapePart = newShapePart;
                     }
-                    else
+
+                    // PopupShade 창에서 수정된 좌표값으로 face 를 다시 생성한다.
+                    CFace face = popupShape.makeFaceInPopup();
+
+                    // Face 조건에 맞지 않으면 null 이 넘어 온다.
+                    if (null == face)
                     {
                         CNotice.noticeWarningID("TGWN");
-
-                        CNotice.printTraceID("TGWN");
+                        CNotice.printLogID("TGWN");
+                        return;
                     }
 
+                    ///------------------------------- 1. Node Face 교체 -------------------------
+                    /// node 의 Face 를 수정된 face 로 교체한다.
+                    shapePart.Face = face;
+
+                    /// 형상에 맞추어 코일 설계 사양정보를 초기화 한다.
+                    if (shapePart.m_kindKey == EMKind.COIL)
+                        ((CCoil)shapePart).initialShapeDesignValue();
+
+                    ///------------------------------- 2. Node Name 교체 -------------------------
+                    // 노드명칭은 수정과 상관없이 무조건 Dialog 의 값으로 수정한다.                    
+                    shapePart.NodeName = popupShape.PartName;
+
+                    treeViewMain.SelectedNode.Text = shapePart.NodeName;
+
+                    showDataNode(shapePart.NodeName);
+
+                    // 혹시 FEMM 의 화면이 닫힌 경우 FEMM 의 화면을 복원합니다.
+                    reopenFEMM();
+
+                    // 형상변경이 있는 경우 FEMM 을 다시 실행하는데 선택을 유지하기 위해 추가한다.
+                    if (m_strSelectedNodeName != string.Empty)
+                        selectFaceOnFemm(shapePart);
                 }
                 else
                 {
@@ -3611,15 +3720,15 @@ namespace DoSA
             }
             catch (Exception ex)
             {
-                CNotice.printTrace(ex.Message);
-                CNotice.printTraceID("AEOD");
+                CNotice.printLog(ex.Message);
+                CNotice.printLogID("AEOD");
                 return;
             }
 
             // 수정 되었음을 기록한다.
             m_design.m_bChanged = true;
 
-            CNotice.printUserMessage(nodeParts.NodeName + m_resManager.GetString("_PHBM"));
+            CNotice.printUserMessage(shapePart.NodeName + m_resManager.GetString("_PHBM"));
 
             /// 수정된 코일형상을 프로퍼티에 표시한다.
             propertyGridMain.Refresh();
@@ -3629,7 +3738,16 @@ namespace DoSA
 
         private void ribbonButtonDonation_Click(object sender, EventArgs e)
         {
-            string target = "https://www.buymeacoffee.com/openactuator";
+            string target;
+
+            if (CSettingData.m_emLanguage == EMLanguage.Korean)
+            {
+                target = "https://solenoid.or.kr/index_donation.html";
+            }
+            else
+            {
+                target = "https://www.buymeacoffee.com/openactuator";
+            }
 
             try
             {
@@ -3638,12 +3756,162 @@ namespace DoSA
             catch (System.ComponentModel.Win32Exception noBrowser)
             {
                 if (noBrowser.ErrorCode == -2147467259)
-                    CNotice.printTrace(noBrowser.Message);
+                    CNotice.printLog(noBrowser.Message);
             }
             catch (System.Exception other)
             {
-                CNotice.printTrace(other.Message);
+                CNotice.printLog(other.Message);
             }
         }
+
+        private void ribbonButtonImportDXF_Click(object sender, EventArgs e)
+        {
+            OpenFileDialog openFileDialog = new OpenFileDialog();
+
+            // 파일 열기창 설정
+            openFileDialog.Title = "Import a DXF File";
+            // 디자인 파일을 열 때 디렉토리는 프로그램 작업 디렉토리로 하고 있다.
+            openFileDialog.InitialDirectory = CSettingData.m_strCurrentWorkingDirPath;
+            openFileDialog.FileName = null;
+            openFileDialog.Filter = "DXF 2D File (*.dxf)|*.dxf|All files (*.*)|*.*";
+            openFileDialog.FilterIndex = 1;
+            openFileDialog.RestoreDirectory = true;
+
+            DialogResult result = openFileDialog.ShowDialog();
+
+            if (result == DialogResult.OK)
+            {
+                string strDXFFileFullName = openFileDialog.FileName;
+
+                importDXF(strDXFFileFullName);
+            }
+        }
+
+        private void importDXF(string strDXFFileName)
+        {
+            //Loads a file from the command line argument
+            Document simpleDXF = new Document(strDXFFileName);
+            List<Polyline> listPolylines;
+            int nCountParts = 0;
+
+            simpleDXF.Read();
+
+            listPolylines = simpleDXF.Polylines;
+
+            try
+            {
+                foreach (Polyline polyLine in listPolylines)
+                {
+                    // 이름 인덱스를 증가시킨다.
+                    nCountParts++;
+
+                    CFace face = new CFace();
+
+                    face.BasePoint.X = 0.0;
+                    face.BasePoint.Z = 0.0;
+
+                    if (polyLine.Vertexes.Count < 4)
+                    {
+                        CNotice.printLog("3개 이하는 Point 로 구성된 Face 는 제외 됩니다.");
+                        continue;
+                    }
+
+                    List<CPoint> listPoint = new List<CPoint>();
+
+                    bool bCheckPoint = true;
+
+                    // 마지막점은 시작점과 동일점이기 때문에 -1 을 추가하여 제외시킨다.
+                    for (int i = 0; i < polyLine.Vertexes.Count - 1; i++)
+                    {
+                        // 매번 신규로 생성을 해야 한다.
+                        CPoint point = new CPoint();
+
+                        point.X = polyLine.Vertexes[i].Position.X;
+                        point.Z = polyLine.Vertexes[i].Position.Y;
+
+                        // 자리수 오차에서 발생하는 0 < X < -0.1 um 사이의 값은 영으로 처리한다.
+                        if (CSmallUtil.isZeroPosition(point.X))
+                        {
+                            point.X = 0;
+                        }
+
+                        // 축대칭해석만 지원하고 있기 때문에 
+                        // 거리에 대한 영처리가 된 이 후에 point.X 가 음의 값이면 해당 List 를 Node 로 생성하지 않는다.
+                        if (point.X < 0)
+                        {
+                            bCheckPoint = false;
+                        }
+
+                        // 무조건 Straight 만 지원 한다.
+                        point.LineKind = EMLineKind.STRAIGHT;
+
+                        listPoint.Add(point);
+                    }
+
+                    // 음의 X 값이 있거나 point 의 수가 4보다 작으면 Node 생성작업을 취소한다.
+                    if (bCheckPoint == false || listPoint.Count < 4)
+                        continue;
+
+                    // DXF 에서 읽어드리는 객체는 무조건 PLOYGON 으로 지정한다.
+                    face.FaceType = EMFaceType.POLYGON;
+                    face.setPolygonPoints(listPoint);
+
+                    // 형상노드를 생성하고 추가한다.
+                    CNonKind nonKind = new CNonKind();
+
+                    bool bCheckExist = false;
+                    string strNodeName;
+
+                    // 기존에 이름이 존재하면 nCount 를 증가시키면서 계속 시도한다.
+                    do
+                    {
+                        strNodeName = "DXF_Shape_" + nCountParts.ToString();
+
+                        bCheckExist = m_design.isExistNode(strNodeName);
+
+                        if (bCheckExist == true) nCountParts++;
+                    }
+                    while (bCheckExist == true);
+
+                    // 노드 값을 설정한다.
+                    nonKind.NodeName = strNodeName;
+                    nonKind.m_kindKey = EMKind.NON_KIND;
+                    nonKind.Face = face;
+                    nonKind.MovingPart = EMMoving.FIXED;
+
+                    bool bRet = m_design.addDataNode(nonKind);
+
+                    if (bRet == true)
+                    {
+                        // Treeview 에 추가한다
+                        addTreeNode(nonKind.NodeName, nonKind.m_kindKey);
+
+                        // 해당 Node 의 Properies View 와 Information Windows 를 표시한다
+                        showDataNode(nonKind.NodeName);
+
+                        propertyGridMain.Refresh();
+                    }
+                    else
+                    {
+                        CNotice.noticeWarningID("TNIA");
+                    }
+                }
+
+                // 혹시 FEMM 의 화면이 닫힌 경우 FEMM 의 화면을 복원합니다.
+                reopenFEMM();
+
+                m_design.drawDesign(m_femm);
+
+                // 수정 되었음을 기록한다.
+                m_design.m_bChanged = true;
+            }
+            catch (Exception ex)
+            {
+                CNotice.printLog(ex.Message);
+                return;
+            }
+
+        }
+
     }
 }

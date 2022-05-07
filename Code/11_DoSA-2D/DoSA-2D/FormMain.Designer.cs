@@ -48,7 +48,8 @@
             this.ribbonButtonOpen = new System.Windows.Forms.RibbonButton();
             this.ribbonButtonSave = new System.Windows.Forms.RibbonButton();
             this.ribbonButtonSaveAs = new System.Windows.Forms.RibbonButton();
-            this.ribbonPanelDesign = new System.Windows.Forms.RibbonPanel();
+            this.ribbonButtonImportDXF = new System.Windows.Forms.RibbonButton();
+            this.ribbonPanelPart = new System.Windows.Forms.RibbonPanel();
             this.ribbonButtonCoil = new System.Windows.Forms.RibbonButton();
             this.ribbonButtonMagnet = new System.Windows.Forms.RibbonButton();
             this.ribbonButtonSteel = new System.Windows.Forms.RibbonButton();
@@ -59,8 +60,8 @@
             this.ribbonPanelHelp = new System.Windows.Forms.RibbonPanel();
             this.ribbonButtonSetting = new System.Windows.Forms.RibbonButton();
             this.ribbonButtonHelp = new System.Windows.Forms.RibbonButton();
-            this.ribbonButtonAbout = new System.Windows.Forms.RibbonButton();
             this.ribbonButtonDonation = new System.Windows.Forms.RibbonButton();
+            this.ribbonButtonAbout = new System.Windows.Forms.RibbonButton();
             this.splitContainerLeft = new System.Windows.Forms.SplitContainer();
             this.treeViewMain = new System.Windows.Forms.TreeView();
             this.imageListTreeView = new System.Windows.Forms.ImageList(this.components);
@@ -215,7 +216,7 @@
             // ribbonTabMenu
             // 
             this.ribbonTabMenu.Panels.Add(this.ribbonPanelFile);
-            this.ribbonTabMenu.Panels.Add(this.ribbonPanelDesign);
+            this.ribbonTabMenu.Panels.Add(this.ribbonPanelPart);
             this.ribbonTabMenu.Panels.Add(this.ribbonPanelTest);
             this.ribbonTabMenu.Panels.Add(this.ribbonPanelHelp);
             this.ribbonTabMenu.Text = "Menu";
@@ -226,6 +227,7 @@
             this.ribbonPanelFile.Items.Add(this.ribbonButtonOpen);
             this.ribbonPanelFile.Items.Add(this.ribbonButtonSave);
             this.ribbonPanelFile.Items.Add(this.ribbonButtonSaveAs);
+            this.ribbonPanelFile.Items.Add(this.ribbonButtonImportDXF);
             this.ribbonPanelFile.Text = "FILE";
             // 
             // ribbonButtonNew
@@ -260,12 +262,20 @@
             this.ribbonButtonSaveAs.Text = "SaveAs";
             this.ribbonButtonSaveAs.Click += new System.EventHandler(this.ribbonButtonSaveAs_Click);
             // 
-            // ribbonPanelDesign
+            // ribbonButtonImportDXF
             // 
-            this.ribbonPanelDesign.Items.Add(this.ribbonButtonCoil);
-            this.ribbonPanelDesign.Items.Add(this.ribbonButtonMagnet);
-            this.ribbonPanelDesign.Items.Add(this.ribbonButtonSteel);
-            this.ribbonPanelDesign.Text = "DESIGN";
+            this.ribbonButtonImportDXF.Image = ((System.Drawing.Image)(resources.GetObject("ribbonButtonImportDXF.Image")));
+            this.ribbonButtonImportDXF.MinimumSize = new System.Drawing.Size(60, 0);
+            this.ribbonButtonImportDXF.SmallImage = ((System.Drawing.Image)(resources.GetObject("ribbonButtonImportDXF.SmallImage")));
+            this.ribbonButtonImportDXF.Text = "Import";
+            this.ribbonButtonImportDXF.Click += new System.EventHandler(this.ribbonButtonImportDXF_Click);
+            // 
+            // ribbonPanelPart
+            // 
+            this.ribbonPanelPart.Items.Add(this.ribbonButtonCoil);
+            this.ribbonPanelPart.Items.Add(this.ribbonButtonMagnet);
+            this.ribbonPanelPart.Items.Add(this.ribbonButtonSteel);
+            this.ribbonPanelPart.Text = "PART";
             // 
             // ribbonButtonCoil
             // 
@@ -326,8 +336,8 @@
             // 
             this.ribbonPanelHelp.Items.Add(this.ribbonButtonSetting);
             this.ribbonPanelHelp.Items.Add(this.ribbonButtonHelp);
-            this.ribbonPanelHelp.Items.Add(this.ribbonButtonAbout);
             this.ribbonPanelHelp.Items.Add(this.ribbonButtonDonation);
+            this.ribbonPanelHelp.Items.Add(this.ribbonButtonAbout);
             this.ribbonPanelHelp.Text = "HELP";
             // 
             // ribbonButtonSetting
@@ -346,6 +356,13 @@
             this.ribbonButtonHelp.Text = "Help";
             this.ribbonButtonHelp.Click += new System.EventHandler(this.ribbonButtonHelp_Click);
             // 
+            // ribbonButtonDonation
+            // 
+            this.ribbonButtonDonation.Image = ((System.Drawing.Image)(resources.GetObject("ribbonButtonDonation.Image")));
+            this.ribbonButtonDonation.SmallImage = ((System.Drawing.Image)(resources.GetObject("ribbonButtonDonation.SmallImage")));
+            this.ribbonButtonDonation.Text = "Donation";
+            this.ribbonButtonDonation.Click += new System.EventHandler(this.ribbonButtonDonation_Click);
+            // 
             // ribbonButtonAbout
             // 
             this.ribbonButtonAbout.Image = ((System.Drawing.Image)(resources.GetObject("ribbonButtonAbout.Image")));
@@ -353,13 +370,6 @@
             this.ribbonButtonAbout.SmallImage = ((System.Drawing.Image)(resources.GetObject("ribbonButtonAbout.SmallImage")));
             this.ribbonButtonAbout.Text = "About";
             this.ribbonButtonAbout.Click += new System.EventHandler(this.ribbonButtonAbout_Click);
-            // 
-            // ribbonButtonDonation
-            // 
-            this.ribbonButtonDonation.Image = ((System.Drawing.Image)(resources.GetObject("ribbonButtonDonation.Image")));
-            this.ribbonButtonDonation.SmallImage = ((System.Drawing.Image)(resources.GetObject("ribbonButtonDonation.SmallImage")));
-            this.ribbonButtonDonation.Text = "Donation";
-            this.ribbonButtonDonation.Click += new System.EventHandler(this.ribbonButtonDonation_Click);
             // 
             // splitContainerLeft
             // 
@@ -406,6 +416,7 @@
             this.imageListTreeView.Images.SetKeyName(5, "force.png");
             this.imageListTreeView.Images.SetKeyName(6, "stroke.png");
             this.imageListTreeView.Images.SetKeyName(7, "current.png");
+            this.imageListTreeView.Images.SetKeyName(8, "non_kind.png");
             // 
             // propertyGridMain
             // 
@@ -905,7 +916,7 @@
         private System.Windows.Forms.RibbonButton ribbonButtonOpen;
         private System.Windows.Forms.RibbonButton ribbonButtonSave;
         private System.Windows.Forms.RibbonButton ribbonButtonSaveAs;
-        private System.Windows.Forms.RibbonPanel ribbonPanelDesign;
+        private System.Windows.Forms.RibbonPanel ribbonPanelPart;
         private System.Windows.Forms.RibbonButton ribbonButtonCoil;
         private System.Windows.Forms.RibbonButton ribbonButtonMagnet;
         private System.Windows.Forms.RibbonButton ribbonButtonSteel;
@@ -971,6 +982,7 @@
         private System.Windows.Forms.ProgressBar progressBarStroke;
         private System.Windows.Forms.Button buttonLoadForceAndVectorB;
         private System.Windows.Forms.RibbonButton ribbonButtonDonation;
+        private System.Windows.Forms.RibbonButton ribbonButtonImportDXF;
     }
 }
 

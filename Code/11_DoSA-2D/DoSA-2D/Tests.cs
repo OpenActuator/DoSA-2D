@@ -19,7 +19,7 @@ namespace Tests
     //------------------------------------------------------------------------------------------
     // 측정조건에 대해 Node 들을 만들고 성능결과를 얻고 싶을 때 개발자에게 측정 조건의 입력을 요청한다 
     //------------------------------------------------------------------------------------------
-    public class CTest : CNode
+    public class CTest : CDataNode
     {
 
         [DisplayNameAttribute("Mesh Size [%]"), CategoryAttribute("Condition Fields"), DescriptionAttribute("Mesh Size / Shape Length * 100")]
@@ -59,31 +59,31 @@ namespace Tests
 
         // 파일스트림 객체에 코일 정보를 기록한다.
         // override 를 꼭 사용해야 가상함수가 아니라 현 함수가 호출된다.
-        public override bool writeObject(StreamWriter writeStream)
+        public override bool writeObject(StreamWriter writeStream, int nLevel)
         {
             try
             {
                 CWriteFile writeFile = new CWriteFile();
 
-                writeFile.writeBeginLine(writeStream, "ForceTest", 2);
+                writeFile.writeBeginLine(writeStream, "ForceTest", nLevel);
 
                 // CNode
-                writeFile.writeDataLine(writeStream, "NodeName", NodeName, 3);
-                writeFile.writeDataLine(writeStream, "KindKey", m_kindKey, 3);
+                writeFile.writeDataLine(writeStream, "NodeName", NodeName, nLevel + 1);
+                writeFile.writeDataLine(writeStream, "KindKey", m_kindKey, nLevel + 1);
 
                 // CTest
-                writeFile.writeDataLine(writeStream, "MeshSizePercent", MeshSizePercent, 3);
+                writeFile.writeDataLine(writeStream, "MeshSizePercent", MeshSizePercent, nLevel + 1);
 
                 // CForceTest
-                writeFile.writeDataLine(writeStream, "Voltage", Voltage, 3);
-                writeFile.writeDataLine(writeStream, "Current", Current, 3);
-                writeFile.writeDataLine(writeStream, "MovingStroke", MovingStroke, 3);
+                writeFile.writeDataLine(writeStream, "Voltage", Voltage, nLevel + 1);
+                writeFile.writeDataLine(writeStream, "Current", Current, nLevel + 1);
+                writeFile.writeDataLine(writeStream, "MovingStroke", MovingStroke, nLevel + 1);
 
-                writeFile.writeEndLine(writeStream, "ForceTest", 2);
+                writeFile.writeEndLine(writeStream, "ForceTest", nLevel);
             }
             catch (Exception ex)
             {
-                CNotice.printTrace(ex.Message);
+                CNotice.printLog(ex.Message);
                 return false;
             }
 
@@ -156,7 +156,7 @@ namespace Tests
             }
             catch (Exception ex)
             {
-                CNotice.printTrace(ex.Message);
+                CNotice.printLog(ex.Message);
                 return false;
             }
 
@@ -201,33 +201,33 @@ namespace Tests
 
         // 파일스트림 객체에 코일 정보를 기록한다.
         // override 를 꼭 사용해야 가상함수가 아니라 현 함수가 호출된다.
-        public override bool writeObject(StreamWriter writeStream)
+        public override bool writeObject(StreamWriter writeStream, int nLevel)
         {
             try 
             { 
                 CWriteFile writeFile = new CWriteFile();
 
-                writeFile.writeBeginLine(writeStream, "StrokeTest", 2);
+                writeFile.writeBeginLine(writeStream, "StrokeTest", nLevel);
 
                 // CNode
-                writeFile.writeDataLine(writeStream, "NodeName", NodeName, 3);
-                writeFile.writeDataLine(writeStream, "KindKey", m_kindKey, 3);
+                writeFile.writeDataLine(writeStream, "NodeName", NodeName, nLevel + 1);
+                writeFile.writeDataLine(writeStream, "KindKey", m_kindKey, nLevel + 1);
 
                 // CTest
-                writeFile.writeDataLine(writeStream, "MeshSizePercent", MeshSizePercent, 3);
+                writeFile.writeDataLine(writeStream, "MeshSizePercent", MeshSizePercent, nLevel + 1);
 
                 // CStrokeTest
-                writeFile.writeDataLine(writeStream, "Voltage", Voltage, 3);
-                writeFile.writeDataLine(writeStream, "Current", Current, 3);
-                writeFile.writeDataLine(writeStream, "InitialStroke", InitialStroke, 3);
-                writeFile.writeDataLine(writeStream, "FinalStroke", FinalStroke, 3);
-                writeFile.writeDataLine(writeStream, "StepCount", StepCount, 3);
+                writeFile.writeDataLine(writeStream, "Voltage", Voltage, nLevel + 1);
+                writeFile.writeDataLine(writeStream, "Current", Current, nLevel + 1);
+                writeFile.writeDataLine(writeStream, "InitialStroke", InitialStroke, nLevel + 1);
+                writeFile.writeDataLine(writeStream, "FinalStroke", FinalStroke, nLevel + 1);
+                writeFile.writeDataLine(writeStream, "StepCount", StepCount, nLevel + 1);
 
-                writeFile.writeEndLine(writeStream, "StrokeTest", 2);
+                writeFile.writeEndLine(writeStream, "StrokeTest", nLevel);
             }
             catch (Exception ex)
             {
-                CNotice.printTrace(ex.Message);
+                CNotice.printLog(ex.Message);
                 return false;
             }
 
@@ -308,7 +308,7 @@ namespace Tests
             }
             catch (Exception ex)
             {
-                CNotice.printTrace(ex.Message);
+                CNotice.printLog(ex.Message);
                 return false;
             }
 
@@ -343,32 +343,32 @@ namespace Tests
 
         // 파일스트림 객체에 코일 정보를 기록한다.
         // override 를 꼭 사용해야 가상함수가 아니라 현 함수가 호출된다.
-        public override bool writeObject(StreamWriter writeStream)
+        public override bool writeObject(StreamWriter writeStream, int nLevel)
         {
             try
             {
                 CWriteFile writeFile = new CWriteFile();
 
-                writeFile.writeBeginLine(writeStream, "CurrentTest", 2);
+                writeFile.writeBeginLine(writeStream, "CurrentTest", nLevel);
 
                 // CNode
-                writeFile.writeDataLine(writeStream, "NodeName", NodeName, 3);
-                writeFile.writeDataLine(writeStream, "KindKey", m_kindKey, 3);
+                writeFile.writeDataLine(writeStream, "NodeName", NodeName, nLevel + 1);
+                writeFile.writeDataLine(writeStream, "KindKey", m_kindKey, nLevel + 1);
 
                 // CTest
-                writeFile.writeDataLine(writeStream, "MeshSizePercent", MeshSizePercent, 3);
+                writeFile.writeDataLine(writeStream, "MeshSizePercent", MeshSizePercent, nLevel + 1);
 
                 // CCurrentTest
-                writeFile.writeDataLine(writeStream, "InitialCurrent", InitialCurrent, 3);
-                writeFile.writeDataLine(writeStream, "FinalCurrent", FinalCurrent, 3);
-                writeFile.writeDataLine(writeStream, "StepCount", StepCount, 3);
-                writeFile.writeDataLine(writeStream, "MovingStroke", MovingStroke, 3);
+                writeFile.writeDataLine(writeStream, "InitialCurrent", InitialCurrent, nLevel + 1);
+                writeFile.writeDataLine(writeStream, "FinalCurrent", FinalCurrent, nLevel + 1);
+                writeFile.writeDataLine(writeStream, "StepCount", StepCount, nLevel + 1);
+                writeFile.writeDataLine(writeStream, "MovingStroke", MovingStroke, nLevel + 1);
 
-                writeFile.writeEndLine(writeStream, "CurrentTest", 2);
+                writeFile.writeEndLine(writeStream, "CurrentTest", nLevel);
             }
             catch (Exception ex)
             {
-                CNotice.printTrace(ex.Message);
+                CNotice.printLog(ex.Message);
                 return false;
             }
 
@@ -445,7 +445,7 @@ namespace Tests
             }
             catch (Exception ex)
             {
-                CNotice.printTrace(ex.Message);
+                CNotice.printLog(ex.Message);
                 return false;
             }
 

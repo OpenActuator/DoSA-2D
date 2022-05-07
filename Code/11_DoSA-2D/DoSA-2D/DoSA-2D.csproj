@@ -95,6 +95,9 @@
     <Compile Include="..\..\21_DoSA-Library\ReadWriteFile.cs">
       <Link>gtLibraries\ReadWriteFile.cs</Link>
     </Compile>
+    <Compile Include="..\..\21_DoSA-Library\SmallUtil.cs">
+      <Link>SmallUtil.cs</Link>
+    </Compile>
     <Compile Include="PointControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -125,6 +128,7 @@
     <Compile Include="PopupShape.Designer.cs">
       <DependentUpon>PopupShape.cs</DependentUpon>
     </Compile>
+    <Compile Include="SimpleDXF.cs" />
     <Compile Include="Tests.cs" />
     <Compile Include="FormMain.cs">
       <SubType>Form</SubType>
@@ -224,10 +228,16 @@
       <DependentUpon>Settings.settings</DependentUpon>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
-    <None Include="Samples\LV\LV.dsa">
+    <None Include="Samples\Solenoid.dxf">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Include="Samples\Solenoid\Solenoid.dsa">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Samples\VCM.dxf">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Samples\VCM\VCM.dsa">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
   </ItemGroup>

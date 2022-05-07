@@ -1,7 +1,7 @@
 $begin "DoSA_Project"
-	Writed=4/13/2022 9:50:44 PM
-	DoSA_Version=0.9.15.6
-	File_Version=0.9.15.6
+	Writed=05/07/2022 00:51:47
+	DoSA_Version=1.0.1.0
+	File_Version=1.0.1.0
 	$begin "Design"
 		DesignName=Solenoid
 		$begin "Coil"
@@ -25,23 +25,23 @@ $begin "DoSA_Project"
 			VerticalCoefficient=0.98
 			ResistanceCoefficient=1
 			$begin "Shape"
-				BasePointX=4.8
-				BasePointY=-2
+				BasePointX=0
+				BasePointY=0
 				FaceType=RECTANGLE
-				PointX=0
-				PointY=0
+				PointX=4.8
+				PointY=-2
 				LineKind=STRAIGHT
 				ArcDriction=FORWARD
-				PointX=6
-				PointY=0
+				PointX=10.8
+				PointY=-2
 				LineKind=STRAIGHT
 				ArcDriction=FORWARD
-				PointX=6
-				PointY=16
+				PointX=10.8
+				PointY=14
 				LineKind=STRAIGHT
 				ArcDriction=FORWARD
-				PointX=0
-				PointY=16
+				PointX=4.8
+				PointY=14
 				LineKind=STRAIGHT
 				ArcDriction=FORWARD
 			$end "Shape"
@@ -50,25 +50,25 @@ $begin "DoSA_Project"
 			NodeName=plunger
 			KindKey=STEEL
 			MovingParts=MOVING
-			Material=1010 Steel
+			Material=430 Stainless Steel
 			$begin "Shape"
 				BasePointX=0
-				BasePointY=-12
-				FaceType=RECTANGLE
+				BasePointY=0
+				FaceType=POLYGON
 				PointX=0
-				PointY=0
+				PointY=-15
+				LineKind=STRAIGHT
+				ArcDriction=FORWARD
+				PointX=4
+				PointY=-15
 				LineKind=STRAIGHT
 				ArcDriction=FORWARD
 				PointX=4
 				PointY=0
 				LineKind=STRAIGHT
 				ArcDriction=FORWARD
-				PointX=4
-				PointY=12
-				LineKind=STRAIGHT
-				ArcDriction=FORWARD
 				PointX=0
-				PointY=12
+				PointY=0
 				LineKind=STRAIGHT
 				ArcDriction=FORWARD
 			$end "Shape"
@@ -77,33 +77,33 @@ $begin "DoSA_Project"
 			NodeName=core
 			KindKey=STEEL
 			MovingParts=FIXED
-			Material=430 Stainless Steel
+			Material=1010 Steel
 			$begin "Shape"
 				BasePointX=0
-				BasePointY=1.2
+				BasePointY=0
 				FaceType=POLYGON
 				PointX=0
-				PointY=0
+				PointY=1.2
 				LineKind=STRAIGHT
 				ArcDriction=FORWARD
 				PointX=4
-				PointY=0
+				PointY=1.2
 				LineKind=STRAIGHT
 				ArcDriction=FORWARD
 				PointX=4
-				PointY=13.6
+				PointY=14.8
 				LineKind=STRAIGHT
 				ArcDriction=FORWARD
 				PointX=15.6
-				PointY=13.6
+				PointY=14.8
 				LineKind=STRAIGHT
 				ArcDriction=FORWARD
 				PointX=15.6
-				PointY=18
+				PointY=19.2
 				LineKind=STRAIGHT
 				ArcDriction=FORWARD
 				PointX=0
-				PointY=18
+				PointY=19.2
 				LineKind=STRAIGHT
 				ArcDriction=FORWARD
 			$end "Shape"
@@ -114,31 +114,31 @@ $begin "DoSA_Project"
 			MovingParts=FIXED
 			Material=1010 Steel
 			$begin "Shape"
-				BasePointX=4.4
-				BasePointY=-10.4
+				BasePointX=0
+				BasePointY=0
 				FaceType=POLYGON
-				PointX=0
-				PointY=0
+				PointX=4.4
+				PointY=-10.4
 				LineKind=STRAIGHT
 				ArcDriction=FORWARD
-				PointX=11.2
-				PointY=0
+				PointX=15.6
+				PointY=-10.4
 				LineKind=STRAIGHT
 				ArcDriction=FORWARD
-				PointX=11.2
-				PointY=25.2
+				PointX=15.6
+				PointY=14.8
 				LineKind=STRAIGHT
 				ArcDriction=FORWARD
-				PointX=7.4
-				PointY=25.2
+				PointX=11.8
+				PointY=14.8
 				LineKind=STRAIGHT
 				ArcDriction=FORWARD
-				PointX=7.4
-				PointY=7.6
+				PointX=11.8
+				PointY=-2.8
 				LineKind=STRAIGHT
 				ArcDriction=FORWARD
-				PointX=0
-				PointY=7.6
+				PointX=4.4
+				PointY=-2.8
 				LineKind=STRAIGHT
 				ArcDriction=FORWARD
 			$end "Shape"

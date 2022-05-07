@@ -1,6 +1,11 @@
-DoSA-Open_2D
+DoSA-2D
+https://solenoid.or.kr/index_dosa_open_2d_kor.html
 Gi-Tae Kweon
 zgitae@gmail.com
+
+
+2022-05-06 Ver(1.0.1.0)
+ - Added DXF Import feature, Tutorial manual Update
 
 2022-04-23 Ver(0.9.16.0)
  - Update on version check and initializeProgram()

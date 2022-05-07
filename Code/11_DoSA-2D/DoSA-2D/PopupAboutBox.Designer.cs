@@ -54,7 +54,7 @@
             this.textBoxDescription.Name = "textBoxDescription";
             this.textBoxDescription.ReadOnly = true;
             this.textBoxDescription.ScrollBars = System.Windows.Forms.ScrollBars.Both;
-            this.textBoxDescription.Size = new System.Drawing.Size(479, 180);
+            this.textBoxDescription.Size = new System.Drawing.Size(479, 160);
             this.textBoxDescription.TabIndex = 23;
             this.textBoxDescription.TabStop = false;
             // 
@@ -73,7 +73,7 @@
             // labelCopyright
             // 
             this.labelCopyright.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.labelCopyright.Location = new System.Drawing.Point(7, 246);
+            this.labelCopyright.Location = new System.Drawing.Point(7, 226);
             this.labelCopyright.Margin = new System.Windows.Forms.Padding(7, 0, 3, 0);
             this.labelCopyright.MaximumSize = new System.Drawing.Size(0, 16);
             this.labelCopyright.Name = "labelCopyright";
@@ -123,13 +123,13 @@
             this.textBoxOpenLicense.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.tableLayoutPanel.SetColumnSpan(this.textBoxOpenLicense, 2);
             this.textBoxOpenLicense.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.textBoxOpenLicense.Location = new System.Drawing.Point(7, 269);
+            this.textBoxOpenLicense.Location = new System.Drawing.Point(7, 249);
             this.textBoxOpenLicense.Margin = new System.Windows.Forms.Padding(7, 3, 3, 3);
             this.textBoxOpenLicense.Multiline = true;
             this.textBoxOpenLicense.Name = "textBoxOpenLicense";
             this.textBoxOpenLicense.ReadOnly = true;
             this.textBoxOpenLicense.ScrollBars = System.Windows.Forms.ScrollBars.Both;
-            this.textBoxOpenLicense.Size = new System.Drawing.Size(479, 148);
+            this.textBoxOpenLicense.Size = new System.Drawing.Size(479, 178);
             this.textBoxOpenLicense.TabIndex = 24;
             this.textBoxOpenLicense.TabStop = false;
             // 

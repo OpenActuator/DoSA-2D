@@ -89,7 +89,7 @@ namespace Scripts
 
                 if (strVersionDate.Length < 9)
                 {
-                    CNotice.printTraceID("TWAP4");
+                    CNotice.printLogID("TWAP4");
                     return false;
                 }
 
@@ -108,7 +108,7 @@ namespace Scripts
             }
             catch (Exception ex)
             {
-                CNotice.printTrace(ex.Message);
+                CNotice.printLog(ex.Message);
                 return false;
             }
         }
@@ -126,7 +126,7 @@ namespace Scripts
             }
             catch (Exception ex)
             {
-                CNotice.printTrace(ex.Message);
+                CNotice.printLog(ex.Message);
                 return false;
             }
         }
@@ -168,7 +168,7 @@ namespace Scripts
             }
             catch (Exception ex)
             {
-                CNotice.printTrace(ex.Message);
+                CNotice.printLog(ex.Message);
                 return false;
             }
         }
@@ -198,7 +198,7 @@ namespace Scripts
             }
             catch (Exception ex)
             {
-                CNotice.printTrace(ex.Message);
+                CNotice.printLog(ex.Message);
                 return false;
             }
         }
@@ -225,7 +225,7 @@ namespace Scripts
             }
             catch (Exception ex)
             {
-                CNotice.printTrace(ex.Message);
+                CNotice.printLog(ex.Message);
                 return;
             }
         }
@@ -257,7 +257,7 @@ namespace Scripts
             }
             catch (Exception ex)
             {
-                CNotice.printTrace(ex.Message);
+                CNotice.printLog(ex.Message);
                 return;
             }
         }
@@ -293,7 +293,7 @@ namespace Scripts
             }
             catch (Exception ex)
             {
-                CNotice.printTrace(ex.Message);
+                CNotice.printLog(ex.Message);
                 return;
             }
         }
@@ -331,8 +331,8 @@ namespace Scripts
 
                 if (strReturn.Contains("error"))
                 {
-                    CNotice.printTrace(strCommand);
-                    CNotice.printTrace(strReturn);
+                    CNotice.printLog(strCommand);
+                    CNotice.printLog(strReturn);
                     return "error";
                 }
 
@@ -340,7 +340,7 @@ namespace Scripts
             }
             catch (Exception ex)
             {
-                CNotice.printTrace(ex.Message);
+                CNotice.printLog(ex.Message);
                 return "error";
             }
 
@@ -372,7 +372,7 @@ namespace Scripts
             }
             catch (Exception ex)
             {
-                CNotice.printTrace(ex.Message);
+                CNotice.printLog(ex.Message);
                 return;
             }
         }
@@ -425,7 +425,7 @@ namespace Scripts
             }
             catch (Exception ex)
             {
-                CNotice.printTrace(ex.Message);
+                CNotice.printLog(ex.Message);
                 return;
             }
         }
@@ -447,7 +447,7 @@ namespace Scripts
             }
             catch (Exception ex)
             {
-                CNotice.printTrace(ex.Message);
+                CNotice.printLog(ex.Message);
                 return;
             }
         }
@@ -496,7 +496,7 @@ namespace Scripts
             }
             catch (Exception ex)
             {
-                CNotice.printTrace(ex.Message);
+                CNotice.printLog(ex.Message);
                 return;
             }
 
@@ -508,10 +508,10 @@ namespace Scripts
 
             float fX1, fY1, fX2, fY2;
 
-            fX1 = (float)line.m_startPoint.m_dX;
-            fY1 = (float)line.m_startPoint.m_dY;
-            fX2 = (float)line.m_endPoint.m_dX;
-            fY2 = (float)line.m_endPoint.m_dY;
+            fX1 = (float)line.m_startPoint.X;
+            fY1 = (float)line.m_startPoint.Z;
+            fX2 = (float)line.m_endPoint.X;
+            fY2 = (float)line.m_endPoint.Z;
 
             try
             {
@@ -545,7 +545,7 @@ namespace Scripts
             }
             catch (Exception ex)
             {
-                CNotice.printTrace(ex.Message);
+                CNotice.printLog(ex.Message);
                 return;
             }
 
@@ -602,7 +602,7 @@ namespace Scripts
             }
             catch (Exception ex)
             {
-                CNotice.printTrace(ex.Message);
+                CNotice.printLog(ex.Message);
                 return;
             }
 
@@ -623,7 +623,7 @@ namespace Scripts
             }
             catch (Exception ex)
             {
-                CNotice.printTrace(ex.Message);
+                CNotice.printLog(ex.Message);
                 return;
             }
 
@@ -645,10 +645,10 @@ namespace Scripts
                 strCommand = "mi_seteditmode(\"blocks\")";
                 sendCommand(strCommand);
 
-                strCommand = "mi_addblocklabel(" + point.m_dX + "," + point.m_dY + ")";
+                strCommand = "mi_addblocklabel(" + point.X + "," + point.Z + ")";
                 sendCommand(strCommand);
 
-                strCommand = "mi_selectlabel(" + point.m_dX + "," + point.m_dY + ")";
+                strCommand = "mi_selectlabel(" + point.X + "," + point.Z + ")";
                 sendCommand(strCommand);
 
                 int nGroup;
@@ -675,7 +675,7 @@ namespace Scripts
             }
             catch (Exception ex)
             {
-                CNotice.printTrace(ex.Message);
+                CNotice.printLog(ex.Message);
                 return;
             }
 
@@ -703,7 +703,7 @@ namespace Scripts
             }
             catch (Exception ex)
             {
-                CNotice.printTrace(ex.Message);
+                CNotice.printLog(ex.Message);
                 return;
             }
 
@@ -722,7 +722,7 @@ namespace Scripts
             }
             catch (Exception ex)
             {
-                CNotice.printTrace(ex.Message);
+                CNotice.printLog(ex.Message);
                 return;
             }
 
@@ -739,7 +739,7 @@ namespace Scripts
             }
             catch (Exception ex)
             {
-                CNotice.printTrace(ex.Message);
+                CNotice.printLog(ex.Message);
                 return;
             }
         }
@@ -782,7 +782,7 @@ namespace Scripts
             }
             catch (Exception ex)
             {
-                CNotice.printTrace(ex.Message);
+                CNotice.printLog(ex.Message);
                 return;
             }
 
@@ -794,10 +794,10 @@ namespace Scripts
 
             try
             {
-                strCommand = "mi_addblocklabel(" + blockPoint.m_dX + "," + blockPoint.m_dY + ")";
+                strCommand = "mi_addblocklabel(" + blockPoint.X + "," + blockPoint.Z + ")";
                 sendCommand(strCommand);
 
-                strCommand = "mi_selectlabel(" + blockPoint.m_dX + "," + blockPoint.m_dY + ")";
+                strCommand = "mi_selectlabel(" + blockPoint.X + "," + blockPoint.Z + ")";
                 sendCommand(strCommand);
 
                 /// Region 의 물성치를 Default 물성치로 지정하여 Block 이 추가되지 않은 영역을 설정 한다.
@@ -818,7 +818,7 @@ namespace Scripts
             }
             catch (Exception ex)
             {
-                CNotice.printTrace(ex.Message);
+                CNotice.printLog(ex.Message);
                 return;
             }
 
@@ -846,7 +846,7 @@ namespace Scripts
             }
             catch (Exception ex)
             {
-                CNotice.printTrace(ex.Message);
+                CNotice.printLog(ex.Message);
                 return;
             }
         }
@@ -887,7 +887,7 @@ namespace Scripts
             }
             catch (Exception ex)
             {
-                CNotice.printTrace(ex.Message);
+                CNotice.printLog(ex.Message);
                 return 0;
             }
             
@@ -996,6 +996,54 @@ namespace Scripts
             return true;
         }
 
+        public bool writeContourImage(  double minX, double minY,
+                                        double maxX, double maxY,
+                                        string strFieldImageName,
+                                        string strPostDataFullName)
+        {
+            string strCommand = string.Empty;
+
+            //-------------------------------------------------------------
+            // 아주 중요
+            //-------------------------------------------------------------
+            //
+            // 디렉토리에 들어있는 \\ 기호는 FEMM 에서 인식하지 못한다.
+            // 따라서 디렉토리안의 \\ 기호를 / 기호로 변경한다
+            strPostDataFullName = strPostDataFullName.Replace("\\", "/");
+            strFieldImageName = strFieldImageName.Replace("\\", "/");
+            //-------------------------------------------------------------
+
+            strPostDataFullName = "\"" + strPostDataFullName + "\"";
+
+            //if(bForceTest == true)
+            //{
+            //    strCommand = "mi_loadsolution()";
+            //    sendCommand(strCommand);
+            //}
+            //else
+            //{
+            // 해석 후 바로 출력은 상관 없지만
+            // 프로그램을 다시 실행한 다음에 해석결과로 이미지를 만들때는 ans 파일을 읽어드리고 진행해야 한다.
+            strCommand = "open(" + strPostDataFullName + ")";
+            sendCommand(strCommand);
+            //}
+
+            strCommand = "mo_zoom(" + minX.ToString() + "," + minY.ToString() + "," + maxX.ToString() + "," + maxY.ToString() + ")";
+            sendCommand(strCommand);
+
+            //------------------ 자속밀도 Magnitude 저장 -------------------
+            //strCommand = "mo_showcontourplot(30, 0, 0.0001, \"real\")";
+            strCommand = "mo_showcontourplot(-1)";
+            sendCommand(strCommand);
+
+            strFieldImageName = "\"" + strFieldImageName + "\"";
+
+            strCommand = "mo_savebitmap(" + strFieldImageName + ")";
+            sendCommand(strCommand);
+
+            return true;
+        }
+
         public void lockEdit()
         {
             string strCommand;
@@ -1009,7 +1057,7 @@ namespace Scripts
             }
             catch (Exception ex)
             {
-                CNotice.printTrace(ex.Message);
+                CNotice.printLog(ex.Message);
                 return;
             }
         }
@@ -1024,7 +1072,7 @@ namespace Scripts
                 strCommand = "mi_seteditmode(\"segments\")";
                 sendCommand(strCommand);
 
-                strCommand = "mi_selectsegment(" + selectPoint.m_dX + "," + selectPoint.m_dY + ")";
+                strCommand = "mi_selectsegment(" + selectPoint.X + "," + selectPoint.Z + ")";
                 sendCommand(strCommand);
 
                 /// editmode 를 group 으로 바꾸어서 FEMM 마우스 동작을 막는다.
@@ -1036,7 +1084,7 @@ namespace Scripts
             }
             catch (Exception ex)
             {
-                CNotice.printTrace(ex.Message);
+                CNotice.printLog(ex.Message);
                 return;
             }
         }
@@ -1051,7 +1099,7 @@ namespace Scripts
                 strCommand = "mi_seteditmode(\"nodes\")";
                 sendCommand(strCommand);
 
-                strCommand = "mi_selectnode(" + selectPoint.m_dX + "," + selectPoint.m_dY + ")";
+                strCommand = "mi_selectnode(" + selectPoint.X + "," + selectPoint.Z + ")";
                 sendCommand(strCommand);
 
                 /// editmode 를 group 으로 바꾸어서 FEMM 마우스 동작을 막는다.
@@ -1063,7 +1111,7 @@ namespace Scripts
             }
             catch (Exception ex)
             {
-                CNotice.printTrace(ex.Message);
+                CNotice.printLog(ex.Message);
                 return;
             }
         }
@@ -1137,7 +1185,7 @@ namespace Scripts
             }
             catch (Exception ex)
             {
-                CNotice.printTrace(ex.Message);
+                CNotice.printLog(ex.Message);
                 return;
             }
 
@@ -1155,7 +1203,7 @@ namespace Scripts
             }
             catch (Exception ex)
             {
-                CNotice.printTrace(ex.Message);
+                CNotice.printLog(ex.Message);
                 return;
             }
         }
@@ -1187,7 +1235,7 @@ namespace Scripts
             }
             catch (Exception ex)
             {
-                CNotice.printTrace(ex.Message);
+                CNotice.printLog(ex.Message);
                 return;
             }
 
@@ -1205,7 +1253,7 @@ namespace Scripts
             }
             catch (Exception ex)
             {
-                CNotice.printTrace(ex.Message);
+                CNotice.printLog(ex.Message);
                 return;
             }
         }
@@ -1220,7 +1268,7 @@ namespace Scripts
                 strCommand = "mi_seteditmode(\"arcsegments\")";
                 sendCommand(strCommand);
 
-                strCommand = "mi_selectarcsegment(" + selectPoint.m_dX + "," + selectPoint.m_dY + ")";
+                strCommand = "mi_selectarcsegment(" + selectPoint.X + "," + selectPoint.Z + ")";
                 sendCommand(strCommand);
 
                 /// editmode 를 group 으로 바꾸어서 FEMM 마우스 동작을 막는다.
@@ -1232,7 +1280,7 @@ namespace Scripts
             }
             catch (Exception ex)
             {
-                CNotice.printTrace(ex.Message);
+                CNotice.printLog(ex.Message);
                 return;
             }
         }
@@ -1249,7 +1297,7 @@ namespace Scripts
             }
             catch (Exception ex)
             {
-                CNotice.printTrace(ex.Message);
+                CNotice.printLog(ex.Message);
                 return;
             }
         }
@@ -1269,7 +1317,7 @@ namespace Scripts
 
             if (manageFile.isExistFile(strTestFullName) == false)
             {
-                CNotice.printTraceID("NFFF");
+                CNotice.printLogID("NFFF");
                 return false;
             }
             else
@@ -1306,11 +1354,11 @@ namespace Scripts
 
                     if(bBlockLabels == true)
                     {
-                        if(pointBoundaryBlock.m_dX == Double.Parse(strArray[0]) && pointBoundaryBlock.m_dY == Double.Parse(strArray[1]))
+                        if(pointBoundaryBlock.X == Double.Parse(strArray[0]) && pointBoundaryBlock.Z == Double.Parse(strArray[1]))
                         {
                             if(strArray.Length != 9)
                             {
-                                CNotice.printTraceID("TWAP2");
+                                CNotice.printLogID("TWAP2");
                                 return false;
                             }
 
@@ -1337,7 +1385,7 @@ namespace Scripts
             }
             catch (Exception ex)
             {
-                CNotice.printTrace(ex.Message);
+                CNotice.printLog(ex.Message);
                 writeFile.Close();
                 return false;
             }
@@ -1369,7 +1417,7 @@ namespace Scripts
             }
             catch (Exception ex)
             {
-                CNotice.printTrace(ex.Message);
+                CNotice.printLog(ex.Message);
                 return;
             }
         }
@@ -1385,7 +1433,7 @@ namespace Scripts
             }
             catch (Exception ex)
             {
-                CNotice.printTrace(ex.Message);
+                CNotice.printLog(ex.Message);
                 return;
             }
         }

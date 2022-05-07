@@ -29,12 +29,14 @@
         private void InitializeComponent()
         {
             this.panelBotton = new System.Windows.Forms.Panel();
-            this.button1 = new System.Windows.Forms.Button();
+            this.buttonReserved = new System.Windows.Forms.Button();
             this.buttonFitAll = new System.Windows.Forms.Button();
             this.buttonDraw = new System.Windows.Forms.Button();
             this.buttonCancel = new System.Windows.Forms.Button();
             this.buttonOK = new System.Windows.Forms.Button();
             this.panelFaceType = new System.Windows.Forms.Panel();
+            this.comboBoxNodeType = new System.Windows.Forms.ComboBox();
+            this.labelKind = new System.Windows.Forms.Label();
             this.textBoxPartName = new System.Windows.Forms.TextBox();
             this.labelPartName = new System.Windows.Forms.Label();
             this.comboBoxFaceType = new System.Windows.Forms.ComboBox();
@@ -44,7 +46,7 @@
             this.labelArc = new System.Windows.Forms.Label();
             this.labelNo = new System.Windows.Forms.Label();
             this.labelDirection = new System.Windows.Forms.Label();
-            this.labelY = new System.Windows.Forms.Label();
+            this.labelZ = new System.Windows.Forms.Label();
             this.labelDelete = new System.Windows.Forms.Label();
             this.labelAdd = new System.Windows.Forms.Label();
             this.panelTitle = new System.Windows.Forms.Panel();
@@ -65,30 +67,30 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.panelBotton.BackColor = System.Drawing.SystemColors.Control;
             this.panelBotton.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.panelBotton.Controls.Add(this.button1);
+            this.panelBotton.Controls.Add(this.buttonReserved);
             this.panelBotton.Controls.Add(this.buttonFitAll);
             this.panelBotton.Controls.Add(this.buttonDraw);
-            this.panelBotton.Location = new System.Drawing.Point(7, 436);
+            this.panelBotton.Location = new System.Drawing.Point(7, 467);
             this.panelBotton.Name = "panelBotton";
             this.panelBotton.Size = new System.Drawing.Size(350, 50);
-            this.panelBotton.TabIndex = 1;
+            this.panelBotton.TabIndex = 3;
             // 
-            // button1
+            // buttonReserved
             // 
-            this.button1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.button1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(98)))), ((int)(((byte)(118)))), ((int)(((byte)(145)))));
-            this.button1.Enabled = false;
-            this.button1.FlatAppearance.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(178)))), ((int)(((byte)(188)))), ((int)(((byte)(215)))));
-            this.button1.FlatAppearance.MouseDownBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(178)))), ((int)(((byte)(188)))), ((int)(((byte)(215)))));
-            this.button1.FlatAppearance.MouseOverBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(138)))), ((int)(((byte)(148)))), ((int)(((byte)(175)))));
-            this.button1.FlatStyle = System.Windows.Forms.FlatStyle.System;
-            this.button1.Font = new System.Drawing.Font("Gulim", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(129)));
-            this.button1.Location = new System.Drawing.Point(245, 7);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(95, 35);
-            this.button1.TabIndex = 7;
-            this.button1.Text = "Reserved";
-            this.button1.UseVisualStyleBackColor = false;
+            this.buttonReserved.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.buttonReserved.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(98)))), ((int)(((byte)(118)))), ((int)(((byte)(145)))));
+            this.buttonReserved.Enabled = false;
+            this.buttonReserved.FlatAppearance.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(178)))), ((int)(((byte)(188)))), ((int)(((byte)(215)))));
+            this.buttonReserved.FlatAppearance.MouseDownBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(178)))), ((int)(((byte)(188)))), ((int)(((byte)(215)))));
+            this.buttonReserved.FlatAppearance.MouseOverBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(138)))), ((int)(((byte)(148)))), ((int)(((byte)(175)))));
+            this.buttonReserved.FlatStyle = System.Windows.Forms.FlatStyle.System;
+            this.buttonReserved.Font = new System.Drawing.Font("Gulim", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(129)));
+            this.buttonReserved.Location = new System.Drawing.Point(245, 7);
+            this.buttonReserved.Name = "buttonReserved";
+            this.buttonReserved.Size = new System.Drawing.Size(95, 35);
+            this.buttonReserved.TabIndex = 2;
+            this.buttonReserved.Text = "Reserved";
+            this.buttonReserved.UseVisualStyleBackColor = false;
             // 
             // buttonFitAll
             // 
@@ -102,7 +104,7 @@
             this.buttonFitAll.Location = new System.Drawing.Point(128, 7);
             this.buttonFitAll.Name = "buttonFitAll";
             this.buttonFitAll.Size = new System.Drawing.Size(95, 35);
-            this.buttonFitAll.TabIndex = 6;
+            this.buttonFitAll.TabIndex = 1;
             this.buttonFitAll.Text = "Fit All";
             this.buttonFitAll.UseVisualStyleBackColor = false;
             this.buttonFitAll.Click += new System.EventHandler(this.buttonFitAll_Click);
@@ -119,7 +121,7 @@
             this.buttonDraw.Location = new System.Drawing.Point(11, 7);
             this.buttonDraw.Name = "buttonDraw";
             this.buttonDraw.Size = new System.Drawing.Size(95, 35);
-            this.buttonDraw.TabIndex = 5;
+            this.buttonDraw.TabIndex = 0;
             this.buttonDraw.Text = "Redraw";
             this.buttonDraw.UseVisualStyleBackColor = false;
             this.buttonDraw.Click += new System.EventHandler(this.buttonDraw_Click);
@@ -133,10 +135,10 @@
             this.buttonCancel.FlatAppearance.MouseOverBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(138)))), ((int)(((byte)(148)))), ((int)(((byte)(175)))));
             this.buttonCancel.FlatStyle = System.Windows.Forms.FlatStyle.System;
             this.buttonCancel.Font = new System.Drawing.Font("Gulim", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(129)));
-            this.buttonCancel.Location = new System.Drawing.Point(262, 500);
+            this.buttonCancel.Location = new System.Drawing.Point(262, 531);
             this.buttonCancel.Name = "buttonCancel";
             this.buttonCancel.Size = new System.Drawing.Size(95, 35);
-            this.buttonCancel.TabIndex = 4;
+            this.buttonCancel.TabIndex = 5;
             this.buttonCancel.Text = "Cancel";
             this.buttonCancel.UseVisualStyleBackColor = false;
             this.buttonCancel.Click += new System.EventHandler(this.buttonCancel_Click);
@@ -150,10 +152,10 @@
             this.buttonOK.FlatAppearance.MouseOverBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(138)))), ((int)(((byte)(148)))), ((int)(((byte)(175)))));
             this.buttonOK.FlatStyle = System.Windows.Forms.FlatStyle.System;
             this.buttonOK.Font = new System.Drawing.Font("Gulim", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(129)));
-            this.buttonOK.Location = new System.Drawing.Point(161, 500);
+            this.buttonOK.Location = new System.Drawing.Point(161, 531);
             this.buttonOK.Name = "buttonOK";
             this.buttonOK.Size = new System.Drawing.Size(95, 35);
-            this.buttonOK.TabIndex = 1;
+            this.buttonOK.TabIndex = 4;
             this.buttonOK.Text = "OK";
             this.buttonOK.UseVisualStyleBackColor = false;
             this.buttonOK.Click += new System.EventHandler(this.buttonOK_Click);
@@ -164,26 +166,50 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.panelFaceType.BackColor = System.Drawing.SystemColors.Control;
             this.panelFaceType.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.panelFaceType.Controls.Add(this.comboBoxNodeType);
+            this.panelFaceType.Controls.Add(this.labelKind);
             this.panelFaceType.Controls.Add(this.textBoxPartName);
             this.panelFaceType.Controls.Add(this.labelPartName);
             this.panelFaceType.Controls.Add(this.comboBoxFaceType);
             this.panelFaceType.Controls.Add(this.labelFaceType);
             this.panelFaceType.Location = new System.Drawing.Point(7, 7);
             this.panelFaceType.Name = "panelFaceType";
-            this.panelFaceType.Size = new System.Drawing.Size(350, 75);
-            this.panelFaceType.TabIndex = 12;
+            this.panelFaceType.Size = new System.Drawing.Size(350, 105);
+            this.panelFaceType.TabIndex = 0;
+            // 
+            // comboBoxNodeType
+            // 
+            this.comboBoxNodeType.FormattingEnabled = true;
+            this.comboBoxNodeType.Items.AddRange(new object[] {
+            "COIL",
+            "MAGNET",
+            "STEEL"});
+            this.comboBoxNodeType.Location = new System.Drawing.Point(118, 42);
+            this.comboBoxNodeType.Name = "comboBoxNodeType";
+            this.comboBoxNodeType.Size = new System.Drawing.Size(167, 20);
+            this.comboBoxNodeType.TabIndex = 1;
+            this.comboBoxNodeType.SelectedIndexChanged += new System.EventHandler(this.comboBoxPartType_SelectedIndexChanged);
+            // 
+            // labelKind
+            // 
+            this.labelKind.AutoSize = true;
+            this.labelKind.Location = new System.Drawing.Point(25, 45);
+            this.labelKind.Name = "labelKind";
+            this.labelKind.Size = new System.Drawing.Size(68, 12);
+            this.labelKind.TabIndex = 17;
+            this.labelKind.Text = "Part Type :";
             // 
             // textBoxPartName
             // 
-            this.textBoxPartName.Location = new System.Drawing.Point(113, 9);
+            this.textBoxPartName.Location = new System.Drawing.Point(118, 10);
             this.textBoxPartName.Name = "textBoxPartName";
-            this.textBoxPartName.Size = new System.Drawing.Size(150, 21);
+            this.textBoxPartName.Size = new System.Drawing.Size(167, 21);
             this.textBoxPartName.TabIndex = 0;
             // 
             // labelPartName
             // 
             this.labelPartName.AutoSize = true;
-            this.labelPartName.Location = new System.Drawing.Point(20, 13);
+            this.labelPartName.Location = new System.Drawing.Point(25, 14);
             this.labelPartName.Name = "labelPartName";
             this.labelPartName.Size = new System.Drawing.Size(73, 12);
             this.labelPartName.TabIndex = 13;
@@ -195,16 +221,16 @@
             this.comboBoxFaceType.Items.AddRange(new object[] {
             "RECTANGLE",
             "POLYGON"});
-            this.comboBoxFaceType.Location = new System.Drawing.Point(113, 42);
+            this.comboBoxFaceType.Location = new System.Drawing.Point(118, 73);
             this.comboBoxFaceType.Name = "comboBoxFaceType";
-            this.comboBoxFaceType.Size = new System.Drawing.Size(150, 20);
-            this.comboBoxFaceType.TabIndex = 1;
-            this.comboBoxFaceType.SelectedIndexChanged += new System.EventHandler(this.comboBoxdrawType_SelectedIndexChanged);
+            this.comboBoxFaceType.Size = new System.Drawing.Size(167, 20);
+            this.comboBoxFaceType.TabIndex = 2;
+            this.comboBoxFaceType.SelectedIndexChanged += new System.EventHandler(this.comboBoxFaceType_SelectedIndexChanged);
             // 
             // labelFaceType
             // 
             this.labelFaceType.AutoSize = true;
-            this.labelFaceType.Location = new System.Drawing.Point(19, 46);
+            this.labelFaceType.Location = new System.Drawing.Point(25, 76);
             this.labelFaceType.Name = "labelFaceType";
             this.labelFaceType.Size = new System.Drawing.Size(74, 12);
             this.labelFaceType.TabIndex = 12;
@@ -217,10 +243,10 @@
             this.panelPointControl.AutoScroll = true;
             this.panelPointControl.BackColor = System.Drawing.SystemColors.Control;
             this.panelPointControl.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.panelPointControl.Location = new System.Drawing.Point(7, 176);
+            this.panelPointControl.Location = new System.Drawing.Point(7, 207);
             this.panelPointControl.Name = "panelPointControl";
             this.panelPointControl.Size = new System.Drawing.Size(350, 254);
-            this.panelPointControl.TabIndex = 0;
+            this.panelPointControl.TabIndex = 2;
             // 
             // labelX
             // 
@@ -258,14 +284,14 @@
             this.labelDirection.TabIndex = 12;
             this.labelDirection.Text = "Dir.";
             // 
-            // labelY
+            // labelZ
             // 
-            this.labelY.AutoSize = true;
-            this.labelY.Location = new System.Drawing.Point(140, 11);
-            this.labelY.Name = "labelY";
-            this.labelY.Size = new System.Drawing.Size(13, 12);
-            this.labelY.TabIndex = 12;
-            this.labelY.Text = "Y";
+            this.labelZ.AutoSize = true;
+            this.labelZ.Location = new System.Drawing.Point(140, 11);
+            this.labelZ.Name = "labelZ";
+            this.labelZ.Size = new System.Drawing.Size(13, 12);
+            this.labelZ.TabIndex = 12;
+            this.labelZ.Text = "Z";
             // 
             // labelDelete
             // 
@@ -293,12 +319,12 @@
             this.panelTitle.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.panelTitle.Controls.Add(this.labelAdd);
             this.panelTitle.Controls.Add(this.labelDelete);
-            this.panelTitle.Controls.Add(this.labelY);
+            this.panelTitle.Controls.Add(this.labelZ);
             this.panelTitle.Controls.Add(this.labelDirection);
             this.panelTitle.Controls.Add(this.labelNo);
             this.panelTitle.Controls.Add(this.labelArc);
             this.panelTitle.Controls.Add(this.labelX);
-            this.panelTitle.Location = new System.Drawing.Point(7, 135);
+            this.panelTitle.Location = new System.Drawing.Point(7, 166);
             this.panelTitle.Name = "panelTitle";
             this.panelTitle.Size = new System.Drawing.Size(350, 35);
             this.panelTitle.TabIndex = 13;
@@ -313,16 +339,16 @@
             this.panelBasePoint.Controls.Add(this.textBoxBaseY);
             this.panelBasePoint.Controls.Add(this.label1);
             this.panelBasePoint.Controls.Add(this.label2);
-            this.panelBasePoint.Location = new System.Drawing.Point(7, 88);
+            this.panelBasePoint.Location = new System.Drawing.Point(7, 119);
             this.panelBasePoint.Name = "panelBasePoint";
             this.panelBasePoint.Size = new System.Drawing.Size(350, 41);
-            this.panelBasePoint.TabIndex = 15;
+            this.panelBasePoint.TabIndex = 1;
             // 
             // textBoxBaseX
             // 
             this.textBoxBaseX.Location = new System.Drawing.Point(82, 11);
             this.textBoxBaseX.Name = "textBoxBaseX";
-            this.textBoxBaseX.Size = new System.Drawing.Size(72, 21);
+            this.textBoxBaseX.Size = new System.Drawing.Size(80, 21);
             this.textBoxBaseX.TabIndex = 0;
             this.textBoxBaseX.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
             this.textBoxBaseX.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.textBoxBaseX_KeyPress);
@@ -331,9 +357,9 @@
             // 
             // textBoxBaseY
             // 
-            this.textBoxBaseY.Location = new System.Drawing.Point(235, 11);
+            this.textBoxBaseY.Location = new System.Drawing.Point(243, 11);
             this.textBoxBaseY.Name = "textBoxBaseY";
-            this.textBoxBaseY.Size = new System.Drawing.Size(72, 21);
+            this.textBoxBaseY.Size = new System.Drawing.Size(80, 21);
             this.textBoxBaseY.TabIndex = 1;
             this.textBoxBaseY.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
             this.textBoxBaseY.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.textBoxBaseY_KeyPress);
@@ -343,11 +369,11 @@
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(171, 14);
+            this.label1.Location = new System.Drawing.Point(179, 14);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(56, 12);
             this.label1.TabIndex = 13;
-            this.label1.Text = "Base_Y :";
+            this.label1.Text = "Base_Z :";
             // 
             // label2
             // 
@@ -362,7 +388,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(364, 542);
+            this.ClientSize = new System.Drawing.Size(364, 572);
             this.Controls.Add(this.panelBasePoint);
             this.Controls.Add(this.panelPointControl);
             this.Controls.Add(this.panelTitle);
@@ -397,7 +423,7 @@
         private System.Windows.Forms.Label labelArc;
         private System.Windows.Forms.Label labelNo;
         private System.Windows.Forms.Label labelDirection;
-        private System.Windows.Forms.Label labelY;
+        private System.Windows.Forms.Label labelZ;
         private System.Windows.Forms.Label labelDelete;
         private System.Windows.Forms.Label labelAdd;
         private System.Windows.Forms.Panel panelTitle;
@@ -405,12 +431,14 @@
         private System.Windows.Forms.TextBox textBoxPartName;
         private System.Windows.Forms.Label labelPartName;
         private System.Windows.Forms.Button buttonDraw;
-        private System.Windows.Forms.Button button1;
+        private System.Windows.Forms.Button buttonReserved;
         private System.Windows.Forms.Button buttonFitAll;
         private System.Windows.Forms.Panel panelBasePoint;
         private System.Windows.Forms.TextBox textBoxBaseX;
         private System.Windows.Forms.TextBox textBoxBaseY;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Label label2;
+        private System.Windows.Forms.ComboBox comboBoxNodeType;
+        private System.Windows.Forms.Label labelKind;
     }
 }

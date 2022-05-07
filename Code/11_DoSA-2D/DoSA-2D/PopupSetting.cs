@@ -51,7 +51,7 @@ namespace DoSA
             }
             catch (Exception ex)
             {
-                CNotice.printTrace(ex.Message);
+                CNotice.printLog(ex.Message);
             }
         }
 
@@ -79,7 +79,7 @@ namespace DoSA
             // 파일 열기창 설정
             openFileDialog.Title = "Select a Exe File";
             openFileDialog.FileName = null;
-            openFileDialog.Filter = "FEMM EXE files|femm.exe|All files (*.*)|*.*";
+            openFileDialog.Filter = "FEMM EXE file|femm.exe|All files (*.*)|*.*";
             openFileDialog.FilterIndex = 1;
             openFileDialog.RestoreDirectory = true;
 
@@ -110,7 +110,7 @@ namespace DoSA
             }
             catch (Exception ex)
             {
-                CNotice.printTrace(ex.Message);
+                CNotice.printLog(ex.Message);
             }
         }
 
@@ -135,7 +135,7 @@ namespace DoSA
             }
             catch (Exception ex)
             {
-                CNotice.printTrace(ex.Message);
+                CNotice.printLog(ex.Message);
             }
 
             return true;
@@ -175,8 +175,8 @@ namespace DoSA
             }
             catch (Exception ex)
             {
-                CNotice.printTrace(ex.Message);
-                CNotice.printTraceID("AEOW");
+                CNotice.printLog(ex.Message);
+                CNotice.printLogID("AEOW");
             }
             
             return true;

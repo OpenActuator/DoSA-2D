@@ -1,6 +1,6 @@
 ﻿namespace Shapes
 {
-    partial class CPointControl
+    partial class CPointUI
     {
         /// <summary> 
         /// 필수 디자이너 변수입니다.
@@ -34,7 +34,7 @@
             this.buttonAdd = new System.Windows.Forms.Button();
             this.buttonDelete = new System.Windows.Forms.Button();
             this.textBoxX = new System.Windows.Forms.TextBox();
-            this.textBoxY = new System.Windows.Forms.TextBox();
+            this.textBoxZ = new System.Windows.Forms.TextBox();
             this.SuspendLayout();
             // 
             // labelNo
@@ -104,31 +104,31 @@
             this.textBoxX.KeyUp += new System.Windows.Forms.KeyEventHandler(this.textBoxX_KeyUp);
             this.textBoxX.Leave += new System.EventHandler(this.textBoxX_Leave);
             // 
-            // textBoxY
+            // textBoxZ
             // 
-            this.textBoxY.Location = new System.Drawing.Point(115, 6);
-            this.textBoxY.Name = "textBoxY";
-            this.textBoxY.Size = new System.Drawing.Size(70, 21);
-            this.textBoxY.TabIndex = 1;
-            this.textBoxY.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
-            this.textBoxY.Enter += new System.EventHandler(this.textBoxY_Enter);
-            this.textBoxY.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.textBoxY_KeyPress);
-            this.textBoxY.KeyUp += new System.Windows.Forms.KeyEventHandler(this.textBoxY_KeyUp);
-            this.textBoxY.Leave += new System.EventHandler(this.textBoxY_Leave);
+            this.textBoxZ.Location = new System.Drawing.Point(115, 6);
+            this.textBoxZ.Name = "textBoxZ";
+            this.textBoxZ.Size = new System.Drawing.Size(70, 21);
+            this.textBoxZ.TabIndex = 1;
+            this.textBoxZ.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
+            this.textBoxZ.Enter += new System.EventHandler(this.textBoxY_Enter);
+            this.textBoxZ.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.textBoxY_KeyPress);
+            this.textBoxZ.KeyUp += new System.Windows.Forms.KeyEventHandler(this.textBoxY_KeyUp);
+            this.textBoxZ.Leave += new System.EventHandler(this.textBoxY_Leave);
             // 
-            // CPointControl
+            // CPointUI
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.SystemColors.Control;
-            this.Controls.Add(this.textBoxY);
+            this.Controls.Add(this.textBoxZ);
             this.Controls.Add(this.textBoxX);
             this.Controls.Add(this.buttonDelete);
             this.Controls.Add(this.buttonAdd);
             this.Controls.Add(this.checkBoxArcDirection);
             this.Controls.Add(this.checkBoxKind);
             this.Controls.Add(this.labelNo);
-            this.Name = "CPointControl";
+            this.Name = "CPointUI";
             this.Size = new System.Drawing.Size(336, 28);
             this.ResumeLayout(false);
             this.PerformLayout();
@@ -143,6 +143,6 @@
         private System.Windows.Forms.Button buttonAdd;
         private System.Windows.Forms.Button buttonDelete;
         private System.Windows.Forms.TextBox textBoxX;
-        private System.Windows.Forms.TextBox textBoxY;
+        private System.Windows.Forms.TextBox textBoxZ;
     }
 }

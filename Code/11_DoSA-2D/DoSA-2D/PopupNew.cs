@@ -67,16 +67,26 @@ namespace DoSA
 
                         if (strOldTempName == strNewTempName)
                         {
+                            // 신규 디자인 이름이 기존 디자인과 겹칠때 기존 디자인을 삭제하는 것은 위험성이 따른다.
+                            // 그래서 아래의 동작을 중지한다.
+                            //
                             // 기존 디자인이 이미 존재할 때 삭제하고 새롭게 시작할지를 물어 온다
-                            DialogResult ret = CNotice.noticeWarningOKCancelID("TSDA", "W");
+                            //DialogResult ret = CNotice.noticeWarningOKCancelID("TSDA", "W");
 
-                            if (ret == DialogResult.OK)
-                            {
-                                m_manageFile.deleteDirectory(directoryName);
-                                return true;
-                            }
+                            //if (ret == DialogResult.OK)
+                            //{
+                            //    m_manageFile.deleteDirectory(directoryName);
+                            //    return true;
+                            //}
+                            //else
+                            //    return false;
+
+                            if (CSettingData.m_emLanguage == EMLanguage.Korean)
+                                CNotice.noticeWarning("동일한 이름의 Design 이 이미 존재 합니다.\n다른 디자인명을 사용해 주세요.");
                             else
-                                return false;
+                                CNotice.noticeWarning("A design with the same name already exists.\nPlease use a different design name.");
+
+                            return false;
                         }
                     }
                 }
@@ -88,7 +98,7 @@ namespace DoSA
 
                     if (formMain == null)
                     {
-                        CNotice.printTraceID("CNGM");
+                        CNotice.printLogID("CNGM");
                         return false;
                     }
 
@@ -101,7 +111,7 @@ namespace DoSA
             }
             catch (Exception ex)
             {
-                CNotice.printTrace(ex.Message);
+                CNotice.printLog(ex.Message);
                 return false;
             }
 

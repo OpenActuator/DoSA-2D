@@ -84,10 +84,10 @@ namespace Shapes
                 for (int i=0; i < m_listRelativePoint.Count; i++ )
                 {
                     point = new CPoint();
-                    point.m_dX = shapeTools.roundDigitOfShape(m_listRelativePoint[i].m_dX + m_basePoint.m_dX);
-                    point.m_dY = shapeTools.roundDigitOfShape(m_listRelativePoint[i].m_dY + m_basePoint.m_dY);
-                    point.m_emDirectionArc = m_listRelativePoint[i].m_emDirectionArc;
-                    point.m_emLineKind = m_listRelativePoint[i].m_emLineKind;
+                    point.X = shapeTools.roundDigitOfShape(m_listRelativePoint[i].X + m_basePoint.X);
+                    point.Z = shapeTools.roundDigitOfShape(m_listRelativePoint[i].Z + m_basePoint.Z);
+                    point.DirectionArc = m_listRelativePoint[i].DirectionArc;
+                    point.LineKind = m_listRelativePoint[i].LineKind;
 
                     listPoint.Add(point);
                 }
@@ -116,7 +116,7 @@ namespace Shapes
             {
                 if (m_listRelativePoint.Count < MIN_POLYGON_LINE_COUNT)
                 {
-                    CNotice.printTraceID("WRAL");
+                    CNotice.printLogID("WRAL");
                     return null;
                 }
 
@@ -130,10 +130,10 @@ namespace Shapes
                     // 기준 점인 Base Point 의 좌표와 상대좌표인 PointList 를 더해서
                     // 절대좌표값을 계산한 후에 형상을 그리기 위한 LineList 를 만든다
                     startPoint = new CPoint();
-                    startPoint.m_dX = shapeTools.roundDigitOfShape(m_listRelativePoint[i].m_dX + m_basePoint.m_dX);
-                    startPoint.m_dY = shapeTools.roundDigitOfShape(m_listRelativePoint[i].m_dY + m_basePoint.m_dY);
-                    startPoint.m_emDirectionArc = m_listRelativePoint[i].m_emDirectionArc;
-                    startPoint.m_emLineKind = m_listRelativePoint[i].m_emLineKind;
+                    startPoint.X = shapeTools.roundDigitOfShape(m_listRelativePoint[i].X + m_basePoint.X);
+                    startPoint.Z = shapeTools.roundDigitOfShape(m_listRelativePoint[i].Z + m_basePoint.Z);
+                    startPoint.DirectionArc = m_listRelativePoint[i].DirectionArc;
+                    startPoint.LineKind = m_listRelativePoint[i].LineKind;
 
                     // 마지막 Point 을 제외한 나머지 경우
                     if (i < m_listRelativePoint.Count - 1)
@@ -141,19 +141,19 @@ namespace Shapes
                         // 기준 점인 Base Point 의 좌표와 상대좌표인 PointList 를 더해서
                         // 절대좌표값을 계산한 후에 형상을 그리기 위한 LineList 를 만든다
                         endPoint = new CPoint();
-                        endPoint.m_dX = shapeTools.roundDigitOfShape(m_listRelativePoint[i + 1].m_dX + m_basePoint.m_dX);
-                        endPoint.m_dY = shapeTools.roundDigitOfShape(m_listRelativePoint[i + 1].m_dY + m_basePoint.m_dY);
-                        endPoint.m_emDirectionArc = m_listRelativePoint[i + 1].m_emDirectionArc;
-                        endPoint.m_emLineKind = m_listRelativePoint[i + 1].m_emLineKind;
+                        endPoint.X = shapeTools.roundDigitOfShape(m_listRelativePoint[i + 1].X + m_basePoint.X);
+                        endPoint.Z = shapeTools.roundDigitOfShape(m_listRelativePoint[i + 1].Z + m_basePoint.Z);
+                        endPoint.DirectionArc = m_listRelativePoint[i + 1].DirectionArc;
+                        endPoint.LineKind = m_listRelativePoint[i + 1].LineKind;
                     }
                     /// 마지막인 Point 경우
                     else
                     {
                         endPoint = new CPoint();
-                        endPoint.m_dX = shapeTools.roundDigitOfShape(m_listRelativePoint[0].m_dX + m_basePoint.m_dX);
-                        endPoint.m_dY = shapeTools.roundDigitOfShape(m_listRelativePoint[0].m_dY + m_basePoint.m_dY);
-                        endPoint.m_emDirectionArc = m_listRelativePoint[0].m_emDirectionArc;
-                        endPoint.m_emLineKind = m_listRelativePoint[0].m_emLineKind;
+                        endPoint.X = shapeTools.roundDigitOfShape(m_listRelativePoint[0].X + m_basePoint.X);
+                        endPoint.Z = shapeTools.roundDigitOfShape(m_listRelativePoint[0].Z + m_basePoint.Z);
+                        endPoint.DirectionArc = m_listRelativePoint[0].DirectionArc;
+                        endPoint.LineKind = m_listRelativePoint[0].LineKind;
                     }
 
                     listLine.Add(new CLine(startPoint, endPoint));
@@ -165,8 +165,8 @@ namespace Shapes
 
         public CFace()
         {
-            m_basePoint.m_dX = 0.0f;
-            m_basePoint.m_dY = 0.0f;
+            m_basePoint.X = 0.0f;
+            m_basePoint.Z = 0.0f;
         }
 
         public bool addPoint(CPoint point)
@@ -174,6 +174,47 @@ namespace Shapes
             m_listRelativePoint.Add(point);
 
             return true;
+        }
+
+        public bool isRectangle()
+        {
+            bool bCheck = false;
+
+            CPoint startPoint, endPoint;
+            double dDistanceX, dDistanceZ;
+
+            if (m_listRelativePoint.Count != 4)
+            {
+                bCheck = false;
+            }
+            else
+            {
+                // 회전하지 않은 직사각형인지를 확인한다.
+                for (int i = 0; i < 4; i++)
+                {
+                    if (i != 3)
+                    {
+                        startPoint = m_listRelativePoint[i];
+                        endPoint = m_listRelativePoint[i + 1];
+                    }
+                    else
+                    {
+                        startPoint = m_listRelativePoint[i];
+                        endPoint = m_listRelativePoint[0];
+                    }
+
+                    dDistanceX = Math.Abs(startPoint.X - endPoint.X);
+                    dDistanceZ = Math.Abs(startPoint.Z - endPoint.Z);
+
+                    // 회전하지 않았으면 모든 라인은 수직이거나 수평이기 때문에 한쪽의 좌표의 거리는 0이 있어야 한다.
+                    if (CSmallUtil.isZeroPosition(dDistanceX) == true || CSmallUtil.isZeroPosition(dDistanceZ) == true)
+                        bCheck = true;
+                    else
+                        bCheck = false;
+                }
+            }
+
+            return bCheck;
         }
 
         /// <summary>
@@ -188,7 +229,7 @@ namespace Shapes
             /// 내부 포인트의 X 좌표값은 항상 영보다 커야 한다.
             foreach(CPoint point in m_listRelativePoint)
             {
-                if((point.m_dX + m_basePoint.m_dX) < 0)
+                if((point.X + m_basePoint.X) < 0)
                 {
                     CNotice.noticeWarningID("YUNX");
                     return false;
@@ -297,7 +338,6 @@ namespace Shapes
             // 4 점 (좌상)
             m_listRelativePoint.Add(new CPoint(smallX, bigY, EMLineKind.STRAIGHT, EMDirectionArc.FORWARD));
 
-
             return true;
         }
 
@@ -315,7 +355,7 @@ namespace Shapes
 
             if (m_listRelativePoint.Count < MIN_POINT_COUNT)
             {
-                CNotice.printTraceID("YATT2");
+                CNotice.printLogID("YATT2");
                 return false;
             }
 
@@ -331,23 +371,23 @@ namespace Shapes
                 // 마지막 Point 만 제외한다.
                 if (i < listAbsolutePoint.Count - 1)
                 {
-                    x1 = listAbsolutePoint[i].m_dX;
-                    y1 = listAbsolutePoint[i].m_dY;
-                    x2 = listAbsolutePoint[i + 1].m_dX;
-                    y2 = listAbsolutePoint[i + 1].m_dY;
+                    x1 = listAbsolutePoint[i].X;
+                    y1 = listAbsolutePoint[i].Z;
+                    x2 = listAbsolutePoint[i + 1].X;
+                    y2 = listAbsolutePoint[i + 1].Z;
                 }
                 // 마지막 선은 끝점과 첫점을 있는다
                 else
                 {
-                    x1 = listAbsolutePoint[i].m_dX;
-                    y1 = listAbsolutePoint[i].m_dY;
-                    x2 = listAbsolutePoint[0].m_dX;
-                    y2 = listAbsolutePoint[0].m_dY;
+                    x1 = listAbsolutePoint[i].X;
+                    y1 = listAbsolutePoint[i].Z;
+                    x2 = listAbsolutePoint[0].X;
+                    y2 = listAbsolutePoint[0].Z;
                 }
 
-                if (listAbsolutePoint[i].m_emLineKind == EMLineKind.ARC)
+                if (listAbsolutePoint[i].LineKind == EMLineKind.ARC)
                 {
-                    bDirectionArc = (listAbsolutePoint[i].m_emDirectionArc == EMDirectionArc.BACKWARD ? true : false);
+                    bDirectionArc = (listAbsolutePoint[i].DirectionArc == EMDirectionArc.BACKWARD ? true : false);
                     femm.drawArc(x1, y1, x2, y2, bDirectionArc, emMoving);
                 }
                 else
@@ -368,7 +408,7 @@ namespace Shapes
         {
             if (listPoint.Count < MIN_POINT_COUNT)
             {
-                CNotice.printTraceID("YATT");
+                CNotice.printLogID("YATT");
                 return false;
             }
 
@@ -405,12 +445,12 @@ namespace Shapes
 
                 foreach (CPoint point in listAbsolutePoint)
                 {
-                    sumX += point.m_dX;
-                    sumY += point.m_dY;
+                    sumX += point.X;
+                    sumY += point.Z;
                 }
 
-                blockPoint.m_dX = sumX / listAbsolutePoint.Count;
-                blockPoint.m_dY = sumY / listAbsolutePoint.Count;
+                blockPoint.X = sumX / listAbsolutePoint.Count;
+                blockPoint.Z = sumY / listAbsolutePoint.Count;
             }
             else
             {
@@ -427,8 +467,8 @@ namespace Shapes
                 else
                 {
                     // 예외 처리를 한다.
-                    blockPoint.m_dX = 0;
-                    blockPoint.m_dY = 0;
+                    blockPoint.X = 0;
+                    blockPoint.Z = 0;
                 }
             }
 
@@ -461,8 +501,8 @@ namespace Shapes
 
             foreach (CPoint point in listAbsolutePoint)
             {
-                if (point.m_dX < minX)  minX = point.m_dX;
-                if (point.m_dX > maxX)  maxX = point.m_dX;
+                if (point.X < minX)  minX = point.X;
+                if (point.X > maxX)  maxX = point.X;
             }
 
             /// minX 나 maxX 가 값이 입력되지 않으면 오류를 발생시킨다.
@@ -502,8 +542,8 @@ namespace Shapes
 
             foreach (CPoint point in listAbsolutePoint)
             {
-                if (point.m_dY < minY) minY = point.m_dY;
-                if (point.m_dY > maxY) maxY = point.m_dY;
+                if (point.Z < minY) minY = point.Z;
+                if (point.Z > maxY) maxY = point.Z;
             }
 
             /// minX 나 maxX 가 값이 입력되지 않으면 오류를 발생시킨다.
@@ -551,8 +591,8 @@ namespace Shapes
 
             // 좌상단 구석에 block point 좌표를 얻어낸다.
             // Region 은 무조건 직사각형이기 때문에 촤상단 점의 근접점이 내부점이 될 수 있다.
-            blockPoint.m_dX = maxX - width / 1000.0f;
-            blockPoint.m_dY = maxY - height / 1000.0f;
+            blockPoint.X = maxX - width / 1000.0f;
+            blockPoint.Z = maxY - height / 1000.0f;
 
             femm.setRegionBlockProp(blockPoint, dMeshSize);
 
@@ -569,10 +609,10 @@ namespace Shapes
                 // 마지막 Point 만 제외한다.
                 if (i < listAbsolutePoint.Count - 1)
                 {
-                    sx = listAbsolutePoint[i].m_dX;
-                    sy = listAbsolutePoint[i].m_dY;
-                    ex = listAbsolutePoint[i + 1].m_dX;
-                    ey = listAbsolutePoint[i + 1].m_dY;
+                    sx = listAbsolutePoint[i].X;
+                    sy = listAbsolutePoint[i].Z;
+                    ex = listAbsolutePoint[i + 1].X;
+                    ey = listAbsolutePoint[i + 1].Z;
 
                     femm.drawBoundaryLine(sx, sy, ex, ey);
                 }
@@ -580,10 +620,10 @@ namespace Shapes
                 /// 마지막 선은 좌변 라인으로 경계조건이 필요 없다.
                 else
                 {
-                    sx = listAbsolutePoint[i].m_dX;
-                    sy = listAbsolutePoint[i].m_dY;
-                    ex = listAbsolutePoint[0].m_dX;
-                    ey = listAbsolutePoint[0].m_dY;
+                    sx = listAbsolutePoint[i].X;
+                    sy = listAbsolutePoint[i].Z;
+                    ex = listAbsolutePoint[0].X;
+                    ey = listAbsolutePoint[0].Z;
 
                     femm.drawLine(sx, sy, ex, ey);
                 }
@@ -613,8 +653,8 @@ namespace Shapes
             // 좌상단 구석에 block point 좌표를 얻어낸다.
             //
             // Region 은 무조건 직사각형이기 때문에 촤상단 점의 근접점이 내부점이 될 수 있다.
-            blockPoint.m_dX = maxX - width / 1000.0f;
-            blockPoint.m_dY = maxY - height / 1000.0f;
+            blockPoint.X = maxX - width / 1000.0f;
+            blockPoint.Z = maxY - height / 1000.0f;
 
             femm.setRegionBlockProp(blockPoint, dMeshSize);
 
@@ -631,10 +671,10 @@ namespace Shapes
                 // 마지막 Point 만 제외한다.
                 if (i < listAbsolutePoint.Count - 1)
                 {
-                    sx = listAbsolutePoint[i].m_dX;
-                    sy = listAbsolutePoint[i].m_dY;
-                    ex = listAbsolutePoint[i + 1].m_dX;
-                    ey = listAbsolutePoint[i + 1].m_dY;
+                    sx = listAbsolutePoint[i].X;
+                    sy = listAbsolutePoint[i].Z;
+                    ex = listAbsolutePoint[i + 1].X;
+                    ey = listAbsolutePoint[i + 1].Z;
 
                     /// 경계조건은 부여하지 않음
                     femm.drawLine(sx, sy, ex, ey);
@@ -643,36 +683,36 @@ namespace Shapes
                 // 마지막 선은 끝점과 첫점을 있는다
                 else
                 {
-                    sx = listAbsolutePoint[i].m_dX;
-                    sy = listAbsolutePoint[i].m_dY;
-                    ex = listAbsolutePoint[0].m_dX;
-                    ey = listAbsolutePoint[0].m_dY;
+                    sx = listAbsolutePoint[i].X;
+                    sy = listAbsolutePoint[i].Z;
+                    ex = listAbsolutePoint[0].X;
+                    ey = listAbsolutePoint[0].Z;
 
                     femm.drawLine(sx, sy, ex, ey);
                 }
             }
         }
 
-        public void writeObject(System.IO.StreamWriter writeStream)
+        public void writeObject(System.IO.StreamWriter writeStream, int nLevel)
         {
             CWriteFile writeFile = new CWriteFile();
 
-            writeFile.writeBeginLine(writeStream, "Shape", 3);
+            writeFile.writeBeginLine(writeStream, "Shape", nLevel);
 
-            writeFile.writeDataLine(writeStream, "BasePointX", m_basePoint.m_dX.ToString(), 4);
-            writeFile.writeDataLine(writeStream, "BasePointY", m_basePoint.m_dY.ToString(), 4);
+            writeFile.writeDataLine(writeStream, "BasePointX", m_basePoint.X.ToString(), nLevel + 1);
+            writeFile.writeDataLine(writeStream, "BasePointY", m_basePoint.Z.ToString(), nLevel + 1);
 
-            writeFile.writeDataLine(writeStream, "FaceType", m_emFaceType, 4);
+            writeFile.writeDataLine(writeStream, "FaceType", m_emFaceType, nLevel + 1);
 
             foreach (CPoint pointe in m_listRelativePoint)
             {
-                writeFile.writeDataLine(writeStream, "PointX", pointe.m_dX.ToString(), 4);
-                writeFile.writeDataLine(writeStream, "PointY", pointe.m_dY.ToString(), 4);
-                writeFile.writeDataLine(writeStream, "LineKind", pointe.m_emLineKind.ToString(), 4);
-                writeFile.writeDataLine(writeStream, "ArcDriction", pointe.m_emDirectionArc.ToString(), 4);
+                writeFile.writeDataLine(writeStream, "PointX", pointe.X.ToString(), nLevel + 1);
+                writeFile.writeDataLine(writeStream, "PointY", pointe.Z.ToString(), nLevel + 1);
+                writeFile.writeDataLine(writeStream, "LineKind", pointe.LineKind.ToString(), nLevel + 1);
+                writeFile.writeDataLine(writeStream, "ArcDriction", pointe.DirectionArc.ToString(), nLevel + 1);
             }
 
-            writeFile.writeEndLine(writeStream, "Shape", 3);
+            writeFile.writeEndLine(writeStream, "Shape", nLevel);
         }
     }
     
@@ -686,16 +726,39 @@ namespace Shapes
     /// </summary>
     public class CPoint
     {
-        public double m_dX;
-        public double m_dY;
+        private double m_dX;
+        private double m_dZ;
+        private EMLineKind m_emLineKind;
+        private EMDirectionArc m_emDirectionArc;
 
-        public EMLineKind m_emLineKind;
-        public EMDirectionArc m_emDirectionArc;
+        public double X
+        {
+            get { return m_dX; }
+            set { m_dX = value; }
+        }
+
+        public double Z
+        {
+            get { return m_dZ; }
+            set { m_dZ = value; }
+        }
+
+        public EMLineKind LineKind
+        {
+            get { return m_emLineKind; }
+            set { m_emLineKind = value; }
+        }
+
+        public EMDirectionArc DirectionArc
+        {
+            get { return m_emDirectionArc; }
+            set { m_emDirectionArc = value; }
+        }
 
         public CPoint()
         {
             m_dX = 0.0;
-            m_dY = 0.0;
+            m_dZ = 0.0;
 
             m_emLineKind = EMLineKind.STRAIGHT;
             m_emDirectionArc = EMDirectionArc.FORWARD;
@@ -704,7 +767,7 @@ namespace Shapes
         public CPoint(double x, double y, EMLineKind kind, EMDirectionArc direction)
         {
             m_dX = x;
-            m_dY = y;
+            m_dZ = y;
 
             m_emLineKind = kind;
             m_emDirectionArc = direction;
@@ -724,37 +787,37 @@ namespace Shapes
 
         public CLine()
         {
-            m_startPoint.m_dX = 0;
-            m_startPoint.m_dY = 0;
-            m_endPoint.m_dX = 0;
-            m_endPoint.m_dY = 0;
+            m_startPoint.X = 0;
+            m_startPoint.Z = 0;
+            m_endPoint.X = 0;
+            m_endPoint.Z = 0;
 
-            m_startPoint.m_emLineKind = EMLineKind.STRAIGHT;
-            m_startPoint.m_emDirectionArc = EMDirectionArc.FORWARD;
+            m_startPoint.LineKind = EMLineKind.STRAIGHT;
+            m_startPoint.DirectionArc = EMDirectionArc.FORWARD;
         }
 
         public CLine(double x1, double y1, double x2, double y2, EMLineKind kind, EMDirectionArc direction)
         {
-            m_startPoint.m_dX = x1;
-            m_startPoint.m_dY = y1;
-            m_endPoint.m_dX = x2;
-            m_endPoint.m_dY = y2;
+            m_startPoint.X = x1;
+            m_startPoint.Z = y1;
+            m_endPoint.X = x2;
+            m_endPoint.Z = y2;
 
             /// Line 정보는 Start 점에 담겨있는 정보를 사용한다.
-            m_startPoint.m_emLineKind = kind;
-            m_startPoint.m_emDirectionArc = direction;
+            m_startPoint.LineKind = kind;
+            m_startPoint.DirectionArc = direction;
         }
 
         public CLine(CPoint start, CPoint end)
         {
-            m_startPoint.m_dX = start.m_dX;
-            m_startPoint.m_dY = start.m_dY;
-            m_endPoint.m_dX = end.m_dX;
-            m_endPoint.m_dY = end.m_dY;
+            m_startPoint.X = start.X;
+            m_startPoint.Z = start.Z;
+            m_endPoint.X = end.X;
+            m_endPoint.Z = end.Z;
 
             /// Line 정보는 Start 점에 담겨있는 정보를 사용한다.
-            m_startPoint.m_emLineKind = start.m_emLineKind;
-            m_startPoint.m_emDirectionArc = start.m_emDirectionArc;
+            m_startPoint.LineKind = start.LineKind;
+            m_startPoint.DirectionArc = start.DirectionArc;
         }
     }
 
@@ -788,14 +851,14 @@ namespace Shapes
         /// </summary>
         public bool isPerchedOnLine(CLine line, CPoint point)
         {
-            double dL_P1_X = line.m_startPoint.m_dX;
-            double dL_P1_Y = line.m_startPoint.m_dY;
+            double dL_P1_X = line.m_startPoint.X;
+            double dL_P1_Y = line.m_startPoint.Z;
 
-            double dL_P2_X = line.m_endPoint.m_dX;
-            double dL_P2_Y = line.m_endPoint.m_dY;
+            double dL_P2_X = line.m_endPoint.X;
+            double dL_P2_Y = line.m_endPoint.Z;
 
-            double dP_X = point.m_dX;
-            double dP_Y = point.m_dY;
+            double dP_X = point.X;
+            double dP_Y = point.Z;
 
             /// 라인의 X 구간 
             double dBigX = Math.Max(dL_P1_X, dL_P2_X);
@@ -861,17 +924,17 @@ namespace Shapes
         /// </summary>
         public bool isIntersected(CLine firstLine, CLine secondLine)
         {
-            double dFL_P1_X = roundDigitOfShape(firstLine.m_startPoint.m_dX);
-            double dFL_P1_Y = roundDigitOfShape(firstLine.m_startPoint.m_dY);
+            double dFL_P1_X = roundDigitOfShape(firstLine.m_startPoint.X);
+            double dFL_P1_Y = roundDigitOfShape(firstLine.m_startPoint.Z);
 
-            double dFL_P2_X = roundDigitOfShape(firstLine.m_endPoint.m_dX);
-            double dFL_P2_Y = roundDigitOfShape(firstLine.m_endPoint.m_dY);
+            double dFL_P2_X = roundDigitOfShape(firstLine.m_endPoint.X);
+            double dFL_P2_Y = roundDigitOfShape(firstLine.m_endPoint.Z);
 
-            double dSL_P1_X = roundDigitOfShape(secondLine.m_startPoint.m_dX);
-            double dSL_P1_Y = roundDigitOfShape(secondLine.m_startPoint.m_dY);
+            double dSL_P1_X = roundDigitOfShape(secondLine.m_startPoint.X);
+            double dSL_P1_Y = roundDigitOfShape(secondLine.m_startPoint.Z);
 
-            double dSL_P2_X = roundDigitOfShape(secondLine.m_endPoint.m_dX);
-            double dSL_P2_Y = roundDigitOfShape(secondLine.m_endPoint.m_dY);
+            double dSL_P2_X = roundDigitOfShape(secondLine.m_endPoint.X);
+            double dSL_P2_Y = roundDigitOfShape(secondLine.m_endPoint.Z);
 
             /// 알고리즘 2 번
             /// 
@@ -895,17 +958,17 @@ namespace Shapes
         /// </summary>
         public bool isOverlaped(CLine firstLine, CLine secondLine)
         {
-            double dFL_P1_X = firstLine.m_startPoint.m_dX;
-            double dFL_P1_Y = firstLine.m_startPoint.m_dY;
+            double dFL_P1_X = firstLine.m_startPoint.X;
+            double dFL_P1_Y = firstLine.m_startPoint.Z;
 
-            double dFL_P2_X = firstLine.m_endPoint.m_dX;
-            double dFL_P2_Y = firstLine.m_endPoint.m_dY;
+            double dFL_P2_X = firstLine.m_endPoint.X;
+            double dFL_P2_Y = firstLine.m_endPoint.Z;
 
-            double dSL_P1_X = secondLine.m_startPoint.m_dX;
-            double dSL_P1_Y = secondLine.m_startPoint.m_dY;
+            double dSL_P1_X = secondLine.m_startPoint.X;
+            double dSL_P1_Y = secondLine.m_startPoint.Z;
 
-            double dSL_P2_X = secondLine.m_endPoint.m_dX;
-            double dSL_P2_Y = secondLine.m_endPoint.m_dY;
+            double dSL_P2_X = secondLine.m_endPoint.X;
+            double dSL_P2_Y = secondLine.m_endPoint.Z;
 
             /// 첫번째 라인의 직선방정식 기울기와 Y 절편을 계산한다.
             double dA = (dFL_P2_Y - dFL_P1_Y) / (dFL_P2_X - dFL_P1_X);
@@ -992,7 +1055,7 @@ namespace Shapes
 
                 for (int i = 0; i < face.RelativePointList.Count; i++)
                 {
-                    dArea += (face.RelativePointList[j].m_dX * face.RelativePointList[i].m_dY) - (face.RelativePointList[j].m_dY * face.RelativePointList[i].m_dX);
+                    dArea += (face.RelativePointList[j].X * face.RelativePointList[i].Z) - (face.RelativePointList[j].Z * face.RelativePointList[i].X);
  
                     j = i;  /// j is previous vertex to i
                 }
@@ -1038,20 +1101,20 @@ namespace Shapes
             baseY = roundDigitOfShape(baseY);
 
             // 중심점을 만든다.
-            centerPoint.m_dX = centerX;
-            centerPoint.m_dY = baseY;
+            centerPoint.X = centerX;
+            centerPoint.Z = baseY;
 
             /// create a right check line
-            rightCheckLine.m_startPoint.m_dX = centerX;
-            rightCheckLine.m_startPoint.m_dY = baseY;
-            rightCheckLine.m_endPoint.m_dX = maxX + 10.0f;    // 오른 검색선의 끝을 maxX 보다 10 크게 한다.
-            rightCheckLine.m_endPoint.m_dY = baseY;
+            rightCheckLine.m_startPoint.X = centerX;
+            rightCheckLine.m_startPoint.Z = baseY;
+            rightCheckLine.m_endPoint.X = maxX + 10.0f;    // 오른 검색선의 끝을 maxX 보다 10 크게 한다.
+            rightCheckLine.m_endPoint.Z = baseY;
 
             /// create a left check line
-            leftCheckLine.m_startPoint.m_dX = centerX;
-            leftCheckLine.m_startPoint.m_dY = baseY;
-            leftCheckLine.m_endPoint.m_dX = minX - 10.0f;    // 오른 검색선의 끝을 minX 보다 10 작게 한다.
-            leftCheckLine.m_endPoint.m_dY = baseY;
+            leftCheckLine.m_startPoint.X = centerX;
+            leftCheckLine.m_startPoint.Z = baseY;
+            leftCheckLine.m_endPoint.X = minX - 10.0f;    // 오른 검색선의 끝을 minX 보다 10 작게 한다.
+            leftCheckLine.m_endPoint.Z = baseY;
 
             /// 매번 생성하는 Property 이기 때문에 
             /// LineList 는 새로운 List에  담는 동작 한번만 호출하고, 사용은 새로운 List 를 사용한다.
@@ -1110,8 +1173,8 @@ namespace Shapes
             // 양측이 홀수이면 Inside Point 이다.
             if (EMNumberKind.ODD == getNumberKind(nRightIntersection) && EMNumberKind.ODD == getNumberKind(nLeftIntersection))
             {
-                point.m_dX = centerX;
-                point.m_dY = baseY;
+                point.X = centerX;
+                point.Z = baseY;
 
                 return point;
             }

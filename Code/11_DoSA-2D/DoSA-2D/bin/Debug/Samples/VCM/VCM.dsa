@@ -1,47 +1,47 @@
 $begin "DoSA_Project"
-	Writed=4/13/2022 9:50:19 PM
-	DoSA_Version=0.9.15.6
-	File_Version=0.9.15.6
+	Writed=2022-05-06 오후 11:39:17
+	DoSA_Version=1.0.1.0
+	File_Version=1.0.1.0
 	$begin "Design"
-		DesignName=LV
+		DesignName=VCM
 		$begin "Coil"
 			NodeName=coil
 			KindKey=COIL
-			MovingParts=FIXED
+			MovingParts=MOVING
 			Material=Copper
 			CurrentDirection=IN
-			Turns=126
-			Resistance=15.74769
+			Turns=120
+			Resistance=14.9978
 			Layers=6
-			TurnsOfOneLayer=21
-			CoilWireGrade=Bonded_IEC_Grade_1B
+			TurnsOfOneLayer=20
+			CoilWireGrade=Enameled_IEC_Grade_1
 			InnerDiameter=3
 			OuterDiameter=3.73
-			Height=1.18
+			Height=1.2
 			CopperDiameter=0.045
-			WireDiameter=0.04953
+			WireDiameter=0.05202
 			Temperature=20
 			HorizontalCoefficient=0.95
 			VerticalCoefficient=1.13
 			ResistanceCoefficient=1.1
 			$begin "Shape"
-				BasePointX=1.5
-				BasePointY=-0.67
+				BasePointX=0
+				BasePointY=0
 				FaceType=RECTANGLE
-				PointX=0
-				PointY=0
+				PointX=1.5
+				PointY=-0.69
 				LineKind=STRAIGHT
 				ArcDriction=FORWARD
-				PointX=0.365
-				PointY=0
+				PointX=1.865
+				PointY=-0.69
 				LineKind=STRAIGHT
 				ArcDriction=FORWARD
-				PointX=0.365
-				PointY=1.18
+				PointX=1.865
+				PointY=0.51
 				LineKind=STRAIGHT
 				ArcDriction=FORWARD
-				PointX=0
-				PointY=1.18
+				PointX=1.5
+				PointY=0.51
 				LineKind=STRAIGHT
 				ArcDriction=FORWARD
 			$end "Shape"
@@ -49,27 +49,27 @@ $begin "DoSA_Project"
 		$begin "Magnet"
 			NodeName=magnet
 			KindKey=MAGNET
-			MovingParts=MOVING
+			MovingParts=FIXED
 			Material=N52
 			MagnetDirection=UP
 			$begin "Shape"
 				BasePointX=0
-				BasePointY=0.4
-				FaceType=RECTANGLE
+				BasePointY=0
+				FaceType=POLYGON
 				PointX=0
-				PointY=0
-				LineKind=STRAIGHT
-				ArcDriction=FORWARD
-				PointX=1.35
-				PointY=0
-				LineKind=STRAIGHT
-				ArcDriction=FORWARD
-				PointX=1.35
-				PointY=1
+				PointY=1.4
 				LineKind=STRAIGHT
 				ArcDriction=FORWARD
 				PointX=0
-				PointY=1
+				PointY=0.4
+				LineKind=STRAIGHT
+				ArcDriction=FORWARD
+				PointX=1.35
+				PointY=0.4
+				LineKind=STRAIGHT
+				ArcDriction=FORWARD
+				PointX=1.35
+				PointY=1.4
 				LineKind=STRAIGHT
 				ArcDriction=FORWARD
 			$end "Shape"
@@ -77,26 +77,26 @@ $begin "DoSA_Project"
 		$begin "Steel"
 			NodeName=plate
 			KindKey=STEEL
-			MovingParts=MOVING
-			Material=430 Stainless Steel
+			MovingParts=FIXED
+			Material=1010 Steel
 			$begin "Shape"
 				BasePointX=0
-				BasePointY=0.2
-				FaceType=RECTANGLE
+				BasePointY=0
+				FaceType=POLYGON
 				PointX=0
-				PointY=0
+				PointY=0.4
 				LineKind=STRAIGHT
 				ArcDriction=FORWARD
-				PointX=1.35
-				PointY=0
+				PointX=0
+				PointY=0.2
 				LineKind=STRAIGHT
 				ArcDriction=FORWARD
 				PointX=1.35
 				PointY=0.2
 				LineKind=STRAIGHT
 				ArcDriction=FORWARD
-				PointX=0
-				PointY=0.2
+				PointX=1.35
+				PointY=0.4
 				LineKind=STRAIGHT
 				ArcDriction=FORWARD
 			$end "Shape"
@@ -104,42 +104,34 @@ $begin "DoSA_Project"
 		$begin "Steel"
 			NodeName=yoke
 			KindKey=STEEL
-			MovingParts=MOVING
+			MovingParts=FIXED
 			Material=1010 Steel
 			$begin "Shape"
 				BasePointX=0
-				BasePointY=0.2
+				BasePointY=0
 				FaceType=POLYGON
 				PointX=0
-				PointY=1.4
+				PointY=1.6
 				LineKind=STRAIGHT
 				ArcDriction=FORWARD
 				PointX=0
-				PointY=1.2
-				LineKind=STRAIGHT
-				ArcDriction=FORWARD
-				PointX=1.9
-				PointY=1.2
-				LineKind=ARC
-				ArcDriction=BACKWARD
-				PointX=2.05
-				PointY=1.05
-				LineKind=STRAIGHT
-				ArcDriction=FORWARD
-				PointX=2.05
-				PointY=0
-				LineKind=STRAIGHT
-				ArcDriction=FORWARD
-				PointX=2.25
-				PointY=0
-				LineKind=STRAIGHT
-				ArcDriction=FORWARD
-				PointX=2.25
-				PointY=1.05
-				LineKind=ARC
-				ArcDriction=FORWARD
-				PointX=1.9
 				PointY=1.4
+				LineKind=STRAIGHT
+				ArcDriction=FORWARD
+				PointX=2.05
+				PointY=1.4
+				LineKind=STRAIGHT
+				ArcDriction=FORWARD
+				PointX=2.05
+				PointY=0.2
+				LineKind=STRAIGHT
+				ArcDriction=FORWARD
+				PointX=2.25
+				PointY=0.2
+				LineKind=STRAIGHT
+				ArcDriction=FORWARD
+				PointX=2.25
+				PointY=1.6
 				LineKind=STRAIGHT
 				ArcDriction=FORWARD
 			$end "Shape"
@@ -149,7 +141,7 @@ $begin "DoSA_Project"
 			KindKey=FORCE_TEST
 			MeshSizePercent=2
 			Voltage=2.5
-			Current=0.15875
+			Current=0.16669
 			MovingStroke=0
 		$end "ForceTest"
 		$begin "StrokeTest"
@@ -157,7 +149,7 @@ $begin "DoSA_Project"
 			KindKey=STROKE_TEST
 			MeshSizePercent=2
 			Voltage=2.5
-			Current=0.15875
+			Current=0.16669
 			InitialStroke=-0.5
 			FinalStroke=0.5
 			StepCount=5

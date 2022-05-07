@@ -19,18 +19,29 @@ namespace Shapes
     public partial class PopupShape : Form
     {
         const int POPUP_SIZE_X = 380;
-        const int POPUP_SIZE_Y = 580;
+        const int POPUP_SIZE_Y = 620;
 
         const int MIN_POLYGON_CONTROL_COUNT = 4;
         const int RECTANGLE_CONTROL_COUNT = 2;
 
         private EMFaceType m_faceType = EMFaceType.RECTANGLE;
+        private EMKind m_partType = EMKind.NON_KIND;
 
-        private List<CPointControl> m_listPointControl = null;
+        private List<CPointUI> m_listPointUI = null;
 
-        public string m_strPartName;
+        private string m_strPartName;
 
         private bool m_bCreatePopupWindow;
+        public EMKind PartType
+        {
+            get { return m_partType; }
+            set { m_partType = value; }
+        }
+        public string PartName
+        {
+            get { return m_strPartName; }
+            set { m_strPartName = value; }
+        }
 
         /// <summary>
         /// PopupShape 의 FaceType 변경만으로 Popup 창의 형태와 초기화가 이루어진다.
@@ -62,7 +73,7 @@ namespace Shapes
                         break;
 
                     default:
-                        CNotice.printTraceID("AFTE");
+                        CNotice.printLogID("AFTE");
                         break;
                 }
             }
@@ -71,24 +82,24 @@ namespace Shapes
         /// <summary>
         /// 좌표정보 리스트
         /// </summary>
-        public List<CPointControl> ListPointControl
+        public List<CPointUI> ListPointUI
         {
             get
             {
                 try 
                 { 
-                    m_listPointControl = new List<CPointControl>();
+                    m_listPointUI = new List<CPointUI>();
 
                     for (int i = this.panelPointControl.Controls.Count - 1; i >= 0; i--)
                     {
-                        m_listPointControl.Add((CPointControl)this.panelPointControl.Controls[i]);
+                        m_listPointUI.Add((CPointUI)this.panelPointControl.Controls[i]);
                     }
 
-                    return m_listPointControl;
+                    return m_listPointUI;
                 }
                 catch (Exception ex)
                 {
-                    CNotice.printTrace(ex.Message);
+                    CNotice.printLog(ex.Message);
 
                     return null;
                 }  
@@ -96,20 +107,22 @@ namespace Shapes
         }
 
         /// <summary>
-        /// Face 의 형상 정보가 없는 경우 호출되는 생성자
+        /// Face 의 형상 정보가 없는 경우 호출되는 생성자로
+        /// 툴바의 파트 생성 버튼을 사용할 때 호출되는 생성자이다.
         /// </summary>
         public PopupShape(EMFaceType drawType, EMKind emKind)
         {
             InitializeComponent();
 
             m_strPartName = string.Empty;
+            m_partType = emKind;
 
             m_bCreatePopupWindow = true;
             
             textBoxBaseX.Text = "0.0";
             textBoxBaseY.Text = "0.0";
 
-            switch (emKind)
+            switch (m_partType)
             {
                 case EMKind.COIL:
                     labelPartName.Text = "Coil Name :";
@@ -127,31 +140,37 @@ namespace Shapes
                     break;
 
                 default:
-                    CNotice.printTraceID("TPTI");
+                    CNotice.printLogID("TPTI");
                     return;
             }
-          
+
+            // 콤보박스 데이터는 파라메터로 넘어오는 대로 강제로 지정한다.
             comboBoxFaceType.SelectedItem = drawType.ToString();
+            comboBoxNodeType.SelectedItem = m_partType.ToString();
 
             /// 코일의 경우는 코일계산 때문에 Rectangle 로 고정을 해야 한다.
             if (emKind == EMKind.COIL)
                 comboBoxFaceType.Enabled = false;
+
+            comboBoxNodeType.Enabled = false;
         }
 
         /// <summary>
-        /// Face 의 형상 정보가 있는 경우 호출되는 생성자
+        /// Face 의 형상 정보가 있는 경우 호출되는 생성자로
+        /// TreeView 에서 파트를 더블클릭할때 호출되는 생성자이다.
         /// </summary>
         public PopupShape(string partName, CFace face, EMKind emKind)
         {
             InitializeComponent();
 
             m_strPartName = partName;
+            m_partType = emKind;
 
             m_bCreatePopupWindow = false;
 
             try
             {
-                switch (emKind)
+                switch (m_partType)
                 {
                     case EMKind.COIL:
                         labelPartName.Text = "Coil Name :";
@@ -168,29 +187,33 @@ namespace Shapes
                         this.Text = "Change Steel";
                         break;
 
+                    case EMKind.NON_KIND:
+                        labelPartName.Text = "Part Name";
+                        this.Text = "Change Part";
+                        break;
+
                     default:
-                        CNotice.printTraceID("TPTI");
+                        CNotice.printLogID("TPTI");
                         return;
                 }
             
                 if (face == null)
                 {
-                    CNotice.printTraceID("CTPS1");
+                    CNotice.printLogID("CTPS1");
                     return;
                 }
 
-                textBoxBaseX.Text = face.BasePoint.m_dX.ToString();
-                textBoxBaseY.Text = face.BasePoint.m_dY.ToString();
+                textBoxBaseX.Text = face.BasePoint.X.ToString();
+                textBoxBaseY.Text = face.BasePoint.Z.ToString();
 
                 if (face.getPointCount() < MIN_POLYGON_CONTROL_COUNT)
                 {
-                    CNotice.printTraceID("CTPS");
+                    CNotice.printLogID("CTPS");
                     return;
                 }
 
                 /// 파트이름을 표시만하고 수정을 하지 못하게 한다.
                 textBoxPartName.Text = partName;
-                textBoxPartName.Enabled = false;
 
                 if(face.FaceType == EMFaceType.RECTANGLE)
                 {
@@ -198,11 +221,11 @@ namespace Shapes
                     // 이벤트함수에서 FaceType 가 지정되면서 Popup 창의 형태와 UserControl 이 초기화 된다.
                     comboBoxFaceType.SelectedItem = EMFaceType.RECTANGLE.ToString();
 
-                    this.ListPointControl[0].StrCoordX = face.RelativePointList[0].m_dX.ToString();
-                    this.ListPointControl[0].StrCoordY = face.RelativePointList[0].m_dY.ToString();
+                    this.ListPointUI[0].StrCoordX = face.RelativePointList[0].X.ToString();
+                    this.ListPointUI[0].StrCoordZ = face.RelativePointList[0].Z.ToString();
 
-                    this.ListPointControl[1].StrCoordX = face.RelativePointList[2].m_dX.ToString();
-                    this.ListPointControl[1].StrCoordY = face.RelativePointList[2].m_dY.ToString();            
+                    this.ListPointUI[1].StrCoordX = face.RelativePointList[2].X.ToString();
+                    this.ListPointUI[1].StrCoordZ = face.RelativePointList[2].Z.ToString();            
                 }
                 else if(face.FaceType == EMFaceType.POLYGON)
                 {
@@ -215,35 +238,39 @@ namespace Shapes
                         // 기본 생성 Control 수 보다 작을 때는 있는 Control 에 데이터를 담고
                         // 클 때는 Control 를 생성하면서 데이터를 담은다.
                         if(i >= MIN_POLYGON_CONTROL_COUNT)
-                            this.addPointControl(new CPointControl(), true, this.panelPointControl);
+                            this.addPointControl(new CPointUI(), true, this.panelPointControl);
 
-                        this.ListPointControl[i].StrCoordX = face.RelativePointList[i].m_dX.ToString();
-                        this.ListPointControl[i].StrCoordY = face.RelativePointList[i].m_dY.ToString();
+                        this.ListPointUI[i].StrCoordX = face.RelativePointList[i].X.ToString();
+                        this.ListPointUI[i].StrCoordZ = face.RelativePointList[i].Z.ToString();
 
-                        if (face.RelativePointList[i].m_emLineKind == EMLineKind.ARC)
-                            this.ListPointControl[i].IsArc = true;
+                        if (face.RelativePointList[i].LineKind == EMLineKind.ARC)
+                            this.ListPointUI[i].IsArc = true;
                         else
-                            this.ListPointControl[i].IsArc = false;
+                            this.ListPointUI[i].IsArc = false;
 
-                        if (face.RelativePointList[i].m_emDirectionArc == EMDirectionArc.BACKWARD)
-                            this.ListPointControl[i].IsArcDirection = true;
+                        if (face.RelativePointList[i].DirectionArc == EMDirectionArc.BACKWARD)
+                            this.ListPointUI[i].IsArcDirection = true;
                         else
-                            this.ListPointControl[i].IsArcDirection = false;
+                            this.ListPointUI[i].IsArcDirection = false;
                     }
                 }
                 else
                 {
-                    CNotice.printTraceID("UAWF");
+                    CNotice.printLogID("UAWF");
                     return;
                 }
 
-                /// 코일의 경우는 코일계산 때문에 Rectangle 로 고정을 해야 한다.
-                if (emKind == EMKind.COIL)
-                    comboBoxFaceType.Enabled = false;
+                /// 수정을 할때는 형상 과 Node Type 변경을 못하도록 한다.
+                comboBoxFaceType.Enabled = false;
+
+                comboBoxNodeType.SelectedItem = m_partType.ToString();
+
+                if(m_partType != EMKind.NON_KIND)
+                    comboBoxNodeType.Enabled = false;
             }
             catch (Exception ex)
             {
-                CNotice.printTrace(ex.Message);
+                CNotice.printLog(ex.Message);
             }  
         }
 
@@ -253,7 +280,7 @@ namespace Shapes
         private void addRectanglePointControl(Panel panel)
         {
             for(int i=0 ; i< RECTANGLE_CONTROL_COUNT; i++)
-                this.addPointControl(new CPointControl(), false, panel);
+                this.addPointControl(new CPointUI(), false, panel);
 
             this.resetSequence();
         }
@@ -264,7 +291,7 @@ namespace Shapes
         private void addPolylinePointControl(Panel panel)
         {
             for(int i=0 ; i< MIN_POLYGON_CONTROL_COUNT; i++)
-                this.addPointControl(new CPointControl(), true, panel);
+                this.addPointControl(new CPointUI(), true, panel);
        
             this.resetSequence();
         }
@@ -274,7 +301,7 @@ namespace Shapes
         /// </summary>
         /// <param name="pointControl">좌표 객체</param>
         /// <param name="panel">좌표를 추가할 Panel</param>
-        private CPointControl addPointControl(CPointControl pointControl, bool showButton, Panel panel)
+        private CPointUI addPointControl(CPointUI pointControl, bool showButton, Panel panel)
         {
             pointControl.Dock = DockStyle.Top;
             pointControl.IsRectangle = showButton;
@@ -291,13 +318,13 @@ namespace Shapes
                     /// 추가 버튼 클릭했을때 현재 컨트롤 아래 추가
                     /// - 컨트롤 추가 
                     ///  * addPointControl() 의 호출 영역을 호출 한다.
-                    CPointControl current = this.addPointControl(new CPointControl(), showButton, panel);
+                    CPointUI current = this.addPointControl(new CPointUI(), showButton, panel);
 
                     /// - 컨트롤 정렬
-                    List<CPointControl> sortList = new List<CPointControl>();
+                    List<CPointUI> sortList = new List<CPointUI>();
                     for (int i = 0; i < panel.Controls.Count; i++)
                     {
-                        CPointControl c = panel.Controls[i] as CPointControl;
+                        CPointUI c = panel.Controls[i] as CPointUI;
                         if (c.Equals(current)) continue; // 현재 추가된 항목은 통과
                         if (c.Equals(pointControl)) break; // 버튼 클릭한 항목을때 그 위쪽은 탐색할 필요 없으므로 루프 종료
 
@@ -351,9 +378,9 @@ namespace Shapes
                         for (int i = 0; i < panelPointControl.Controls.Count; i++)
                         {
                             if (i == 0)
-                                ((CPointControl)panelPointControl.Controls[i]).showAddButton();
+                                ((CPointUI)panelPointControl.Controls[i]).showAddButton();
                             else
-                                ((CPointControl)panelPointControl.Controls[i]).hideAddButton();
+                                ((CPointUI)panelPointControl.Controls[i]).hideAddButton();
                         }
                     }
                 };
@@ -376,9 +403,9 @@ namespace Shapes
                     for (int i = 0; i < panelPointControl.Controls.Count; i++)
                     {
                         if (i == 0)
-                            ((CPointControl)panelPointControl.Controls[i]).showAddButton();
+                            ((CPointUI)panelPointControl.Controls[i]).showAddButton();
                         else
-                            ((CPointControl)panelPointControl.Controls[i]).hideAddButton();
+                            ((CPointUI)panelPointControl.Controls[i]).hideAddButton();
                     }
                 }
 
@@ -388,7 +415,7 @@ namespace Shapes
             }
             catch (Exception ex)
             {
-                CNotice.printTrace(ex.Message);
+                CNotice.printLog(ex.Message);
                 return null;
             }  
         }
@@ -407,12 +434,12 @@ namespace Shapes
             {
                 for (int i = 0; i < this.panelPointControl.Controls.Count; i++)
                 {
-                    ((CPointControl)this.panelPointControl.Controls[i]).Sequence = this.panelPointControl.Controls.Count - i;
+                    ((CPointUI)this.panelPointControl.Controls[i]).Sequence = this.panelPointControl.Controls.Count - i;
                 }
             }
             catch (Exception ex)
             {
-                CNotice.printTrace(ex.Message);
+                CNotice.printLog(ex.Message);
             }  
         }
 
@@ -421,14 +448,14 @@ namespace Shapes
 
             if (this.m_faceType != EMFaceType.POLYGON)
             {
-                CNotice.printTraceID("TBOA");
+                CNotice.printLogID("TBOA");
                 return;
             }
 
-            this.addPointControl(new CPointControl(), true, this.panelPointControl);
+            this.addPointControl(new CPointUI(), true, this.panelPointControl);
         }
 
-        private void comboBoxdrawType_SelectedIndexChanged(object sender, EventArgs e)
+        private void comboBoxFaceType_SelectedIndexChanged(object sender, EventArgs e)
         {
             FaceType = (EMFaceType)comboBoxFaceType.SelectedIndex;
         }
@@ -448,15 +475,15 @@ namespace Shapes
                 return false;
             }
 
-            for (int i = 0; i < ListPointControl.Count; i++)
+            for (int i = 0; i < ListPointUI.Count; i++)
             {               
-                if (ListPointControl[i].StrCoordX.Trim().Length == 0)
+                if (ListPointUI[i].StrCoordX.Trim().Length == 0)
                 {
                     CNotice.noticeWarningID("PETC");
                     return false;
                 }
 
-                if (ListPointControl[i].StrCoordY.Trim().Length == 0)
+                if (ListPointUI[i].StrCoordZ.Trim().Length == 0)
                 {
                     CNotice.noticeWarningID("PETC");
                     return false;
@@ -466,14 +493,14 @@ namespace Shapes
             string strX1, strY1, strX2, strY2;
 
             /// 동일한 좌표값이 점이 중복으로 있는 경우
-            for (int i = 0; i < ListPointControl.Count - 1; i++)
+            for (int i = 0; i < ListPointUI.Count - 1; i++)
             {
-                for (int j = i + 1; j < ListPointControl.Count; j++)
+                for (int j = i + 1; j < ListPointUI.Count; j++)
                 {
-                    strX1 = ListPointControl[i].StrCoordX.Trim();
-                    strY1 = ListPointControl[i].StrCoordY.Trim();
-                    strX2 = ListPointControl[j].StrCoordX.Trim();
-                    strY2 = ListPointControl[j].StrCoordY.Trim();
+                    strX1 = ListPointUI[i].StrCoordX.Trim();
+                    strY1 = ListPointUI[i].StrCoordZ.Trim();
+                    strX2 = ListPointUI[j].StrCoordX.Trim();
+                    strY2 = ListPointUI[j].StrCoordZ.Trim();
 
                     if(strX1 == strX2 && strY1 == strY2)
                     {
@@ -497,7 +524,7 @@ namespace Shapes
 
                 if (formMain == null)
                 {
-                    CNotice.printTraceID("CNGM");
+                    CNotice.printLogID("CNGM");
                     return false;
                 }
 
@@ -515,107 +542,173 @@ namespace Shapes
         {
             /// 완벽한 입력인 상태에서만 Draw 및 저장이 가능한다.
             if ( isInputDataOK() == false)
-                return;
-
-            /// 형상 유효성 확인
-            /// 
-            CFace face = makeFace();
-
-            if (face == null)
             {
-                CNotice.noticeWarningID("TWAP1");
-                return;
-            }
-
-            if (false == face.isShapeOK())
-            {
-                CNotice.printTraceID("TWAP3");
+                DialogResult = DialogResult.Cancel;
                 return;
             }
             
-            m_strPartName = textBoxPartName.Text;
-            this.DialogResult = DialogResult.OK;
-
-            FormMain formMain = ((FormMain)this.Owner);
-
-            if (formMain == null)
+            if (PartType == EMKind.COIL && FaceType == EMFaceType.POLYGON)
             {
-                CNotice.printTraceID("CNGM");
+                if(false == isRectangleShapeInPopup())
+                {
+                    if (CSettingData.m_emLanguage == EMLanguage.Korean)
+                        CNotice.noticeWarning("Coil 의 형상이 직사각형이 아닙니다.\nCoil 지정을 취소합니다.");
+                    else
+                        CNotice.noticeWarning("The shape of the Coil is not rectangular.\n.Cancels the Coil assignment.");
+
+                    DialogResult = DialogResult.Cancel;
+                    return;
+                }
+            }
+
+            // 확인을 위해 임시 생성한다.
+            CFace faceTemp = makeFaceInPopup();
+
+            if (faceTemp == null)
+            {
+                CNotice.noticeWarningID("TWAP1");
+                DialogResult = DialogResult.Cancel;
                 return;
             }
 
-            // 혹시 FEMM 의 화면이 닫힌 경우 FEMM 의 화면을 복원합니다.
-            formMain.reopenFEMM();
+            if (false == faceTemp.isShapeOK())
+            {
+                CNotice.printLogID("TWAP3");
+                DialogResult = DialogResult.Cancel;
+                return;
+            }
+            
+            FormMain formMain = ((FormMain)this.Owner);
+
+            if (formMain != null)
+            {
+                // 혹시 FEMM 의 화면이 닫힌 경우 FEMM 의 화면을 복원합니다.
+                formMain.reopenFEMM();
+            }
+
+            m_strPartName = textBoxPartName.Text;
+
+            // 문제가 없으면 정상 종료를 리턴한다.
+            DialogResult = DialogResult.OK;
         }
 
         // Base Point 와 상대좌표로 좌표값이 저장되는 Face 가 생성된다.
-        public CFace makeFace()
+        public CFace makeFaceInPopup()
         {
             try
             {
                 CFace face = new CFace();
 
-                face.BasePoint.m_dX = Double.Parse(textBoxBaseX.Text);
-                face.BasePoint.m_dY = Double.Parse(textBoxBaseY.Text);
+                face.BasePoint.X = Double.Parse(textBoxBaseX.Text);
+                face.BasePoint.Z = Double.Parse(textBoxBaseY.Text);
 
                 if (FaceType == EMFaceType.RECTANGLE)
                 {
-                    if (ListPointControl.Count != 2)
+                    if (ListPointUI.Count != 2)
                     {
-                        CNotice.printTraceID("TATP1");
+                        CNotice.printLogID("TATP1");
                         return null;
                     }
 
                     double x1, y1, x2, y2;
 
-                    x1 = Double.Parse(ListPointControl[0].StrCoordX);
-                    y1 = Double.Parse(ListPointControl[0].StrCoordY);
-                    x2 = Double.Parse(ListPointControl[1].StrCoordX);
-                    y2 = Double.Parse(ListPointControl[1].StrCoordY);
+                    x1 = Double.Parse(ListPointUI[0].StrCoordX);
+                    y1 = Double.Parse(ListPointUI[0].StrCoordZ);
+                    x2 = Double.Parse(ListPointUI[1].StrCoordX);
+                    y2 = Double.Parse(ListPointUI[1].StrCoordZ);
 
                     face.setRectanglePoints(x1, y1, x2, y2);
                 }
                 else
                 {
-                    if (ListPointControl.Count < 4)
+                    if (ListPointUI.Count < 4)
                     {
-                        CNotice.printTraceID("TANM");
+                        CNotice.printLogID("TANM");
                         return null;
+                    }
+
+                    // PartType 가 코일이고 Polygon 형상을 가지고 있는 경우라면 (DXF로 읽어드리고 코일로 지정하는 경우)
+                    // Rectangle 로 바꾸어 저장한다.
+                    // 만약, Retangle 조건이 아니라면 지나쳐서 Polygon 으로 저장한다.
+                    if (PartType == EMKind.COIL)
+                    {
+                        CFace retFace = makeRectangleFaceInPopup();
+                        
+                        if (retFace != null )
+                        {
+                            return retFace;
+                        }                            
                     }
 
                     List<CPoint> listPoint = new List<CPoint>();
 
-                    foreach (CPointControl pointControl in ListPointControl)
+                    foreach (CPointUI pointControl in ListPointUI)
                     {
                         // 매번 신규로 생성을 해야 한다.
                         CPoint point = new CPoint();
 
-                        point.m_dX = Double.Parse(pointControl.StrCoordX);
-                        point.m_dY = Double.Parse(pointControl.StrCoordY);
+                        point.X = Double.Parse(pointControl.StrCoordX);
+                        point.Z = Double.Parse(pointControl.StrCoordZ);
 
                         if (pointControl.IsArc == true)
-                            point.m_emLineKind = EMLineKind.ARC;
+                            point.LineKind = EMLineKind.ARC;
                         else
-                            point.m_emLineKind = EMLineKind.STRAIGHT;
+                            point.LineKind = EMLineKind.STRAIGHT;
 
                         if (pointControl.IsArcDirection == true)
-                            point.m_emDirectionArc = EMDirectionArc.BACKWARD;
+                            point.DirectionArc = EMDirectionArc.BACKWARD;
                         else
-                            point.m_emDirectionArc = EMDirectionArc.FORWARD;
+                            point.DirectionArc = EMDirectionArc.FORWARD;
 
                         listPoint.Add(point);
                     }
 
                     face.setPolygonPoints(listPoint);
+
                 }
 
                 return face;
             }
             catch (Exception ex)
             {
-                CNotice.printTrace(ex.Message);
+                CNotice.printLog(ex.Message);
                 return null;
             }  
+        }
+
+        private CFace makeRectangleFaceInPopup()
+        {
+            double minX, minZ, maxX, maxZ;
+
+            minX = minZ = 1e100;
+            maxX = maxZ = -1e100;
+
+            CFace face = new CFace();
+
+            if (false == isRectangleShapeInPopup())
+                return null;
+
+            foreach(CPointUI pointUI in ListPointUI)
+            {
+                if (minX > Convert.ToDouble(pointUI.StrCoordX))
+                    minX = Convert.ToDouble(pointUI.StrCoordX);
+
+                if (minZ > Convert.ToDouble(pointUI.StrCoordZ))
+                    minZ = Convert.ToDouble(pointUI.StrCoordZ);
+
+                if (maxX < Convert.ToDouble(pointUI.StrCoordX))
+                    maxX = Convert.ToDouble(pointUI.StrCoordX);
+
+                if (maxZ < Convert.ToDouble(pointUI.StrCoordZ))
+                    maxZ = Convert.ToDouble(pointUI.StrCoordZ);
+            }
+
+            if (minX >= maxX || minZ >= maxZ)
+                return null;
+
+            face.setRectanglePoints(minX, minZ, maxX, maxZ);
+
+            return face;
         }
 
         public void buttonDraw_Click(object sender, EventArgs e)
@@ -638,23 +731,23 @@ namespace Shapes
 
                 if (formMain == null)
                 {
-                    CNotice.printTraceID("CNGM");
+                    CNotice.printLogID("CNGM");
                     return;
                 }
                     
-                /// 형상 유효성 확인
+                /// 형상 유효성 확인을 위해 임시로 생성한다.
                 /// 
-                CFace face = makeFace();
+                CFace faceTemp = makeFaceInPopup();
 
-                if (face == null)
+                if (faceTemp == null)
                 {
                     CNotice.noticeWarningID("TWAP1");
                     return;
                 }
 
-                if (false == face.isShapeOK())
+                if (false == faceTemp.isShapeOK())
                 {
-                    CNotice.printTraceID("TWAP3");
+                    CNotice.printLogID("TWAP3");
                     return ;
                 }
                     
@@ -663,7 +756,7 @@ namespace Shapes
                 femm.deleteAll();
 
                 /// 1. 작업 중인 Face 를 제외하고 형상 그리기
-                foreach (CNode node in formMain.m_design.NodeList)
+                foreach (CDataNode node in formMain.m_design.GetNodeList)
                 {
                     if (node.GetType().BaseType.Name == "CShapeParts")
                     {
@@ -681,12 +774,12 @@ namespace Shapes
                 formMain.reopenFEMM();
 
                 /// 2. 작업중인 Face 형상 그리기
-                face.drawFace(femm);    
+                faceTemp.drawFace(femm);    
 
             }
             catch (Exception ex)
             {
-                CNotice.printTrace(ex.Message);
+                CNotice.printLog(ex.Message);
             }  
         }
 
@@ -697,7 +790,7 @@ namespace Shapes
         /// </summary>
         /// <param name="pointControl">좌표점 PointControl</param>
         /// <param name="bRedraw">형상 수정이 없어도 강제로 ARC 변경때 강제로 수정함</param>
-        internal void drawTemporaryFace(CPointControl pointControl, bool bRedraw = false)
+        internal void drawTemporaryFace(CPointUI pointControl, bool bRedraw = false)
         {
             try
             {
@@ -711,13 +804,13 @@ namespace Shapes
 
                 if (formMain == null)
                 {
-                    CNotice.printTraceID("CNGM");
+                    CNotice.printLogID("CNGM");
                     return;
                 }
 
                 CScriptFEMM femm = formMain.m_femm;
 
-                CNode nodeParts = formMain.m_design.getNode(m_strPartName);
+                CDataNode nodeParts = formMain.m_design.getNode(m_strPartName);
 
                 /// 0. 해당 좌표점의 수정이 있었는지를 판단한다.
                 ///  - 수정이 있는 경우만 다시 그리기 위해서이다.
@@ -727,16 +820,16 @@ namespace Shapes
                 if(nodeParts != null)
                 {
                     /// 좌표 Control 에 빈칸이 존재하는 지를 확인함
-                    for (int i = 0; i < ListPointControl.Count; i++)
+                    for (int i = 0; i < ListPointUI.Count; i++)
                     {
                         /// 해당 좌표점만 비교한다.
                         /// 만약, Parts 의 모든 좌표점을 비교하면 다른 좌표점이 수정되었을때 나머지 좌표점의 수정이 없어도 다시 그리기가 된다.
-                        if (ListPointControl[i] == pointControl)
+                        if (ListPointUI[i] == pointControl)
                         {
-                            if (((CShapeParts)nodeParts).Face.RelativePointList[i].m_dX != Double.Parse(ListPointControl[i].StrCoordX.Trim()))
+                            if (((CShapeParts)nodeParts).Face.RelativePointList[i].X != Double.Parse(ListPointUI[i].StrCoordX.Trim()))
                                 retCheck = true;
 
-                            if (((CShapeParts)nodeParts).Face.RelativePointList[i].m_dY != Double.Parse(ListPointControl[i].StrCoordY.Trim()))
+                            if (((CShapeParts)nodeParts).Face.RelativePointList[i].Z != Double.Parse(ListPointUI[i].StrCoordZ.Trim()))
                                 retCheck = true;
                         }
                     }
@@ -751,7 +844,7 @@ namespace Shapes
                     femm.deleteAll();
 
                     /// 1. 혹시 수정중이라면, 현재 작업 중인 Face 를 제외하고 형상 그리기
-                    foreach (CNode node in formMain.m_design.NodeList)
+                    foreach (CDataNode node in formMain.m_design.GetNodeList)
                     {
                         if (node.GetType().BaseType.Name == "CShapeParts")
                         {
@@ -768,12 +861,12 @@ namespace Shapes
                 retCheck = true;
 
                 /// 좌표 Control 에 빈칸이 존재하는 지를 확인함
-                for (int i = 0; i < ListPointControl.Count; i++)
+                for (int i = 0; i < ListPointUI.Count; i++)
                 {
-                    if (ListPointControl[i].StrCoordX.Trim().Length == 0)
+                    if (ListPointUI[i].StrCoordX.Trim().Length == 0)
                         retCheck = false;
 
-                    if (ListPointControl[i].StrCoordY.Trim().Length == 0)
+                    if (ListPointUI[i].StrCoordZ.Trim().Length == 0)
                         retCheck = false;
                 }
                 
@@ -783,20 +876,18 @@ namespace Shapes
                 dBase_X = Double.Parse(textBoxBaseX.Text.Trim());
                 dBase_Y = Double.Parse(textBoxBaseY.Text.Trim());
 
-                CFace face = null; 
-
                 // 모든 데이터가 입력된 경우는 폐곡선의 정상적인 Face 를 그린다.
                 if(retCheck == true)
                 {
-                    face = makeFace();
+                    CFace faceTemp = makeFaceInPopup();
 
-                    if (null != face)
+                    if (null != faceTemp)
                     {
-                        face.drawFace(femm);
+                        faceTemp.drawFace(femm);
                     }
                     else
                     {
-                        CNotice.printTraceID("TSWN");
+                        CNotice.printLogID("TSWN");
                     }
                 }
                 // 모든 데이터가 아직 입력되지 않은 상태는 입력중인 데이터만으로 그림을 그린다.
@@ -809,19 +900,19 @@ namespace Shapes
                     dP1_X = dP1_Y = dP2_X = dP2_Y = 0;                   
                     bArc = bArcDirection = false;
 
-                    for (int i = 0; i < ListPointControl.Count; i++)
+                    for (int i = 0; i < ListPointUI.Count; i++)
                     {
                         retCheck = true;
 
-                        if (ListPointControl[i].StrCoordX.Trim().Length == 0)
+                        if (ListPointUI[i].StrCoordX.Trim().Length == 0)
                             retCheck = false;
                         else
-                            dP1_X = Double.Parse(ListPointControl[i].StrCoordX.Trim()) + dBase_X;
+                            dP1_X = Double.Parse(ListPointUI[i].StrCoordX.Trim()) + dBase_X;
 
-                        if (ListPointControl[i].StrCoordY.Trim().Length == 0)
+                        if (ListPointUI[i].StrCoordZ.Trim().Length == 0)
                             retCheck = false;
                         else
-                            dP1_Y = Double.Parse(ListPointControl[i].StrCoordY.Trim()) + dBase_Y;
+                            dP1_Y = Double.Parse(ListPointUI[i].StrCoordZ.Trim()) + dBase_Y;
 
                         /// X, Y 값이 모두 입력된 Point Control 인 경우
                         if (retCheck == true)
@@ -833,12 +924,12 @@ namespace Shapes
                             {
                                 if(this.FaceType == EMFaceType.RECTANGLE)
                                 {
-                                    CNotice.printTraceID("ATTW");
+                                    CNotice.printLogID("ATTW");
                                 }
                                 /// 다각형만 적용된다.
                                 /// 만약 사각형의 경우 i = 1 까지 모두 채워지면 모두 입력된 상태로 if 문의 위에처 처리되기 때문이다.
-                                bArc = ListPointControl[i].IsArc;
-                                bArcDirection = ListPointControl[i].IsArcDirection;
+                                bArc = ListPointUI[i].IsArc;
+                                bArcDirection = ListPointUI[i].IsArcDirection;
                                     
                                 if (bArc == true)
                                     femm.drawArc(dP2_X, dP2_Y, dP1_X, dP1_Y, bArcDirection);
@@ -862,12 +953,12 @@ namespace Shapes
                 if (pointControl != null)
                 {
                     /// XY 값 모두 들어 있는 경우에만 표시를 한다.
-                    if (pointControl.StrCoordX != "" && pointControl.StrCoordY != "")
+                    if (pointControl.StrCoordX != "" && pointControl.StrCoordZ != "")
                     {
                         CPoint selectedPoint = new CPoint();
 
-                        selectedPoint.m_dX = Double.Parse(pointControl.StrCoordX) + dBase_X;
-                        selectedPoint.m_dY = Double.Parse(pointControl.StrCoordY) + dBase_Y;
+                        selectedPoint.X = Double.Parse(pointControl.StrCoordX) + dBase_X;
+                        selectedPoint.Z = Double.Parse(pointControl.StrCoordZ) + dBase_Y;
 
                         femm.clearSelected();
 
@@ -877,7 +968,7 @@ namespace Shapes
             }
             catch (Exception ex)
             {
-                CNotice.printTrace(ex.Message);
+                CNotice.printLog(ex.Message);
             }  
         }
 
@@ -887,7 +978,7 @@ namespace Shapes
 
             if (formMain == null)
             {
-                CNotice.printTraceID("CNGM");
+                CNotice.printLogID("CNGM");
                 return;
             }
 
@@ -950,6 +1041,53 @@ namespace Shapes
             {
                 e.Handled = true;
             }
+        }
+
+        private void comboBoxPartType_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            // Type 의 가장 위에 PARTS 가 있어서 1을 더해 준다.
+            m_partType = (EMKind)comboBoxNodeType.SelectedIndex + 1;
+        }
+
+        private bool isRectangleShapeInPopup()
+        {
+            bool bCheck = false;
+
+            CPointUI startPointUI, endPointUI;
+            double dDistanceX, dDistanceZ;
+
+            if (ListPointUI.Count != 4)
+            {
+                bCheck = false;
+            }
+            else
+            {
+                // 회전하지 않은 직사각형인지를 확인한다.
+                for (int i = 0; i < 4; i++)
+                {
+                    if (i != 3)
+                    {
+                        startPointUI = ListPointUI[i];
+                        endPointUI = ListPointUI[i + 1];
+                    }
+                    else
+                    {
+                        startPointUI = ListPointUI[i];
+                        endPointUI = ListPointUI[0];
+                    }
+
+                    dDistanceX = Math.Abs(Convert.ToDouble(startPointUI.StrCoordX) - Convert.ToDouble(endPointUI.StrCoordX));
+                    dDistanceZ = Math.Abs(Convert.ToDouble(startPointUI.StrCoordZ) - Convert.ToDouble(endPointUI.StrCoordZ));
+
+                    // 회전하지 않았으면 모든 라인은 수직이거나 수평이기 때문에 한쪽의 좌표의 거리는 0이 있어야 한다.
+                    if (CSmallUtil.isZeroPosition(dDistanceX) == true || CSmallUtil.isZeroPosition(dDistanceZ) == true)
+                        bCheck = true;
+                    else
+                        bCheck = false;
+                }
+            }
+
+            return bCheck;
         }
     }
 }

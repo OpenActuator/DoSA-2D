@@ -11,7 +11,7 @@ using System.Windows.Forms;
 
 namespace Shapes
 {
-    public partial class CPointControl : UserControl
+    public partial class CPointUI : UserControl
     {
         /// <summary>
         /// 좌표 제거 이벤트 핸들러
@@ -45,10 +45,10 @@ namespace Shapes
         /// <summary>
         /// 좌표 값
         /// </summary>
-        public string StrCoordY
+        public string StrCoordZ
         {
-            get { return textBoxY.Text; }
-            set { this.textBoxY.Text = value.ToString(); }
+            get { return textBoxZ.Text; }
+            set { this.textBoxZ.Text = value.ToString(); }
         }
 
         /// <summary>
@@ -94,20 +94,20 @@ namespace Shapes
 
         #region--------------------------- 생성자 ---------------------------
 
-        public CPointControl()
+        public CPointUI()
         {
             InitializeComponent();
         }             
 
-        public CPointControl(CPoint point)
+        public CPointUI(CPoint point)
         {
             InitializeComponent();
 
-            StrCoordX = point.m_dX.ToString();
-            StrCoordY = point.m_dY.ToString();
+            StrCoordX = point.X.ToString();
+            StrCoordZ = point.Z.ToString();
 
-            IsArc = (point.m_emLineKind == EMLineKind.ARC) ? true : false;
-            IsArcDirection = (point.m_emDirectionArc == EMDirectionArc.BACKWARD) ? true : false;            
+            IsArc = (point.LineKind == EMLineKind.ARC) ? true : false;
+            IsArcDirection = (point.DirectionArc == EMDirectionArc.BACKWARD) ? true : false;            
         }
 
         #endregion

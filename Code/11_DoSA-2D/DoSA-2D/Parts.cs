@@ -52,9 +52,9 @@ namespace Parts
         Bonded_JIS_Class_2
     };
 
-    public class CShapeParts : CNode
+    public class CShapeParts : CDataNode
     {
-        protected string m_strMaterial;
+        protected string m_strMaterialName;
 
         private CFace m_face = null;
 
@@ -74,10 +74,10 @@ namespace Parts
         // 출력만 필요한 전체 하위 객체들을 위해 표시되지 않는 Get 용 getMaterial() 메소드를 사용한다.
         public string getMaterial()
         {
-            return m_strMaterial;
+            return m_strMaterialName;
         }
-        
-        protected CShapeParts()
+
+        public CShapeParts()
         {
             // 초기값은 고정된 것으로 가정함
             this.MovingPart = EMMoving.FIXED;
@@ -114,18 +114,18 @@ namespace Parts
 
                     if (m_face == null)
                     {
-                        CNotice.printTraceID("IIAT");
+                        CNotice.printLogID("IIAT");
                         return false;
                     }
 
                     switch (arrayString[0])
                     {
                         case "BasePointX":
-                            m_face.BasePoint.m_dX = Double.Parse(arrayString[1]);
+                            m_face.BasePoint.X = Double.Parse(arrayString[1]);
                             break;
 
                         case "BasePointY":
-                            m_face.BasePoint.m_dY = Double.Parse(arrayString[1]);
+                            m_face.BasePoint.Z = Double.Parse(arrayString[1]);
                             break;
                         
                         case "FaceType":
@@ -137,12 +137,12 @@ namespace Parts
                             // ArcDriction 키워드를 만날때 생성된 CPoint 를 Face 에 추가한다.
                             // 따라서 저장될때 X, Y, LineKind, ArcDriction 의 순서로 꼭 저장 되어야 한다.
                             point = new CPoint();
-                            point.m_dX = Double.Parse(arrayString[1]);
+                            point.X = Double.Parse(arrayString[1]);
                             break;
 
                         case "PointY":
                             if (point != null)
-                                point.m_dY = Double.Parse(arrayString[1]);
+                                point.Z = Double.Parse(arrayString[1]);
                             else
                             {
                                 CNotice.noticeWarningID("YCWX");
@@ -152,7 +152,7 @@ namespace Parts
 
                         case "LineKind":
                             if (point != null)
-                                point.m_emLineKind = (EMLineKind)Enum.Parse(typeof(EMLineKind), arrayString[1]);
+                                point.LineKind = (EMLineKind)Enum.Parse(typeof(EMLineKind), arrayString[1]);
                             else
                             {
                                 CNotice.noticeWarningID("TIAP9");
@@ -162,7 +162,7 @@ namespace Parts
 
                         case "ArcDriction":
                             if (point != null)
-                                point.m_emDirectionArc = (EMDirectionArc)Enum.Parse(typeof(EMDirectionArc), arrayString[1]);
+                                point.DirectionArc = (EMDirectionArc)Enum.Parse(typeof(EMDirectionArc), arrayString[1]);
                             else
                             {
                                 CNotice.noticeWarningID("TIAP10");
@@ -180,13 +180,147 @@ namespace Parts
             }
             catch (Exception ex)
             {
-                CNotice.printTrace(ex.Message);
+                CNotice.printLog(ex.Message);
                 return false;
             }  
 
             return true;
         }
 
+    }
+
+    public class CNonKind : CShapeParts
+    {
+        public string MaterialName
+        {
+            get { return m_strMaterialName; }
+            set { m_strMaterialName = value; }
+        }
+
+        public CNonKind()
+        {
+            m_kindKey = EMKind.NON_KIND;
+            MaterialName = "Air";
+        }
+
+        // 파일스트림 객체에 코일 정보를 기록한다.
+        // override 를 꼭 사용해야 가상함수가 아니라 현 함수가 호출된다.
+        public override bool writeObject(StreamWriter writeStream, int nLevel)
+        {
+            try
+            {
+                CWriteFile writeFile = new CWriteFile();
+
+                writeFile.writeBeginLine(writeStream, "Non-Kind", nLevel);
+
+                // CNode
+                writeFile.writeDataLine(writeStream, "NodeName", NodeName, nLevel + 1);
+                writeFile.writeDataLine(writeStream, "KindKey", m_kindKey, nLevel + 1);
+
+                // CShapeParts
+                writeFile.writeDataLine(writeStream, "MovingParts", MovingPart, nLevel + 1);
+
+                // CFace
+                if (Face != null)
+                {
+                    Face.writeObject(writeStream, nLevel + 1);
+                }
+
+                writeFile.writeEndLine(writeStream, "Non-Kind", nLevel);
+
+            }
+            catch (Exception ex)
+            {
+                CNotice.printLog(ex.Message);
+                return false;
+            }
+
+            return true;
+        }
+
+        // 코일에 대한 문자열 라인을 넘겨 받아서 코일 객체를 초기화 한다.
+        public bool readObject(List<string> listStringLines)
+        {
+            CReadFile readFile = new CReadFile();
+            string strTemp;
+            string[] arrayString;
+
+            List<string> listInformationLines = new List<string>();
+            List<string> listShapeLines = new List<string>();
+
+            bool bShapeLine = false;
+
+            if (m_kindKey != EMKind.NON_KIND)
+            {
+                CNotice.printLog("NON_KIND 가 아닌 객체가 CNonKind 로 열리려고 한다.");
+                return false;
+            }
+
+            try
+            {
+                // Shape 라인과 정보 라인을 분리한다.
+                foreach (string strLine in listStringLines)
+                {
+                    if (readFile.isEndLine(strLine) == "Shape")
+                        bShapeLine = false;
+
+                    if (bShapeLine == true)
+                        listShapeLines.Add(strLine);
+                    else
+                    {
+                        if (readFile.isBeginLine(strLine) == "Shape")
+                            bShapeLine = true;
+                        else
+                            listInformationLines.Add(strLine);
+                    }
+                }
+
+                // 정보 라인을 처리한다.
+                foreach (string strLine in listInformationLines)
+                {
+                    strTemp = strLine.Trim('\t');
+
+                    arrayString = strTemp.Split('=');
+
+                    /// 각 줄의 String 배열은 항상 2개이여야 한다.
+                    if (arrayString.Length != 2)
+                    {
+                        CNotice.printLog("Non-Kind 데이터에 문제가 있습니다.");
+                        return false;
+                    }
+
+                    switch (arrayString[0])
+                    {
+                        // CNode
+                        case "NodeName":
+                            NodeName = arrayString[1];
+                            break;
+
+                        case "KindKey":
+                            m_kindKey = (EMKind)Enum.Parse(typeof(EMKind), arrayString[1]);
+                            break;
+
+                        // CShapeParts
+                        case "MovingParts":
+                            MovingPart = (EMMoving)Enum.Parse(typeof(EMMoving), arrayString[1]);
+                            break;
+
+                        default:
+                            break;
+                    }
+                }
+
+                // 상위 객체의 메소드를 사용한다.
+                readShapeInformation(listShapeLines);
+            }
+            catch (Exception ex)
+            {
+                CNotice.printLog(ex.Message);
+                return false;
+            }
+
+            return true;
+        }
     }
 
     [DefaultPropertyAttribute("Turns")]
@@ -196,10 +330,10 @@ namespace Parts
         // Property Change Event 에서 라벨이름으로 사용되고 있음을 주의하라
         [TypeConverter(typeof(CCoilWirePropertyConverter))]
         [DisplayNameAttribute("Part Material"), CategoryAttribute("\t\tSpecification Fields"), DescriptionAttribute("Name of part material")]
-        public string Material
+        public string MaterialName
         {
-            get { return m_strMaterial; }
-            set { m_strMaterial = value; }
+            get { return m_strMaterialName; }
+            set { m_strMaterialName = value; }
         }
 
         [DisplayNameAttribute("Curent Direction"), CategoryAttribute("\t\tSpecification Fields"), DescriptionAttribute("Voltage Direction")]
@@ -270,7 +404,7 @@ namespace Parts
         public CCoil()
         {
             m_kindKey = EMKind.COIL;
-            m_strMaterial = "Copper";            
+            m_strMaterialName = "Copper";            
                         
             CurrentDirection = EMCurrentDirection.IN;
             CoilWireGrade = EMCoilWireGrade.Enameled_IEC_Grade_2;
@@ -457,7 +591,7 @@ namespace Parts
                 // 온도 계수
                 double dTemperatureCoefficient = 0.0f;
 
-                if (m_strMaterial == "Copper")
+                if (m_strMaterialName == "Copper")
                 {
                     // IEC 317, 단위 저항 보간
                     res_a = 0.021771473f;
@@ -468,7 +602,7 @@ namespace Parts
                     dTemperatureCoefficient = 0.004041f;
                 }
                 // 두가지 밖에 없어서 알루미늄의 경우이다.
-                else if(m_strMaterial == "Aluminum")
+                else if(m_strMaterialName == "Aluminum")
                 {
                     // IEC 317, 단위 저항 보간
                     res_a = 0.036438f;
@@ -480,7 +614,7 @@ namespace Parts
                 }
                 else
                 {
-                    CNotice.printTraceID("TIAP1");
+                    CNotice.printLogID("TIAP1");
                     return;
                 }
 
@@ -494,7 +628,7 @@ namespace Parts
             }
             catch (Exception ex)
             {
-                CNotice.printTrace(ex.Message);
+                CNotice.printLog(ex.Message);
             }
        
         }
@@ -503,7 +637,7 @@ namespace Parts
         {
             if (Face == null)
             {
-                CNotice.printTraceID("YATT3");
+                CNotice.printLogID("YATT3");
                 return false;
             }
 
@@ -524,51 +658,51 @@ namespace Parts
 
         // 파일스트림 객체에 코일 정보를 기록한다.
         // override 를 꼭 사용해야 가상함수가 아니라 현 함수가 호출된다.
-        public override bool writeObject(StreamWriter writeStream)
+        public override bool writeObject(StreamWriter writeStream, int nLevel)
         {
             try
             {
                 CWriteFile writeFile = new CWriteFile();
 
-                writeFile.writeBeginLine(writeStream, "Coil", 2);
+                writeFile.writeBeginLine(writeStream, "Coil", nLevel);
 
                 // CNode
-                writeFile.writeDataLine(writeStream, "NodeName", NodeName, 3);
-                writeFile.writeDataLine(writeStream, "KindKey", m_kindKey, 3);
+                writeFile.writeDataLine(writeStream, "NodeName", NodeName, nLevel + 1);
+                writeFile.writeDataLine(writeStream, "KindKey", m_kindKey, nLevel + 1);
 
                 // CParts
-                writeFile.writeDataLine(writeStream, "MovingParts", MovingPart, 3);
+                writeFile.writeDataLine(writeStream, "MovingParts", MovingPart, nLevel + 1);
 
                 // CCoil
-                writeFile.writeDataLine(writeStream, "Material", Material, 3);
-                writeFile.writeDataLine(writeStream, "CurrentDirection", CurrentDirection, 3);
-                writeFile.writeDataLine(writeStream, "Turns", Turns, 3);
-                writeFile.writeDataLine(writeStream, "Resistance", Resistance, 3);
-                writeFile.writeDataLine(writeStream, "Layers", Layers, 3);
-                writeFile.writeDataLine(writeStream, "TurnsOfOneLayer", TurnsOfOneLayer, 3);
-                writeFile.writeDataLine(writeStream, "CoilWireGrade", CoilWireGrade, 3);
-                writeFile.writeDataLine(writeStream, "InnerDiameter", InnerDiameter, 3);
-                writeFile.writeDataLine(writeStream, "OuterDiameter", OuterDiameter, 3);
-                writeFile.writeDataLine(writeStream, "Height", Height, 3);
-                writeFile.writeDataLine(writeStream, "CopperDiameter", CopperDiameter, 3);
-                writeFile.writeDataLine(writeStream, "WireDiameter", WireDiameter, 3);
-                writeFile.writeDataLine(writeStream, "Temperature", Temperature, 3);
-                writeFile.writeDataLine(writeStream, "HorizontalCoefficient", HorizontalCoefficient, 3);
-                writeFile.writeDataLine(writeStream, "VerticalCoefficient", VerticalCoefficient, 3);
-                writeFile.writeDataLine(writeStream, "ResistanceCoefficient", ResistanceCoefficient, 3);
+                writeFile.writeDataLine(writeStream, "Material", MaterialName, nLevel + 1);
+                writeFile.writeDataLine(writeStream, "CurrentDirection", CurrentDirection, nLevel + 1);
+                writeFile.writeDataLine(writeStream, "Turns", Turns, nLevel + 1);
+                writeFile.writeDataLine(writeStream, "Resistance", Resistance, nLevel + 1);
+                writeFile.writeDataLine(writeStream, "Layers", Layers, nLevel + 1);
+                writeFile.writeDataLine(writeStream, "TurnsOfOneLayer", TurnsOfOneLayer, nLevel + 1);
+                writeFile.writeDataLine(writeStream, "CoilWireGrade", CoilWireGrade, nLevel + 1);
+                writeFile.writeDataLine(writeStream, "InnerDiameter", InnerDiameter, nLevel + 1);
+                writeFile.writeDataLine(writeStream, "OuterDiameter", OuterDiameter, nLevel + 1);
+                writeFile.writeDataLine(writeStream, "Height", Height, nLevel + 1);
+                writeFile.writeDataLine(writeStream, "CopperDiameter", CopperDiameter, nLevel + 1);
+                writeFile.writeDataLine(writeStream, "WireDiameter", WireDiameter, nLevel + 1);
+                writeFile.writeDataLine(writeStream, "Temperature", Temperature, nLevel + 1);
+                writeFile.writeDataLine(writeStream, "HorizontalCoefficient", HorizontalCoefficient, nLevel + 1);
+                writeFile.writeDataLine(writeStream, "VerticalCoefficient", VerticalCoefficient, nLevel + 1);
+                writeFile.writeDataLine(writeStream, "ResistanceCoefficient", ResistanceCoefficient, nLevel + 1);
 
                 // CFace
                 if (Face != null)
                 {
-                    Face.writeObject(writeStream);
+                    Face.writeObject(writeStream, nLevel + 1);
                 }
             
-                writeFile.writeEndLine(writeStream, "Coil", 2);
+                writeFile.writeEndLine(writeStream, "Coil", nLevel);
 
             }
             catch (Exception ex)
             {
-                CNotice.printTrace(ex.Message);
+                CNotice.printLog(ex.Message);
                 return false;
             }
 
@@ -589,7 +723,7 @@ namespace Parts
 
             if (m_kindKey != EMKind.COIL)
             {
-                CNotice.printTraceID("YATT7");
+                CNotice.printLogID("YATT7");
                 return false;
             }      
     
@@ -640,13 +774,13 @@ namespace Parts
                         case "Material":
                             if (CMaterialListInFEMM.isCoilWIreInList(arrayString[1]) == true)
                             {
-                                m_strMaterial = arrayString[1];
+                                m_strMaterialName = arrayString[1];
                             }
                             else
                             {
                                 // 현재의 버전에서 사용할 수 없는 재질이 존재한다면 공백으로 처리하고
                                 // 동작 중에 공백을 사용해서 재질이 초기화 되지 않음을 확인한다.
-                                m_strMaterial = "";
+                                m_strMaterialName = "";
                             }                            
 
                             break;
@@ -706,7 +840,7 @@ namespace Parts
             }
             catch (Exception ex)
             {
-                CNotice.printTrace(ex.Message);
+                CNotice.printLog(ex.Message);
                 return false;
             }  
 
@@ -720,11 +854,11 @@ namespace Parts
 
             if(blockPoint == null)
             {
-                CNotice.printTraceID("NBPF");
+                CNotice.printLogID("NBPF");
                 return;
             }
 
-            string strMaterialName = this.m_strMaterial;
+            string strMaterialName = this.m_strMaterialName;
 
             string strCircuit = NodeName + "_current";
 
@@ -742,10 +876,10 @@ namespace Parts
         // 상위 strMaterial 을 사용하기 때문에  { get; set; } 형식은 사용해서는 안된다
         [TypeConverter(typeof(CMagnetPropertyConverter))]
         [DisplayNameAttribute("Part Material"), CategoryAttribute("\t\tSpecification Fields"), DescriptionAttribute("Name of Part Material")]
-        public string Material
+        public string MaterialName
         {
-            get { return m_strMaterial; }
-            set { m_strMaterial = value; }
+            get { return m_strMaterialName; }
+            set { m_strMaterialName = value; }
         }
 
         [DisplayNameAttribute("Direction"), CategoryAttribute("\t\tSpecification Fields"), DescriptionAttribute("Determination of magnetization direction")]
@@ -754,41 +888,41 @@ namespace Parts
         public CMagnet()
         {
             m_kindKey = EMKind.MAGNET;
-            Material = "N45";
+            MaterialName = "N45";
         }
 
         // 파일스트림 객체에 코일 정보를 기록한다.
         // override 를 꼭 사용해야 가상함수가 아니라 현 함수가 호출된다.
-        public override bool writeObject(StreamWriter writeStream)
+        public override bool writeObject(StreamWriter writeStream, int nLevel)
         {
             try
             {
                 CWriteFile writeFile = new CWriteFile();
 
-                writeFile.writeBeginLine(writeStream, "Magnet", 2);
+                writeFile.writeBeginLine(writeStream, "Magnet", nLevel);
 
                 // CNode
-                writeFile.writeDataLine(writeStream, "NodeName", NodeName, 3);
-                writeFile.writeDataLine(writeStream, "KindKey", m_kindKey, 3);
+                writeFile.writeDataLine(writeStream, "NodeName", NodeName, nLevel + 1);
+                writeFile.writeDataLine(writeStream, "KindKey", m_kindKey, nLevel + 1);
 
                 // CParts
-                writeFile.writeDataLine(writeStream, "MovingParts", MovingPart, 3);
+                writeFile.writeDataLine(writeStream, "MovingParts", MovingPart, nLevel + 1);
 
                 // CMagnet
-                writeFile.writeDataLine(writeStream, "Material", m_strMaterial, 3);
-                writeFile.writeDataLine(writeStream, "MagnetDirection", emMagnetDirection, 3);
+                writeFile.writeDataLine(writeStream, "Material", m_strMaterialName, nLevel + 1);
+                writeFile.writeDataLine(writeStream, "MagnetDirection", emMagnetDirection, nLevel + 1);
 
                 // CFace
                 if (Face != null)
                 {
-                    Face.writeObject(writeStream);
+                    Face.writeObject(writeStream, nLevel + 1);
                 }            
 
-                writeFile.writeEndLine(writeStream, "Magnet", 2);
+                writeFile.writeEndLine(writeStream, "Magnet", nLevel);
             }
             catch (Exception ex)
             {
-                CNotice.printTrace(ex.Message);
+                CNotice.printLog(ex.Message);
                 return false;
             }
 
@@ -809,7 +943,7 @@ namespace Parts
 
             if (m_kindKey != EMKind.MAGNET)
             {
-                CNotice.printTraceID("YATT5");
+                CNotice.printLogID("YATT5");
                 return false;
             }
 
@@ -864,21 +998,21 @@ namespace Parts
                         // CMagnet
                         case "Material":
 
-                            m_strMaterial = arrayString[1];
+                            m_strMaterialName = arrayString[1];
 
                             // FEMM (21Apr2019)에서 NdFeB 40 MGOe 빠져 있어서 호환이 되지 않아 강제로 N40 으로 변경한다.
                             // 추후에 FEMM 에 NdFeB 40 MGOe 가 Legacy 로 추가되면 아래의 코드를 삭제하라.
                             if (CProgramFEMM.getYearFEMM() >= 2019)
                             {
-                                if (m_strMaterial == "NdFeB 40 MGOe")
-                                    m_strMaterial = "N40";
+                                if (m_strMaterialName == "NdFeB 40 MGOe")
+                                    m_strMaterialName = "N40";
                             }
 
-                            if (CMaterialListInFEMM.isMagnetlInList(m_strMaterial) == false)
+                            if (CMaterialListInFEMM.isMagnetlInList(m_strMaterialName) == false)
                             {
                                 // 현재의 버전에서 사용할 수 없는 재질이 존재한다면 공백으로 처리하고
                                 // 동작 중에 공백을 사용해서 재질이 초기화 되지 않음을 확인한다.
-                                m_strMaterial = "";
+                                m_strMaterialName = "";
                             }
 
                             break;
@@ -898,7 +1032,7 @@ namespace Parts
             }
             catch (Exception ex)
             {
-                CNotice.printTrace(ex.Message);
+                CNotice.printLog(ex.Message);
                 return false;
             }
 
@@ -912,11 +1046,11 @@ namespace Parts
 
             if (blockPoint == null)
             {
-                CNotice.printTraceID("NBPF");
+                CNotice.printLogID("NBPF");
                 return;
             }
 
-            string strMaterialName = this.m_strMaterial;
+            string strMaterialName = this.m_strMaterialName;
 
             double dMagnetAngle = 0;
 
@@ -951,49 +1085,49 @@ namespace Parts
         // 상위 strMaterial 을 사용하기 때문에  { get; set; } 형식은 사용해서는 안된다
         [TypeConverter(typeof(CSteelPropertyConverter))]
         [DisplayNameAttribute("Part Material"), CategoryAttribute("\t\tSpecification Fields"), DescriptionAttribute("Name of Part Material")]
-        public string Material
+        public string MaterialName
         {
-            get { return m_strMaterial; }
-            set { m_strMaterial = value; }
+            get { return m_strMaterialName; }
+            set { m_strMaterialName = value; }
         }
 
         public CSteel()
         {
             m_kindKey = EMKind.STEEL;
-            Material = "1010 Steel";
+            MaterialName = "1010 Steel";
         }
         
         // 파일스트림 객체에 코일 정보를 기록한다.
         // override 를 꼭 사용해야 가상함수가 아니라 현 함수가 호출된다.
-        public override bool writeObject(StreamWriter writeStream)
+        public override bool writeObject(StreamWriter writeStream, int nLevel)
         {
             try
             {
                 CWriteFile writeFile = new CWriteFile();
 
-                writeFile.writeBeginLine(writeStream, "Steel", 2);
+                writeFile.writeBeginLine(writeStream, "Steel", nLevel);
 
                 // CNode
-                writeFile.writeDataLine(writeStream, "NodeName", NodeName, 3);
-                writeFile.writeDataLine(writeStream, "KindKey", m_kindKey, 3);
+                writeFile.writeDataLine(writeStream, "NodeName", NodeName, nLevel + 1);
+                writeFile.writeDataLine(writeStream, "KindKey", m_kindKey, nLevel + 1);
 
                 // CParts
-                writeFile.writeDataLine(writeStream, "MovingParts", MovingPart, 3);
+                writeFile.writeDataLine(writeStream, "MovingParts", MovingPart, nLevel + 1);
 
                 // CSteel
-                writeFile.writeDataLine(writeStream, "Material", m_strMaterial, 3);
+                writeFile.writeDataLine(writeStream, "Material", m_strMaterialName, nLevel + 1);
 
                 // CFace
                 if (Face != null)
                 {
-                    Face.writeObject(writeStream);
+                    Face.writeObject(writeStream, nLevel + 1);
                 }            
 
-                writeFile.writeEndLine(writeStream, "Steel", 2);
+                writeFile.writeEndLine(writeStream, "Steel", nLevel);
             }
             catch (Exception ex)
             {
-                CNotice.printTrace(ex.Message);
+                CNotice.printLog(ex.Message);
                 return false;
             }
 
@@ -1014,7 +1148,7 @@ namespace Parts
 
             if (m_kindKey != EMKind.STEEL)
             {
-                CNotice.printTraceID("YATT6");
+                CNotice.printLogID("YATT6");
                 return false;
             }
 
@@ -1070,13 +1204,13 @@ namespace Parts
                         case "Material":
                             if (CMaterialListInFEMM.isSteelInList(arrayString[1]) == true)
                             {
-                                m_strMaterial = arrayString[1];
+                                m_strMaterialName = arrayString[1];
                             }
                             else
                             {
                                 // 현재의 버전에서 사용할 수 없는 재질이 존재한다면 공백으로 처리하고
                                 // 동작 중에 공백을 사용해서 재질이 초기화 되지 않음을 확인한다.
-                                m_strMaterial = "";
+                                m_strMaterialName = "";
                             }     
                             break;                       
 
@@ -1091,7 +1225,7 @@ namespace Parts
             }
             catch (Exception ex)
             {
-                CNotice.printTrace(ex.Message);
+                CNotice.printLog(ex.Message);
                 return false;
             }
 
@@ -1105,11 +1239,11 @@ namespace Parts
 
             if (blockPoint == null)
             {
-                CNotice.printTraceID("NBPF");
+                CNotice.printLogID("NBPF");
                 return;
             }
 
-            string strMaterialName = this.m_strMaterial;
+            string strMaterialName = this.m_strMaterialName;
 
             femm.setBlockProp(blockPoint, strMaterialName, dMeshSize, "none", 0, MovingPart, 0);
         }
