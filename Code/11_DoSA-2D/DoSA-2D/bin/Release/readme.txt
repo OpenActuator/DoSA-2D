@@ -4,7 +4,7 @@ Gi-Tae Kweon
 zgitae@gmail.com
 
 
-2022-05-06 Ver(1.0.1.0)
+2022-05-06 Ver(1.1.0.0)
  - Added DXF Import feature, Tutorial manual Update
 
 2022-04-23 Ver(0.9.16.0)
