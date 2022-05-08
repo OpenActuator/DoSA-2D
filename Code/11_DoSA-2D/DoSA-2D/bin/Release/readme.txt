@@ -5,7 +5,7 @@ zgitae@gmail.com
 
 
 2022-05-08 Ver(1.1.1.0)
- - Fixed DXF Import Bug, Added Drawing Guides before simulation
+ - Fixed DXF Import Bugs, Added Drawing Guides before simulation
 
 2022-05-06 Ver(1.1.0.0)
  - Added DXF Import feature, Tutorial manual Update
