@@ -46,7 +46,7 @@
             this.labelArc = new System.Windows.Forms.Label();
             this.labelNo = new System.Windows.Forms.Label();
             this.labelDirection = new System.Windows.Forms.Label();
-            this.labelZ = new System.Windows.Forms.Label();
+            this.labelY = new System.Windows.Forms.Label();
             this.labelDelete = new System.Windows.Forms.Label();
             this.labelAdd = new System.Windows.Forms.Label();
             this.panelTitle = new System.Windows.Forms.Panel();
@@ -284,14 +284,14 @@
             this.labelDirection.TabIndex = 12;
             this.labelDirection.Text = "Dir.";
             // 
-            // labelZ
+            // labelY
             // 
-            this.labelZ.AutoSize = true;
-            this.labelZ.Location = new System.Drawing.Point(140, 11);
-            this.labelZ.Name = "labelZ";
-            this.labelZ.Size = new System.Drawing.Size(13, 12);
-            this.labelZ.TabIndex = 12;
-            this.labelZ.Text = "Z";
+            this.labelY.AutoSize = true;
+            this.labelY.Location = new System.Drawing.Point(140, 11);
+            this.labelY.Name = "labelY";
+            this.labelY.Size = new System.Drawing.Size(13, 12);
+            this.labelY.TabIndex = 12;
+            this.labelY.Text = "Y";
             // 
             // labelDelete
             // 
@@ -319,7 +319,7 @@
             this.panelTitle.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.panelTitle.Controls.Add(this.labelAdd);
             this.panelTitle.Controls.Add(this.labelDelete);
-            this.panelTitle.Controls.Add(this.labelZ);
+            this.panelTitle.Controls.Add(this.labelY);
             this.panelTitle.Controls.Add(this.labelDirection);
             this.panelTitle.Controls.Add(this.labelNo);
             this.panelTitle.Controls.Add(this.labelArc);
@@ -373,7 +373,7 @@
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(56, 12);
             this.label1.TabIndex = 13;
-            this.label1.Text = "Base_Z :";
+            this.label1.Text = "Base_Y :";
             // 
             // label2
             // 
@@ -423,7 +423,7 @@
         private System.Windows.Forms.Label labelArc;
         private System.Windows.Forms.Label labelNo;
         private System.Windows.Forms.Label labelDirection;
-        private System.Windows.Forms.Label labelZ;
+        private System.Windows.Forms.Label labelY;
         private System.Windows.Forms.Label labelDelete;
         private System.Windows.Forms.Label labelAdd;
         private System.Windows.Forms.Panel panelTitle;

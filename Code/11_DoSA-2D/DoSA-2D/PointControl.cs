@@ -47,8 +47,8 @@ namespace Shapes
         /// </summary>
         public string StrCoordZ
         {
-            get { return textBoxZ.Text; }
-            set { this.textBoxZ.Text = value.ToString(); }
+            get { return textBoxY.Text; }
+            set { this.textBoxY.Text = value.ToString(); }
         }
 
         /// <summary>
@@ -104,7 +104,7 @@ namespace Shapes
             InitializeComponent();
 
             StrCoordX = point.X.ToString();
-            StrCoordZ = point.Z.ToString();
+            StrCoordZ = point.Y.ToString();
 
             IsArc = (point.LineKind == EMLineKind.ARC) ? true : false;
             IsArcDirection = (point.DirectionArc == EMDirectionArc.BACKWARD) ? true : false;            

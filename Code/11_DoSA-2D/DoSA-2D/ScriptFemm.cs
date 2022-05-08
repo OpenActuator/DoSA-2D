@@ -509,9 +509,9 @@ namespace Scripts
             float fX1, fY1, fX2, fY2;
 
             fX1 = (float)line.m_startPoint.X;
-            fY1 = (float)line.m_startPoint.Z;
+            fY1 = (float)line.m_startPoint.Y;
             fX2 = (float)line.m_endPoint.X;
-            fY2 = (float)line.m_endPoint.Z;
+            fY2 = (float)line.m_endPoint.Y;
 
             try
             {
@@ -645,10 +645,10 @@ namespace Scripts
                 strCommand = "mi_seteditmode(\"blocks\")";
                 sendCommand(strCommand);
 
-                strCommand = "mi_addblocklabel(" + point.X + "," + point.Z + ")";
+                strCommand = "mi_addblocklabel(" + point.X + "," + point.Y + ")";
                 sendCommand(strCommand);
 
-                strCommand = "mi_selectlabel(" + point.X + "," + point.Z + ")";
+                strCommand = "mi_selectlabel(" + point.X + "," + point.Y + ")";
                 sendCommand(strCommand);
 
                 int nGroup;
@@ -794,10 +794,10 @@ namespace Scripts
 
             try
             {
-                strCommand = "mi_addblocklabel(" + blockPoint.X + "," + blockPoint.Z + ")";
+                strCommand = "mi_addblocklabel(" + blockPoint.X + "," + blockPoint.Y + ")";
                 sendCommand(strCommand);
 
-                strCommand = "mi_selectlabel(" + blockPoint.X + "," + blockPoint.Z + ")";
+                strCommand = "mi_selectlabel(" + blockPoint.X + "," + blockPoint.Y + ")";
                 sendCommand(strCommand);
 
                 /// Region 의 물성치를 Default 물성치로 지정하여 Block 이 추가되지 않은 영역을 설정 한다.
@@ -1072,7 +1072,7 @@ namespace Scripts
                 strCommand = "mi_seteditmode(\"segments\")";
                 sendCommand(strCommand);
 
-                strCommand = "mi_selectsegment(" + selectPoint.X + "," + selectPoint.Z + ")";
+                strCommand = "mi_selectsegment(" + selectPoint.X + "," + selectPoint.Y + ")";
                 sendCommand(strCommand);
 
                 /// editmode 를 group 으로 바꾸어서 FEMM 마우스 동작을 막는다.
@@ -1099,7 +1099,7 @@ namespace Scripts
                 strCommand = "mi_seteditmode(\"nodes\")";
                 sendCommand(strCommand);
 
-                strCommand = "mi_selectnode(" + selectPoint.X + "," + selectPoint.Z + ")";
+                strCommand = "mi_selectnode(" + selectPoint.X + "," + selectPoint.Y + ")";
                 sendCommand(strCommand);
 
                 /// editmode 를 group 으로 바꾸어서 FEMM 마우스 동작을 막는다.
@@ -1268,7 +1268,7 @@ namespace Scripts
                 strCommand = "mi_seteditmode(\"arcsegments\")";
                 sendCommand(strCommand);
 
-                strCommand = "mi_selectarcsegment(" + selectPoint.X + "," + selectPoint.Z + ")";
+                strCommand = "mi_selectarcsegment(" + selectPoint.X + "," + selectPoint.Y + ")";
                 sendCommand(strCommand);
 
                 /// editmode 를 group 으로 바꾸어서 FEMM 마우스 동작을 막는다.
@@ -1354,7 +1354,7 @@ namespace Scripts
 
                     if(bBlockLabels == true)
                     {
-                        if(pointBoundaryBlock.X == Double.Parse(strArray[0]) && pointBoundaryBlock.Z == Double.Parse(strArray[1]))
+                        if(pointBoundaryBlock.X == Double.Parse(strArray[0]) && pointBoundaryBlock.Y == Double.Parse(strArray[1]))
                         {
                             if(strArray.Length != 9)
                             {

@@ -632,7 +632,7 @@ namespace Nodes
                     if (nodeParts.MovingPart == EMMoving.MOVING)
                     {
                         face = nodeParts.Face;
-                        face.BasePoint.Z = face.BasePoint.Z + dStroke;
+                        face.BasePoint.Y = face.BasePoint.Y + dStroke;
                     }
                 }
             }
@@ -659,7 +659,7 @@ namespace Nodes
                     if (nodeParts.MovingPart == EMMoving.MOVING)
                     {
                         face = nodeParts.Face;
-                        face.BasePoint.Z = face.BasePoint.Z - dStroke;
+                        face.BasePoint.Y = face.BasePoint.Y - dStroke;
                     }
                 }
             }

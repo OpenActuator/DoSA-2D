@@ -3040,7 +3040,7 @@ namespace DoSA
                     if (listPointOnLine.Count == 2)
                     {
                         selectPoint.X = (startPoint.X + endPoint.X) / 2.0f;
-                        selectPoint.Z = (startPoint.Z + endPoint.Z) / 2.0f;
+                        selectPoint.Y = (startPoint.Y + endPoint.Y) / 2.0f;
 
                         m_femm.selectLine(selectPoint);
                     }
@@ -3051,7 +3051,7 @@ namespace DoSA
                         foreach(CPoint point in listPointOnLine)
                         {
                             dLength = Math.Sqrt(    Math.Pow(startPoint.X - point.X, 2) +
-                                                    Math.Pow(startPoint.Z - point.Z, 2));
+                                                    Math.Pow(startPoint.Y - point.Y, 2));
 
                             listDataSet.Add(new CSortDataSet(dLength, index));
                             index ++;
@@ -3075,7 +3075,7 @@ namespace DoSA
                             endPoint = listPointOnLine[listDataSet[j+1].m_iIndex];
 
                             selectPoint.X = (startPoint.X + endPoint.X) / 2.0f;
-                            selectPoint.Z = (startPoint.Z + endPoint.Z) / 2.0f;
+                            selectPoint.Y = (startPoint.Y + endPoint.Y) / 2.0f;
 
                             m_femm.selectLine(selectPoint);
                         }
@@ -3085,7 +3085,7 @@ namespace DoSA
                 else if(listAbsolutePoints[i].LineKind == EMLineKind.ARC)
                 {
                     selectPoint.X = listAbsolutePoints[i].X;
-                    selectPoint.Z = listAbsolutePoints[i].Z;
+                    selectPoint.Y = listAbsolutePoints[i].Y;
 
                     m_femm.selectArc(selectPoint);
                 }
@@ -3808,7 +3808,7 @@ namespace DoSA
                     CFace face = new CFace();
 
                     face.BasePoint.X = 0.0;
-                    face.BasePoint.Z = 0.0;
+                    face.BasePoint.Y = 0.0;
 
                     if (polyLine.Vertexes.Count < 4)
                     {
@@ -3827,7 +3827,7 @@ namespace DoSA
                         CPoint point = new CPoint();
 
                         point.X = polyLine.Vertexes[i].Position.X;
-                        point.Z = polyLine.Vertexes[i].Position.Y;
+                        point.Y = polyLine.Vertexes[i].Position.Y;
 
                         // 자리수 오차에서 발생하는 0 < X < -0.1 um 사이의 값은 영으로 처리한다.
                         if (CSmallUtil.isZeroPosition(point.X))

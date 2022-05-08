@@ -56,7 +56,7 @@ namespace Parts
     {
         protected string m_strMaterialName;
 
-        private CFace m_face = null;
+        protected CFace m_face = null;
 
         [BrowsableAttribute(false)]
         public CFace Face
@@ -81,110 +81,6 @@ namespace Parts
         {
             // 초기값은 고정된 것으로 가정함
             this.MovingPart = EMMoving.FIXED;
-        }
-
-        protected bool readShapeInformation(List<string> listShapeLines)
-        {
-            string strTemp;
-            string[] arrayString;
-
-            try
-            {
-                // Shape 정보가 있는 경우만 m_face 를 생성하고 읽기 작업을 진행한다.
-                if (listShapeLines.Count > 0)
-                    m_face = new CFace();
-                else
-                    return false;
-
-                CPoint point = null;
-
-                // 형상 라인을 처리한다.
-                foreach (string strLine in listShapeLines)
-                {
-                    strTemp = strLine.Trim('\t');
-
-                    arrayString = strTemp.Split('=');
-
-                    /// 각 줄의 String 배열은 항상 2개이여야 한다.
-                    if (arrayString.Length != 2)
-                    {
-                        CNotice.noticeWarningID("TIAP5");
-                        return false;
-                    }
-
-                    if (m_face == null)
-                    {
-                        CNotice.printLogID("IIAT");
-                        return false;
-                    }
-
-                    switch (arrayString[0])
-                    {
-                        case "BasePointX":
-                            m_face.BasePoint.X = Double.Parse(arrayString[1]);
-                            break;
-
-                        case "BasePointY":
-                            m_face.BasePoint.Z = Double.Parse(arrayString[1]);
-                            break;
-                        
-                        case "FaceType":
-                            m_face.FaceType = (EMFaceType)Enum.Parse(typeof(EMFaceType), arrayString[1]);
-                            break;
-
-                        case "PointX":
-                            // PointX 키워드를 만날때 새로운 CPoint 생성하고,
-                            // ArcDriction 키워드를 만날때 생성된 CPoint 를 Face 에 추가한다.
-                            // 따라서 저장될때 X, Y, LineKind, ArcDriction 의 순서로 꼭 저장 되어야 한다.
-                            point = new CPoint();
-                            point.X = Double.Parse(arrayString[1]);
-                            break;
-
-                        case "PointY":
-                            if (point != null)
-                                point.Z = Double.Parse(arrayString[1]);
-                            else
-                            {
-                                CNotice.noticeWarningID("YCWX");
-                                return false;
-                            }
-                            break;
-
-                        case "LineKind":
-                            if (point != null)
-                                point.LineKind = (EMLineKind)Enum.Parse(typeof(EMLineKind), arrayString[1]);
-                            else
-                            {
-                                CNotice.noticeWarningID("TIAP9");
-                                return false;
-                            }
-                            break;
-
-                        case "ArcDriction":
-                            if (point != null)
-                                point.DirectionArc = (EMDirectionArc)Enum.Parse(typeof(EMDirectionArc), arrayString[1]);
-                            else
-                            {
-                                CNotice.noticeWarningID("TIAP10");
-                                return false;
-                            }
-
-                            // ArcDriction 에서 point 을 저장한다.
-                            m_face.addPoint(point);
-                            break;
-
-                        default:
-                            break;
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                CNotice.printLog(ex.Message);
-                return false;
-            }  
-
-            return true;
         }
 
     }
@@ -310,8 +206,16 @@ namespace Parts
                     }
                 }
 
-                // 상위 객체의 메소드를 사용한다.
-                readShapeInformation(listShapeLines);
+                // Shape 정보가 있는 경우만 m_face 를 생성하고 읽기 작업을 진행한다.
+                if (listShapeLines.Count > 0)
+                {
+                    m_face = new CFace();
+
+                    if (m_face == null)
+                        CNotice.printLogID("IIAT");
+                    else
+                        m_face.readObject(listShapeLines);
+                }
             }
             catch (Exception ex)
             {
@@ -835,8 +739,13 @@ namespace Parts
                     }
                 }
 
-                // 상위 객체의 메소드를 사용한다.
-                readShapeInformation(listShapeLines);
+                // Shape 정보가 있는 경우만 m_face 를 생성하고 읽기 작업을 진행한다.
+                if (listShapeLines.Count > 0)
+                {
+                    m_face = new CFace();
+                    m_face.readObject(listShapeLines);
+                }
+
             }
             catch (Exception ex)
             {
@@ -1026,8 +935,12 @@ namespace Parts
                     }
                 }
 
-                // 상위 객체의 메소드를 사용한다.
-                readShapeInformation(listShapeLines);
+                // Shape 정보가 있는 경우만 m_face 를 생성하고 읽기 작업을 진행한다.
+                if (listShapeLines.Count > 0)
+                {
+                    m_face = new CFace();
+                    m_face.readObject(listShapeLines);
+                }
 
             }
             catch (Exception ex)
@@ -1219,8 +1132,12 @@ namespace Parts
                     }
                 }
 
-                // 상위 객체의 메소드를 사용한다.
-                readShapeInformation(listShapeLines);
+                // Shape 정보가 있는 경우만 m_face 를 생성하고 읽기 작업을 진행한다.
+                if (listShapeLines.Count > 0)
+                {
+                    m_face = new CFace();
+                    m_face.readObject(listShapeLines);
+                }
 
             }
             catch (Exception ex)

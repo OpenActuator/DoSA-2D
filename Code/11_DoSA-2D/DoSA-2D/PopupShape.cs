@@ -204,7 +204,7 @@ namespace Shapes
                 }
 
                 textBoxBaseX.Text = face.BasePoint.X.ToString();
-                textBoxBaseY.Text = face.BasePoint.Z.ToString();
+                textBoxBaseY.Text = face.BasePoint.Y.ToString();
 
                 if (face.getPointCount() < MIN_POLYGON_CONTROL_COUNT)
                 {
@@ -222,10 +222,10 @@ namespace Shapes
                     comboBoxFaceType.SelectedItem = EMFaceType.RECTANGLE.ToString();
 
                     this.ListPointUI[0].StrCoordX = face.RelativePointList[0].X.ToString();
-                    this.ListPointUI[0].StrCoordZ = face.RelativePointList[0].Z.ToString();
+                    this.ListPointUI[0].StrCoordZ = face.RelativePointList[0].Y.ToString();
 
                     this.ListPointUI[1].StrCoordX = face.RelativePointList[2].X.ToString();
-                    this.ListPointUI[1].StrCoordZ = face.RelativePointList[2].Z.ToString();            
+                    this.ListPointUI[1].StrCoordZ = face.RelativePointList[2].Y.ToString();            
                 }
                 else if(face.FaceType == EMFaceType.POLYGON)
                 {
@@ -241,7 +241,7 @@ namespace Shapes
                             this.addPointControl(new CPointUI(), true, this.panelPointControl);
 
                         this.ListPointUI[i].StrCoordX = face.RelativePointList[i].X.ToString();
-                        this.ListPointUI[i].StrCoordZ = face.RelativePointList[i].Z.ToString();
+                        this.ListPointUI[i].StrCoordZ = face.RelativePointList[i].Y.ToString();
 
                         if (face.RelativePointList[i].LineKind == EMLineKind.ARC)
                             this.ListPointUI[i].IsArc = true;
@@ -600,7 +600,7 @@ namespace Shapes
                 CFace face = new CFace();
 
                 face.BasePoint.X = Double.Parse(textBoxBaseX.Text);
-                face.BasePoint.Z = Double.Parse(textBoxBaseY.Text);
+                face.BasePoint.Y = Double.Parse(textBoxBaseY.Text);
 
                 if (FaceType == EMFaceType.RECTANGLE)
                 {
@@ -648,7 +648,7 @@ namespace Shapes
                         CPoint point = new CPoint();
 
                         point.X = Double.Parse(pointControl.StrCoordX);
-                        point.Z = Double.Parse(pointControl.StrCoordZ);
+                        point.Y = Double.Parse(pointControl.StrCoordZ);
 
                         if (pointControl.IsArc == true)
                             point.LineKind = EMLineKind.ARC;
@@ -829,7 +829,7 @@ namespace Shapes
                             if (((CShapeParts)nodeParts).Face.RelativePointList[i].X != Double.Parse(ListPointUI[i].StrCoordX.Trim()))
                                 retCheck = true;
 
-                            if (((CShapeParts)nodeParts).Face.RelativePointList[i].Z != Double.Parse(ListPointUI[i].StrCoordZ.Trim()))
+                            if (((CShapeParts)nodeParts).Face.RelativePointList[i].Y != Double.Parse(ListPointUI[i].StrCoordZ.Trim()))
                                 retCheck = true;
                         }
                     }
@@ -958,7 +958,7 @@ namespace Shapes
                         CPoint selectedPoint = new CPoint();
 
                         selectedPoint.X = Double.Parse(pointControl.StrCoordX) + dBase_X;
-                        selectedPoint.Z = Double.Parse(pointControl.StrCoordZ) + dBase_Y;
+                        selectedPoint.Y = Double.Parse(pointControl.StrCoordZ) + dBase_Y;
 
                         femm.clearSelected();
 
