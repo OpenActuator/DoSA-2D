@@ -33,12 +33,13 @@
             this.buttonSolenoidGuide = new System.Windows.Forms.Button();
             this.buttonVCMGuide = new System.Windows.Forms.Button();
             this.buttonUserGuide = new System.Windows.Forms.Button();
+            this.buttonDrawingGuide = new System.Windows.Forms.Button();
             this.groupBoxHelp.SuspendLayout();
             this.SuspendLayout();
             // 
             // buttonHelpClose
             // 
-            this.buttonHelpClose.Location = new System.Drawing.Point(186, 190);
+            this.buttonHelpClose.Location = new System.Drawing.Point(186, 236);
             this.buttonHelpClose.Name = "buttonHelpClose";
             this.buttonHelpClose.Size = new System.Drawing.Size(111, 31);
             this.buttonHelpClose.TabIndex = 3;
@@ -48,19 +49,20 @@
             // 
             // groupBoxHelp
             // 
+            this.groupBoxHelp.Controls.Add(this.buttonDrawingGuide);
             this.groupBoxHelp.Controls.Add(this.buttonSolenoidGuide);
             this.groupBoxHelp.Controls.Add(this.buttonVCMGuide);
             this.groupBoxHelp.Controls.Add(this.buttonUserGuide);
             this.groupBoxHelp.Location = new System.Drawing.Point(12, 12);
             this.groupBoxHelp.Name = "groupBoxHelp";
-            this.groupBoxHelp.Size = new System.Drawing.Size(285, 172);
+            this.groupBoxHelp.Size = new System.Drawing.Size(285, 218);
             this.groupBoxHelp.TabIndex = 4;
             this.groupBoxHelp.TabStop = false;
             this.groupBoxHelp.Text = "Help";
             // 
             // buttonSolenoidGuide
             // 
-            this.buttonSolenoidGuide.Location = new System.Drawing.Point(26, 119);
+            this.buttonSolenoidGuide.Location = new System.Drawing.Point(26, 122);
             this.buttonSolenoidGuide.Name = "buttonSolenoidGuide";
             this.buttonSolenoidGuide.Size = new System.Drawing.Size(233, 30);
             this.buttonSolenoidGuide.TabIndex = 5;
@@ -80,7 +82,7 @@
             // 
             // buttonUserGuide
             // 
-            this.buttonUserGuide.Location = new System.Drawing.Point(26, 27);
+            this.buttonUserGuide.Location = new System.Drawing.Point(26, 171);
             this.buttonUserGuide.Name = "buttonUserGuide";
             this.buttonUserGuide.Size = new System.Drawing.Size(233, 30);
             this.buttonUserGuide.TabIndex = 3;
@@ -88,11 +90,21 @@
             this.buttonUserGuide.UseVisualStyleBackColor = true;
             this.buttonUserGuide.Click += new System.EventHandler(this.buttonDoSAUserGuide_Click);
             // 
+            // buttonDrawingGuide
+            // 
+            this.buttonDrawingGuide.Location = new System.Drawing.Point(26, 24);
+            this.buttonDrawingGuide.Name = "buttonDrawingGuide";
+            this.buttonDrawingGuide.Size = new System.Drawing.Size(233, 30);
+            this.buttonDrawingGuide.TabIndex = 6;
+            this.buttonDrawingGuide.Text = "Drawing Guide";
+            this.buttonDrawingGuide.UseVisualStyleBackColor = true;
+            this.buttonDrawingGuide.Click += new System.EventHandler(this.buttonDrawingGuide_Click);
+            // 
             // PopupHelp
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(309, 233);
+            this.ClientSize = new System.Drawing.Size(309, 279);
             this.Controls.Add(this.groupBoxHelp);
             this.Controls.Add(this.buttonHelpClose);
             this.Name = "PopupHelp";
@@ -109,5 +121,6 @@
         private System.Windows.Forms.Button buttonSolenoidGuide;
         private System.Windows.Forms.Button buttonVCMGuide;
         private System.Windows.Forms.Button buttonUserGuide;
+        private System.Windows.Forms.Button buttonDrawingGuide;
     }
 }
