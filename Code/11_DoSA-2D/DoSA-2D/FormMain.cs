@@ -786,11 +786,11 @@ namespace DoSA
             OpenFileDialog openFileDialog = new OpenFileDialog();
 
             // 파일 열기창 설정
-            openFileDialog.Title = "Open a Design File";
+            openFileDialog.Title = "Open a DoSA-2D File";
             // 디자인 파일을 열 때 디렉토리는 프로그램 작업 디렉토리로 하고 있다.
             openFileDialog.InitialDirectory = CSettingData.m_strCurrentWorkingDirPath;
             openFileDialog.FileName = null;
-            openFileDialog.Filter = "Toolkit File (*.dsa)|*.dsa|All files (*.*)|*.*";
+            openFileDialog.Filter = "DoSA-2D File (*.dsa)|*.dsa|All files (*.*)|*.*";
             openFileDialog.FilterIndex = 1;
             openFileDialog.RestoreDirectory = true;
 
@@ -798,19 +798,61 @@ namespace DoSA
 
             if (result == DialogResult.OK)
             {
+                string strDesignFileFullName = openFileDialog.FileName;
+
+                string strDesignName = Path.GetFileNameWithoutExtension(strDesignFileFullName);
+                string strDesignDirectory = Path.GetDirectoryName(strDesignFileFullName);
+
+                string[] arrayString = strDesignDirectory.Split(Path.DirectorySeparatorChar);
+
+                // 디자인명과 디자인파일이 포함된 디렉토리명이 일치하는지 확인한다.
+                if (strDesignName != arrayString[arrayString.Length - 1])
+                {
+                    if (CSettingData.m_emLanguage == EMLanguage.Korean)
+                        result = CNotice.noticeWarningYesNo("DoSA-2D 파일의 디렉토리 구조에 문제가 있습니다.\n디렉토리 구조를 자동 생성 하겠습니까?");
+                    else
+                        result = CNotice.noticeWarningYesNo("There is a problem with the directory structure of the DoSA-2D file.\nDo you want to automatically create the directory structure?");
+
+                    if (result == DialogResult.Yes)
+                    {
+                        string strNewDesignFileFullName = Path.Combine(strDesignDirectory, strDesignName, strDesignName + ".dsa");
+
+                        if(true == m_manageFile.isExistDirectory(Path.Combine(strDesignDirectory, strDesignName)))
+                        {
+                            if (CSettingData.m_emLanguage == EMLanguage.Korean)
+                                CNotice.noticeWarning("디자인 명의 디렉토리가 이미 존재합니다.");
+                            else
+                                CNotice.noticeWarning("A directory named design already exists.");
+
+                            return;
+                        }
+
+                        if (false == m_manageFile.createDirectory(Path.Combine(strDesignDirectory, strDesignName)))
+                            return;
+
+                        m_manageFile.copyFile(strDesignFileFullName, strNewDesignFileFullName);
+                        m_manageFile.deleteFile(strDesignFileFullName);
+
+                        // 수정된 디렉토리로 Design 파일의 풀 패스를 변경한다.
+                        strDesignFileFullName = strNewDesignFileFullName;
+                    }
+                    else
+                        return;
+
+                }
+
                 // 기존 디자인 데이터를 모두 삭제한다.
                 closeDesign();
 
-                string strActuatorDesignFileFullName = openFileDialog.FileName;
-
-                loadDesignFile(strActuatorDesignFileFullName);
+                if (false == loadDesignFile(strDesignFileFullName))
+                    return;
 
                 // 디자인 파일이 생성될 때의 디자인 작업 디렉토리는 프로그램 기본 디렉토리 강제 설정하고 있다.
                 // 만약 디렉토리를 옮긴 디자인 디렉토리를 오픈 할 경우라면 
                 // 이전 다지인 작업 디렉토리를 그대로 사용하면 디렉토리 문제가 발생하여 실행이 불가능하게 된다.
                 // 이를 해결하기 위해
                 // 작업파일을 Open 할 때는 파일을 오픈하는 위치로 작업파일의 디렉토리를 다시 설정하고 있다.
-                m_design.m_strDesignDirPath = Path.GetDirectoryName(strActuatorDesignFileFullName);
+                m_design.m_strDesignDirPath = Path.GetDirectoryName(strDesignFileFullName);
 
                 // Design 디렉토리에서 Design 명을 제거한 디렉토리를 작업디렉토리로 설정한다.
                 CSettingData.m_strCurrentWorkingDirPath = Path.GetDirectoryName(m_design.m_strDesignDirPath);
@@ -823,7 +865,7 @@ namespace DoSA
                 treeViewMain.Nodes.Add(treeNode);
 
                 foreach (CDataNode node in m_design.GetNodeList)
-                    this.addTreeNode(node.NodeName, node.m_kindKey);
+                    this.addTreeNode(node.NodeName, node.KindKey);
             }
             else
             {
@@ -1262,6 +1304,7 @@ namespace DoSA
 
             changePartsShapeInPopup(nodeParts);
         }
+    
 
         private void buttonForceAndMagnitudeB_Result_Click(object sender, EventArgs e)
         {
@@ -1644,7 +1687,8 @@ namespace DoSA
                 return;
             }
 
-            loadDesignFile(m_strCommandLineDesignFullName);
+            if (false == loadDesignFile(m_strCommandLineDesignFullName))
+                return;
 
             // 디자인 파일이 생성될 때의 디자인 작업 디렉토리는 프로그램 기본 디렉토리 강제 설정하고 있다.
             // 만약 디렉토리를 옮긴 디자인 디렉토리를 오픈 할 경우라면 
@@ -1661,7 +1705,7 @@ namespace DoSA
             treeViewMain.Nodes.Add(treeNode);
 
             foreach (CDataNode node in m_design.GetNodeList)
-                this.addTreeNode(node.NodeName, node.m_kindKey);
+                this.addTreeNode(node.NodeName, node.KindKey);
 
             openFEMM();
 
@@ -2269,6 +2313,30 @@ namespace DoSA
                 // 전체 내용을 읽어드린다.
                 readFile.getAllLines(strDesignFileFullName, ref listStringLines);
 
+                ///-----------------------------------------------------
+                /// DoSA-2D 와 DoSA-3D 의 구분 기호가 아래와 같음을 유의하라
+                ///  - DoSA-3D : DoSA_3D_Project
+                ///  - DoSA-2D : DoSA_Project
+                ///-----------------------------------------------------
+                if (listStringLines[0].Contains("DoSA_3D_Project") == true)
+                {
+                    if (CSettingData.m_emLanguage == EMLanguage.Korean)
+                        CNotice.noticeWarning("DoSA-3D 파일은 열 수 없습니다.");
+                    else
+                        CNotice.noticeWarning("DoSA-3D files cannot be opened.");
+
+                    return false;
+                }
+                else if (listStringLines[0].Contains("DoSA_Project") == false)
+                {
+                    if (CSettingData.m_emLanguage == EMLanguage.Korean)
+                        CNotice.noticeWarning("DoSA-2D 파일에 문제가 있습니다.");
+                    else
+                        CNotice.noticeWarning("There is a problem with the DoSA-2D file.");
+
+                    return false;
+                }
+
                 foreach (string strLine in listStringLines)
                 {
                     // Design 구문 안의 내용만 listDesignActuator 담는다.
@@ -2577,7 +2645,7 @@ namespace DoSA
                         CCoil coil = new CCoil();
                         Node = coil;         /// for adding a face
                         coil.NodeName = strName;
-                        coil.m_kindKey = emKind;
+                        coil.KindKey = emKind;
 
                         bRet = m_design.addDataNode(coil);
                         break;
@@ -2586,7 +2654,7 @@ namespace DoSA
                         CMagnet magnet = new CMagnet();
                         Node = magnet;         /// for adding a face
                         magnet.NodeName = strName;
-                        magnet.m_kindKey = emKind;
+                        magnet.KindKey = emKind;
 
                         bRet = m_design.addDataNode(magnet);
                         break;
@@ -2595,7 +2663,7 @@ namespace DoSA
                         CSteel steel = new CSteel();
                         Node = steel;         /// for adding a face
                         steel.NodeName = strName;
-                        steel.m_kindKey = emKind;
+                        steel.KindKey = emKind;
 
                         bRet = m_design.addDataNode(steel);
                         break;    
@@ -2666,7 +2734,7 @@ namespace DoSA
                     case EMKind.FORCE_TEST:
                         CForceTest forceTest = new CForceTest();
                         forceTest.NodeName = strName;
-                        forceTest.m_kindKey = emKind;
+                        forceTest.KindKey = emKind;
 
                         // 생성될 때 환경설정의 조건으로 초기화한다.
                         forceTest.MeshSizePercent = CSettingData.m_dMeshLevelPercent;
@@ -2677,7 +2745,7 @@ namespace DoSA
                     case EMKind.STROKE_TEST:
                         CStrokeTest strokeTest = new CStrokeTest();
                         strokeTest.NodeName = strName;
-                        strokeTest.m_kindKey = emKind;
+                        strokeTest.KindKey = emKind;
 
                         // 생성될 때 환경설정의 조건으로 초기화한다.
                         strokeTest.MeshSizePercent = CSettingData.m_dMeshLevelPercent;
@@ -2688,7 +2756,7 @@ namespace DoSA
                     case EMKind.CURRENT_TEST:
                         CCurrentTest currentTest = new CCurrentTest();
                         currentTest.NodeName = strName;
-                        currentTest.m_kindKey = emKind;
+                        currentTest.KindKey = emKind;
 
                         // 생성될 때 환경설정의 조건으로 초기화한다.
                         currentTest.MeshSizePercent = CSettingData.m_dMeshLevelPercent;
@@ -2791,24 +2859,37 @@ namespace DoSA
                         /// 중복선택을 확인하기 위해서 선택된 이름을 보관한다.
                         m_strSelectedNodeName = node.NodeName;
 
-                    // 프로퍼티창을 변경한다.
+                    // 순서 주의 
+                    // - Node 를 속성창에 표시하기 전에 호출을 해야한다.
+                    //
+                    // 의문 사항
+                    // - CDataNode 의 표시항목인 NodeName 만 설정해도 CShapeParts 의 MovingPart 항목까지 숨겨지고 있다. 
+                    PropertyDescriptorCollection propCollection = TypeDescriptor.GetProperties(typeof(CDataNode));
+                    PropertyDescriptor descriptor = propCollection["NodeName"];
+
+                    BrowsableAttribute attrib = (BrowsableAttribute)descriptor.Attributes[typeof(BrowsableAttribute)];
+                    FieldInfo isBrow = attrib.GetType().GetField("browsable", BindingFlags.NonPublic | BindingFlags.Instance);
+
+                    // Non Kind 는 속성 창을 표시하지 않도록 설정한다.
+                    if (node.KindKey == EMKind.NON_KIND)
+                        isBrow.SetValue(attrib, false);
+                    else
+                        isBrow.SetValue(attrib, true);
+
+                    // Node 를 속성창에 표시한다.
                     propertyGridMain.SelectedObject = node;
 
                     // 프로퍼티창의 첫번째 Column 의 폭을 변경한다. (사용 포기함)
                     //setLabelColumnWidth(propertyGridMain, 160);
 
-                    /// 프로퍼티창에서 이름을 변경할 때 기존에 이미 있는 이름을 선택하는 경우
-                    /// 복구를 위해 저장해 둔다.
+                    /// 프로퍼티창에서 이름을 변경할 때 기존에 이미 있는 이름을 선택하는 경우 복구를 위해 저장해 둔다.
                     m_strBackupNodeName = node.NodeName;
 
                     // Expand Treeview when starting
                     foreach (TreeNode tn in treeViewMain.Nodes)
                         tn.Expand();
 
-                    splitContainerRight.Panel1.Controls.Clear();
-
-                    strTestDirName = Path.Combine(m_design.m_strDesignDirPath, node.NodeName);
-
+                    // FEMM 의 화면을 처리한다.
                     if (m_femm != null)
                     {
                         /// 부품이 선택되면 FEMM 에 선택 표시를 한다
@@ -2839,8 +2920,12 @@ namespace DoSA
                         }
                     }
 
+                    splitContainerRight.Panel1.Controls.Clear();
+
+                    strTestDirName = Path.Combine(m_design.m_strDesignDirPath, node.NodeName);
+
                     // 종류에 따라 우측창을 처리한다.
-                    switch (node.m_kindKey)
+                    switch (node.KindKey)
                     {
                         case EMKind.COIL:
                             splitContainerRight.Panel1.Controls.Add(this.panelCoil);
@@ -2858,12 +2943,7 @@ namespace DoSA
                             break;
 
                         case EMKind.NON_KIND:
-                            // 화면을 갱신한다.
-                            splitContainerRight.Panel1.Controls.Clear();
-                            splitContainerRight.Panel1.Controls.Add(this.panelEmpty);
-
-                            // PropertyGrid 창을 초기화 한다.
-                            propertyGridMain.SelectedObject = null;
+                            splitContainerRight.Panel1.Controls.Add(this.panelNonKind);
                             break;
 
                         case EMKind.FORCE_TEST:
@@ -2944,7 +3024,6 @@ namespace DoSA
                         default:
                             return;
                     }
-
                 }
             }
             catch (Exception ex)
@@ -3165,7 +3244,7 @@ namespace DoSA
                     this.treeViewMain.SelectedNode.Text = strChangedItemValue;
                 }            
                 
-                switch (node.m_kindKey)
+                switch (node.KindKey)
                 {
                     case EMKind.COIL:
 
@@ -3229,12 +3308,12 @@ namespace DoSA
 
             // 총 저항
             foreach (CDataNode nodeTemp in m_design.GetNodeList)
-                if (nodeTemp.m_kindKey == EMKind.COIL)
+                if (nodeTemp.KindKey == EMKind.COIL)
                 {
                     total_resistance += ((CCoil)nodeTemp).Resistance;
                 }
 
-            switch (node.m_kindKey)
+            switch (node.KindKey)
             {
                 case EMKind.FORCE_TEST:
 
@@ -3631,12 +3710,12 @@ namespace DoSA
                 // 변경전 정보를 저장해 둔다.
                 string strOriginalNodeName = shapePart.NodeName;
 
-                PopupShape popupShape = new PopupShape(shapePart.NodeName, shapePart.Face, shapePart.m_kindKey);
+                PopupShape popupShape = new PopupShape(shapePart.NodeName, shapePart.Face, shapePart.KindKey);
                 popupShape.StartPosition = FormStartPosition.CenterParent;
 
                 if (DialogResult.OK == popupShape.ShowDialog(this))
                 {
-                    if (shapePart.m_kindKey == EMKind.NON_KIND && popupShape.PartType != EMKind.NON_KIND)
+                    if (shapePart.KindKey == EMKind.NON_KIND && popupShape.PartType != EMKind.NON_KIND)
                     {
                         CShapeParts newShapePart = new CShapeParts();
 
@@ -3692,7 +3771,7 @@ namespace DoSA
                     shapePart.Face = face;
 
                     /// 형상에 맞추어 코일 설계 사양정보를 초기화 한다.
-                    if (shapePart.m_kindKey == EMKind.COIL)
+                    if (shapePart.KindKey == EMKind.COIL)
                         ((CCoil)shapePart).initialShapeDesignValue();
 
                     ///------------------------------- 2. Node Name 교체 -------------------------
@@ -3875,7 +3954,7 @@ namespace DoSA
 
                     // 노드 값을 설정한다.
                     nonKind.NodeName = strNodeName;
-                    nonKind.m_kindKey = EMKind.NON_KIND;
+                    nonKind.KindKey = EMKind.NON_KIND;
                     nonKind.Face = face;
                     nonKind.MovingPart = EMMoving.FIXED;
 
@@ -3884,7 +3963,7 @@ namespace DoSA
                     if (bRet == true)
                     {
                         // Treeview 에 추가한다
-                        addTreeNode(nonKind.NodeName, nonKind.m_kindKey);
+                        addTreeNode(nonKind.NodeName, nonKind.KindKey);
 
                         // 해당 Node 의 Properies View 와 Information Windows 를 표시한다
                         showDataNode(nonKind.NodeName);
