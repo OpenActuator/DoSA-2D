@@ -1,4 +1,4 @@
-# DoSA-2D (Ver 1.1.0.2)
+# DoSA-2D (Ver 1.1.2)
 
 This program is an open source software for solenoids &amp; actuator
 
