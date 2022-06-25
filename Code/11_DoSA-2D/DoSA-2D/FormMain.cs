@@ -26,9 +26,11 @@ using Nodes;
 using Scripts;
 using Shapes;
 using gtLibrary;
+
 using Microsoft.Win32;
 using System.Resources;
 using System.Globalization;
+
 using System.Net;
 using SimpleDXF;
 
@@ -68,13 +70,11 @@ namespace DoSA
 
         #endregion
 
-
         #region----------------------- 프로그램 초기화 --------------------------
 
         public FormMain(string strDSAFileFullName = null, string strDataFileFullName = null)
         {
             InitializeComponent();
-
 
             #region -------------- CSettingData 설정 -----------------------
 
@@ -104,7 +104,6 @@ namespace DoSA
             CSettingData.updataLanguage();
 
         	#endregion
-
 
             // 실행전에 CSettingData 의 값들이 설정되어야 한다.
             initializeProgram();
@@ -141,10 +140,28 @@ namespace DoSA
         // - WiFi 를 연결하고, AssemblyInfo 에서 버전을 임의로 낮춘다.
         private void checkDoSAVersion()
         {
+            // 버전을 숫자로 변환할 때 DIGIT 의 기본 단위
+            const double DIGIT_BASE_NUMBER = 100.0;
+
+            string strNewVersion = string.Empty;
+            bool bCheckMainSite = true;
+
             try
             {
-                // 인터넷이 연결되지 않으면 예외가 발생하여 catch 로 넘어가고 프로그램이 실행된다.
-                string strNewVersion = new WebClient().DownloadString("http://www.actuator.or.kr/DoSA_2D_Version.txt");
+                // 첫번째 버전 확인
+                strNewVersion = new WebClient().DownloadString("http://actuator.or.kr/DoSA_2D_Version.txt");
+            }
+            catch (WebException)
+            {
+                bCheckMainSite = false;
+            }
+
+            try
+            {
+                // 첫번째 버전 확인이 되지 않을 경우 두번째 버전 확인
+                // 두번째 버전 확인에서도 예외가 발생하면 버전 확인을 포기하고 프로그램이 실행된다.
+                if (bCheckMainSite == false)
+                    strNewVersion = new WebClient().DownloadString("https://solenoid.or.kr/openactuator/dosa_update/DoSA_2D_Version.txt");
 
                 string strAppDataPath = Environment.GetEnvironmentVariable("APPDATA");
                 string strSettingFilePath = Path.Combine(strAppDataPath, "DoSA-2D");
@@ -176,11 +193,11 @@ namespace DoSA
                     return;
 
                 // 3 자리만 사용한다. 마지막 자리는 너무 자주 버전업이 되어서 사용자들에 불편을 준다
-                // ex) 0.9.4.2 -> 마지막 2가 버려지고 94 가 된다.
+                // ex) 0.9.4.2 -> 마지막 2가 버려지고 904 가 된다.
                 for (int i = 0; i < 3; i++)
                 {
-                    iNewVersion += (int)(Convert.ToInt32(arrayNewVersion[i]) * Math.Pow(100.0, (double)(2 - i)));
-                    iProductVersion += (int)(Convert.ToInt32(arrayProductVersion[i]) * Math.Pow(100.0, (double)(2 - i)));
+                    iNewVersion += (int)(Convert.ToInt32(arrayNewVersion[i]) * Math.Pow(DIGIT_BASE_NUMBER, (double)(2 - i)));
+                    iProductVersion += (int)(Convert.ToInt32(arrayProductVersion[i]) * Math.Pow(DIGIT_BASE_NUMBER, (double)(2 - i)));
                 }
 
                 bool bVersionCheckDialog = false;
@@ -209,7 +226,7 @@ namespace DoSA
 
                         // 업그레이드 확인은 셋째 자리수로 결정된다. (마지막 자리수는 사용되지 않는다.)
                         for (int i = 0; i < 3; i++)
-                            iPassVersion += (int)(Convert.ToInt32(arrayPassVersion[i]) * Math.Pow(10.0, (double)(2 - i)));
+                            iPassVersion += (int)(Convert.ToInt32(arrayPassVersion[i]) * Math.Pow(DIGIT_BASE_NUMBER, (double)(2 - i)));
 
                         // 저장된 보지 않기를 원하는 버전보다 신규버전이 높을 때만 신규버전 알림창을 띄운다.
                         if (iNewVersion > iPassVersion)
@@ -226,20 +243,25 @@ namespace DoSA
                 // 신규버전을 알리는 창을 띄운다.
                 if (bVersionCheckDialog == true)
                 {
-                    // 인터넷이 연결되지 않으면 예외가 발생하여 catch 로 넘어가고 프로그램이 실행된다.
-                    string strMainUpdateContents = new WebClient().DownloadString("http://www.actuator.or.kr/DoSA_2D_Update_Contents.txt");
+                    string strMainUpdateContents = string.Empty;
+
+                    if (bCheckMainSite == true)
+                        strMainUpdateContents = new WebClient().DownloadString("https://actuator.or.kr/DoSA_2D_Update_Contents.txt");
+                    else
+                        strMainUpdateContents = new WebClient().DownloadString("https://solenoid.or.kr/openactuator/dosa_update/DoSA_2D_Update_Contents.txt");
 
                     PopupNewVersion formNewVersion = new PopupNewVersion(strNewVersion, strProductVersion, strMainUpdateContents);
                     formNewVersion.StartPosition = FormStartPosition.CenterParent;
 
                     formNewVersion.ShowDialog();
 
-                    // 취소를 하면 버전 확인 상관없이 프로그램이 실행 된다.
+                    // 취소 버튼을 클릭 하는 경우
+                    // - 취소를 하면 버전 확인 상관없이 프로그램이 실행 된다.
                     if (formNewVersion.m_iStatus == 3)
                         return;
 
-                    // 프로그램을 종료 하고 다운로드 웹사이트로 이동한다.
-                    // 단, 프로그램을 업데이트하지 않으면 다시 알림 창이 뜬다.
+                    // 다운로드 페이지 버튼을 클릭하는 경우
+                    // - 프로그램을 종료 하고 다운로드 웹사이트로 이동한다. 단, 프로그램을 업데이트하지 않으면 다시 알림 창이 뜬다.
                     if (formNewVersion.m_iStatus == 1)
                     {
                         string target;
@@ -276,8 +298,9 @@ namespace DoSA
                         System.Windows.Forms.Application.ExitThread();
                         Environment.Exit(0);
                     }
-                    // formNewVersion.m_iStatus == 2 인 경우로 지금 New 버전에 대한 공지를 띄우지 않는 것이다.
-                    else
+                    // 해당 업데이트 알림 취소 버튼을 클릭하는 경우
+                    // - 해당 업데이트은 더 이상 알림을 띄우지 않는다
+                    else if (formNewVersion.m_iStatus == 2)
                     {
                         List<string> listStirng = new List<string>();
                         listStirng.Add(strNewVersion);
@@ -329,17 +352,20 @@ namespace DoSA
         {
             try
             {
+                string strAppDataDirPath = Environment.GetEnvironmentVariable("APPDATA");
+                string strSettingDirPath = Path.Combine(strAppDataDirPath, "DoSA-2D");
+
                 //-----------------------------------------------------------------------------
                 // Notice 동작을 위해 우선 실행한다.
                 //-----------------------------------------------------------------------------
                 // Log 디렉토리가 없으면 생성 한다.
-                string strLogDirName = Path.Combine(CSettingData.m_strProgramDirPath, "Log");
+                string strLogDirPath = Path.Combine(strSettingDirPath, "Log");
 
-                if (m_manageFile.isExistDirectory(strLogDirName) == false)
-                    m_manageFile.createDirectory(strLogDirName);
+                if (m_manageFile.isExistDirectory(strLogDirPath) == false)
+                    m_manageFile.createDirectory(strLogDirPath);
 
-                // 출력방향을 결정함 (아래 코드가 동작하면 파일 출력, 동작하지 않으면 Output 창 출력)
-                Trace.Listeners.Add(new TextWriterTraceListener(Path.Combine(CSettingData.m_strProgramDirPath, "Log", DateTime.Now.ToString("yyyyMMdd_HH_mm_ss") + ".Log")));
+                //출력방향을 결정함(아래 코드가 동작하면 파일 출력, 동작하지 않으면 Output 창 출력)
+                Trace.Listeners.Add(new TextWriterTraceListener(Path.Combine(strLogDirPath, DateTime.Now.ToString("yyyyMMdd_HH_mm_ss") + ".Log")));
 
                 // 이벤트 생성 부
                 // 
@@ -376,15 +402,11 @@ namespace DoSA
                 // 기존에 동작을 하고 있는 FEMM 이 있으면 오류가 발생한다.
                 CProgramFEMM.killProcessOfFEMMs();
 
-                // 설치버전을 확인 한다.
-                checkDoSAVersion();
-
                 //=====================================================================
                 // 2023-03-18일 까지 코드를 유지하고 이후는 삭제한다
                 //=====================================================================
                 deleteOldDirectories();
                 //=====================================================================
-
 
                 /// Net Framework V4.51 이전버전이 설치 되었는지를 확인한다.
                 bool retFreamework = checkFramework451();
@@ -399,9 +421,6 @@ namespace DoSA
                     System.Windows.Forms.Application.ExitThread();
                     Environment.Exit(0);
                 }
-
-                string strAppDataDirPath = Environment.GetEnvironmentVariable("APPDATA");
-                string strSettingDirPath = Path.Combine(strAppDataDirPath, "DoSA-2D");
 
                 if (m_manageFile.isExistDirectory(strSettingDirPath) == false)
                     m_manageFile.createDirectory(strSettingDirPath);
@@ -501,7 +520,7 @@ namespace DoSA
             }
             else
             {
-                messageListView.addItem(strMSG);
+                messageListView.addMessage(strMSG);
             }
         }
 
@@ -690,6 +709,10 @@ namespace DoSA
         //전체 초기화 한다
         private void closeDesign()
         {
+            // 데이터가 있는 경우만 Close 메시지를 알린다.
+            if (m_design.GetNodeList.Count != 0)
+                CNotice.printUserMessage(m_design.m_strDesignName + m_resManager.GetString("_DHBC"));
+
             // 기존 자료를 초기화 한다
             // Second Node 들을 삭제한다.
             foreach (TreeNode firstLayerNode in treeViewMain.Nodes)
@@ -800,46 +823,8 @@ namespace DoSA
             {
                 string strDesignFileFullName = openFileDialog.FileName;
 
-                string strDesignName = Path.GetFileNameWithoutExtension(strDesignFileFullName);
-                string strDesignDirectory = Path.GetDirectoryName(strDesignFileFullName);
-
-                string[] arrayString = strDesignDirectory.Split(Path.DirectorySeparatorChar);
-
-                // 디자인명과 디자인파일이 포함된 디렉토리명이 일치하는지 확인한다.
-                if (strDesignName != arrayString[arrayString.Length - 1])
-                {
-                    if (CSettingData.m_emLanguage == EMLanguage.Korean)
-                        result = CNotice.noticeWarningYesNo("DoSA-2D 파일의 디렉토리 구조에 문제가 있습니다.\n디렉토리 구조를 자동 생성 하겠습니까?");
-                    else
-                        result = CNotice.noticeWarningYesNo("There is a problem with the directory structure of the DoSA-2D file.\nDo you want to automatically create the directory structure?");
-
-                    if (result == DialogResult.Yes)
-                    {
-                        string strNewDesignFileFullName = Path.Combine(strDesignDirectory, strDesignName, strDesignName + ".dsa");
-
-                        if(true == m_manageFile.isExistDirectory(Path.Combine(strDesignDirectory, strDesignName)))
-                        {
-                            if (CSettingData.m_emLanguage == EMLanguage.Korean)
-                                CNotice.noticeWarning("디자인 명의 디렉토리가 이미 존재합니다.");
-                            else
-                                CNotice.noticeWarning("A directory named design already exists.");
-
-                            return;
-                        }
-
-                        if (false == m_manageFile.createDirectory(Path.Combine(strDesignDirectory, strDesignName)))
-                            return;
-
-                        m_manageFile.copyFile(strDesignFileFullName, strNewDesignFileFullName);
-                        m_manageFile.deleteFile(strDesignFileFullName);
-
-                        // 수정된 디렉토리로 Design 파일의 풀 패스를 변경한다.
-                        strDesignFileFullName = strNewDesignFileFullName;
-                    }
-                    else
-                        return;
-
-                }
+                if (false == checkDesignFile(ref strDesignFileFullName))
+                    return;
 
                 // 기존 디자인 데이터를 모두 삭제한다.
                 closeDesign();
@@ -880,6 +865,57 @@ namespace DoSA
             CNotice.printUserMessage(m_design.m_strDesignName + m_resManager.GetString("_DHBO"));    
         }
 
+        private bool checkDesignFile(ref string strDesignFileFullName)
+        {
+            DialogResult result;
+
+            string strDesignName = Path.GetFileNameWithoutExtension(strDesignFileFullName);
+            string strDesignDirectory = Path.GetDirectoryName(strDesignFileFullName);
+
+            string[] arrayString = strDesignDirectory.Split(Path.DirectorySeparatorChar);
+
+            // 디자인명과 디자인파일이 포함된 디렉토리명이 일치하는지 확인한다.
+            if (strDesignName != arrayString[arrayString.Length - 1])
+            {
+                if (CSettingData.m_emLanguage == EMLanguage.Korean)
+                    result = CNotice.noticeWarningYesNo("DoSA-2D 파일의 디렉토리 구조에 문제가 있습니다.\n디렉토리 구조를 자동 생성 하겠습니까?");
+                else
+                    result = CNotice.noticeWarningYesNo("There is a problem with the directory structure of the DoSA-2D file.\nDo you want to automatically create the directory structure?");
+
+                if (result == DialogResult.Yes)
+                {
+                    string strNewDesignFileFullName = Path.Combine(strDesignDirectory, strDesignName, strDesignName + ".dsa");
+
+                    if (true == m_manageFile.isExistDirectory(Path.Combine(strDesignDirectory, strDesignName)))
+                    {
+                        if (CSettingData.m_emLanguage == EMLanguage.Korean)
+                            CNotice.noticeWarning("디자인 명의 디렉토리가 이미 존재합니다.");
+                        else
+                            CNotice.noticeWarning("A directory named design already exists.");
+
+                        return false;
+                    }
+
+                    if (false == m_manageFile.createDirectory(Path.Combine(strDesignDirectory, strDesignName)))
+                        return false;
+
+                    m_manageFile.copyFile(strDesignFileFullName, strNewDesignFileFullName);
+                    Thread.Sleep(10);
+                    m_manageFile.deleteFile(strDesignFileFullName);
+
+                    // 수정된 디렉토리로 Design 파일의 풀 패스를 변경한다.
+                    strDesignFileFullName = strNewDesignFileFullName;
+                }
+                else
+                {
+                    // 디렉토리 생성을 강제하지 않는다.
+                    //return false;
+                }
+            }
+
+            return true;
+        }
+
         private void ribbonOrbMenuItemClose_Click(object sender, EventArgs e)
         {
             if (m_design.m_bChanged == true)
@@ -892,8 +928,6 @@ namespace DoSA
 
             // 저장을 하고 나면 초기화 한다.
             m_design.m_bChanged = false;
-
-            CNotice.printUserMessage(m_design.m_strDesignName + m_resManager.GetString("_DHBC"));
 
             // 기존 디자인 데이터를 모두 삭제한다.
             closeDesign();
@@ -972,8 +1006,21 @@ namespace DoSA
                         }
                     }
 
-                    String strOrgDesingFileFullName = Path.Combine(strOrgDesignDirName, strOrgDesignName + ".dsa");
-                    String strSaveAsDesignFileFullName = Path.Combine(strSaveAsDesignDirName, strSaveAsDesignName + ".dsa");
+                    string strOrgDesingFileFullName;
+
+                    if (true == m_manageFile.isExistFile(Path.Combine(strOrgDesignDirName, strOrgDesignName + ".dsa")))
+                        strOrgDesingFileFullName = Path.Combine(strOrgDesignDirName, strOrgDesignName + ".dsa");
+                    else
+                    {
+                        if (CSettingData.m_emLanguage == EMLanguage.Korean)
+                            CNotice.noticeWarning("원본 DoSA-2D 디자인 파일이 존재하지 않습니다.");
+                        else
+                            CNotice.noticeWarning("The original DoSA-2D design file does not exist.");
+
+                        return;
+                    }
+
+                    string strSaveAsDesignFileFullName = Path.Combine(strSaveAsDesignDirName, strSaveAsDesignName + ".dsa");
 
 
                     #region // --------------- 파일과 디렉토리 복사 ---------------------
@@ -1090,13 +1137,192 @@ namespace DoSA
             frmAbout.ShowDialog();
         }
 
+        private void ribbonButtonDonation_Click(object sender, EventArgs e)
+        {
+            string target;
+
+            if (CSettingData.m_emLanguage == EMLanguage.Korean)
+            {
+                target = "https://solenoid.or.kr/index_donation.html";
+            }
+            else
+            {
+                target = "https://www.buymeacoffee.com/openactuator";
+            }
+
+            try
+            {
+                System.Diagnostics.Process.Start(target);
+            }
+            catch (System.ComponentModel.Win32Exception noBrowser)
+            {
+                if (noBrowser.ErrorCode == -2147467259)
+                    CNotice.printLog(noBrowser.Message);
+            }
+            catch (System.Exception other)
+            {
+                CNotice.printLog(other.Message);
+            }
+        }
+
+        private void ribbonButtonImportDXF_Click(object sender, EventArgs e)
+        {
+            OpenFileDialog openFileDialog = new OpenFileDialog();
+
+            // 파일 열기창 설정
+            openFileDialog.Title = "Import a DXF File";
+            // 디자인 파일을 열 때 디렉토리는 프로그램 작업 디렉토리로 하고 있다.
+            openFileDialog.InitialDirectory = CSettingData.m_strCurrentWorkingDirPath;
+            openFileDialog.FileName = null;
+            openFileDialog.Filter = "DXF 2D File (*.dxf)|*.dxf|All files (*.*)|*.*";
+            openFileDialog.FilterIndex = 1;
+            openFileDialog.RestoreDirectory = true;
+
+            DialogResult result = openFileDialog.ShowDialog();
+
+            if (result == DialogResult.OK)
+            {
+                string strDXFFileFullName = openFileDialog.FileName;
+
+                importDXF(strDXFFileFullName);
+            }
+        }
+
+        private void importDXF(string strDXFFileName)
+        {
+            //Loads a file from the command line argument
+            Document simpleDXF = new Document(strDXFFileName);
+            List<Polyline> listPolylines;
+            int nCountParts = 0;
+
+            simpleDXF.Read();
+
+            listPolylines = simpleDXF.Polylines;
+
+            try
+            {
+                foreach (Polyline polyLine in listPolylines)
+                {
+                    // 이름 인덱스를 증가시킨다.
+                    nCountParts++;
+
+                    CFace face = new CFace();
+
+                    face.BasePoint.X = 0.0;
+                    face.BasePoint.Y = 0.0;
+
+                    if (polyLine.Vertexes.Count < 4)
+                    {
+                        CNotice.printLog("3개 이하는 Point 로 구성된 Face 는 제외 됩니다.");
+                        continue;
+                    }
+
+                    List<CPoint> listPoint = new List<CPoint>();
+
+                    bool bCheckPoint = true;
+
+                    // 마지막점은 시작점과 동일점이기 때문에 -1 을 추가하여 제외시킨다.
+                    for (int i = 0; i < polyLine.Vertexes.Count - 1; i++)
+                    {
+                        // 매번 신규로 생성을 해야 한다.
+                        CPoint point = new CPoint();
+
+                        point.X = polyLine.Vertexes[i].Position.X;
+                        point.Y = polyLine.Vertexes[i].Position.Y;
+
+                        // 자리수 오차에서 발생하는 0 < X < -0.1 um 사이의 값은 영으로 처리한다.
+                        if (CSmallUtil.isZeroPosition(point.X))
+                        {
+                            point.X = 0;
+                        }
+
+                        // 축대칭해석만 지원하고 있기 때문에 
+                        // 거리에 대한 영처리가 된 이 후에 point.X 가 음의 값이면 해당 List 를 Node 로 생성하지 않는다.
+                        if (point.X < 0)
+                        {
+                            bCheckPoint = false;
+                        }
+
+                        // 무조건 Straight 만 지원 한다.
+                        point.LineKind = EMLineKind.STRAIGHT;
+
+                        listPoint.Add(point);
+                    }
+
+                    // 음의 X 값이 있거나 point 의 수가 4보다 작으면 Node 생성작업을 취소한다.
+                    if (bCheckPoint == false || listPoint.Count < 4)
+                        continue;
+
+                    // DXF 에서 읽어드리는 객체는 무조건 PLOYGON 으로 지정한다.
+                    face.FaceType = EMFaceType.POLYGON;
+                    face.setPolygonPoints(listPoint);
+
+                    // 형상노드를 생성하고 추가한다.
+                    CNonKind nonKind = new CNonKind();
+
+                    bool bCheckExist = false;
+                    string strNodeName;
+
+                    // 기존에 이름이 존재하면 nCount 를 증가시키면서 계속 시도한다.
+                    do
+                    {
+                        strNodeName = "DXF_Shape_" + nCountParts.ToString();
+
+                        bCheckExist = m_design.isExistNode(strNodeName);
+
+                        if (bCheckExist == true) nCountParts++;
+                    }
+                    while (bCheckExist == true);
+
+                    // 노드 값을 설정한다.
+                    nonKind.NodeName = strNodeName;
+                    nonKind.KindKey = EMKind.NON_KIND;
+                    nonKind.Face = face;
+                    nonKind.MovingPart = EMMoving.FIXED;
+
+                    bool bRet = m_design.addDataNode(nonKind);
+
+                    if (bRet == true)
+                    {
+                        // Treeview 에 추가한다
+                        addTreeNode(nonKind.NodeName, nonKind.KindKey);
+
+                        // 해당 Node 의 Properies View 와 Information Windows 를 표시한다
+                        showDataNode(nonKind.NodeName);
+
+                        propertyGridMain.Refresh();
+                    }
+                    else
+                    {
+                        CNotice.noticeWarningID("TNIA");
+                    }
+                }
+
+                // 혹시 FEMM 의 화면이 닫힌 경우 FEMM 의 화면을 복원합니다.
+                reopenFEMM();
+
+                m_design.drawDesign(m_femm);
+
+                // 수정 되었음을 기록한다.
+                m_design.m_bChanged = true;
+            }
+            catch (Exception ex)
+            {
+                CNotice.printLog(ex.Message);
+                return;
+            }
+
+        }
+
         #endregion
 
         #region----------------------- Button -------------------------------
-        
+
         private void buttonTestCurrent_Click(object sender, EventArgs e)
         {
             CCurrentTest currentTest = (CCurrentTest)propertyGridMain.SelectedObject;
+
+            if (currentTest == null) return;
 
             // 현재 표시되고 있는 PropertyGird 창에서 Test 이름을 찾아 낸다
             string strTestName = currentTest.NodeName;
@@ -1121,6 +1347,14 @@ namespace DoSA
                 // 삭제되는 시간이 필요한 듯 한다.
                 Thread.Sleep(1000);
             }
+
+            // 사용자 메시지를 초기화 한다.
+            messageListView.clearMessage();
+
+            if (CSettingData.m_emLanguage == EMLanguage.Korean)
+                CNotice.printUserMessage(currentTest.NodeName + " 전류별 자기력 실험을 시작합니다.");
+            else
+                CNotice.printUserMessage(currentTest.NodeName + " magnetic force test by current is started.");
 
             // 시험 디렉토리를 생성한다.
             m_manageFile.createDirectory(strTestDirName);
@@ -1173,6 +1407,8 @@ namespace DoSA
 
             getPostRegion(ref minX, ref maxX, ref minY, ref maxY, 1.2f);
 
+            string strMessage = string.Empty;
+
             /// 총 계산횟수는 Step + 1 회이다.
             for (int i = 0; i < nStepCount + 1; i++)
             {
@@ -1190,6 +1426,9 @@ namespace DoSA
                 string strForce = String.Format("{0}", dForce);
 
                 listString.Add(strCurrent + "," + strForce);
+
+                strMessage = string.Format("Count = {0}, Stroke = {1}, Current = {2}, Force = {3}", i + 1, currentTest.MovingStroke, dCurrent, dForce);
+                CNotice.printUserMessage(strMessage);
             }
 
             // Force 계산이 진행되면 후처리로 변화하기 때문에 후처리 모드를 저장한다.
@@ -1235,6 +1474,8 @@ namespace DoSA
         {
             CDataNode node = (CDataNode)propertyGridMain.SelectedObject;
 
+            if (node == null) return;
+
             if ("CMagnet" != node.GetType().Name)
             {
                 Trace.WriteLine("Type mismatch in the FormMain:buttonMagnetUp_Click");
@@ -1249,6 +1490,8 @@ namespace DoSA
         private void buttonMagnetDown_Click(object sender, EventArgs e)
         {
             CDataNode node = (CDataNode)propertyGridMain.SelectedObject;
+
+            if (node == null) return;
 
             if ("CMagnet" != node.GetType().Name)
             {
@@ -1265,6 +1508,8 @@ namespace DoSA
         {
             CDataNode node = (CDataNode)propertyGridMain.SelectedObject;
 
+            if (node == null) return;
+
             if ("CMagnet" != node.GetType().Name)
             {
                 Trace.WriteLine("Type mismatch in the FormMain:buttonMagnetLeft_Click");
@@ -1279,6 +1524,8 @@ namespace DoSA
         private void buttonMagnetRight_Click(object sender, EventArgs e)
         {
             CDataNode node = (CDataNode)propertyGridMain.SelectedObject;
+
+            if (node == null) return;
 
             if ("CMagnet" != node.GetType().Name)
             {
@@ -1302,6 +1549,8 @@ namespace DoSA
         {
             CShapeParts nodeParts = (CShapeParts)propertyGridMain.SelectedObject;
 
+            if (nodeParts == null) return;
+
             changePartsShapeInPopup(nodeParts);
         }
     
@@ -1309,6 +1558,8 @@ namespace DoSA
         private void buttonForceAndMagnitudeB_Result_Click(object sender, EventArgs e)
         {
             CForceTest forceTest = (CForceTest)propertyGridMain.SelectedObject;
+
+            if (forceTest == null) return;
 
             double minX, maxX, minY, maxY;
             minX = maxX = minY = maxY = 0;
@@ -1327,6 +1578,8 @@ namespace DoSA
         {
             CForceTest forceTest = (CForceTest)propertyGridMain.SelectedObject;
 
+            if (forceTest == null) return;
+
             double minX, maxX, minY, maxY;
             minX = maxX = minY = maxY = 0;
 
@@ -1343,6 +1596,8 @@ namespace DoSA
         private void buttonTestForce_Click(object sender, EventArgs e)
         {
             CForceTest forceTest = (CForceTest)propertyGridMain.SelectedObject;
+
+            if (forceTest == null) return;
 
             // 현재 시험의 이름을 m_nodeList 에서 찾지 않고
             // 현재 표시되고 있는 PropertyGird 창에서 Test 이름을 찾아 낸다
@@ -1368,6 +1623,14 @@ namespace DoSA
                 Thread.Sleep(1000);
             }
 
+            // 사용자 메시지를 초기화 한다.
+            messageListView.clearMessage();
+
+            if (CSettingData.m_emLanguage == EMLanguage.Korean)
+                CNotice.printUserMessage(forceTest.NodeName + " 자기력 실험을 시작합니다.");
+            else
+                CNotice.printUserMessage(forceTest.NodeName + " magnetic force test is started.");
+
             // 시험 디렉토리를 생성한다.
             m_manageFile.createDirectory(strTestDirName);
 
@@ -1383,7 +1646,7 @@ namespace DoSA
                 // 순서 주의 할 것
                 closePostView();
 
-                resizeFEMM();
+                resizePrograms();
 
                 m_bPostMode = false;
 
@@ -1435,6 +1698,9 @@ namespace DoSA
             List<string> listString = new List<string>();
 
             listString.Add("force:" + strForce);
+
+            string strMessage = string.Format("Voltage = {0}, Stroke = {1}, Force = {2}", forceTest.Voltage, forceTest.MovingStroke, dForce);
+            CNotice.printUserMessage(strMessage);
 
             writefile.writeLineString(strForceFileFullName, listString, true);
 
@@ -1506,6 +1772,8 @@ namespace DoSA
         {
             CStrokeTest strokeTest = (CStrokeTest)propertyGridMain.SelectedObject;
 
+            if (strokeTest == null) return;
+
             double dInitialStroke = strokeTest.InitialStroke;
             double dFinalStroke = strokeTest.FinalStroke;
             int nStepCount = strokeTest.StepCount;
@@ -1533,6 +1801,14 @@ namespace DoSA
                 // 삭제되는 시간이 필요한 듯 한다.
                 Thread.Sleep(1000);
             }
+
+            // 사용자 메시지를 초기화 한다.
+            messageListView.clearMessage();
+
+            if (CSettingData.m_emLanguage == EMLanguage.Korean)
+                CNotice.printUserMessage(strokeTest.NodeName + " 변위별 자기력 실험을 시작합니다.");
+            else
+                CNotice.printUserMessage(strokeTest.NodeName + " magnetic force test by stroke is started.");
 
             // 시험 디렉토리를 생성한다.
             m_manageFile.createDirectory(strTestDirName);
@@ -1567,6 +1843,8 @@ namespace DoSA
             DateTime previousTime = new DateTime();
             previousTime = DateTime.Now;
 
+            string strMessage = string.Empty;
+
             /// 총 계산횟수는 Step + 1 회이다.
             for (int i = 0; i < nStepCount + 1; i++ )
             {
@@ -1598,6 +1876,9 @@ namespace DoSA
                 string strForce = String.Format("{0}", dForce);
 
                 listString.Add(strStroke + "," + strForce);
+
+                strMessage = string.Format("Count = {0}, Voltage = {1}, Stroke = {2}, Force = {3}", i + 1, strokeTest.Voltage, dStroke, dForce);
+                CNotice.printUserMessage(strMessage);
 
                 // 전처리를 부품 형상으로 초기화 한다.
                 m_design.redrawDesign(m_femm);
@@ -1673,46 +1954,99 @@ namespace DoSA
 
         private void FormMain_Shown(object sender, EventArgs e)
         {
-            // 커멘드 파라메터로 디자인 파일명이 넘어오지 않은 경우는 바로 리턴한다.
-            if (m_strCommandLineDesignFullName == string.Empty)
-                return;
-            
-            if (false == m_manageFile.isExistFile(m_strCommandLineDesignFullName))
+            try
             {
-                if (CSettingData.m_emLanguage == EMLanguage.Korean)
-                    CNotice.noticeWarning("디자인 파일이 존재하지 않습니다.");
-                else
-                    CNotice.noticeWarning("The design file does not exist.");
+                // 설치버전을 확인 한다.
+                // - 버전 확인은 프로그램 동작과 상관없이 진행되기 때문에 Thread 로 실행한다.
+                // - FormMain_Shown() 에서 실행해서 
+                //   Main 화면이 열린 후 동작함으로써 메시지 창이 앞으로 위치하도록 한다
+                Thread threadVersionCheck = new Thread(new ThreadStart(checkDoSAVersion));
+                threadVersionCheck.IsBackground = true;
+                threadVersionCheck.Start();
 
-                return;
+                // 커멘드 파라메터로 디자인 파일명이 넘어오지 않은 경우는 바로 리턴한다.
+                if (m_strCommandLineDesignFullName == string.Empty)
+                    return;
+            
+                if (false == m_manageFile.isExistFile(m_strCommandLineDesignFullName))
+                {
+                    if (CSettingData.m_emLanguage == EMLanguage.Korean)
+                        CNotice.noticeWarning("디자인 파일이 존재하지 않습니다.");
+                    else
+                        CNotice.noticeWarning("The design file does not exist.");
+
+                    return;
+                }
+
+                if (false == checkDesignFile(ref m_strCommandLineDesignFullName))
+                    return;
+
+                if (false == loadDesignFile(m_strCommandLineDesignFullName))
+                    return;
+
+                // 디자인 파일이 생성될 때의 디자인 작업 디렉토리는 프로그램 기본 디렉토리 강제 설정하고 있다.
+                // 만약 디렉토리를 옮긴 디자인 디렉토리를 오픈 할 경우라면 
+                // 이전 다지인 작업 디렉토리를 그대로 사용하면 디렉토리 문제가 발생하여 실행이 불가능하게 된다.
+                // 이를 해결하기 위해
+                // 작업파일을 Open 할 때는 파일을 오픈하는 위치로 작업파일의 디렉토리를 다시 설정하고 있다.
+                m_design.m_strDesignDirPath = Path.GetDirectoryName(m_strCommandLineDesignFullName);
+
+                // 프로젝트가 시작 했음을 표시하기 위해서 TreeView 에 기본 가지를 추가한다.
+                TreeNode treeNode = new TreeNode("Parts", (int)EMKind.PARTS, (int)EMKind.PARTS);
+                treeViewMain.Nodes.Add(treeNode);
+
+                treeNode = new TreeNode("Tests", (int)EMKind.TESTS, (int)EMKind.TESTS);
+                treeViewMain.Nodes.Add(treeNode);
+
+                foreach (CDataNode node in m_design.GetNodeList)
+                    this.addTreeNode(node.NodeName, node.KindKey);
+
+                openFEMM();
+
+                // 제목줄에 디자인명을 표시한다
+                this.Text = "DoSA-2D - " + m_design.m_strDesignName;
+
+                CNotice.printUserMessage(m_design.m_strDesignName + m_resManager.GetString("_DHBO"));
             }
+            catch (Exception ex)
+            {
+                CNotice.printLog(ex.Message);
+            }
+}
+        private void pictureBoxOpenActuator_Click(object sender, EventArgs e)
+        {
+            string target = "http://openactuator.org";
 
-            if (false == loadDesignFile(m_strCommandLineDesignFullName))
-                return;
+            try
+            {
+                System.Diagnostics.Process.Start(target);
+            }
+            catch (System.ComponentModel.Win32Exception noBrowser)
+            {
+                if (noBrowser.ErrorCode == -2147467259)
+                    CNotice.printLog(noBrowser.Message);
+            }
+            catch (System.Exception other)
+            {
+                CNotice.printLog(other.Message);
+            }
+        }
 
-            // 디자인 파일이 생성될 때의 디자인 작업 디렉토리는 프로그램 기본 디렉토리 강제 설정하고 있다.
-            // 만약 디렉토리를 옮긴 디자인 디렉토리를 오픈 할 경우라면 
-            // 이전 다지인 작업 디렉토리를 그대로 사용하면 디렉토리 문제가 발생하여 실행이 불가능하게 된다.
-            // 이를 해결하기 위해
-            // 작업파일을 Open 할 때는 파일을 오픈하는 위치로 작업파일의 디렉토리를 다시 설정하고 있다.
-            m_design.m_strDesignDirPath = Path.GetDirectoryName(m_strCommandLineDesignFullName);
+        private void pictureBoxOpenActuator_MouseLeave(object sender, EventArgs e)
+        {
+            this.Cursor = Cursors.Default;
+        }
 
-            // 프로젝트가 시작 했음을 표시하기 위해서 TreeView 에 기본 가지를 추가한다.
-            TreeNode treeNode = new TreeNode("Parts", (int)EMKind.PARTS, (int)EMKind.PARTS);
-            treeViewMain.Nodes.Add(treeNode);
+        private void pictureBoxOpenActuator_MouseEnter(object sender, EventArgs e)
+        {
+            this.Cursor = Cursors.Hand;
+        }
 
-            treeNode = new TreeNode("Tests", (int)EMKind.TESTS, (int)EMKind.TESTS);
-            treeViewMain.Nodes.Add(treeNode);
-
-            foreach (CDataNode node in m_design.GetNodeList)
-                this.addTreeNode(node.NodeName, node.KindKey);
-
-            openFEMM();
-
-            // 제목줄에 디자인명을 표시한다
-            this.Text = "DoSA-2D - " + m_design.m_strDesignName;
-
-            CNotice.printUserMessage(m_design.m_strDesignName + m_resManager.GetString("_DHBO"));
+        private void panelEmpty_Resize(object sender, EventArgs e)
+        {
+            pictureBoxOpenActuator.Location =
+                new System.Drawing.Point(panelEmpty.Width / 2 - pictureBoxOpenActuator.Width / 2 + panelEmpty.Location.X,
+                                             panelEmpty.Height / 2 - pictureBoxOpenActuator.Height / 2 + panelEmpty.Location.Y);
         }
 
         #endregion
@@ -1722,14 +2056,14 @@ namespace DoSA
         // m_femm 의 스크립트를 사용하여 제어하는 함수들은 CProgramFEMM 에 추가하지 못해서 FormMain 에 두고 있다.
         // FEMM 자체적으로 처리가 가능한 함수라면 CProgramFEMM 에 추가하라.
 
-        public void openFEMM(int iWidthFEMM = FEMM_DEFAULT_WIDTH)
+        public void openFEMM()
         {
             // FEMM.exe 가 실행되지 않았으면 FEMM 을 생성하고 크기를 변경한다.
             if (m_femm == null)
             {
                 m_femm = new CScriptFEMM();                
                 
-                resizeFEMM(iWidthFEMM);
+                resizePrograms();
             }
             // FEMM.exe 가 실행되어 열려 있는 경우는 내용만 삭제하고 크기만 변경한다.
             // FEMM.exe 가 실행되었지만 열려 있지 않은 경우라면 (사용자가 강제로 닫은 경우) 는 종료하고 다시 생성한다.
@@ -1738,7 +2072,7 @@ namespace DoSA
                 quitFEMM();
                 m_femm = new CScriptFEMM();
 
-                resizeFEMM(iWidthFEMM);
+                resizePrograms();
             }
             // 이미 정상적으로 FEMM 이 동작중이라면 화면을 초기화한다.
             else
@@ -1752,7 +2086,7 @@ namespace DoSA
             }
         }
 
-        public void reopenFEMM(int iWidthFEMM = FEMM_DEFAULT_WIDTH)
+        public void reopenFEMM()
         {
             if (m_femm == null)
             {
@@ -1764,14 +2098,28 @@ namespace DoSA
             {
                 quitFEMM();
                 m_femm = new CScriptFEMM();
-                resizeFEMM(iWidthFEMM);
+                resizePrograms();
 
                 m_design.redrawDesign(m_femm);
             }
         }
 
-        private void resizeFEMM(int widthFEMM = FEMM_DEFAULT_WIDTH)
+        /// <summary>
+        /// FEMM 과 DoSA 를 붙여서 화면의 가로의 중심에 배치하고 있다.
+        /// </summary>
+        /// <param name="widthFEMM"></param>
+        private void resizePrograms(int widthFEMM = FEMM_DEFAULT_WIDTH)
         {
+            Rectangle rectScreen = Screen.PrimaryScreen.Bounds;
+
+            // FEMM 좌측 위치는 무조건 FEMM 의 기본크기에 맞추고 있다.
+            // Magnetic Density 를 위한 FEMM 크기 수정때는 DoSA 와 겹치는 것을 허용한다.
+            int iLeftPosition = (int)((rectScreen.Width - FEMM_DEFAULT_WIDTH - this.Width)/2.0);
+            int iTopPosition = 50;
+
+            /// 이상하게 두개의 프로그램 위치가 외곽에 보이지 않는 Border 가 있는것 처럼 동작해서 Border 두께를 사용하고 있다.
+            int iOutsideBorderWidth = 7;
+
             if (m_femm == null)
                 return;
 
@@ -1779,14 +2127,13 @@ namespace DoSA
             /// 먼저 실행이 되어야 한다.
             m_femm.restoreMainWindow();
 
-            const int LEFT_MARGIN = 100;
-            const int TOP_MARGIN = 50;
+            /// 좌측에 FEMM 공간을 확보하기 위해서 DoSA 의 위치를 이동시킨다.
+            /// Border * 2 은 FEMM 의 우측과 DoSA 의 왼측을 같이 고려한 것이다. 
+            this.Left = iLeftPosition + FEMM_DEFAULT_WIDTH - iOutsideBorderWidth * 2;
+            this.Top = iTopPosition;
 
-            /// 좌측에 FEMM 공간을 확보하기 위해서 DoSA 의 위치를 지정한다
-            this.Left = FEMM_DEFAULT_WIDTH + LEFT_MARGIN;
-            this.Top = TOP_MARGIN;
-
-            CProgramFEMM.moveFEMM(this.Location.X - FEMM_DEFAULT_WIDTH, this.Location.Y, widthFEMM, FEMM_DEFAULT_HEIGHT);
+            //CProgramFEMM.moveFEMM(this.Location.X - FEMM_DEFAULT_WIDTH, this.Location.Y, widthFEMM, FEMM_DEFAULT_HEIGHT);
+            CProgramFEMM.moveFEMM(iLeftPosition, iTopPosition, widthFEMM, FEMM_DEFAULT_HEIGHT);
 
             m_femm.zoomFit();
         }
@@ -2019,7 +2366,7 @@ namespace DoSA
             }
 
             // 이미지 캡쳐 때문에 해석중에 FEMM 의 넓이를 일시적으로 넓힌다
-            resizeFEMM(1040);
+            resizePrograms(1040);
 
             //--------------------- 자기력을 저장하고 화면에 표시함 --------------------------
             try
@@ -2028,7 +2375,7 @@ namespace DoSA
 
                 if (bCheck == true)
                 {
-                    strReturn = readfile.pickoutString(strForceFileFullName, "force:", 7, 21);
+                    strReturn = readfile.pickoutString(strForceFileFullName, "force:", 8, 22);
                     dForce = Double.Parse(strReturn);
 
                     textBoxForce.Text = dForce.ToString();
@@ -2133,6 +2480,8 @@ namespace DoSA
             {
                 CStrokeTest strokeTest = (CStrokeTest)propertyGridMain.SelectedObject;
 
+                if (strokeTest == null) return;
+
                 //// 현재 표시되고 있는 PropertyGird 창에서 Test 이름을 찾아 낸다
                 string strTestName = strokeTest.NodeName;
                 string strTestDirName = Path.Combine(m_design.m_strDesignDirPath, strTestName);
@@ -2191,6 +2540,8 @@ namespace DoSA
             try
             {
                 CCurrentTest currentTest = (CCurrentTest)propertyGridMain.SelectedObject;
+
+                if (currentTest == null) return;
 
                 //// 현재 표시되고 있는 PropertyGird 창에서 Test 이름을 찾아 낸다
                 string strTestName = currentTest.NodeName;
@@ -2914,7 +3265,7 @@ namespace DoSA
                             // 순서 주의 할 것
                             closePostView();
 
-                            resizeFEMM();
+                            resizePrograms();
 
                             m_bPostMode = false;
                         }
@@ -3208,6 +3559,8 @@ namespace DoSA
         private void propertyGrid_PropertyValueChanged(object s, PropertyValueChangedEventArgs e)
         {
             CDataNode node = (CDataNode)propertyGridMain.SelectedObject;
+
+            if (node == null) return;
 
             string strChangedItemValue = e.ChangedItem.Value.ToString();
             string strChangedItemLabel = e.ChangedItem.Label;
@@ -3814,183 +4167,6 @@ namespace DoSA
         }
 
         #endregion
-
-        private void ribbonButtonDonation_Click(object sender, EventArgs e)
-        {
-            string target;
-
-            if (CSettingData.m_emLanguage == EMLanguage.Korean)
-            {
-                target = "https://solenoid.or.kr/index_donation.html";
-            }
-            else
-            {
-                target = "https://www.buymeacoffee.com/openactuator";
-            }
-
-            try
-            {
-                System.Diagnostics.Process.Start(target);
-            }
-            catch (System.ComponentModel.Win32Exception noBrowser)
-            {
-                if (noBrowser.ErrorCode == -2147467259)
-                    CNotice.printLog(noBrowser.Message);
-            }
-            catch (System.Exception other)
-            {
-                CNotice.printLog(other.Message);
-            }
-        }
-
-        private void ribbonButtonImportDXF_Click(object sender, EventArgs e)
-        {
-            OpenFileDialog openFileDialog = new OpenFileDialog();
-
-            // 파일 열기창 설정
-            openFileDialog.Title = "Import a DXF File";
-            // 디자인 파일을 열 때 디렉토리는 프로그램 작업 디렉토리로 하고 있다.
-            openFileDialog.InitialDirectory = CSettingData.m_strCurrentWorkingDirPath;
-            openFileDialog.FileName = null;
-            openFileDialog.Filter = "DXF 2D File (*.dxf)|*.dxf|All files (*.*)|*.*";
-            openFileDialog.FilterIndex = 1;
-            openFileDialog.RestoreDirectory = true;
-
-            DialogResult result = openFileDialog.ShowDialog();
-
-            if (result == DialogResult.OK)
-            {
-                string strDXFFileFullName = openFileDialog.FileName;
-
-                importDXF(strDXFFileFullName);
-            }
-        }
-
-        private void importDXF(string strDXFFileName)
-        {
-            //Loads a file from the command line argument
-            Document simpleDXF = new Document(strDXFFileName);
-            List<Polyline> listPolylines;
-            int nCountParts = 0;
-
-            simpleDXF.Read();
-
-            listPolylines = simpleDXF.Polylines;
-
-            try
-            {
-                foreach (Polyline polyLine in listPolylines)
-                {
-                    // 이름 인덱스를 증가시킨다.
-                    nCountParts++;
-
-                    CFace face = new CFace();
-
-                    face.BasePoint.X = 0.0;
-                    face.BasePoint.Y = 0.0;
-
-                    if (polyLine.Vertexes.Count < 4)
-                    {
-                        CNotice.printLog("3개 이하는 Point 로 구성된 Face 는 제외 됩니다.");
-                        continue;
-                    }
-
-                    List<CPoint> listPoint = new List<CPoint>();
-
-                    bool bCheckPoint = true;
-
-                    // 마지막점은 시작점과 동일점이기 때문에 -1 을 추가하여 제외시킨다.
-                    for (int i = 0; i < polyLine.Vertexes.Count - 1; i++)
-                    {
-                        // 매번 신규로 생성을 해야 한다.
-                        CPoint point = new CPoint();
-
-                        point.X = polyLine.Vertexes[i].Position.X;
-                        point.Y = polyLine.Vertexes[i].Position.Y;
-
-                        // 자리수 오차에서 발생하는 0 < X < -0.1 um 사이의 값은 영으로 처리한다.
-                        if (CSmallUtil.isZeroPosition(point.X))
-                        {
-                            point.X = 0;
-                        }
-
-                        // 축대칭해석만 지원하고 있기 때문에 
-                        // 거리에 대한 영처리가 된 이 후에 point.X 가 음의 값이면 해당 List 를 Node 로 생성하지 않는다.
-                        if (point.X < 0)
-                        {
-                            bCheckPoint = false;
-                        }
-
-                        // 무조건 Straight 만 지원 한다.
-                        point.LineKind = EMLineKind.STRAIGHT;
-
-                        listPoint.Add(point);
-                    }
-
-                    // 음의 X 값이 있거나 point 의 수가 4보다 작으면 Node 생성작업을 취소한다.
-                    if (bCheckPoint == false || listPoint.Count < 4)
-                        continue;
-
-                    // DXF 에서 읽어드리는 객체는 무조건 PLOYGON 으로 지정한다.
-                    face.FaceType = EMFaceType.POLYGON;
-                    face.setPolygonPoints(listPoint);
-
-                    // 형상노드를 생성하고 추가한다.
-                    CNonKind nonKind = new CNonKind();
-
-                    bool bCheckExist = false;
-                    string strNodeName;
-
-                    // 기존에 이름이 존재하면 nCount 를 증가시키면서 계속 시도한다.
-                    do
-                    {
-                        strNodeName = "DXF_Shape_" + nCountParts.ToString();
-
-                        bCheckExist = m_design.isExistNode(strNodeName);
-
-                        if (bCheckExist == true) nCountParts++;
-                    }
-                    while (bCheckExist == true);
-
-                    // 노드 값을 설정한다.
-                    nonKind.NodeName = strNodeName;
-                    nonKind.KindKey = EMKind.NON_KIND;
-                    nonKind.Face = face;
-                    nonKind.MovingPart = EMMoving.FIXED;
-
-                    bool bRet = m_design.addDataNode(nonKind);
-
-                    if (bRet == true)
-                    {
-                        // Treeview 에 추가한다
-                        addTreeNode(nonKind.NodeName, nonKind.KindKey);
-
-                        // 해당 Node 의 Properies View 와 Information Windows 를 표시한다
-                        showDataNode(nonKind.NodeName);
-
-                        propertyGridMain.Refresh();
-                    }
-                    else
-                    {
-                        CNotice.noticeWarningID("TNIA");
-                    }
-                }
-
-                // 혹시 FEMM 의 화면이 닫힌 경우 FEMM 의 화면을 복원합니다.
-                reopenFEMM();
-
-                m_design.drawDesign(m_femm);
-
-                // 수정 되었음을 기록한다.
-                m_design.m_bChanged = true;
-            }
-            catch (Exception ex)
-            {
-                CNotice.printLog(ex.Message);
-                return;
-            }
-
-        }
 
     }
 }

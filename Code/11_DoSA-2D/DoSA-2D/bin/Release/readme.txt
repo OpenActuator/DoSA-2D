@@ -1,10 +1,14 @@
 DoSA-2D
-https://solenoid.or.kr/index_dosa_open_2d_kor.html
+https://solenoid.or.kr/index_dosa_open_2d_eng.html
 Gi-Tae Kweon
 zgitae@gmail.com
 
+
+2022-06-13 Ver(1.1.3.0)
+ - Stable Version of DXF Import and the magnetic density plot
+
 2022-05-20 Ver(1.1.2.0)
- - Automatic creation of directory structure for work files and restrictions on opening DoSA-3D files
+ - Automatic creation of directory structure for a design file and restrictions on opening DoSA-3D files
 
 2022-05-08 Ver(1.1.1.0)
  - Fixed DXF Import Bugs, Added Drawing Guides before simulation

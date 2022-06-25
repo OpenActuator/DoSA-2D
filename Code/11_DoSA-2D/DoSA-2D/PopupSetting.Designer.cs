@@ -122,7 +122,7 @@
             // 
             // buttonSettingOK
             // 
-            this.buttonSettingOK.Location = new System.Drawing.Point(389, 200);
+            this.buttonSettingOK.Location = new System.Drawing.Point(389, 208);
             this.buttonSettingOK.Name = "buttonSettingOK";
             this.buttonSettingOK.Size = new System.Drawing.Size(114, 36);
             this.buttonSettingOK.TabIndex = 12;
@@ -132,7 +132,7 @@
             // 
             // buttonSettingCancel
             // 
-            this.buttonSettingCancel.Location = new System.Drawing.Point(389, 242);
+            this.buttonSettingCancel.Location = new System.Drawing.Point(389, 250);
             this.buttonSettingCancel.Name = "buttonSettingCancel";
             this.buttonSettingCancel.Size = new System.Drawing.Size(114, 36);
             this.buttonSettingCancel.TabIndex = 11;
@@ -189,11 +189,11 @@
             // labelMeshSize
             // 
             this.labelMeshSize.AutoSize = true;
-            this.labelMeshSize.Location = new System.Drawing.Point(68, 119);
+            this.labelMeshSize.Location = new System.Drawing.Point(100, 119);
             this.labelMeshSize.Name = "labelMeshSize";
-            this.labelMeshSize.Size = new System.Drawing.Size(219, 12);
+            this.labelMeshSize.Size = new System.Drawing.Size(216, 12);
             this.labelMeshSize.TabIndex = 3;
-            this.labelMeshSize.Text = "( = Mesh Size / Average Partsl Size )";
+            this.labelMeshSize.Text = "( = Mesh Size / Average Parts Size )";
             // 
             // labelLanguage
             // 
@@ -217,7 +217,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(515, 290);
+            this.ClientSize = new System.Drawing.Size(515, 298);
             this.Controls.Add(this.groupBox1);
             this.Controls.Add(this.groupBoxSetting);
             this.Controls.Add(this.buttonSettingOK);

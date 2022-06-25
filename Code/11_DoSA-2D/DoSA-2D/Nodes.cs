@@ -12,8 +12,7 @@ using Parts;
 using System.IO;
 using Scripts;
 using Shapes;
-using System.Windows.Forms;
-using DoSA;
+using System.Drawing.Design;
 
 namespace Nodes
 {
@@ -37,7 +36,14 @@ namespace Nodes
 
     public class CDataNode
     {
-        public EMKind m_kindKey;
+        private EMKind m_kindKey;
+
+        [BrowsableAttribute(false)]
+        public EMKind KindKey
+        {
+            get { return m_kindKey; }
+            set { m_kindKey = value; }
+        }
 
         private string m_nodeName;
 
@@ -382,7 +388,7 @@ namespace Nodes
 
             foreach (CDataNode node in m_listDataNode)
             {
-                if (node.m_kindKey == kind)
+                if (node.KindKey == kind)
                     size++;
             }
 
@@ -440,7 +446,7 @@ namespace Nodes
 
             foreach (CDataNode node in GetNodeList)
             {
-                switch (node.m_kindKey)
+                switch (node.KindKey)
                 {
                     case EMKind.COIL:
                         double dCurrent;
@@ -475,7 +481,7 @@ namespace Nodes
 
             foreach (CDataNode node in m_listDataNode)
             {
-                if (node.m_kindKey == EMKind.COIL)
+                if (node.KindKey == EMKind.COIL)
                     Resistance = Resistance + ((CCoil)node).Resistance;
             }
 
@@ -493,7 +499,7 @@ namespace Nodes
 
             foreach (CDataNode node in GetNodeList)
             {
-                switch (node.m_kindKey)
+                switch (node.KindKey)
                 {
                     case EMKind.COIL:
                         ((CCoil)node).setBlockPropCurrent(femm, dCurrent, dMeshSize);
@@ -671,4 +677,5 @@ namespace Nodes
         }
 
     }
+
 }

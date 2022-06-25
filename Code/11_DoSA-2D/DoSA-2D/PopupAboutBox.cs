@@ -31,7 +31,7 @@ namespace DoSA
             {
                 strDonation = "참여하기";
                 strLicense = "라이선스";
-                strHomepage = "홈페이지";
+                strHomepage = "업그레이드";
 
                 strDescription = @"DoSA-2D 는 액추에이터나 솔레노이드의 자기력을 해석할 수 있는 2차원 오픈소스 프로그램 입니다.
 
@@ -43,7 +43,7 @@ namespace DoSA
             {
                 strDonation = "Contribution";
                 strLicense = "License";
-                strHomepage = "Homepage";
+                strHomepage = "Upgrade";
 
                 strDescription = @"DoSA-2D is an open source actuator software. 
 Anyone can use it free of charge in the company.
@@ -112,9 +112,9 @@ Nuvola 1.0 (KDE 3.x icon set) (nuvola)
             this.textBoxDescription.Text = strDescription;
             this.textBoxOpenLicense.Text = strOpenLicense;
 
-            this.buttonDonation.Text = strDonation;
+            this.buttonContribution.Text = strDonation;
             this.buttonLicense.Text = strLicense;
-            this.buttonHomepage.Text = strHomepage;
+            this.buttonUpgrade.Text = strHomepage;
         }
 
         #region Assembly Attribute Accessors
@@ -300,5 +300,6 @@ Nuvola 1.0 (KDE 3.x icon set) (nuvola)
                 CNotice.printLog(other.Message);
             }
         }
+
     }
 }

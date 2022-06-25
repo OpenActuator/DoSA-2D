@@ -87,16 +87,10 @@ namespace Parts
 
     public class CNonKind : CShapeParts
     {
-        public string MaterialName
-        {
-            get { return m_strMaterialName; }
-            set { m_strMaterialName = value; }
-        }
-
         public CNonKind()
         {
-            m_kindKey = EMKind.NON_KIND;
-            MaterialName = "Air";
+            KindKey = EMKind.NON_KIND;
+            m_strMaterialName = "Air";
         }
 
         // 파일스트림 객체에 코일 정보를 기록한다.
@@ -111,10 +105,13 @@ namespace Parts
 
                 // CNode
                 writeFile.writeDataLine(writeStream, "NodeName", NodeName, nLevel + 1);
-                writeFile.writeDataLine(writeStream, "KindKey", m_kindKey, nLevel + 1);
+                writeFile.writeDataLine(writeStream, "KindKey", KindKey, nLevel + 1);
 
+                // Non Kind 는 CNode 의 정보와 CShapParts 의 Face 정보만 필요하기 때문에
+                // 나머지 정보는 저장하지 않는다.
+                // 
                 // CShapeParts
-                writeFile.writeDataLine(writeStream, "MovingParts", MovingPart, nLevel + 1);
+                //writeFile.writeDataLine(writeStream, "MovingParts", MovingPart, nLevel + 1);
 
                 // CFace
                 if (Face != null)
@@ -146,7 +143,7 @@ namespace Parts
 
             bool bShapeLine = false;
 
-            if (m_kindKey != EMKind.NON_KIND)
+            if (KindKey != EMKind.NON_KIND)
             {
                 CNotice.printLog("NON_KIND 가 아닌 객체가 CNonKind 로 열리려고 한다.");
                 return false;
@@ -193,13 +190,16 @@ namespace Parts
                             break;
 
                         case "KindKey":
-                            m_kindKey = (EMKind)Enum.Parse(typeof(EMKind), arrayString[1]);
+                            KindKey = (EMKind)Enum.Parse(typeof(EMKind), arrayString[1]);
                             break;
 
+                        // Non Kind 는 CNode 의 정보와 CShapParts 의 Face 정보만 필요하기 때문에
+                        // 나머지 정보는 저장하지 않는다.
+                        // 
                         // CShapeParts
-                        case "MovingParts":
-                            MovingPart = (EMMoving)Enum.Parse(typeof(EMMoving), arrayString[1]);
-                            break;
+                        //case "MovingParts":
+                        //    MovingPart = (EMMoving)Enum.Parse(typeof(EMMoving), arrayString[1]);
+                        //    break;
 
                         default:
                             break;
@@ -243,12 +243,12 @@ namespace Parts
         [DisplayNameAttribute("Curent Direction"), CategoryAttribute("\t\tSpecification Fields"), DescriptionAttribute("Voltage Direction")]
         public EMCurrentDirection CurrentDirection { get; set; }
 
-        [DisplayNameAttribute("Coil Turns"), CategoryAttribute("\tCalculated Fields"), DescriptionAttribute("Coil Turns")]
+        [DisplayNameAttribute("Turns"), CategoryAttribute("\tCalculated Fields"), DescriptionAttribute("Coil Turns")]
         public int Turns { get; set; }
 
         private double m_dResistance;
 
-        [DisplayNameAttribute("Coil Resistance [Ω]"), CategoryAttribute("\tCalculated Fields"), DescriptionAttribute("Coil Resistance")]
+        [DisplayNameAttribute("Resistance [Ω]"), CategoryAttribute("\tCalculated Fields"), DescriptionAttribute("Coil Resistance")]
         public double Resistance
         {
             // 소수점 5째 자리 까지만 출력한다.
@@ -256,8 +256,19 @@ namespace Parts
             set { m_dResistance = value; }
         }
 
+        private double m_dResistance_20;
+
         [ReadOnlyAttribute(true)]
-        [DisplayNameAttribute("Coil Layers"), CategoryAttribute("\tCalculated Fields"), DescriptionAttribute("Number of coil layers")]
+        [DisplayNameAttribute("Resistance at 20℃ [Ω]"), CategoryAttribute("\tCalculated Fields"), DescriptionAttribute("Coil Resistance at 20℃")]
+        public double Resistance_20
+        {
+            // 소수점 5째 자리 까지만 출력한다.
+            get { return Math.Round(m_dResistance_20, 5); }
+            set { m_dResistance_20 = value; }
+        }
+
+        [ReadOnlyAttribute(true)]
+        [DisplayNameAttribute("Layers"), CategoryAttribute("\tCalculated Fields"), DescriptionAttribute("Number of coil layers")]
         public int Layers { get; set; }
 
         [ReadOnlyAttribute(true)]
@@ -307,7 +318,7 @@ namespace Parts
        
         public CCoil()
         {
-            m_kindKey = EMKind.COIL;
+            KindKey = EMKind.COIL;
             m_strMaterialName = "Copper";            
                         
             CurrentDirection = EMCurrentDirection.IN;
@@ -487,13 +498,13 @@ namespace Parts
                 this.TurnsOfOneLayer = iVirtical_N;
                 this.Layers = iHorizontal_N;
 
-                double dWireLength = Math.PI * this.Turns * dCoilAvgDiameter;
+                double dWireLength_Meter = Math.PI * this.Turns * dCoilAvgDiameter / 1000.0;
 
                 // IEC 317, 단위 저항 보간
                 double res_a = 0.0, res_b = 0.0, res_c = 0.0;
 
                 // 온도 계수
-                double dTemperatureCoefficient = 0.0f;
+                double dTemperatureCoefficient = 0.004041f;
 
                 if (m_strMaterialName == "Copper")
                 {
@@ -503,7 +514,7 @@ namespace Parts
                     res_c = -1.9999322f;
 
                     // 온도 계수
-                    dTemperatureCoefficient = 0.004041f;
+                    dTemperatureCoefficient = 0.00393f;
                 }
                 // 두가지 밖에 없어서 알루미늄의 경우이다.
                 else if(m_strMaterialName == "Aluminum")
@@ -525,10 +536,10 @@ namespace Parts
 
                 double dResistancePerMeter = res_a * (Math.Pow(res_b, CopperDiameter) * Math.Pow(CopperDiameter, res_c));
 
-                dResistancePerMeter = (1 + dTemperatureCoefficient * (this.Temperature - 20.0f)) * dResistancePerMeter;
-                this.Resistance = dResistancePerMeter * dWireLength * ResistanceCoefficient;
+                Resistance_20 = dResistancePerMeter * dWireLength_Meter * ResistanceCoefficient;
 
-                this.Resistance = this.Resistance / 1000.0f;     
+                Resistance = Resistance_20 * (1 + dTemperatureCoefficient * (Temperature - 20.0f));
+  
             }
             catch (Exception ex)
             {
@@ -572,7 +583,7 @@ namespace Parts
 
                 // CNode
                 writeFile.writeDataLine(writeStream, "NodeName", NodeName, nLevel + 1);
-                writeFile.writeDataLine(writeStream, "KindKey", m_kindKey, nLevel + 1);
+                writeFile.writeDataLine(writeStream, "KindKey", KindKey, nLevel + 1);
 
                 // CParts
                 writeFile.writeDataLine(writeStream, "MovingParts", MovingPart, nLevel + 1);
@@ -582,6 +593,7 @@ namespace Parts
                 writeFile.writeDataLine(writeStream, "CurrentDirection", CurrentDirection, nLevel + 1);
                 writeFile.writeDataLine(writeStream, "Turns", Turns, nLevel + 1);
                 writeFile.writeDataLine(writeStream, "Resistance", Resistance, nLevel + 1);
+                writeFile.writeDataLine(writeStream, "Resistance_20", Resistance_20, nLevel + 1);
                 writeFile.writeDataLine(writeStream, "Layers", Layers, nLevel + 1);
                 writeFile.writeDataLine(writeStream, "TurnsOfOneLayer", TurnsOfOneLayer, nLevel + 1);
                 writeFile.writeDataLine(writeStream, "CoilWireGrade", CoilWireGrade, nLevel + 1);
@@ -625,7 +637,7 @@ namespace Parts
 
             bool bShapeLine = false;
 
-            if (m_kindKey != EMKind.COIL)
+            if (KindKey != EMKind.COIL)
             {
                 CNotice.printLogID("YATT7");
                 return false;
@@ -666,7 +678,7 @@ namespace Parts
                             break;
 
                         case "KindKey":
-                            m_kindKey = (EMKind)Enum.Parse(typeof(EMKind), arrayString[1]);
+                            KindKey = (EMKind)Enum.Parse(typeof(EMKind), arrayString[1]);
                             break;
 
                         // CParts
@@ -685,51 +697,69 @@ namespace Parts
                                 // 현재의 버전에서 사용할 수 없는 재질이 존재한다면 공백으로 처리하고
                                 // 동작 중에 공백을 사용해서 재질이 초기화 되지 않음을 확인한다.
                                 m_strMaterialName = "";
-                            }                            
-
+                            }  
                             break;
+
                         case "CurrentDirection":
                             CurrentDirection = (EMCurrentDirection)Enum.Parse(typeof(EMCurrentDirection), arrayString[1]);
                             break;
+
                         case "Turns":
                             Turns = Convert.ToInt16(arrayString[1]);
                             break;
+
                         case "Resistance":
-                            m_dResistance = Convert.ToDouble(arrayString[1]);
+                            Resistance = Convert.ToDouble(arrayString[1]);
                             break;
+
+                        case "Resistance_20":
+                            Resistance_20 = Convert.ToDouble(arrayString[1]);
+                            break;
+
                         case "Layers":
                             Layers = Convert.ToInt16(arrayString[1]);
                             break;
+
                         case "TurnsOfOneLayer":
                             TurnsOfOneLayer = Convert.ToInt16(arrayString[1]);
                             break;
+
                         case "CoilWireGrade":
                             CoilWireGrade = (EMCoilWireGrade)Enum.Parse(typeof(EMCoilWireGrade), arrayString[1]);
                             break;
+
                         case "InnerDiameter":
                             InnerDiameter = Convert.ToDouble(arrayString[1]);
                             break;
+
                         case "OuterDiameter":
                             OuterDiameter = Convert.ToDouble(arrayString[1]);
                             break;
+
                         case "Height":
                             Height = Convert.ToDouble(arrayString[1]);
                             break;
+
                         case "CopperDiameter":
                             CopperDiameter = Convert.ToDouble(arrayString[1]);
                             break;
+
                         case "WireDiameter":
-                            m_dWireDiameter = Convert.ToDouble(arrayString[1]);
+                            WireDiameter = Convert.ToDouble(arrayString[1]);
                             break;
+
                         case "Temperature":
                             Temperature = Convert.ToDouble(arrayString[1]);
                             break;
+
                         case "HorizontalCoefficient":
                             HorizontalCoefficient = Convert.ToDouble(arrayString[1]);
                             break;
+
                         case "VerticalCoefficient":
                             VerticalCoefficient = Convert.ToDouble(arrayString[1]);
                             break;
+
                         case "ResistanceCoefficient":
                             ResistanceCoefficient = Convert.ToDouble(arrayString[1]);
                             break;
@@ -796,7 +826,7 @@ namespace Parts
 
         public CMagnet()
         {
-            m_kindKey = EMKind.MAGNET;
+            KindKey = EMKind.MAGNET;
             MaterialName = "N45";
         }
 
@@ -812,7 +842,7 @@ namespace Parts
 
                 // CNode
                 writeFile.writeDataLine(writeStream, "NodeName", NodeName, nLevel + 1);
-                writeFile.writeDataLine(writeStream, "KindKey", m_kindKey, nLevel + 1);
+                writeFile.writeDataLine(writeStream, "KindKey", KindKey, nLevel + 1);
 
                 // CParts
                 writeFile.writeDataLine(writeStream, "MovingParts", MovingPart, nLevel + 1);
@@ -850,7 +880,7 @@ namespace Parts
 
             bool bShapeLine = false;
 
-            if (m_kindKey != EMKind.MAGNET)
+            if (KindKey != EMKind.MAGNET)
             {
                 CNotice.printLogID("YATT5");
                 return false;
@@ -896,7 +926,7 @@ namespace Parts
                             break;
 
                         case "KindKey":
-                            m_kindKey = (EMKind)Enum.Parse(typeof(EMKind), arrayString[1]);
+                            KindKey = (EMKind)Enum.Parse(typeof(EMKind), arrayString[1]);
                             break;
 
                         // CParts
@@ -1006,7 +1036,7 @@ namespace Parts
 
         public CSteel()
         {
-            m_kindKey = EMKind.STEEL;
+            KindKey = EMKind.STEEL;
             MaterialName = "1010 Steel";
         }
         
@@ -1022,7 +1052,7 @@ namespace Parts
 
                 // CNode
                 writeFile.writeDataLine(writeStream, "NodeName", NodeName, nLevel + 1);
-                writeFile.writeDataLine(writeStream, "KindKey", m_kindKey, nLevel + 1);
+                writeFile.writeDataLine(writeStream, "KindKey", KindKey, nLevel + 1);
 
                 // CParts
                 writeFile.writeDataLine(writeStream, "MovingParts", MovingPart, nLevel + 1);
@@ -1059,7 +1089,7 @@ namespace Parts
 
             bool bShapeLine = false;
 
-            if (m_kindKey != EMKind.STEEL)
+            if (KindKey != EMKind.STEEL)
             {
                 CNotice.printLogID("YATT6");
                 return false;
@@ -1105,7 +1135,7 @@ namespace Parts
                             break;
 
                         case "KindKey":
-                            m_kindKey = (EMKind)Enum.Parse(typeof(EMKind), arrayString[1]);
+                            KindKey = (EMKind)Enum.Parse(typeof(EMKind), arrayString[1]);
                             break;
 
                         // CParts

@@ -53,7 +53,7 @@ namespace Tests
 
         public CForceTest()
         {
-            m_kindKey = EMKind.FORCE_TEST;
+            KindKey = EMKind.FORCE_TEST;
             Voltage = 5.0;
         }
 
@@ -69,7 +69,7 @@ namespace Tests
 
                 // CNode
                 writeFile.writeDataLine(writeStream, "NodeName", NodeName, nLevel + 1);
-                writeFile.writeDataLine(writeStream, "KindKey", m_kindKey, nLevel + 1);
+                writeFile.writeDataLine(writeStream, "KindKey", KindKey, nLevel + 1);
 
                 // CTest
                 writeFile.writeDataLine(writeStream, "MeshSizePercent", MeshSizePercent, nLevel + 1);
@@ -128,7 +128,7 @@ namespace Tests
                             if (arrayString[1] == "FORCE_EXPERIMENT")
                                 arrayString[1] = "FORCE_TEST";
 
-                            m_kindKey = (EMKind)Enum.Parse(typeof(EMKind), arrayString[1]);
+                            KindKey = (EMKind)Enum.Parse(typeof(EMKind), arrayString[1]);
                             break;
 
                         // CTest
@@ -192,7 +192,7 @@ namespace Tests
 
         public CStrokeTest()
         {
-            m_kindKey = EMKind.STROKE_TEST;
+            KindKey = EMKind.STROKE_TEST;
             InitialStroke = 0.0;
             FinalStroke = 0.1;
             StepCount = 5;
@@ -211,7 +211,7 @@ namespace Tests
 
                 // CNode
                 writeFile.writeDataLine(writeStream, "NodeName", NodeName, nLevel + 1);
-                writeFile.writeDataLine(writeStream, "KindKey", m_kindKey, nLevel + 1);
+                writeFile.writeDataLine(writeStream, "KindKey", KindKey, nLevel + 1);
 
                 // CTest
                 writeFile.writeDataLine(writeStream, "MeshSizePercent", MeshSizePercent, nLevel + 1);
@@ -272,7 +272,7 @@ namespace Tests
                             if (arrayString[1] == "STROKE_EXPERIMENT")
                                 arrayString[1] = "STROKE_TEST";
 
-                            m_kindKey = (EMKind)Enum.Parse(typeof(EMKind), arrayString[1]);
+                            KindKey = (EMKind)Enum.Parse(typeof(EMKind), arrayString[1]);
                             break;
 
                         // CTest
@@ -334,7 +334,7 @@ namespace Tests
 
         public CCurrentTest()
         {
-            m_kindKey = EMKind.CURRENT_TEST;
+            KindKey = EMKind.CURRENT_TEST;
             InitialCurrent = 0.0;
             FinalCurrent = 0.1;
             StepCount = 5;
@@ -353,7 +353,7 @@ namespace Tests
 
                 // CNode
                 writeFile.writeDataLine(writeStream, "NodeName", NodeName, nLevel + 1);
-                writeFile.writeDataLine(writeStream, "KindKey", m_kindKey, nLevel + 1);
+                writeFile.writeDataLine(writeStream, "KindKey", KindKey, nLevel + 1);
 
                 // CTest
                 writeFile.writeDataLine(writeStream, "MeshSizePercent", MeshSizePercent, nLevel + 1);
@@ -413,7 +413,7 @@ namespace Tests
                             if (arrayString[1] == "CURRENT_EXPERIMENT")
                                 arrayString[1] = "CURRENT_TEST";
 
-                            m_kindKey = (EMKind)Enum.Parse(typeof(EMKind), arrayString[1]);
+                            KindKey = (EMKind)Enum.Parse(typeof(EMKind), arrayString[1]);
                             break;
 
                         // CTest
