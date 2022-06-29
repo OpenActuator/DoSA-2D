@@ -109,6 +109,7 @@ namespace Scripts
             catch (Exception ex)
             {
                 CNotice.printLog(ex.Message);
+
                 return false;
             }
         }
@@ -127,6 +128,7 @@ namespace Scripts
             catch (Exception ex)
             {
                 CNotice.printLog(ex.Message);
+
                 return false;
             }
         }
@@ -169,6 +171,7 @@ namespace Scripts
             catch (Exception ex)
             {
                 CNotice.printLog(ex.Message);
+
                 return false;
             }
         }
@@ -199,6 +202,7 @@ namespace Scripts
             catch (Exception ex)
             {
                 CNotice.printLog(ex.Message);
+
                 return false;
             }
         }
@@ -226,6 +230,7 @@ namespace Scripts
             catch (Exception ex)
             {
                 CNotice.printLog(ex.Message);
+
                 return;
             }
         }
@@ -258,6 +263,7 @@ namespace Scripts
             catch (Exception ex)
             {
                 CNotice.printLog(ex.Message);
+
                 return;
             }
         }
@@ -294,6 +300,7 @@ namespace Scripts
             catch (Exception ex)
             {
                 CNotice.printLog(ex.Message);
+
                 return;
             }
         }
@@ -341,6 +348,7 @@ namespace Scripts
             catch (Exception ex)
             {
                 CNotice.printLog(ex.Message);
+
                 return "error";
             }
 
@@ -373,40 +381,10 @@ namespace Scripts
             catch (Exception ex)
             {
                 CNotice.printLog(ex.Message);
+
                 return;
             }
         }
-
-        //public void settingPost()
-        //{
-        //    string strCommand;
-
-        //    try
-        //    {
-
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        CNotice.printTrace(ex.Message);
-        //        return;
-        //    }
-        //}
-
-        //public void settingPre()
-        //{
-        //    string strCommand;
-
-        //    try
-        //    {
-        //        strCommand = "mi_hidegrid()";
-        //        sendCommand(strCommand);
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        CNotice.printTrace(ex.Message);
-        //        return;
-        //    }
-        //}
 
         public void zoomFit(bool bExceptionZoomout = false)
         {
@@ -426,6 +404,7 @@ namespace Scripts
             catch (Exception ex)
             {
                 CNotice.printLog(ex.Message);
+
                 return;
             }
         }
@@ -448,6 +427,7 @@ namespace Scripts
             catch (Exception ex)
             {
                 CNotice.printLog(ex.Message);
+
                 return;
             }
         }
@@ -497,6 +477,7 @@ namespace Scripts
             catch (Exception ex)
             {
                 CNotice.printLog(ex.Message);
+
                 return;
             }
 
@@ -546,6 +527,7 @@ namespace Scripts
             catch (Exception ex)
             {
                 CNotice.printLog(ex.Message);
+
                 return;
             }
 
@@ -603,6 +585,7 @@ namespace Scripts
             catch (Exception ex)
             {
                 CNotice.printLog(ex.Message);
+
                 return;
             }
 
@@ -624,6 +607,7 @@ namespace Scripts
             catch (Exception ex)
             {
                 CNotice.printLog(ex.Message);
+
                 return;
             }
 
@@ -676,6 +660,7 @@ namespace Scripts
             catch (Exception ex)
             {
                 CNotice.printLog(ex.Message);
+
                 return;
             }
 
@@ -704,6 +689,7 @@ namespace Scripts
             catch (Exception ex)
             {
                 CNotice.printLog(ex.Message);
+
                 return;
             }
 
@@ -723,6 +709,7 @@ namespace Scripts
             catch (Exception ex)
             {
                 CNotice.printLog(ex.Message);
+
                 return;
             }
 
@@ -740,6 +727,7 @@ namespace Scripts
             catch (Exception ex)
             {
                 CNotice.printLog(ex.Message);
+
                 return;
             }
         }
@@ -783,6 +771,7 @@ namespace Scripts
             catch (Exception ex)
             {
                 CNotice.printLog(ex.Message);
+
                 return;
             }
 
@@ -819,6 +808,7 @@ namespace Scripts
             catch (Exception ex)
             {
                 CNotice.printLog(ex.Message);
+
                 return;
             }
 
@@ -847,6 +837,7 @@ namespace Scripts
             catch (Exception ex)
             {
                 CNotice.printLog(ex.Message);
+
                 return;
             }
         }
@@ -888,6 +879,7 @@ namespace Scripts
             catch (Exception ex)
             {
                 CNotice.printLog(ex.Message);
+
                 return 0;
             }
             
@@ -901,43 +893,52 @@ namespace Scripts
         {
             string strCommand = string.Empty;
 
-            //-------------------------------------------------------------
-            // 아주 중요
-            //-------------------------------------------------------------
-            //
-            // 디렉토리에 들어있는 \\ 기호는 FEMM 에서 인식하지 못한다.
-            // 따라서 디렉토리안의 \\ 기호를 / 기호로 변경한다
-            strPostDataFullName = strPostDataFullName.Replace("\\", "/");
-            strFieldImageName = strFieldImageName.Replace("\\", "/");
-            //-------------------------------------------------------------
+            try
+            {
+                //-------------------------------------------------------------
+                // 아주 중요
+                //-------------------------------------------------------------
+                //
+                // 디렉토리에 들어있는 \\ 기호는 FEMM 에서 인식하지 못한다.
+                // 따라서 디렉토리안의 \\ 기호를 / 기호로 변경한다
+                strPostDataFullName = strPostDataFullName.Replace("\\", "/");
+                strFieldImageName = strFieldImageName.Replace("\\", "/");
+                //-------------------------------------------------------------
 
-            strPostDataFullName = "\"" + strPostDataFullName + "\"";
+                strPostDataFullName = "\"" + strPostDataFullName + "\"";
 
-            //if(bForceTest == true)
-            //{
-            //    strCommand = "mi_loadsolution()";
-            //    sendCommand(strCommand);
-            //}
-            //else
-            //{
-            // 해석 후 바로 출력은 상관 없지만
-            // 프로그램을 다시 실행한 다음에 해석결과로 이미지를 만들때는 ans 파일을 읽어드리고 진행해야 한다.
-            strCommand = "open(" + strPostDataFullName + ")";
+                //if(bForceTest == true)
+                //{
+                //    strCommand = "mi_loadsolution()";
+                //    sendCommand(strCommand);
+                //}
+                //else
+                //{
+                // 해석 후 바로 출력은 상관 없지만
+                // 프로그램을 다시 실행한 다음에 해석결과로 이미지를 만들때는 ans 파일을 읽어드리고 진행해야 한다.
+                strCommand = "open(" + strPostDataFullName + ")";
                 sendCommand(strCommand);
-            //}
+                //}
 
-            strCommand = "mo_zoom(" + minX.ToString() + "," + minY.ToString() + "," + maxX.ToString() + "," + maxY.ToString() + ")";
-            sendCommand(strCommand);
+                strCommand = "mo_zoom(" + minX.ToString() + "," + minY.ToString() + "," + maxX.ToString() + "," + maxY.ToString() + ")";
+                sendCommand(strCommand);
 
 
-            //------------------ 자속밀도 Magnitude 저장 -------------------
-            strCommand = "mo_showdensityplot(1, 0, 1.7, 0, \"bmag\")";
-            sendCommand(strCommand);
+                //------------------ 자속밀도 Magnitude 저장 -------------------
+                strCommand = "mo_showdensityplot(1, 0, 1.7, 0, \"bmag\")";
+                sendCommand(strCommand);
 
-            strFieldImageName = "\"" + strFieldImageName + "\"";
+                strFieldImageName = "\"" + strFieldImageName + "\"";
 
-            strCommand = "mo_savebitmap(" + strFieldImageName + ")";
-            sendCommand(strCommand);
+                strCommand = "mo_savebitmap(" + strFieldImageName + ")";
+                sendCommand(strCommand);
+            }
+            catch (Exception ex)
+            {
+                CNotice.printLog(ex.Message);
+
+                return false;
+            }
 
             return true;
         }
@@ -951,47 +952,56 @@ namespace Scripts
                                                 double vectorScale)
         {
             string strCommand = string.Empty;
+            try
+            {
 
-            //-------------------------------------------------------------
-            // 아주 중요
-            //-------------------------------------------------------------
-            //
-            // 디렉토리에 들어있는 \\ 기호는 FEMM 에서 인식하지 못한다.
-            // 따라서 디렉토리안의 \\ 기호를 / 기호로 변경한다
-            strPostDataFullName = strPostDataFullName.Replace("\\", "/");
-            strFieldImageName = strFieldImageName.Replace("\\", "/");
-            //-------------------------------------------------------------
+                //-------------------------------------------------------------
+                // 아주 중요
+                //-------------------------------------------------------------
+                //
+                // 디렉토리에 들어있는 \\ 기호는 FEMM 에서 인식하지 못한다.
+                // 따라서 디렉토리안의 \\ 기호를 / 기호로 변경한다
+                strPostDataFullName = strPostDataFullName.Replace("\\", "/");
+                strFieldImageName = strFieldImageName.Replace("\\", "/");
+                //-------------------------------------------------------------
 
-            strPostDataFullName = "\"" + strPostDataFullName + "\"";
+                strPostDataFullName = "\"" + strPostDataFullName + "\"";
 
-            //if (bForceTest == true)
-            //{
-            //    strCommand = "mi_loadsolution()";
-            //    sendCommand(strCommand);
-            //}
-            //else
-            //{
+                //if (bForceTest == true)
+                //{
+                //    strCommand = "mi_loadsolution()";
+                //    sendCommand(strCommand);
+                //}
+                //else
+                //{
                 // 해석 후 바로 출력은 상관 없지만
                 // 프로그램을 다시 실행한 다음에 해석결과로 이미지를 만들때는 ans 파일을 읽어드리고 진행해야 한다.
                 strCommand = "open(" + strPostDataFullName + ")";
                 sendCommand(strCommand);
-            //}
+                //}
 
 
-            strCommand = "mo_zoom(" + minX.ToString() + "," + minY.ToString() + "," + maxX.ToString() + "," + maxY.ToString() + ")";
-            sendCommand(strCommand);
+                strCommand = "mo_zoom(" + minX.ToString() + "," + minY.ToString() + "," + maxX.ToString() + "," + maxY.ToString() + ")";
+                sendCommand(strCommand);
 
-            //------------------ 자속밀도 Magnitude 저장 -------------------
-            strCommand = "mo_setgrid(" + gridSize.ToString() + ",\"cart\")";
-            sendCommand(strCommand);
+                //------------------ 자속밀도 Magnitude 저장 -------------------
+                strCommand = "mo_setgrid(" + gridSize.ToString() + ",\"cart\")";
+                sendCommand(strCommand);
 
-            strCommand = "mo_showvectorplot(1, " + vectorScale.ToString() + ")";
-            sendCommand(strCommand);
+                strCommand = "mo_showvectorplot(1, " + vectorScale.ToString() + ")";
+                sendCommand(strCommand);
 
-            strFieldImageName = "\"" + strFieldImageName + "\"";
+                strFieldImageName = "\"" + strFieldImageName + "\"";
 
-            strCommand = "mo_savebitmap(" + strFieldImageName + ")";
-            sendCommand(strCommand);
+                strCommand = "mo_savebitmap(" + strFieldImageName + ")";
+                sendCommand(strCommand);
+            }
+            catch (Exception ex)
+            {
+                CNotice.printLog(ex.Message);
+
+                return false;
+            }
 
             return true;
         }
@@ -1003,43 +1013,52 @@ namespace Scripts
         {
             string strCommand = string.Empty;
 
-            //-------------------------------------------------------------
-            // 아주 중요
-            //-------------------------------------------------------------
-            //
-            // 디렉토리에 들어있는 \\ 기호는 FEMM 에서 인식하지 못한다.
-            // 따라서 디렉토리안의 \\ 기호를 / 기호로 변경한다
-            strPostDataFullName = strPostDataFullName.Replace("\\", "/");
-            strFieldImageName = strFieldImageName.Replace("\\", "/");
-            //-------------------------------------------------------------
+            try
+            {
+                //-------------------------------------------------------------
+                // 아주 중요
+                //-------------------------------------------------------------
+                //
+                // 디렉토리에 들어있는 \\ 기호는 FEMM 에서 인식하지 못한다.
+                // 따라서 디렉토리안의 \\ 기호를 / 기호로 변경한다
+                strPostDataFullName = strPostDataFullName.Replace("\\", "/");
+                strFieldImageName = strFieldImageName.Replace("\\", "/");
+                //-------------------------------------------------------------
 
-            strPostDataFullName = "\"" + strPostDataFullName + "\"";
+                strPostDataFullName = "\"" + strPostDataFullName + "\"";
 
-            //if(bForceTest == true)
-            //{
-            //    strCommand = "mi_loadsolution()";
-            //    sendCommand(strCommand);
-            //}
-            //else
-            //{
-            // 해석 후 바로 출력은 상관 없지만
-            // 프로그램을 다시 실행한 다음에 해석결과로 이미지를 만들때는 ans 파일을 읽어드리고 진행해야 한다.
-            strCommand = "open(" + strPostDataFullName + ")";
-            sendCommand(strCommand);
-            //}
+                //if(bForceTest == true)
+                //{
+                //    strCommand = "mi_loadsolution()";
+                //    sendCommand(strCommand);
+                //}
+                //else
+                //{
+                // 해석 후 바로 출력은 상관 없지만
+                // 프로그램을 다시 실행한 다음에 해석결과로 이미지를 만들때는 ans 파일을 읽어드리고 진행해야 한다.
+                strCommand = "open(" + strPostDataFullName + ")";
+                sendCommand(strCommand);
+                //}
 
-            strCommand = "mo_zoom(" + minX.ToString() + "," + minY.ToString() + "," + maxX.ToString() + "," + maxY.ToString() + ")";
-            sendCommand(strCommand);
+                strCommand = "mo_zoom(" + minX.ToString() + "," + minY.ToString() + "," + maxX.ToString() + "," + maxY.ToString() + ")";
+                sendCommand(strCommand);
 
-            //------------------ 자속밀도 Magnitude 저장 -------------------
-            //strCommand = "mo_showcontourplot(30, 0, 0.0001, \"real\")";
-            strCommand = "mo_showcontourplot(-1)";
-            sendCommand(strCommand);
+                //------------------ 자속밀도 Magnitude 저장 -------------------
+                //strCommand = "mo_showcontourplot(30, 0, 0.0001, \"real\")";
+                strCommand = "mo_showcontourplot(-1)";
+                sendCommand(strCommand);
 
-            strFieldImageName = "\"" + strFieldImageName + "\"";
+                strFieldImageName = "\"" + strFieldImageName + "\"";
 
-            strCommand = "mo_savebitmap(" + strFieldImageName + ")";
-            sendCommand(strCommand);
+                strCommand = "mo_savebitmap(" + strFieldImageName + ")";
+                sendCommand(strCommand);
+            }
+            catch (Exception ex)
+            {
+                CNotice.printLog(ex.Message);
+
+                return false;
+            }
 
             return true;
         }
@@ -1058,6 +1077,7 @@ namespace Scripts
             catch (Exception ex)
             {
                 CNotice.printLog(ex.Message);
+
                 return;
             }
         }
@@ -1085,6 +1105,7 @@ namespace Scripts
             catch (Exception ex)
             {
                 CNotice.printLog(ex.Message);
+
                 return;
             }
         }
@@ -1112,64 +1133,10 @@ namespace Scripts
             catch (Exception ex)
             {
                 CNotice.printLog(ex.Message);
+
                 return;
             }
         }
-
-        /// <summary>
-        /// 1. 문제점
-        /// FEMM 프로세스로 FEMM 의 실행여부를 확인할 수 있으나,
-        /// ActiveFEMMClass() 로 생성된 FEMM 을 사용자가 종료하면 FEMM 프로세스가 정리되지 않는 문제가 있다.
-        /// 
-        /// 2. 해결방안
-        /// FEMM 이 살아있는지를 확인하기 위하여 임의의 한점을 생성하고 위치를 확인하는 방법을 사용한다.
-        /// </summary>
-        //public bool isLiveFEMM()
-        //{
-        //    string strCommand;
-        //    string strReturn;
-
-        //    double farX = 1e10;
-        //    double farY = 1e10;
-
-        //    try
-        //    {
-        //        // 확인점을 추가, 선택, 삭제하기 전에 기존 선택된 객체들은 선택을 해제 해주어야 한다.
-        //        strCommand = "mi_clearselected()";
-        //        sendCommand(strCommand);
-
-        //        /// nodes, segments, arcsegments, blocks, group
-        //        strCommand = "mi_seteditmode(\"nodes\")";
-        //        sendCommand(strCommand);
-
-        //        /// 아주 먼곳에 임의의 한점을 생성한다
-        //        strCommand = "mi_addnode(" + farX.ToString() + "," + farY.ToString() + ")";
-        //        sendCommand(strCommand);
-                        
-        //        strCommand = "mi_selectnode(" + farX.ToString() + "," + farY.ToString() + ")";
-        //        strReturn = sendCommand(strCommand);
-
-        //        /// 확인 후 삭제한다
-        //        strCommand = "mi_deleteselectednodes()";
-        //        sendCommand(strCommand);
-
-        //        /// editmode 를 group 으로 바꾸어서 FEMM 마우스 동작을 막는다.
-        //        /// - refreshView() 전에 실행해야 한다. 
-        //        lockEdit();
-
-        //        refreshView();
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        CNotice.printTrace(ex.Message);
-        //        return false;
-        //    }
-
-        //    if (strReturn == "error")
-        //        return false;
-        //    else
-        //        return true;
-        //}
 
         public void clearSelected()
         {
@@ -1186,6 +1153,7 @@ namespace Scripts
             catch (Exception ex)
             {
                 CNotice.printLog(ex.Message);
+
                 return;
             }
 
@@ -1204,6 +1172,7 @@ namespace Scripts
             catch (Exception ex)
             {
                 CNotice.printLog(ex.Message);
+
                 return;
             }
         }
@@ -1236,6 +1205,7 @@ namespace Scripts
             catch (Exception ex)
             {
                 CNotice.printLog(ex.Message);
+
                 return;
             }
 
@@ -1254,6 +1224,7 @@ namespace Scripts
             catch (Exception ex)
             {
                 CNotice.printLog(ex.Message);
+
                 return;
             }
         }
@@ -1281,6 +1252,7 @@ namespace Scripts
             catch (Exception ex)
             {
                 CNotice.printLog(ex.Message);
+
                 return;
             }
         }
@@ -1298,6 +1270,7 @@ namespace Scripts
             catch (Exception ex)
             {
                 CNotice.printLog(ex.Message);
+
                 return;
             }
         }
@@ -1359,6 +1332,8 @@ namespace Scripts
                             if(strArray.Length != 9)
                             {
                                 CNotice.printLogID("TWAP2");
+                                writeFile.Close();
+
                                 return false;
                             }
 
@@ -1387,6 +1362,7 @@ namespace Scripts
             {
                 CNotice.printLog(ex.Message);
                 writeFile.Close();
+
                 return false;
             }
 
@@ -1418,6 +1394,7 @@ namespace Scripts
             catch (Exception ex)
             {
                 CNotice.printLog(ex.Message);
+
                 return;
             }
         }
@@ -1434,6 +1411,7 @@ namespace Scripts
             catch (Exception ex)
             {
                 CNotice.printLog(ex.Message);
+
                 return;
             }
         }

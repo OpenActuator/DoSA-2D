@@ -90,36 +90,45 @@ namespace Nodes
             List<CLine> listAbsoluteLine = null;
             CFace face = null;
 
-            foreach (CDataNode node in m_listDataNode)
+            try
             {
-                if (node.GetType().BaseType.Name == "CShapeParts")
+                foreach (CDataNode node in m_listDataNode)
                 {
-                    CShapeParts nodeParts = (CShapeParts)node;
-
-                    face = nodeParts.Face;
-
-                    if (null != face)
+                    if (node.GetType().BaseType.Name == "CShapeParts")
                     {
-                        listAbsoluteLine = face.AbsoluteLineList;
+                        CShapeParts nodeParts = (CShapeParts)node;
 
-                        /// 모든 라인들을 하나의 Line List 에 담는다.
-                        foreach (CLine line in listAbsoluteLine)
-                            listLineAll.Add(line);
+                        face = nodeParts.Face;
+
+                        if (null != face)
+                        {
+                            listAbsoluteLine = face.AbsoluteLineList;
+
+                            /// 모든 라인들을 하나의 Line List 에 담는다.
+                            foreach (CLine line in listAbsoluteLine)
+                                listLineAll.Add(line);
+                        }
+                    }
+                }
+
+                CShapeTools shapeTools = new CShapeTools();
+
+                for (int i = 0; i < listLineAll.Count - 1; i++)
+                {
+                    for (int j = i + 1; j < listLineAll.Count; j++)
+                    {
+                        if (true == shapeTools.isIntersected(listLineAll[i], listLineAll[j]))
+                        {
+                            return true;
+                        }
                     }
                 }
             }
-
-            CShapeTools shapeTools = new CShapeTools();
-
-            for (int i = 0; i < listLineAll.Count - 1; i++)
+            catch (Exception ex)
             {
-                for (int j = i + 1; j < listLineAll.Count; j++)
-                {
-                    if (true == shapeTools.isIntersected(listLineAll[i], listLineAll[j]))
-                    {
-                        return true;
-                    }
-                }
+                CNotice.printLog(ex.Message);
+
+                return false;
             }
 
             return false;
@@ -132,46 +141,55 @@ namespace Nodes
             List<CLine> listAbsoluteLine = null;
             CFace face = null;
 
-            foreach (CDataNode node in m_listDataNode)
+            try
             {
-                if (node.GetType().BaseType.Name == "CShapeParts")
+                foreach (CDataNode node in m_listDataNode)
                 {
-                    CShapeParts nodeParts = (CShapeParts)node;
-
-                    face = nodeParts.Face;
-
-                    if (null != face)
+                    if (node.GetType().BaseType.Name == "CShapeParts")
                     {
-                        listAbsoluteLine = face.AbsoluteLineList;
+                        CShapeParts nodeParts = (CShapeParts)node;
 
-                        if (nodeParts.MovingPart == EMMoving.MOVING)
-                        {
-                            /// Moving Part 라인들을 하나의 Line List 에 담는다.
-                            foreach (CLine line in listAbsoluteLine)
-                                listMovingPartLines.Add(line);
-                        }
-                        else
-                        {
-                            /// Moving Part 라인들을 하나의 Line List 에 담는다.
-                            foreach (CLine line in listAbsoluteLine)
-                                listFixedPartLines.Add(line);
-                        }
+                        face = nodeParts.Face;
 
+                        if (null != face)
+                        {
+                            listAbsoluteLine = face.AbsoluteLineList;
+
+                            if (nodeParts.MovingPart == EMMoving.MOVING)
+                            {
+                                /// Moving Part 라인들을 하나의 Line List 에 담는다.
+                                foreach (CLine line in listAbsoluteLine)
+                                    listMovingPartLines.Add(line);
+                            }
+                            else
+                            {
+                                /// Moving Part 라인들을 하나의 Line List 에 담는다.
+                                foreach (CLine line in listAbsoluteLine)
+                                    listFixedPartLines.Add(line);
+                            }
+
+                        }
+                    }
+                }
+
+                CShapeTools shapeTools = new CShapeTools();
+
+                for (int i = 0; i < listMovingPartLines.Count - 1; i++)
+                {
+                    for (int j = i + 1; j < listFixedPartLines.Count; j++)
+                    {
+                        if (true == shapeTools.isContacted(listMovingPartLines[i], listFixedPartLines[j]))
+                        {
+                            return true;
+                        }
                     }
                 }
             }
-
-            CShapeTools shapeTools = new CShapeTools();
-
-            for (int i = 0; i < listMovingPartLines.Count - 1; i++)
+            catch (Exception ex)
             {
-                for (int j = i + 1; j < listFixedPartLines.Count; j++)
-                {
-                    if (true == shapeTools.isContacted(listMovingPartLines[i], listFixedPartLines[j]))
-                    {
-                        return true;
-                    }
-                }
+                CNotice.printLog(ex.Message);
+
+                return false;
             }
 
             return false;
@@ -195,6 +213,7 @@ namespace Nodes
                     return node;
             }
 
+            // null 를 리턴하고 호출하는 측에서 꼭 null 체크를 해야 한다.
             return null;
         }
 
@@ -208,30 +227,39 @@ namespace Nodes
             double tempMinX = 0;
             double tempMaxX = 0;
 
-            if (m_listDataNode.Count == 0)
-                return false;
-
-            foreach (CDataNode node in m_listDataNode)
+            try
             {
-                if (node.GetType().BaseType.Name == "CShapeParts")
-                {
-                    if (false == ((CShapeParts)node).Face.getMinMaxX(ref tempMinX, ref tempMaxX))
-                        return false;
+                if (m_listDataNode.Count == 0)
+                    return false;
 
-                    if (tempMinX < minX) minX = tempMinX;
-                    if (tempMaxX > maxX) maxX = tempMaxX;
+                foreach (CDataNode node in m_listDataNode)
+                {
+                    if (node.GetType().BaseType.Name == "CShapeParts")
+                    {
+                        if (false == ((CShapeParts)node).Face.getMinMaxX(ref tempMinX, ref tempMaxX))
+                            return false;
+
+                        if (tempMinX < minX) minX = tempMinX;
+                        if (tempMaxX > maxX) maxX = tempMaxX;
+                    }
+                }
+
+                /// minX 나 maxX 가 값이 입력되지 않으면 오류를 발생시킨다.
+                if (minX == 1e300 || maxX == -1e300)
+                    return false;
+                else
+                {
+                    dMinX = minX;
+                    dMaxX = maxX;
+
+                    return true;
                 }
             }
-
-            /// minX 나 maxX 가 값이 입력되지 않으면 오류를 발생시킨다.
-            if (minX == 1e300 || maxX == -1e300)
-                return false;
-            else
+            catch (Exception ex)
             {
-                dMinX = minX;
-                dMaxX = maxX;
+                CNotice.printLog(ex.Message);
 
-                return true;
+                return false;
             }
         }
 
@@ -242,14 +270,23 @@ namespace Nodes
 
             CShapeTools shapeTools = new CShapeTools();
 
-            foreach (CDataNode node in m_listDataNode)
+            try
             {
-                if (node.GetType().BaseType.Name == "CShapeParts")
+                foreach (CDataNode node in m_listDataNode)
                 {
-                    dFaceArea = shapeTools.calcArea(((CShapeParts)node).Face);
+                    if (node.GetType().BaseType.Name == "CShapeParts")
+                    {
+                        dFaceArea = shapeTools.calcArea(((CShapeParts)node).Face);
 
-                    dSumArea += dFaceArea;
+                        dSumArea += dFaceArea;
+                    }
                 }
+            }
+            catch (Exception ex)
+            {
+                CNotice.printLog(ex.Message);
+
+                return 0;
             }
 
             return dSumArea;
@@ -264,17 +301,26 @@ namespace Nodes
             int nCountOfShapeParts = 0;
 
             CShapeTools shapeTools = new CShapeTools();
-
-            foreach (CDataNode node in m_listDataNode)
+            try
             {
-                if (node.GetType().BaseType.Name == "CShapeParts")
+
+                foreach (CDataNode node in m_listDataNode)
                 {
-                    dFaceArea = shapeTools.calcArea(((CShapeParts)node).Face);
+                    if (node.GetType().BaseType.Name == "CShapeParts")
+                    {
+                        dFaceArea = shapeTools.calcArea(((CShapeParts)node).Face);
 
-                    dSumArea += dFaceArea;
+                        dSumArea += dFaceArea;
 
-                    nCountOfShapeParts++;
+                        nCountOfShapeParts++;
+                    }
                 }
+            }
+            catch (Exception ex)
+            {
+                CNotice.printLog(ex.Message);
+
+                return 0;
             }
 
             return dSumArea / nCountOfShapeParts;
@@ -293,36 +339,45 @@ namespace Nodes
             if (m_listDataNode.Count == 0)
                 return false;
 
-            foreach (CDataNode node in m_listDataNode)
+            try
             {
-                if (node.GetType().BaseType.Name == "CShapeParts")
+                foreach (CDataNode node in m_listDataNode)
                 {
-                    if (false == ((CShapeParts)node).Face.getMinMaxY(ref tempMinY, ref tempMaxY))
-                        return false;
+                    if (node.GetType().BaseType.Name == "CShapeParts")
+                    {
+                        if (false == ((CShapeParts)node).Face.getMinMaxY(ref tempMinY, ref tempMaxY))
+                            return false;
 
-                    // Moving Part 인 경우는 Stroke 까지 고려해서 MinY 와 MaxY 를 구한다.
-                    if (((CShapeParts)node).MovingPart == EMMoving.MOVING)
-                    {
-                        if (tempMinY + dMovingStroke < minY) minY = tempMinY + dMovingStroke;
-                        if (tempMaxY + dMovingStroke > maxY) maxY = tempMaxY + dMovingStroke;
-                    }
-                    else
-                    {
-                        if (tempMinY < minY) minY = tempMinY;
-                        if (tempMaxY > maxY) maxY = tempMaxY;
+                        // Moving Part 인 경우는 Stroke 까지 고려해서 MinY 와 MaxY 를 구한다.
+                        if (((CShapeParts)node).MovingPart == EMMoving.MOVING)
+                        {
+                            if (tempMinY + dMovingStroke < minY) minY = tempMinY + dMovingStroke;
+                            if (tempMaxY + dMovingStroke > maxY) maxY = tempMaxY + dMovingStroke;
+                        }
+                        else
+                        {
+                            if (tempMinY < minY) minY = tempMinY;
+                            if (tempMaxY > maxY) maxY = tempMaxY;
+                        }
                     }
                 }
+
+                /// minX 나 maxX 가 값이 입력되지 않으면 오류를 발생시킨다.
+                if (minY == 1e300 || maxY == -1e300)
+                    return false;
+                else
+                {
+                    dMinY = minY;
+                    dMaxY = maxY;
+
+                    return true;
+                }
             }
-
-            /// minX 나 maxX 가 값이 입력되지 않으면 오류를 발생시킨다.
-            if (minY == 1e300 || maxY == -1e300)
-                return false;
-            else
+            catch (Exception ex)
             {
-                dMinY = minY;
-                dMaxY = maxY;
+                CNotice.printLog(ex.Message);
 
-                return true;
+                return false;
             }
         }
 
@@ -356,18 +411,27 @@ namespace Nodes
         public bool deleteNode(string nodeName)
         {
 
-            // 추가된 Node 중에 없으면 바로 리턴한다.
-            if (isExistNode(nodeName) == false)
-                return false;
-
-            foreach (CDataNode node in m_listDataNode)
+            try
             {
-                if (node.NodeName == nodeName)
+                // 추가된 Node 중에 없으면 바로 리턴한다.
+                if (isExistNode(nodeName) == false)
+                    return false;
+
+                foreach (CDataNode node in m_listDataNode)
                 {
-                    // 삭제 후 바로 빠져나가야 한다.
-                    m_listDataNode.Remove(node);
-                    return true;
+                    if (node.NodeName == nodeName)
+                    {
+                        // 삭제 후 바로 빠져나가야 한다.
+                        m_listDataNode.Remove(node);
+                        return true;
+                    }
                 }
+            }
+            catch (Exception ex)
+            {
+                CNotice.printLog(ex.Message);
+
+                return false;
             }
 
             return false;
@@ -412,20 +476,29 @@ namespace Nodes
 
         public void drawDesign(CScriptFEMM femm)
         {
-            foreach (CDataNode node in GetNodeList)
+            try
             {
-                if (node.GetType().BaseType.Name == "CShapeParts")
+                foreach (CDataNode node in GetNodeList)
                 {
-                    CShapeParts nodeParts = (CShapeParts)node;
+                    if (node.GetType().BaseType.Name == "CShapeParts")
+                    {
+                        CShapeParts nodeParts = (CShapeParts)node;
 
-                    if (null != nodeParts.Face)
-                        nodeParts.Face.drawFace(femm, nodeParts.MovingPart);
-                    else
-                        CNotice.printLogID("YATT1");
+                        if (null != nodeParts.Face)
+                            nodeParts.Face.drawFace(femm, nodeParts.MovingPart);
+                        else
+                            CNotice.printLogID("YATT1");
+                    }
                 }
-            }
 
-            femm.zoomFit();
+                femm.zoomFit();
+            }
+            catch (Exception ex)
+            {
+                CNotice.printLog(ex.Message);
+
+                return;
+            }
         }
 
         public void redrawDesign(CScriptFEMM femm)
@@ -441,37 +514,47 @@ namespace Nodes
             if (dMeshSizePercent <= 0)
                 dMeshSizePercent = 1;
 
-            // Mesh Size 는 길이단위이기 때문에 면적을 루트 취한 값과 곱하고 있다.
-            double dMeshSize = Math.Sqrt(this.calcShapeModelAverageArea()) * dMeshSizePercent / 100.0f;
-
-            foreach (CDataNode node in GetNodeList)
+            try
             {
-                switch (node.KindKey)
+                // Mesh Size 는 길이단위이기 때문에 면적을 루트 취한 값과 곱하고 있다.
+                double dMeshSize = Math.Sqrt(this.calcShapeModelAverageArea()) * dMeshSizePercent / 100.0f;
+
+                foreach (CDataNode node in GetNodeList)
                 {
-                    case EMKind.COIL:
-                        double dCurrent;
-                        double dResistance = getSerialResistance();
+                    switch (node.KindKey)
+                    {
+                        case EMKind.COIL:
+                            double dCurrent;
+                            double dResistance = getSerialResistance();
 
-                        // 전류 계산
-                        if (dResistance != 0.0f)
-                            dCurrent = dVolt / dResistance;
-                        else
-                            dCurrent = 0.0f;
+                            // 전류 계산
+                            if (dResistance != 0.0f)
+                                dCurrent = dVolt / dResistance;
+                            else
+                                dCurrent = 0.0f;
 
-                        ((CCoil)node).setBlockPropCurrent(femm, dCurrent, dMeshSize);
-                        break;
+                            ((CCoil)node).setBlockPropCurrent(femm, dCurrent, dMeshSize);
+                            break;
 
-                    case EMKind.MAGNET:
-                        ((CMagnet)node).setBlockProp(femm, dMeshSize);
-                        break;
+                        case EMKind.MAGNET:
+                            ((CMagnet)node).setBlockProp(femm, dMeshSize);
+                            break;
 
-                    case EMKind.STEEL:
-                        ((CSteel)node).setBlockProp(femm, dMeshSize);
-                        break;
+                        case EMKind.STEEL:
+                            ((CSteel)node).setBlockProp(femm, dMeshSize);
+                            break;
 
-                    default:
-                        break;
+                        default:
+                            // 해당사항이 없는 항목은 아무것도 하지 않는다. foreach 가 동작하기 때문에 return 해서는 않된다.
+                            break;
+                    }
                 }
+            }
+            catch (Exception ex)
+            {
+                CNotice.printLog(ex.Message);
+
+                return;
             }
         }
 
@@ -506,6 +589,7 @@ namespace Nodes
                         break;
 
                     default:
+                        // 해당사항이 없는 항목은 아무것도 하지 않는다. foreach 가 동작하기 때문에 return 해서는 않된다.
                         break;
                 }
             }
@@ -524,76 +608,94 @@ namespace Nodes
 
             bool bCheck;
 
-            // Air 는 무조건 사용하기 때문에 여기서 우선적으로 추가해 둔다.
-            femm.addMaterial(strMaterial);
-            listTempMaterial.Add(strMaterial);
-
-            foreach (CDataNode node in GetNodeList)
+            try
             {
-                bCheck = false;
-                if (node.GetType().BaseType.Name == "CShapeParts")
+                // Air 는 무조건 사용하기 때문에 여기서 우선적으로 추가해 둔다.
+                femm.addMaterial(strMaterial);
+                listTempMaterial.Add(strMaterial);
+
+                foreach (CDataNode node in GetNodeList)
                 {
-                    strMaterial = ((CShapeParts)node).getMaterial();
-
-                    /// 현 파트의 재료가 기존에 저장된 Material 과 겹치는지를 확인한다.
-                    foreach (string strTemp in listTempMaterial)
-                        if (strTemp == strMaterial)
-                            bCheck = true;
-
-                    // 겹치지 않는 재료만 추가한다.
-                    if (bCheck == false)
+                    bCheck = false;
+                    if (node.GetType().BaseType.Name == "CShapeParts")
                     {
-                        femm.addMaterial(strMaterial);
-                        listTempMaterial.Add(strMaterial);
+                        strMaterial = ((CShapeParts)node).getMaterial();
 
-                        // 발생해서는 안되는 상황이 발생하는 경우
-                        if(strMaterial == "")
+                        /// 현 파트의 재료가 기존에 저장된 Material 과 겹치는지를 확인한다.
+                        foreach (string strTemp in listTempMaterial)
+                            if (strTemp == strMaterial)
+                                bCheck = true;
+
+                        // 겹치지 않는 재료만 추가한다.
+                        if (bCheck == false)
                         {
-                            CNotice.printLog("재질이 설정되지 않는 파트가 존재해 해석 오류가 발생한다.");
+                            femm.addMaterial(strMaterial);
+                            listTempMaterial.Add(strMaterial);
+
+                            // 발생해서는 안되는 상황이 발생하는 경우
+                            if (strMaterial == "")
+                            {
+                                CNotice.printLog("재질이 설정되지 않는 파트가 존재해 해석 오류가 발생한다.");
+                            }
                         }
                     }
                 }
+            }
+            catch (Exception ex)
+            {
+                CNotice.printLog(ex.Message);
+
+                return;
             }
         }
 
         public void setBoundary(CScriptFEMM femm, double dMeshSizePercent, double minX, double maxX, double minY, double maxY)
         {
-            const int iPaddingPercent = 200;
+            try
+            {
+                const int iPaddingPercent = 200;
 
-            double lengthX = Math.Abs(maxX - minX);
-            double lengthY = Math.Abs(maxY - minY);
+                double lengthX = Math.Abs(maxX - minX);
+                double lengthY = Math.Abs(maxY - minY);
 
-            // MeshSizePercent 에 문제가 있으면 1% 로 초기화 한다.
-            if (dMeshSizePercent <= 0)
-                dMeshSizePercent = 1;
+                // MeshSizePercent 에 문제가 있으면 1% 로 초기화 한다.
+                if (dMeshSizePercent <= 0)
+                    dMeshSizePercent = 1;
 
-            // Mesh Size 는 길이단위이기 때문에 면적을 루트 취한 값과 곱하고 있다.
-            double dMeshSize = Math.Sqrt(this.calcShapeModelAverageArea()) * dMeshSizePercent / 100.0f;
+                // Mesh Size 는 길이단위이기 때문에 면적을 루트 취한 값과 곱하고 있다.
+                double dMeshSize = Math.Sqrt(this.calcShapeModelAverageArea()) * dMeshSizePercent / 100.0f;
 
-            double padLengthX = lengthX * iPaddingPercent / 100.0f;
-            double padLengthY = lengthY * iPaddingPercent / 100.0f;
+                double padLengthX = lengthX * iPaddingPercent / 100.0f;
+                double padLengthY = lengthY * iPaddingPercent / 100.0f;
 
-            /// - 긴방향의 길이로 Pad 량을 결정한다.
-            /// - 100.0f 는 Percent 를 배수로 환산한다.
-            double padLength = (padLengthX > padLengthY) ? padLengthX : padLengthY;
+                /// - 긴방향의 길이로 Pad 량을 결정한다.
+                /// - 100.0f 는 Percent 를 배수로 환산한다.
+                double padLength = (padLengthX > padLengthY) ? padLengthX : padLengthY;
 
-            CFace face = new CFace();
+                CFace face = new CFace();
 
-            /// 외부 Region 을 생성 및 경계조건을 부여한다.
-            /// - X min 값 : 0
-            /// - Mesh : AutoMesh
-            face.setOutsideBoundary(femm, 0, maxY + padLength,
-                                maxX + padLength, minY - padLength, 0);
+                /// 외부 Region 을 생성 및 경계조건을 부여한다.
+                /// - X min 값 : 0
+                /// - Mesh : AutoMesh
+                face.setOutsideBoundary(femm, 0, maxY + padLength,
+                                    maxX + padLength, minY - padLength, 0);
 
-            /// 내부 Region 은 경계조건과 상관없이 메쉬만를 위해 추가하였다.
-            /// 내부 Region 의 메쉬 크기는 기본 메쉬의 3배로 설정한다.
-            const double dRatioRegion = 5.0f;
+                /// 내부 Region 은 경계조건과 상관없이 메쉬만를 위해 추가하였다.
+                /// 내부 Region 의 메쉬 크기는 기본 메쉬의 3배로 설정한다.
+                const double dRatioRegion = 5.0f;
 
-            /// 내부 Region 을 생성한다.
-            /// - X min 값 : 0
-            /// - Mesh : 지정메쉬 * 3.0f
-            face.setInsideRegion(femm, 0, maxY + padLength / dRatioRegion,
-                                maxX + padLength / dRatioRegion, minY - padLength / dRatioRegion, dMeshSize * 3.0f);
+                /// 내부 Region 을 생성한다.
+                /// - X min 값 : 0
+                /// - Mesh : 지정메쉬 * 3.0f
+                face.setInsideRegion(femm, 0, maxY + padLength / dRatioRegion,
+                                    maxX + padLength / dRatioRegion, minY - padLength / dRatioRegion, dMeshSize * 3.0f);
+            }
+            catch (Exception ex)
+            {
+                CNotice.printLog(ex.Message);
+
+                return;
+            }
         }
 
         /// <summary>
@@ -608,15 +710,24 @@ namespace Nodes
         /// <returns>이름이 겹치면 true 리턴</returns>
         public bool duplicateNodeName()
         {
-            /// 비교의 앞 이름은 m_listNode.Count - 1 까지 이다.
-            for (int i = 0; i < m_listDataNode.Count - 1; i++)
+            try
             {
-                /// 비교의 뒤 이름은 1 부터 이다.
-                for (int j = i + 1; j < m_listDataNode.Count; j++)
+                /// 비교의 앞 이름은 m_listNode.Count - 1 까지 이다.
+                for (int i = 0; i < m_listDataNode.Count - 1; i++)
                 {
-                    if (m_listDataNode[i].NodeName == m_listDataNode[j].NodeName)
-                        return true;
+                    /// 비교의 뒤 이름은 1 부터 이다.
+                    for (int j = i + 1; j < m_listDataNode.Count; j++)
+                    {
+                        if (m_listDataNode[i].NodeName == m_listDataNode[j].NodeName)
+                            return true;
+                    }
                 }
+            }
+            catch (Exception ex)
+            {
+                CNotice.printLog(ex.Message);
+
+                return false;
             }
 
             return false;
@@ -627,55 +738,62 @@ namespace Nodes
             CFace face = null;
             bool bError = false;
             CShapeParts nodeParts = null;
-
-            // Moving Part 를 Stroke 만큼 이동시킨다.
-            foreach (CDataNode node in GetNodeList)
+            try
             {
-                if (node.GetType().BaseType.Name == "CShapeParts")
-                {
-                    nodeParts = (CShapeParts)node;
 
-                    if (nodeParts.MovingPart == EMMoving.MOVING)
+                // Moving Part 를 Stroke 만큼 이동시킨다.
+                foreach (CDataNode node in GetNodeList)
+                {
+                    if (node.GetType().BaseType.Name == "CShapeParts")
                     {
-                        face = nodeParts.Face;
-                        face.BasePoint.Y = face.BasePoint.Y + dStroke;
+                        nodeParts = (CShapeParts)node;
+
+                        if (nodeParts.MovingPart == EMMoving.MOVING)
+                        {
+                            face = nodeParts.Face;
+                            face.BasePoint.Y = face.BasePoint.Y + dStroke;
+                        }
                     }
                 }
-            }
 
-            if (isIntersectedAllLines() == true)
-            {
-                CNotice.noticeWarningID("LCBP");
-                bError = true;
-            }
-
-            if (isContactedMovingParts() == true)
-            {
-                CNotice.noticeWarningID("IHOT");
-                bError = true;
-            }
-
-            // Moving Part 를 Stroke 만큼 복원 시킨다.
-            foreach (CDataNode node in GetNodeList)
-            {
-                if (node.GetType().BaseType.Name == "CShapeParts")
+                if (isIntersectedAllLines() == true)
                 {
-                    nodeParts = (CShapeParts)node;
+                    CNotice.noticeWarningID("LCBP");
+                    bError = true;
+                }
 
-                    if (nodeParts.MovingPart == EMMoving.MOVING)
+                if (isContactedMovingParts() == true)
+                {
+                    CNotice.noticeWarningID("IHOT");
+                    bError = true;
+                }
+
+                // Moving Part 를 Stroke 만큼 복원 시킨다.
+                foreach (CDataNode node in GetNodeList)
+                {
+                    if (node.GetType().BaseType.Name == "CShapeParts")
                     {
-                        face = nodeParts.Face;
-                        face.BasePoint.Y = face.BasePoint.Y - dStroke;
+                        nodeParts = (CShapeParts)node;
+
+                        if (nodeParts.MovingPart == EMMoving.MOVING)
+                        {
+                            face = nodeParts.Face;
+                            face.BasePoint.Y = face.BasePoint.Y - dStroke;
+                        }
                     }
                 }
-            }
 
-            if (bError == true)
+                if (bError == true)
+                    return false;
+                else
+                    return true;
+            }
+            catch (Exception ex)
+            {
+                CNotice.printLog(ex.Message);
+
                 return false;
-            else
-                return true;
+            }
         }
-
     }
-
 }

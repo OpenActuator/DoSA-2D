@@ -95,51 +95,60 @@ namespace DoSA
         {
             bool bCheck = false;
 
-            bCheck = m_manageFile.isExistFile(m_strFemmExeFileFullName);
-            if (bCheck == false)
+            try
             {
-                if (bOpenNoticeDialog == true)
-                    CNotice.noticeWarningID("TEFD");
-                else
-                    CNotice.printLogID("TEFD");
+                bCheck = m_manageFile.isExistFile(m_strFemmExeFileFullName);
+                if (bCheck == false)
+                {
+                    if (bOpenNoticeDialog == true)
+                        CNotice.noticeWarningID("TEFD");
+                    else
+                        CNotice.printLogID("TEFD");
+
+                    return false;
+                }
+
+                bCheck = m_manageFile.isExistDirectory(m_strBaseWorkingDirPath);
+
+                if (bCheck == false)
+                {
+                    if (bOpenNoticeDialog == true)
+                        CNotice.noticeWarningID("TDWD");
+                    else
+                        CNotice.printLogID("TDWD");
+
+                    return false;
+                }
+
+                bCheck = m_manageFile.isExistDirectory(m_strProgramDirPath);
+
+                if (bCheck == false)
+                {
+                    if (bOpenNoticeDialog == true)
+                        CNotice.noticeWarningID("TIAP2");
+                    else
+                        CNotice.printLogID("TIAP2");
+
+                    return false;
+                }
+
+                if (m_dMeshLevelPercent <= 0.05f)
+                {
+                    if (bOpenNoticeDialog == true)
+                        CNotice.noticeWarningID("TMSL");
+                    else
+                        CNotice.printLogID("TMSL");
+
+                    return false;
+                }
+            }
+            catch (Exception ex)
+            {
+                CNotice.printLog(ex.Message);
 
                 return false;
             }
 
-            bCheck = m_manageFile.isExistDirectory(m_strBaseWorkingDirPath);
-
-            if (bCheck == false)
-            {
-                if (bOpenNoticeDialog == true)
-                    CNotice.noticeWarningID("TDWD");
-                else
-                    CNotice.printLogID("TDWD");
-
-                return false;
-            }
-            
-            bCheck = m_manageFile.isExistDirectory(m_strProgramDirPath);
-
-            if (bCheck == false)
-            {
-                if (bOpenNoticeDialog == true)
-                    CNotice.noticeWarningID("TIAP2");
-                else
-                    CNotice.printLogID("TIAP2");
-
-                return false;
-            }
-
-            if(m_dMeshLevelPercent <= 0.05f)
-            {
-                if (bOpenNoticeDialog == true)
-                    CNotice.noticeWarningID("TMSL");
-                else
-                    CNotice.printLogID("TMSL");
-
-                return false;
-            }
-            
             return true;
         }
     }

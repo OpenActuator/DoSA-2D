@@ -125,6 +125,7 @@ namespace Parts
             catch (Exception ex)
             {
                 CNotice.printLog(ex.Message);
+
                 return false;
             }
 
@@ -202,6 +203,7 @@ namespace Parts
                         //    break;
 
                         default:
+                            // 해당사항이 없는 항목은 아무것도 하지 않는다. foreach 가 동작하기 때문에 return 해서는 않된다.
                             break;
                     }
                 }
@@ -220,6 +222,7 @@ namespace Parts
             catch (Exception ex)
             {
                 CNotice.printLog(ex.Message);
+
                 return false;
             }
 
@@ -414,10 +417,8 @@ namespace Parts
                     break;
                 
                 default:
-                    a = 0.0f;
-                    b = 0.0f;
-                    c = 0.0f;
-                    break;
+                    // 해당사항이 없는 항목이 넘어 왔기 때문에 바로 retrun 해서 아래의 동작을 하지 않는다.
+                    return 0;
             }
 
             return a * (Math.Pow(b, CopperDiameter) * Math.Pow(CopperDiameter, c));
@@ -544,8 +545,9 @@ namespace Parts
             catch (Exception ex)
             {
                 CNotice.printLog(ex.Message);
-            }
-       
+
+                return;
+            }       
         }
 
         public bool initialShapeDesignValue()
@@ -619,6 +621,7 @@ namespace Parts
             catch (Exception ex)
             {
                 CNotice.printLog(ex.Message);
+
                 return false;
             }
 
@@ -640,6 +643,7 @@ namespace Parts
             if (KindKey != EMKind.COIL)
             {
                 CNotice.printLogID("YATT7");
+
                 return false;
             }      
     
@@ -765,6 +769,7 @@ namespace Parts
                             break;
 
                         default:
+                            // 해당사항이 없는 항목은 아무것도 하지 않는다. foreach 가 동작하기 때문에 return 해서는 않된다.
                             break;
                     }
                 }
@@ -780,6 +785,7 @@ namespace Parts
             catch (Exception ex)
             {
                 CNotice.printLog(ex.Message);
+
                 return false;
             }  
 
@@ -788,25 +794,34 @@ namespace Parts
 
         public void setBlockPropCurrent(CScriptFEMM femm, double dCurrent, double dMeshSize)
         {
-            CPoint blockPoint = null;
-            blockPoint = this.Face.getBlockPoint();
-
-            if(blockPoint == null)
+            try
             {
-                CNotice.printLogID("NBPF");
+                CPoint blockPoint = null;
+                blockPoint = this.Face.getBlockPoint();
+
+                if (blockPoint == null)
+                {
+                    CNotice.printLogID("NBPF");
+                    return;
+                }
+
+                string strMaterialName = this.m_strMaterialName;
+
+                string strCircuit = NodeName + "_current";
+
+                if (CurrentDirection == EMCurrentDirection.OUT)
+                    dCurrent = -dCurrent;
+
+                femm.addCircuitProp(strCircuit, dCurrent);
+
+                femm.setBlockProp(blockPoint, strMaterialName, dMeshSize, strCircuit, 0, MovingPart, Turns);
+            }
+            catch (Exception ex)
+            {
+                CNotice.printLog(ex.Message);
+
                 return;
             }
-
-            string strMaterialName = this.m_strMaterialName;
-
-            string strCircuit = NodeName + "_current";
-
-            if (CurrentDirection == EMCurrentDirection.OUT)
-                dCurrent = -dCurrent;
-
-            femm.addCircuitProp(strCircuit, dCurrent);
-
-            femm.setBlockProp(blockPoint, strMaterialName, dMeshSize, strCircuit, 0, MovingPart, Turns);
         }
     }
 
@@ -862,6 +877,7 @@ namespace Parts
             catch (Exception ex)
             {
                 CNotice.printLog(ex.Message);
+
                 return false;
             }
 
@@ -961,6 +977,7 @@ namespace Parts
                             break;
                         
                         default:
+                            // 해당사항이 없는 항목은 아무것도 하지 않는다. foreach 가 동작하기 때문에 return 해서는 않된다.
                             break;
                     }
                 }
@@ -976,6 +993,7 @@ namespace Parts
             catch (Exception ex)
             {
                 CNotice.printLog(ex.Message);
+
                 return false;
             }
 
@@ -984,42 +1002,54 @@ namespace Parts
 
         public void setBlockProp(CScriptFEMM femm, double dMeshSize)
         {
-            CPoint blockPoint = null;
-            blockPoint = this.Face.getBlockPoint();
-
-            if (blockPoint == null)
+            try
             {
-                CNotice.printLogID("NBPF");
+                CPoint blockPoint = null;
+                blockPoint = this.Face.getBlockPoint();
+
+                if (blockPoint == null)
+                {
+                    CNotice.printLogID("NBPF");
+                    return;
+                }
+
+                string strMaterialName = this.m_strMaterialName;
+
+                double dMagnetAngle = 0;
+
+                switch (emMagnetDirection)
+                {
+                    case EMMagnetDirection.RIGHT:
+                        dMagnetAngle = 0;
+                        break;
+
+                    case EMMagnetDirection.UP:
+                        dMagnetAngle = 90;
+                        break;
+
+                    case EMMagnetDirection.LEFT:
+                        dMagnetAngle = 180;
+                        break;
+
+                    case EMMagnetDirection.DOWN:
+                        dMagnetAngle = 270;
+                        break;
+
+                    default:
+                        CNotice.printLog("정의 되지 않은 착자방향이 사용되고 있다.");
+
+                        // 해당사항이 없는 항목이 넘어 왔기 때문에 바로 retrun 해서 아래의 동작을 하지 않는다.
+                        return;
+                }
+
+                femm.setBlockProp(blockPoint, strMaterialName, dMeshSize, "none", dMagnetAngle, MovingPart, 0);
+            }
+            catch (Exception ex)
+            {
+                CNotice.printLog(ex.Message);
+
                 return;
             }
-
-            string strMaterialName = this.m_strMaterialName;
-
-            double dMagnetAngle = 0;
-
-            switch (emMagnetDirection)
-            {
-                case EMMagnetDirection.RIGHT:
-                    dMagnetAngle = 0;
-                    break;
-
-                case EMMagnetDirection.UP:
-                    dMagnetAngle = 90;
-                    break;
-
-                case EMMagnetDirection.LEFT:
-                    dMagnetAngle = 180;
-                    break;
-
-                case EMMagnetDirection.DOWN:
-                    dMagnetAngle = 270;
-                    break;
-
-                default:
-                    break;
-            }
-
-            femm.setBlockProp(blockPoint, strMaterialName, dMeshSize, "none", dMagnetAngle, MovingPart, 0);
         }
     }
 
@@ -1071,6 +1101,7 @@ namespace Parts
             catch (Exception ex)
             {
                 CNotice.printLog(ex.Message);
+
                 return false;
             }
 
@@ -1158,6 +1189,7 @@ namespace Parts
                             break;                       
 
                         default:
+                            // 해당사항이 없는 항목은 아무것도 하지 않는다. foreach 가 동작하기 때문에 return 해서는 않된다.
                             break;
                     }
                 }
@@ -1173,6 +1205,7 @@ namespace Parts
             catch (Exception ex)
             {
                 CNotice.printLog(ex.Message);
+
                 return false;
             }
 

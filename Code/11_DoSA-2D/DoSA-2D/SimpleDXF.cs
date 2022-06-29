@@ -67,10 +67,12 @@ namespace SimpleDXF {
                                 if (sec == "ENTITIES")
                                     entitysection = true;
                                 break;
+
                             case "LAYER":
                                 Layer layer = ReadLayer(ref code);
                                 Layers.Add(layer);
                                 break;
+
                             default:
                                 code = this.ReadPair();
                                 break;
@@ -82,30 +84,37 @@ namespace SimpleDXF {
                                 Line line = ReadLine(ref code);
                                 Lines.Add(line);
                                 break;
+
                             case "CIRCLE":
                                 Circle circle = ReadCircle(ref code);
                                 Circles.Add(circle);
                                 break;
+
                             case "ARC":
                                 Arc arc = ReadArc(ref code);
                                 Arcs.Add(arc);
                                 break;
+
                             case "POINT":
                                 Point point = ReadPoint(ref code);
                                 Points.Add(point);
                                 break;
+
                             case "TEXT":
                                 Text text = ReadText(ref code);
                                 Texts.Add(text);
                                 break;
+
                             case "POLYLINE":
                                 Polyline polyline = ReadPolyline(ref code);
                                 Polylines.Add(polyline);
                                 break;
+
                             case "LWPOLYLINE":
                                 Polyline lwpolyline = ReadLwPolyline(ref code);
                                 Polylines.Add(lwpolyline);
                                 break;
+
                             default:
                                 code = this.ReadPair();
                                 break;

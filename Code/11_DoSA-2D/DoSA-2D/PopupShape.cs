@@ -74,7 +74,9 @@ namespace Shapes
 
                     default:
                         CNotice.printLogID("AFTE");
-                        break;
+
+                        // 해당사항이 없는 항목이 넘어 왔기 때문에 바로 retrun 해서 아래의 동작을 하지 않는다.
+                        return;
                 }
             }
         }
@@ -86,9 +88,10 @@ namespace Shapes
         {
             get
             {
-                try 
+                m_listPointUI = new List<CPointUI>();
+
+                try
                 { 
-                    m_listPointUI = new List<CPointUI>();
 
                     for (int i = this.panelPointControl.Controls.Count - 1; i >= 0; i--)
                     {
@@ -101,7 +104,8 @@ namespace Shapes
                 {
                     CNotice.printLog(ex.Message);
 
-                    return null;
+                    // null 를 리턴하지 않고 항목이 들어있지 않는 List 를 송부한다.
+                    return m_listPointUI;
                 }  
             }
         }
@@ -141,6 +145,8 @@ namespace Shapes
 
                 default:
                     CNotice.printLogID("TPTI");
+
+                    // 해당사항이 없는 항목이 넘어 왔기 때문에 바로 retrun 해서 아래의 동작을 하지 않는다.
                     return;
             }
 
@@ -194,6 +200,8 @@ namespace Shapes
 
                     default:
                         CNotice.printLogID("TPTI");
+
+                        // 해당사항이 없는 항목이 넘어 왔기 때문에 바로 retrun 해서 아래의 동작을 하지 않는다.
                         return;
                 }
             
@@ -416,7 +424,9 @@ namespace Shapes
             catch (Exception ex)
             {
                 CNotice.printLog(ex.Message);
-                return null;
+
+                // null 를 리턴하지 않고 추가되지 않은 이전의 pointControl 를 리턴한다. 
+                return pointControl;
             }  
         }
            
@@ -440,6 +450,8 @@ namespace Shapes
             catch (Exception ex)
             {
                 CNotice.printLog(ex.Message);
+
+                return;
             }  
         }
 
@@ -607,6 +619,8 @@ namespace Shapes
                     if (ListPointUI.Count != 2)
                     {
                         CNotice.printLogID("TATP1");
+
+                        // null 을 리턴하고 호출하는 측에서 꼭 null 검사를 한다.
                         return null;
                     }
 
@@ -624,6 +638,8 @@ namespace Shapes
                     if (ListPointUI.Count < 4)
                     {
                         CNotice.printLogID("TANM");
+
+                        // null 을 리턴하고 호출하는 측에서 꼭 null 검사를 한다.
                         return null;
                     }
 
@@ -672,6 +688,8 @@ namespace Shapes
             catch (Exception ex)
             {
                 CNotice.printLog(ex.Message);
+
+                // null 을 리턴하고 호출하는 측에서 꼭 null 검사를 한다.
                 return null;
             }  
         }
@@ -684,29 +702,41 @@ namespace Shapes
             maxX = maxZ = -1e100;
 
             CFace face = new CFace();
-
-            if (false == isRectangleShapeInPopup())
-                return null;
-
-            foreach(CPointUI pointUI in ListPointUI)
+            try
             {
-                if (minX > Convert.ToDouble(pointUI.StrCoordX))
-                    minX = Convert.ToDouble(pointUI.StrCoordX);
 
-                if (minZ > Convert.ToDouble(pointUI.StrCoordZ))
-                    minZ = Convert.ToDouble(pointUI.StrCoordZ);
+                if (false == isRectangleShapeInPopup())
+                    // null 을 리턴하고 호출하는 측에서 꼭 null 검사를 한다.
+                    return null;
 
-                if (maxX < Convert.ToDouble(pointUI.StrCoordX))
-                    maxX = Convert.ToDouble(pointUI.StrCoordX);
+                foreach (CPointUI pointUI in ListPointUI)
+                {
+                    if (minX > Convert.ToDouble(pointUI.StrCoordX))
+                        minX = Convert.ToDouble(pointUI.StrCoordX);
 
-                if (maxZ < Convert.ToDouble(pointUI.StrCoordZ))
-                    maxZ = Convert.ToDouble(pointUI.StrCoordZ);
+                    if (minZ > Convert.ToDouble(pointUI.StrCoordZ))
+                        minZ = Convert.ToDouble(pointUI.StrCoordZ);
+
+                    if (maxX < Convert.ToDouble(pointUI.StrCoordX))
+                        maxX = Convert.ToDouble(pointUI.StrCoordX);
+
+                    if (maxZ < Convert.ToDouble(pointUI.StrCoordZ))
+                        maxZ = Convert.ToDouble(pointUI.StrCoordZ);
+                }
+
+                if (minX >= maxX || minZ >= maxZ)
+                    // null 을 리턴하고 호출하는 측에서 꼭 null 검사를 한다.
+                    return null;
+
+                face.setRectanglePoints(minX, minZ, maxX, maxZ);
             }
+            catch (Exception ex)
+            {
+                CNotice.printLog(ex.Message);
 
-            if (minX >= maxX || minZ >= maxZ)
+                // null 을 리턴하고 호출하는 측에서 꼭 null 검사를 한다.
                 return null;
-
-            face.setRectanglePoints(minX, minZ, maxX, maxZ);
+            }
 
             return face;
         }
@@ -780,6 +810,8 @@ namespace Shapes
             catch (Exception ex)
             {
                 CNotice.printLog(ex.Message);
+
+                return;
             }  
         }
 
@@ -969,6 +1001,8 @@ namespace Shapes
             catch (Exception ex)
             {
                 CNotice.printLog(ex.Message);
+
+                return;
             }  
         }
 
