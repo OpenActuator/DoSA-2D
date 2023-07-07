@@ -660,7 +660,7 @@ namespace DoSA
                     //------------------------------------------------
                     // 코일 동선 재료
                     //------------------------------------------------
-                    CMaterialListInFEMM.coilWireList.Add("Aluminum");
+                    CMaterialListInFEMM.coilWireList.Add("Aluminum, 1100");
                     CMaterialListInFEMM.coilWireList.Add("Copper");
                 }
                 else
@@ -897,7 +897,7 @@ namespace DoSA
                     treeNode = new TreeNode("Tests", (int)EMKind.TESTS, (int)EMKind.TESTS);
                     treeViewMain.Nodes.Add(treeNode);
 
-                    foreach (CDataNode node in m_design.GetNodeList)
+                    foreach (CNode node in m_design.GetNodeList)
                         this.addTreeNode(node.NodeName, node.KindKey);
                 }
                 else
@@ -1213,36 +1213,20 @@ namespace DoSA
             frmAbout.ShowDialog();
         }
 
-        private void ribbonButtonDonation_Click(object sender, EventArgs e)
-        {
-            string target;
-
-            if (CSettingData.m_emLanguage == EMLanguage.Korean)
-            {
-                target = "https://solenoid.or.kr/index_donation.html";
-            }
-            else
-            {
-                target = "https://www.buymeacoffee.com/openactuator";
-            }
-
-            try
-            {
-                System.Diagnostics.Process.Start(target);
-            }
-            catch (System.ComponentModel.Win32Exception noBrowser)
-            {
-                if (noBrowser.ErrorCode == -2147467259)
-                    CNotice.printLog(noBrowser.Message);
-            }
-            catch (System.Exception other)
-            {
-                CNotice.printLog(other.Message);
-            }
-        }
 
         private void ribbonButtonImportDXF_Click(object sender, EventArgs e)
         {
+
+            if (m_design.m_strDesignName.Length == 0)
+            {
+                if(CSettingData.m_emLanguage == EMLanguage.Korean)
+                    CNotice.noticeWarning("DXF 를 Import 할 작업 디지인이 없습니다.\n작업을 취소합니다.");
+                else
+                    CNotice.noticeWarning("There is no design to import DXF.\nThe job is cancelled.");
+                
+                return;
+            }
+
             OpenFileDialog openFileDialog = new OpenFileDialog();
 
             // 파일 열기창 설정
@@ -1557,7 +1541,7 @@ namespace DoSA
 
         private void buttonMagnetUp_Click(object sender, EventArgs e)
         {
-            CDataNode node = (CDataNode)propertyGridMain.SelectedObject;
+            CNode node = (CNode)propertyGridMain.SelectedObject;
 
             if (node == null) return;
 
@@ -1574,7 +1558,7 @@ namespace DoSA
 
         private void buttonMagnetDown_Click(object sender, EventArgs e)
         {
-            CDataNode node = (CDataNode)propertyGridMain.SelectedObject;
+            CNode node = (CNode)propertyGridMain.SelectedObject;
 
             if (node == null) return;
 
@@ -1591,7 +1575,7 @@ namespace DoSA
 
         private void buttonMagnetLeft_Click(object sender, EventArgs e)
         {
-            CDataNode node = (CDataNode)propertyGridMain.SelectedObject;
+            CNode node = (CNode)propertyGridMain.SelectedObject;
 
             if (node == null) return;
 
@@ -1608,7 +1592,7 @@ namespace DoSA
 
         private void buttonMagnetRight_Click(object sender, EventArgs e)
         {
-            CDataNode node = (CDataNode)propertyGridMain.SelectedObject;
+            CNode node = (CNode)propertyGridMain.SelectedObject;
 
             if (node == null) return;
 
@@ -1712,7 +1696,7 @@ namespace DoSA
                 string strTestFullName = Path.Combine(strTestDirName, strTestName + ".fem");
                 string strForceFileFullName = Path.Combine(strTestDirName, strTestName + ".txt");
 
-                if (false == isForceTestOK(forceTest))
+                if (false == isForceTestOK())
                     return;
 
                 if (m_manageFile.isExistDirectory(strTestDirName) == true)
@@ -2119,7 +2103,7 @@ namespace DoSA
                 treeNode = new TreeNode("Tests", (int)EMKind.TESTS, (int)EMKind.TESTS);
                 treeViewMain.Nodes.Add(treeNode);
 
-                foreach (CDataNode node in m_design.GetNodeList)
+                foreach (CNode node in m_design.GetNodeList)
                     this.addTreeNode(node.NodeName, node.KindKey);
 
                 openFEMM();
@@ -2318,7 +2302,7 @@ namespace DoSA
 
             try
             {
-                foreach (CDataNode node in m_design.GetNodeList)
+                foreach (CNode node in m_design.GetNodeList)
                 {
                     if (node.GetType().Name == "CCoil")
                     {
@@ -2359,7 +2343,7 @@ namespace DoSA
 
             try
             {
-                foreach (CDataNode node in m_design.GetNodeList)
+                foreach (CNode node in m_design.GetNodeList)
                 {
                     // Parts 만 확인한다.
                     if (node.GetType().BaseType.Name == "CShapeParts")
@@ -2379,20 +2363,33 @@ namespace DoSA
             }
         }
 
-        private bool isForceTestOK(CForceTest forceTest)
+        private bool isCommonCheckInTestOK()
         {
-
-            try
-            {
+            try 
+            { 
                 if (checkMovingParts() == false)
                 {
                     CNotice.noticeWarningID("ALOM");
                     return false;
                 }
 
-                if (m_design.isDesignShapeOK() == false)
+                if (m_design.isExistCoil() == false)
                 {
-                    CNotice.printLogID("AEOI");
+                    if (CSettingData.m_emLanguage == EMLanguage.Korean)
+                        CNotice.noticeWarning("하나 이상의 코일 파트가 필요합니다.");
+                    else
+                        CNotice.noticeWarning("One or more coil parts are required.");
+
+                    return false;
+                }
+
+                if (m_design.isCoilSpecificationOK() == false)
+                {
+                    if (CSettingData.m_emLanguage == EMLanguage.Korean)
+                        CNotice.noticeWarning("코일사양 계산이 필요합니다.");
+                    else
+                        CNotice.noticeWarning("You need to calculate the coil specification.");
+
                     return false;
                 }
 
@@ -2403,6 +2400,30 @@ namespace DoSA
                     else
                         CNotice.noticeWarning("There are parts with no material set.\nCheck the material names of the parts.");
 
+                    return false;
+                }
+
+            }
+            catch (Exception ex)
+            {
+                CNotice.printLog(ex.Message);
+
+                return false;
+            }
+
+            return true;
+        }
+
+        private bool isForceTestOK()
+        {
+            try
+            {
+                if (false == isCommonCheckInTestOK())
+                    return false;
+
+                if (m_design.isDesignShapeOK() == false)
+                {
+                    CNotice.printLogID("AEOI");
                     return false;
                 }
             }
@@ -2420,6 +2441,9 @@ namespace DoSA
         {
             try
             {
+                if (false == isCommonCheckInTestOK())
+                    return false;
+
                 if (strokeTest.InitialStroke >= strokeTest.FinalStroke)
                 {
                     CNotice.noticeWarningID("TFSM");
@@ -2429,12 +2453,6 @@ namespace DoSA
                 if (strokeTest.StepCount <= 0)
                 {
                     CNotice.noticeWarningID("TSSM");
-                    return false;
-                }
-
-                if (checkMovingParts() == false)
-                {
-                    CNotice.noticeWarningID("ALOM");
                     return false;
                 }
 
@@ -2452,15 +2470,6 @@ namespace DoSA
                     return false;
                 }
 
-                if (checkMaterials() == false)
-                {
-                    if (CSettingData.m_emLanguage == EMLanguage.Korean)
-                        CNotice.noticeWarning("재질이 설정되지 않는 Part 가 존재합니다.\nPart 들의 재질명을 확인하세요.");
-                    else
-                        CNotice.noticeWarning("There are parts with no material set.\nCheck the material names of the parts.");
-
-                    return false;
-                }
             }
             catch (Exception ex)
             {
@@ -2476,6 +2485,9 @@ namespace DoSA
         {
             try
             {
+                if (false == isCommonCheckInTestOK())
+                    return false;
+
                 if (currentTest.InitialCurrent >= currentTest.FinalCurrent)
                 {
                     CNotice.noticeWarningID("TFCM");
@@ -2494,21 +2506,6 @@ namespace DoSA
                     return false;
                 }
 
-                if (checkMovingParts() == false)
-                {
-                    CNotice.noticeWarningID("ALOM");
-                    return false;
-                }
-
-                if (checkMaterials() == false)
-                {
-                    if (CSettingData.m_emLanguage == EMLanguage.Korean)
-                        CNotice.noticeWarning("재질이 설정되지 않는 Part 가 존재합니다.\nPart 들의 재질명을 확인하세요.");
-                    else
-                        CNotice.noticeWarning("There are parts with no material set.\nCheck the material names of the parts.");
-
-                    return false;
-                }
             }
             catch (Exception ex)
             {
@@ -3070,7 +3067,7 @@ namespace DoSA
                         return;
                     }
 
-                    CDataNode node = m_design.getNode(selectedNodeText);
+                    CNode node = m_design.getNode(selectedNodeText);
 
                     if (node == null)
                     {
@@ -3132,7 +3129,7 @@ namespace DoSA
                     return;
                 }
 
-                CDataNode node = m_design.getNode(selectedNodeText);
+                CNode node = m_design.getNode(selectedNodeText);
 
                 if (node == null)
                 {
@@ -3185,7 +3182,7 @@ namespace DoSA
             string strName = string.Empty;
             bool bRet = false;
 
-            CDataNode Node = null;
+            CNode Node = null;
 
             try
             {
@@ -3438,7 +3435,7 @@ namespace DoSA
         // 선택한 노드를 Information Window 와 Property View 에 보여준다
         private void showDataNode(string nodeName)
         {
-            CDataNode node = m_design.getNode(nodeName);
+            CNode node = m_design.getNode(nodeName);
 
             if (node == null)
             {
@@ -3463,7 +3460,7 @@ namespace DoSA
                 //
                 // 의문 사항
                 // - CDataNode 의 표시항목인 NodeName 만 설정해도 CShapeParts 의 MovingPart 항목까지 숨겨지고 있다. 
-                PropertyDescriptorCollection propCollection = TypeDescriptor.GetProperties(typeof(CDataNode));
+                PropertyDescriptorCollection propCollection = TypeDescriptor.GetProperties(typeof(CNode));
                 PropertyDescriptor descriptor = propCollection["NodeName"];
 
                 BrowsableAttribute attrib = (BrowsableAttribute)descriptor.Attributes[typeof(BrowsableAttribute)];
@@ -3664,7 +3661,7 @@ namespace DoSA
                 /// 디자인의 모든 포인트를 담는다.
                 List<CPoint> listAbsoluteAllPoint = new List<CPoint>();
 
-                foreach (CDataNode node in m_design.GetNodeList)
+                foreach (CNode node in m_design.GetNodeList)
                 {
                     /// 부품이 선택되면 FEMM 에 선택 표시를 한다
                     if (node.GetType().BaseType.Name == "CShapeParts")
@@ -3819,7 +3816,7 @@ namespace DoSA
         //property 수정
         private void propertyGrid_PropertyValueChanged(object s, PropertyValueChangedEventArgs e)
         {
-            CDataNode node = (CDataNode)propertyGridMain.SelectedObject;
+            CNode node = (CNode)propertyGridMain.SelectedObject;
 
             if (node == null) return;
 
@@ -3918,7 +3915,7 @@ namespace DoSA
             propertyGridMain.Refresh();
         }
 
-        private void setCurrentInTest(CDataNode node)
+        private void setCurrentInTest(CNode node)
         {
             // 총 저항은 합산이 필요함으로 0.0f 로 초기화 한다.
             double total_resistance = 0.0f;
@@ -3926,7 +3923,7 @@ namespace DoSA
             {
 
                 // 총 저항
-                foreach (CDataNode nodeTemp in m_design.GetNodeList)
+                foreach (CNode nodeTemp in m_design.GetNodeList)
                     if (nodeTemp.KindKey == EMKind.COIL)
                     {
                         total_resistance += ((CCoil)nodeTemp).Resistance;
@@ -4400,7 +4397,7 @@ namespace DoSA
 
                         // CFormMain 의 addDataNode() 는 Dialog 를 띠워서 추가할 때만 사용이 가능하다.
                         // 따라서 직접 추가를 위해서는 m_design 안의 addDataNode() 를 사용한다.
-                        m_design.addDataNode((CDataNode)newShapePart);
+                        m_design.addDataNode((CNode)newShapePart);
                         addTreeNode(strOriginalNodeName, popupShape.PartType);
 
                         /// 수정이 없을때도 아래의 코드를 동일하게 사용하기 위해 객체의 교체작업도 같이 한다.

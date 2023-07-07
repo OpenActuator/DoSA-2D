@@ -786,7 +786,7 @@ namespace Shapes
                 femm.deleteAll();
 
                 /// 1. 작업 중인 Face 를 제외하고 형상 그리기
-                foreach (CDataNode node in formMain.m_design.GetNodeList)
+                foreach (CNode node in formMain.m_design.GetNodeList)
                 {
                     if (node.GetType().BaseType.Name == "CShapeParts")
                     {
@@ -842,7 +842,7 @@ namespace Shapes
 
                 CScriptFEMM femm = formMain.m_femm;
 
-                CDataNode nodeParts = formMain.m_design.getNode(m_strPartName);
+                CNode nodeParts = formMain.m_design.getNode(m_strPartName);
 
                 /// 0. 해당 좌표점의 수정이 있었는지를 판단한다.
                 ///  - 수정이 있는 경우만 다시 그리기 위해서이다.
@@ -876,7 +876,7 @@ namespace Shapes
                     femm.deleteAll();
 
                     /// 1. 혹시 수정중이라면, 현재 작업 중인 Face 를 제외하고 형상 그리기
-                    foreach (CDataNode node in formMain.m_design.GetNodeList)
+                    foreach (CNode node in formMain.m_design.GetNodeList)
                     {
                         if (node.GetType().BaseType.Name == "CShapeParts")
                         {

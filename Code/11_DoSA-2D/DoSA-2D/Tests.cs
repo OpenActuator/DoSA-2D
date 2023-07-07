@@ -19,7 +19,7 @@ namespace Tests
     //------------------------------------------------------------------------------------------
     // 측정조건에 대해 Node 들을 만들고 성능결과를 얻고 싶을 때 개발자에게 측정 조건의 입력을 요청한다 
     //------------------------------------------------------------------------------------------
-    public class CTest : CDataNode
+    public class CTest : CNode
     {
 
         [DisplayNameAttribute("Mesh Size [%]"), CategoryAttribute("Condition Fields"), DescriptionAttribute("Mesh Size / Shape Length * 100")]

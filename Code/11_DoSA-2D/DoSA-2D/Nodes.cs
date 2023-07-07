@@ -34,7 +34,7 @@ namespace Nodes
         NON_KIND
     };
 
-    public class CDataNode
+    public class CNode
     {
         private EMKind m_kindKey;
 
@@ -57,7 +57,7 @@ namespace Nodes
 
         // 작업파일 저장을 각 객체에서 진행하고 있다.
         public virtual bool writeObject(StreamWriter writeFile, int nLevel) { return true; }
-        public virtual bool readObject(List<string> listStringLines, ref CDataNode node) { return true; }
+        public virtual bool readObject(List<string> listStringLines, ref CNode node) { return true; }
     }
 
     public class CDesign
@@ -70,16 +70,16 @@ namespace Nodes
         public string m_strDesignDirPath;
 
         // Design 에 사용되는 부품이나 시험조건을 저장하는 List 이다.
-        private List<CDataNode> m_listDataNode = new List<CDataNode>();
+        private List<CNode> m_listNode = new List<CNode>();
 
         public bool m_bChanged;
 
         // Get 전용로 오픈한다
-        public List<CDataNode> GetNodeList
+        public List<CNode> GetNodeList
         {
             get
             {
-                return m_listDataNode;
+                return m_listNode;
             }
         }
 
@@ -92,7 +92,7 @@ namespace Nodes
 
             try
             {
-                foreach (CDataNode node in m_listDataNode)
+                foreach (CNode node in m_listNode)
                 {
                     if (node.GetType().BaseType.Name == "CShapeParts")
                     {
@@ -143,7 +143,7 @@ namespace Nodes
 
             try
             {
-                foreach (CDataNode node in m_listDataNode)
+                foreach (CNode node in m_listNode)
                 {
                     if (node.GetType().BaseType.Name == "CShapeParts")
                     {
@@ -204,9 +204,9 @@ namespace Nodes
             m_bChanged = false;
         }
 
-        public CDataNode getNode(string nodeName)
+        public CNode getNode(string nodeName)
         {
-            foreach (CDataNode node in m_listDataNode)
+            foreach (CNode node in m_listNode)
             {
                 // 같은 이름의 노드가 있으면 리턴한다.
                 if (node.NodeName == nodeName)
@@ -229,10 +229,10 @@ namespace Nodes
 
             try
             {
-                if (m_listDataNode.Count == 0)
+                if (m_listNode.Count == 0)
                     return false;
 
-                foreach (CDataNode node in m_listDataNode)
+                foreach (CNode node in m_listNode)
                 {
                     if (node.GetType().BaseType.Name == "CShapeParts")
                     {
@@ -272,7 +272,7 @@ namespace Nodes
 
             try
             {
-                foreach (CDataNode node in m_listDataNode)
+                foreach (CNode node in m_listNode)
                 {
                     if (node.GetType().BaseType.Name == "CShapeParts")
                     {
@@ -304,7 +304,7 @@ namespace Nodes
             try
             {
 
-                foreach (CDataNode node in m_listDataNode)
+                foreach (CNode node in m_listNode)
                 {
                     if (node.GetType().BaseType.Name == "CShapeParts")
                     {
@@ -336,12 +336,12 @@ namespace Nodes
             double tempMinY = 0;
             double tempMaxY = 0;
 
-            if (m_listDataNode.Count == 0)
+            if (m_listNode.Count == 0)
                 return false;
 
             try
             {
-                foreach (CDataNode node in m_listDataNode)
+                foreach (CNode node in m_listNode)
                 {
                     if (node.GetType().BaseType.Name == "CShapeParts")
                     {
@@ -383,15 +383,15 @@ namespace Nodes
 
         public int getNodeCount()
         {
-            return m_listDataNode.Count;
+            return m_listNode.Count;
         }
 
-        public bool addDataNode(CDataNode node)
+        public bool addDataNode(CNode node)
         {
             if (isExistNode(node.NodeName) == true)
                 return false;
 
-            m_listDataNode.Add(node);
+            m_listNode.Add(node);
 
             return true;
         }
@@ -399,13 +399,46 @@ namespace Nodes
         // 같이 이름의 Node 가 있는지 검사한다.
         public bool isExistNode(string nodeName)
         {
-            foreach (CDataNode node in m_listDataNode)
-            {
-                if (node.NodeName == nodeName)
-                    return true;
-            }
+            int nNodeCount = m_listNode.Where(p => p.NodeName == nodeName).Count();
 
-            return false;
+            // 존재하지 않으면 false 를 리턴하고 존재하면 true 를 리턴한다.
+            if (nNodeCount == 0)
+                return false;
+            else
+                return true;
+        }
+
+        public bool isExistMagnet()
+        {
+            int nMagnetCount = m_listNode.Where(p => p.KindKey == EMKind.MAGNET).Count();
+
+            // 존재하지 않으면 false 를 리턴하고 존재하면 true 를 리턴한다.
+            if (nMagnetCount == 0)
+                return false;
+            else
+                return true;
+        }
+
+        public bool isExistSteel()
+        {
+            int nSteelCount = m_listNode.Where(p => p.KindKey == EMKind.STEEL).Count();
+
+            // 존재하지 않으면 false 를 리턴하고 존재하면 true 를 리턴한다.
+            if (nSteelCount == 0)
+                return false;
+            else
+                return true;
+        }
+
+        public bool isExistCoil()
+        {
+            int nCoilCount = m_listNode.Where(p => p.KindKey == EMKind.COIL).Count();
+
+            // 존재하지 않으면 false 를 리턴하고 존재하면 true 를 리턴한다.
+            if (nCoilCount == 0)
+                return false;
+            else
+                return true;
         }
 
         public bool deleteNode(string nodeName)
@@ -417,12 +450,12 @@ namespace Nodes
                 if (isExistNode(nodeName) == false)
                     return false;
 
-                foreach (CDataNode node in m_listDataNode)
+                foreach (CNode node in m_listNode)
                 {
                     if (node.NodeName == nodeName)
                     {
                         // 삭제 후 바로 빠져나가야 한다.
-                        m_listDataNode.Remove(node);
+                        m_listNode.Remove(node);
                         return true;
                     }
                 }
@@ -442,7 +475,7 @@ namespace Nodes
             m_strDesignName = string.Empty;
             m_strDesignDirPath = string.Empty;
 
-            m_listDataNode.Clear();
+            m_listNode.Clear();
         }
 
         // 해당 종류의 노드 갯수를 얻어 온다
@@ -450,7 +483,7 @@ namespace Nodes
         {
             int size = 0;
 
-            foreach (CDataNode node in m_listDataNode)
+            foreach (CNode node in m_listNode)
             {
                 if (node.KindKey == kind)
                     size++;
@@ -466,7 +499,7 @@ namespace Nodes
             writeFile.writeBeginLine(writeStream, "Design", nLevel);
             writeFile.writeDataLine(writeStream, "DesignName", m_strDesignName, nLevel + 1);
 
-            foreach (CDataNode node in GetNodeList)
+            foreach (CNode node in GetNodeList)
             {
                 node.writeObject(writeStream, nLevel + 1);
             }
@@ -478,7 +511,7 @@ namespace Nodes
         {
             try
             {
-                foreach (CDataNode node in GetNodeList)
+                foreach (CNode node in GetNodeList)
                 {
                     if (node.GetType().BaseType.Name == "CShapeParts")
                     {
@@ -519,7 +552,7 @@ namespace Nodes
                 // Mesh Size 는 길이단위이기 때문에 면적을 루트 취한 값과 곱하고 있다.
                 double dMeshSize = Math.Sqrt(this.calcShapeModelAverageArea()) * dMeshSizePercent / 100.0f;
 
-                foreach (CDataNode node in GetNodeList)
+                foreach (CNode node in GetNodeList)
                 {
                     switch (node.KindKey)
                     {
@@ -562,7 +595,7 @@ namespace Nodes
         {
             double Resistance = 0;
 
-            foreach (CDataNode node in m_listDataNode)
+            foreach (CNode node in m_listNode)
             {
                 if (node.KindKey == EMKind.COIL)
                     Resistance = Resistance + ((CCoil)node).Resistance;
@@ -580,7 +613,7 @@ namespace Nodes
             // Mesh Size 는 길이단위이기 때문에 면적을 루트 취한 값과 곱하고 있다.
             double dMeshSize = Math.Sqrt(this.calcShapeModelAverageArea()) * dMeshSizePercent / 100.0f;
 
-            foreach (CDataNode node in GetNodeList)
+            foreach (CNode node in GetNodeList)
             {
                 switch (node.KindKey)
                 {
@@ -614,7 +647,7 @@ namespace Nodes
                 femm.addMaterial(strMaterial);
                 listTempMaterial.Add(strMaterial);
 
-                foreach (CDataNode node in GetNodeList)
+                foreach (CNode node in GetNodeList)
                 {
                     bCheck = false;
                     if (node.GetType().BaseType.Name == "CShapeParts")
@@ -713,12 +746,12 @@ namespace Nodes
             try
             {
                 /// 비교의 앞 이름은 m_listNode.Count - 1 까지 이다.
-                for (int i = 0; i < m_listDataNode.Count - 1; i++)
+                for (int i = 0; i < m_listNode.Count - 1; i++)
                 {
                     /// 비교의 뒤 이름은 1 부터 이다.
-                    for (int j = i + 1; j < m_listDataNode.Count; j++)
+                    for (int j = i + 1; j < m_listNode.Count; j++)
                     {
-                        if (m_listDataNode[i].NodeName == m_listDataNode[j].NodeName)
+                        if (m_listNode[i].NodeName == m_listNode[j].NodeName)
                             return true;
                     }
                 }
@@ -733,6 +766,20 @@ namespace Nodes
             return false;
         }
 
+        internal bool isCoilSpecificationOK()
+        {
+            foreach (CNode node in m_listNode)
+            {
+                if (node.KindKey == EMKind.COIL)
+                {
+                    if (((CCoil)node).Resistance <= 0 || ((CCoil)node).Turns <= 0)
+                        return false;
+                }
+            }
+
+            return true;
+        }
+
         public bool isDesignShapeOK(double dStroke = 0)
         {
             CFace face = null;
@@ -742,7 +789,7 @@ namespace Nodes
             {
 
                 // Moving Part 를 Stroke 만큼 이동시킨다.
-                foreach (CDataNode node in GetNodeList)
+                foreach (CNode node in GetNodeList)
                 {
                     if (node.GetType().BaseType.Name == "CShapeParts")
                     {
@@ -762,6 +809,8 @@ namespace Nodes
                     bError = true;
                 }
 
+                // FEMM 은 접촉하는 Moving Part 의 자기력 계산을 지원하지 않는다.
+                // 어렵더라도 작은 틈을 사용해서 떨어트려야 한다.
                 if (isContactedMovingParts() == true)
                 {
                     CNotice.noticeWarningID("IHOT");
@@ -769,7 +818,7 @@ namespace Nodes
                 }
 
                 // Moving Part 를 Stroke 만큼 복원 시킨다.
-                foreach (CDataNode node in GetNodeList)
+                foreach (CNode node in GetNodeList)
                 {
                     if (node.GetType().BaseType.Name == "CShapeParts")
                     {

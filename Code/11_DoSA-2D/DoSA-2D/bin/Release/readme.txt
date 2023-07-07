@@ -3,6 +3,9 @@ https://solenoid.or.kr/index_dosa_open_2d_eng.html
 Gi-Tae Kweon
 zgitae@gmail.com
 
+2023-06-11 Ver(1.1.5)
+ - Bug Fix : Aluminum Material error for coils with FEMM 4.2 2019
+
 2022-06-30 Ver(1.1.4)
  - Automatically copies the sample files to your working directory.
  - Code refactoring for stabilization.

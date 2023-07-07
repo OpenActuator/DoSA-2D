@@ -52,7 +52,7 @@ namespace Parts
         Bonded_JIS_Class_2
     };
 
-    public class CShapeParts : CDataNode
+    public class CShapeParts : CNode
     {
         protected string m_strMaterialName;
 

@@ -245,7 +245,7 @@ Nuvola 1.0 (KDE 3.x icon set) (nuvola)
             }
         }
 
-        private void buttonDonation_Click(object sender, EventArgs e)
+        private void buttonContribution_Click(object sender, EventArgs e)
         {
             string target;
 
