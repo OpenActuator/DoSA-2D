@@ -8,7 +8,7 @@ This program is an open source software for solenoids &amp; actuator
 4. Homepage : <a href="https://solenoid.or.kr/index_dosa_open_2d_eng.html">DoSA-2D Homepage Link</a><br>
 <br><br>
 
-<img src="./Images/VCM_Analysis_2D.png" width="830" height="467" border="0" style="display: block; margin: auto;" alt="">
-<img src="./Images/Solenoid_Analysis_2D.png" width="830" height="467" style="display: block; margin: auto;" border="0" alt="">
-<img src="./Images/OpenVCM_Analysis_2D.png" width="830" height="467" style="display: block; margin: auto;" border="0" alt="">
-<img src="./Images/Coil_Design.png" width="660" height="540" border="0" style="display: block; margin: auto;" alt="">
+<img src="./Images/VCM_Analysis_2D.png" width="830" height="467" border="0" alt="">
+<img src="./Images/Solenoid_Analysis_2D.png" width="830" height="467" alt="">
+<img src="./Images/OpenVCM_Analysis_2D.png" width="830" height="467" alt="">
+<img src="./Images/Coil_Design.png" width="660" height="540" border="0" alt="">
